@@ -4,11 +4,17 @@
 
 // Static data members
 Clique SyncAgent::clique;
+PowerManager* SyncAgent::powerMgr;
 
 
 // Temp standin for OS
 static void scheduleTask(void callback() ) {
 	
+}
+
+
+SyncAgent::SyncAgent(PowerManager* aPowerMgr) {
+	powerMgr = aPowerMgr;
 }
 
 void SyncAgent::startSyncing() {
@@ -18,7 +24,7 @@ void SyncAgent::startSyncing() {
 	// app schedule task
 	scheduleSyncWake();
 
-	// caller is sleeping, self will wake
+	// caller should sleep, self will wake
 }
 
 
@@ -28,6 +34,10 @@ void SyncAgent::startSyncing() {
 
 
 void SyncAgent::onSyncWake() {
+	// sync slot starts
+	if ( !powerMgr->isPowerForRadio() ) {
+
+	}
 
 }
 

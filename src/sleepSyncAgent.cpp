@@ -9,9 +9,11 @@
 // #include <iostream>
 // using namespace std;
 //#include "app.h"
+#include "powerManager.h"
 #include "syncAgent.h"
 
-SyncAgent syncAgent;
+PowerManager powerMgr;
+SyncAgent syncAgent(&powerMgr);
 
 void scheduleSyncTask(){
 	// Schedule a task with callback to 
