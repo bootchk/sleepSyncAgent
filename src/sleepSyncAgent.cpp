@@ -15,12 +15,14 @@
 PowerManager powerMgr;
 SyncAgent syncAgent(&powerMgr);
 
-void scheduleSyncTask(){
+/*
+ void scheduleSyncTask(){
 	// Schedule a task with callback to 
 	// TBD schedule task
 	// TBD separate function ... casting problems
 	syncAgent.onSyncWake();
 }
+*/
 
 int main() {
 	//App app;

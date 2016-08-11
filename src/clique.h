@@ -10,6 +10,7 @@ public:
 	//SyncAgent();
 	
 	void reset();
+	bool isSelfMaster();
 
 private:
 	//Schedule schedule;
