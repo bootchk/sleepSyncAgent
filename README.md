@@ -61,6 +61,6 @@ References
 
 Digi Corporation's Digimesh has sleep synchronization
 
-"Reachback firefly algorithm".  But in firefly algorithms, all units xmit sync. Here, we elect a master.
+"Reachback firefly algorithm".  But in firefly algorithms, all units xmit sync. Here, we decide a master.  Here, more than one unit (even slaves) may xmit sync, but in the ideal state, only one master does.
 
 "time triggered communication".  Units are synced and communicate on a schedule of slots.

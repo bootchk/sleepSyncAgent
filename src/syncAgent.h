@@ -1,7 +1,6 @@
 
 #include "clique.h"
 #include "powerManager.h"
-#include "syncPolicy.h"
 #include "message.h"
 #include "dropoutMonitor.h"
 #include "cliqueMerger.h"
@@ -14,7 +13,6 @@ class SyncAgent {
 
 
 public:
-	// Compiler defaults ctor
 	SyncAgent(
 			PowerManager* powerMgr,
 			void (*onSyncLostCallback)()
@@ -29,17 +27,14 @@ private:
 	static bool isSynching;
 
 	// has-a, all singletons
-	static SyncPolicy syncPolicy;
 	static Clique clique;
 	static DropoutMonitor dropoutMonitor;
 	static CliqueMerger cliqueMerger;
-
 
 	// uses
 	static PowerManager* powerMgr;	// owned by app
 	static void (*onSyncLostCallback)();	// callback to app
 
-	//Schedule schedule;
 
 	// Callbacks
 	static void onSyncWake();
@@ -55,6 +50,4 @@ private:
 	static void doSyncMsgInSyncSlot(Message msg);
 	static void doAbandonMastershipMsgInSyncSlot(Message msg);
 	static void doWorkMsgInSyncSlot(Message msg);
-
-
 };

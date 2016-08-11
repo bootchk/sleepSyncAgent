@@ -1,9 +1,20 @@
+
+#pragma once
+
+// Monitor loss of sync: too many sync slots without hearing sync
 class DropoutMonitor {
 
 public:
 
-	static void heardSync() {};
+	DropoutMonitor() {
+		countSyncSlotsWithoutSyncMsg = 0;
+	}
+	static void heardSync();
+	static bool check();
 
 private:
-	//Schedule schedule;
+	static int countSyncSlotsWithoutSyncMsg;
+
 };
+
+

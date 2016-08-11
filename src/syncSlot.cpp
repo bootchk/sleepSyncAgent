@@ -67,7 +67,7 @@ void SyncAgent::doRoleAproposSyncXmit() {
 	// Contention:
 	//    two cliques may unwittingly by in sync
 	//    merging: a better clique may be xmitting sync to merge this clique into an offset syncSlot
-	if ( clique.isSelfMaster() && syncPolicy.shouldXmitSync() ) {
+	if ( clique.isSelfMaster() && clique.masterXmitSyncPolicy.shouldXmitSync() ) {
 		xmit(Sync);
 	}
 }
@@ -91,6 +91,14 @@ void SyncAgent::onMsgReceivedInSyncSlot(Message msg) {
 
 
 void SyncAgent::onSyncSlotEnd() {
+	// end of sync slot
+	// TODO This may be late, since message spanning this delays this, OR message spanning is received after end?
+
+	// TODO we could do this elsewhere
+	if (dropoutMonitor.check()) {
+		dropoutMonitor.heardSync();	// reset
+		clique.onMasterDropout();
+	}
 
 }
 
@@ -108,21 +116,24 @@ void SyncAgent::doSyncMsgInSyncSlot(Message msg){
 	}
 	else {
 		// usual: self isSlave
-		// sync is from my master OR from member of a usurping clique
+		// sync is from my master
+		// OR from member of a usurping clique
+		// OR from master of clique that happens to be in sync
 
 		// TODO assume master is best?
+	}
 
-		dropoutMonitor.heardSync();
+	// Sync is valid
+	dropoutMonitor.heardSync();
 
-		// Regardless: from my master (small offset) or from another clique (large offset)
-		clique.schedule.adjustBySyncMsg(msg);
+	// Regardless: from my master (small offset) or from another clique (large offset)
+	clique.schedule.adjustBySyncMsg(msg);
 
-		// TODO clique.historyOfMasters.update(msg);
+	// TODO clique.historyOfMasters.update(msg);
 
-		if (cliqueMerger.isActive()) {
-			// Already merging another clique, now merge to updated sync slot time
-			cliqueMerger.adjust(msg);
-		}
+	if (cliqueMerger.isActive()) {
+		// Already merging another clique, now merge to updated sync slot time
+		cliqueMerger.adjust(msg);
 	}
 }
 

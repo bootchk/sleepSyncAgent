@@ -10,7 +10,6 @@ PowerManager* SyncAgent::powerMgr;
 void (*SyncAgent::onSyncLostCallback)();
 
 Clique SyncAgent::clique;
-SyncPolicy SyncAgent::syncPolicy;
 DropoutMonitor SyncAgent::dropoutMonitor;
 CliqueMerger SyncAgent::cliqueMerger;
 
