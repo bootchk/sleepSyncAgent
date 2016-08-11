@@ -9,11 +9,15 @@ bool SyncAgent::isSynching = false;
 Clique SyncAgent::clique;
 PowerManager* SyncAgent::powerMgr;
 SyncPolicy SyncAgent::syncPolicy;
+void (*SyncAgent::onSyncLostCallback)();
 
 
-
-SyncAgent::SyncAgent(PowerManager* aPowerMgr) {
+SyncAgent::SyncAgent(
+		PowerManager* aPowerMgr,
+		void (*aOnSyncLostCallback)()
+	) {
 	powerMgr = aPowerMgr;
+	onSyncLostCallback = aOnSyncLostCallback;
 }
 
 void SyncAgent::startSyncing() {
@@ -34,8 +38,6 @@ void SyncAgent::startSyncing() {
 }
 
 
-void SyncAgent::loseSync() {
 
-}
 
 

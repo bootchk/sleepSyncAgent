@@ -2,10 +2,23 @@ Work in progress
 
 A sleep synchronization algorithm
 
-Ultra low power
+
+
+Characteristics of the algorithm:
+
+Ultra low power:  Unit is duty-cycled, sleeping mostly without the radio on.
+
+Symmetric powered: no unit has more electrical power than other units.
+
+Distributed, non-centralized: all units have same program.  All units may perform any role. No unit is responsible for gathering complete information from other units.
+
+Leader election: cliques form, each clique elects a master transmitting sync.  Cliques merge.
+
 
 References
 
-Digi Digimesh has sleep synchronization
+Digi Corporation's Digimesh has sleep synchronization
 
-Reachback firefly algorithms.  But here, we elect a master.
+"Reachback firefly algorithm".  But here, we elect a master.
+
+"time triggered communication".  Units are synced and communicate on a schedule of slots.

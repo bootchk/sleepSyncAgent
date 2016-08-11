@@ -13,7 +13,14 @@
 #include "syncAgent.h"
 
 PowerManager powerMgr;
-SyncAgent syncAgent(&powerMgr);
+
+void onSyncLost() {
+	// Called by SyncAgent when power inadequate to continue sync
+	// TODO schedule a wakeTask to monitor power
+}
+
+
+SyncAgent syncAgent(&powerMgr, onSyncLost);
 
 /*
  void scheduleSyncTask(){
