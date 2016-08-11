@@ -1,13 +1,16 @@
 
-#include "Schedule.h"
-class SyncAgent {
+#pragma once
+
+#include "message.h"
+
+class Schedule {
 
 public:
 	// Compiler defaults ctor
 	//SyncAgent();
 	
-	void startSynching();
+	void adjustBySyncMsg(Message msg) {/*TODO*/ };
 
 private:
-	Schedule schedule;
+
 };

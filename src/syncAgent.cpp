@@ -6,10 +6,13 @@
 
 // Static data members
 bool SyncAgent::isSynching = false;
-Clique SyncAgent::clique;
 PowerManager* SyncAgent::powerMgr;
-SyncPolicy SyncAgent::syncPolicy;
 void (*SyncAgent::onSyncLostCallback)();
+
+Clique SyncAgent::clique;
+SyncPolicy SyncAgent::syncPolicy;
+DropoutMonitor SyncAgent::dropoutMonitor;
+CliqueMerger SyncAgent::cliqueMerger;
 
 
 SyncAgent::SyncAgent(

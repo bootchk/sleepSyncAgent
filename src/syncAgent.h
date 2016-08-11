@@ -1,9 +1,10 @@
 
-//#include "Schedule.h"
 #include "clique.h"
 #include "powerManager.h"
 #include "syncPolicy.h"
 #include "message.h"
+#include "dropoutMonitor.h"
+#include "cliqueMerger.h"
 
 
 /*
@@ -20,15 +21,19 @@ public:
 			);
 	
 	//void setTaskScheduler(void callback());
-	void startSyncing();
+	static void startSyncing();
+	// App can not stop synching.  SyncAgent monitors power and tells app onSyncLostCallback
 
 
 private:
 	static bool isSynching;
 
-	// has-a
+	// has-a, all singletons
 	static SyncPolicy syncPolicy;
 	static Clique clique;
+	static DropoutMonitor dropoutMonitor;
+	static CliqueMerger cliqueMerger;
+
 
 	// uses
 	static PowerManager* powerMgr;	// owned by app
@@ -45,6 +50,11 @@ private:
 	static void loseSync();
 	static void maintainSyncSlot();
 	static void doRoleAproposSyncXmit();
+
+	// Msg handlers
 	static void doSyncMsgInSyncSlot(Message msg);
+	static void doAbandonMastershipMsgInSyncSlot(Message msg);
+	static void doWorkMsgInSyncSlot(Message msg);
+
 
 };

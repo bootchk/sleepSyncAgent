@@ -1,19 +1,20 @@
 
-//#include "Schedule.h"
-//#include "Clique.h"
+#include "schedule.h"
 
-
+/*
+ * Only my limited knowledge of the 'clique'.
+ * I don't know all members.
+ * I don't know accurate history of masters of clique.
+ */
 class Clique {
 
 public:
-	// Compiler defaults ctor
-	//SyncAgent();
+
+	static Schedule schedule;
 	
 	void reset();
 	bool isSelfMaster();
 
 private:
-	//Schedule schedule;
-	int masterID;
-	int myID;
+	int masterID;	// self or other unit
 };

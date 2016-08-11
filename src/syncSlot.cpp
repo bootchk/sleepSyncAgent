@@ -4,6 +4,7 @@
 #include <cassert>
 #include "syncAgent.h"
 #include "message.h"
+#include "schedule.h"
 #include "os.h"
 
 
@@ -17,13 +18,15 @@ void SyncAgent::onSyncWake() {
 		maintainSyncSlot();
 		// assert receiver on and endSyncSlotTask is scheduled
 	}
-	// assert some SyncAgent task is scheduled or App wakingTask is scheduled
+
 	sleep();
+	// ensure some SyncAgent task is scheduled or App wakingTask is scheduled
 }
+
 
 void SyncAgent::loseSync() {
 	// Not enough power to continue in sync
-	// Other units may still have power and be able to assume mastership
+	// Other units might still have power and assume mastership of my clique
 
 	// assert radio not on
 
@@ -38,8 +41,10 @@ void SyncAgent::loseSync() {
 	// Let app schedule a wakeTask
 	onSyncLostCallback();
 
-	// assert no sync related task is scheduled, but app has scheduled its own wakeTask
+	// ensure no sync related task is scheduled
+	// ensure app has scheduled its own wakeTask (else will not wake from sleep)
 }
+
 
 void SyncAgent::scheduleSyncWake() {
 	scheduleTask(onSyncWake);
@@ -63,7 +68,7 @@ void SyncAgent::doRoleAproposSyncXmit() {
 	//    two cliques may unwittingly by in sync
 	//    merging: a better clique may be xmitting sync to merge this clique into an offset syncSlot
 	if ( clique.isSelfMaster() && syncPolicy.shouldXmitSync() ) {
-		xmit(1 /*Sync*/ );
+		xmit(Sync);
 	}
 }
 
@@ -74,8 +79,10 @@ void SyncAgent::onMsgReceivedInSyncSlot(Message msg) {
 		doSyncMsgInSyncSlot(msg);
 		break;
 	case AbandonMastership:
+		doAbandonMastershipMsgInSyncSlot(msg);
 		break;
 	case Work:
+		doWorkMsgInSyncSlot(msg);
 		break;
 	default:
 		break;
@@ -87,7 +94,48 @@ void SyncAgent::onSyncSlotEnd() {
 
 }
 
-void SyncAgent::doSyncMsgInSyncSlot(Message msg){
+// Message handlers for messages received in sync slot
 
+void SyncAgent::doSyncMsgInSyncSlot(Message msg){
+	// Received sync msg in sync slot.
+	// require self is master (rare!) OR self is slave (usually)
+	// Cannot receive sync from self (xmitter and receiver are exclusive)
+
+	if (clique.isSelfMaster()) {
+		// rare!  Another clique sent sync in my sync slot
+
+
+	}
+	else {
+		// usual: self isSlave
+		// sync is from my master OR from member of a usurping clique
+
+		// TODO assume master is best?
+
+		dropoutMonitor.heardSync();
+
+		// Regardless: from my master (small offset) or from another clique (large offset)
+		clique.schedule.adjustBySyncMsg(msg);
+
+		// TODO clique.historyOfMasters.update(msg);
+
+		if (cliqueMerger.isActive()) {
+			// Already merging another clique, now merge to updated sync slot time
+			cliqueMerger.adjust(msg);
+		}
+	}
 }
+
+void SyncAgent::doAbandonMastershipMsgInSyncSlot(Message msg){
+	// Master of my clique is abandoning
+	// TODO assume mastership?
+}
+
+void SyncAgent::doWorkMsgInSyncSlot(Message msg){
+	// Msg received in wrong slot, from an out-of-sync clique
+	// TODO
+}
+
+
+
 
