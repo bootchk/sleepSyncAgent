@@ -4,11 +4,8 @@
  * All private
  */
 
-//#include <cassert>
 #include "syncAgent.h"
-//#include "message.h"
-//#include "schedule.h"
-#include "os.h"
+
 
 void SyncAgent::startWorkSlot() {
 	xmitAproposWork();
@@ -26,6 +23,7 @@ void SyncAgent::xmitAproposWork() {
 		xmit(Work);
 	}
 }
+
 
 void SyncAgent::onMsgReceivedInWorkSlot(Message msg){
 	switch(msg.type) {

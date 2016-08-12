@@ -1,6 +1,8 @@
 
+#include "../os.h"
+
 #include "clique.h"
-#include "os.h"
+
 
 
 // static

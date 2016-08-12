@@ -10,7 +10,7 @@
 // using namespace std;
 //#include "app.h"
 #include "powerManager.h"
-#include "syncAgent.h"
+#include "syncAgent/syncAgent.h"
 #include "message.h"
 
 PowerManager powerMgr;

@@ -17,9 +17,7 @@
 
 #include <cassert>
 #include "syncAgent.h"
-#include "message.h"
 #include "schedule.h"
-#include "os.h"
 
 
 void SyncAgent::onSyncWake() {

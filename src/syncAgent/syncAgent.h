@@ -1,7 +1,10 @@
 
+// external to project
+#include "../powerManager.h"
+#include "../message.h"
+#include "../os.h"
+
 #include "clique.h"
-#include "powerManager.h"
-#include "message.h"
 #include "dropoutMonitor.h"
 #include "cliqueMerger.h"
 #include "role.h"

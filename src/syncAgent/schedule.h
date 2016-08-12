@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "message.h"
+#include "../message.h"
 
 /*
  * Schedule is infinite sequence of periods, aligned with global clock of clique.
