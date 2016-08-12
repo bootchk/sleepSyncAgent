@@ -16,7 +16,8 @@ class SyncAgent {
 public:
 	SyncAgent(
 			PowerManager* powerMgr,
-			void (*onSyncLostCallback)()
+			void (*onSyncLostCallback)(),
+			void (*onWorkMsgCallback)(Message msg)
 			);
 	
 	//void setTaskScheduler(void callback());
@@ -36,26 +37,44 @@ private:
 	// uses
 	static PowerManager* powerMgr;	// owned by app
 	static void (*onSyncLostCallback)();	// callback to app
+	static void (*onWorkMsgCallback)(Message msg);	// callback to app
 
 
-	// callbacks
+	// callbacks for scheduled tasks
+	// marking start of slots
 	static void onSyncWake();
 	static void onFishWake();
 	static void onMergeWake();
-
-	static void onMsgReceivedInSyncSlot(Message msg);
+	// marking end of slots
 	static void onSyncSlotEnd();
+	static void onWorkSlotEnd();
+	static void onFishSlotEnd();
+	// Merge slots over as soon as xmit
+
+	// callback for external event (varied time within slot)
+	static void onMsgReceivedInSyncSlot(Message msg);
+	static void onMsgReceivedInWorkSlot(Message msg);
+	static void onMsgReceivedInFishSlot(Message msg);
+
 
 	// scheduling
 	static void scheduleSyncWake();
 	static void scheduleNextSyncRelatedTask();
 
+	// misc
+	static void startWorkSlot();
 	static void loseSync();
 	static void maintainSyncSlot();
-	static void doRoleAproposSyncXmit();
+
+	// transmissions
+	// Depending on OS, might be asynchronous (no waiting)
+	static void xmitRoleAproposSync();
+	static void xmitAproposWork();
 
 	// msg handlers
 	static void doSyncMsgInSyncSlot(Message msg);
 	static void doAbandonMastershipMsgInSyncSlot(Message msg);
 	static void doWorkMsgInSyncSlot(Message msg);
+
+	static void doWorkMsgInWorkSlot(Message msg);
 };

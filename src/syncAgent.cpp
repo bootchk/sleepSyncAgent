@@ -8,6 +8,7 @@
 bool SyncAgent::isSynching = false;
 PowerManager* SyncAgent::powerMgr;
 void (*SyncAgent::onSyncLostCallback)();
+void (*SyncAgent::onWorkMsgCallback)(Message msg);
 
 Clique SyncAgent::clique;
 DropoutMonitor SyncAgent::dropoutMonitor;
@@ -20,10 +21,12 @@ bool CliqueMerger::active;
 
 SyncAgent::SyncAgent(
 		PowerManager* aPowerMgr,
-		void (*aOnSyncLostCallback)()
+		void (*aOnSyncLostCallback)(),
+		void (*aOnWorkMsgCallback)(Message msg)
 	) {
 	powerMgr = aPowerMgr;
 	onSyncLostCallback = aOnSyncLostCallback;
+	onWorkMsgCallback = aOnWorkMsgCallback;
 
 	// ensure initial state of SyncAgent
 	assert(role.isFisher());

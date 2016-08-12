@@ -11,6 +11,7 @@
 //#include "app.h"
 #include "powerManager.h"
 #include "syncAgent.h"
+#include "message.h"
 
 PowerManager powerMgr;
 
@@ -19,8 +20,14 @@ void onSyncLost() {
 	// TODO schedule a wakeTask to monitor power
 }
 
+void onWorkMsg(Message msg) {
+	// Called by SyncAgent when work msg received
+	// TODO schedule low priority task to do work
+	// realtime constrained
+}
 
-SyncAgent syncAgent(&powerMgr, onSyncLost);
+
+SyncAgent syncAgent(&powerMgr, onSyncLost, onWorkMsg);
 
 /*
  void scheduleSyncTask(){

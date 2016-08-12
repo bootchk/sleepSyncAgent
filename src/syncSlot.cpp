@@ -82,9 +82,9 @@ void SyncAgent::scheduleNextSyncRelatedTask() {
 
 
 void SyncAgent::maintainSyncSlot() {
-	doRoleAproposSyncXmit();
+	xmitRoleAproposSync();
 	// even a Master listens for remainder of sync slot
-	turnRadioOnWithCallback(onMsgReceivedInSyncSlot);
+	turnReceiverOnWithCallback(onMsgReceivedInSyncSlot);
 	scheduleTask(onSyncSlotEnd);
 	sleep();
     // assert radio on
@@ -92,7 +92,7 @@ void SyncAgent::maintainSyncSlot() {
 }
 
 
-void SyncAgent::doRoleAproposSyncXmit() {
+void SyncAgent::xmitRoleAproposSync() {
 	// Assert self is in sync slot.
 
 	// Only master xmits FROM its sync slot.
@@ -130,9 +130,15 @@ void SyncAgent::onSyncSlotEnd() {
 	}
 
 	scheduleNextSyncRelatedTask();
-
-
-
+	// workSlot follows syncSlot.  Fall into it.
+	startWorkSlot();
+	/*
+	 * Assert onWorkSlotEnd scheduled
+	 * AND some sync-related task is scheduled.
+	 *
+	 * assert radio on for work msgs
+	 */
+	sleep();
 }
 
 // Message handlers for messages received in sync slot
@@ -144,8 +150,6 @@ void SyncAgent::doSyncMsgInSyncSlot(Message msg){
 
 	if (clique.isSelfMaster()) {
 		// rare!  Another clique sent sync in my sync slot
-
-
 	}
 	else {
 		// usual: self isSlave
