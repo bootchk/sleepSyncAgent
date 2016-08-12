@@ -12,6 +12,10 @@ void (*SyncAgent::onSyncLostCallback)();
 Clique SyncAgent::clique;
 DropoutMonitor SyncAgent::dropoutMonitor;
 CliqueMerger SyncAgent::cliqueMerger;
+Role SyncAgent::role;
+
+// Static data members of singleton data members
+bool CliqueMerger::active;
 
 
 SyncAgent::SyncAgent(
@@ -20,6 +24,11 @@ SyncAgent::SyncAgent(
 	) {
 	powerMgr = aPowerMgr;
 	onSyncLostCallback = aOnSyncLostCallback;
+
+	// ensure initial state of SyncAgent
+	assert(role.isFisher());
+	assert(clique.isSelfMaster());
+	// assert no tasks scheduled until startSyncing()
 }
 
 void SyncAgent::startSyncing() {

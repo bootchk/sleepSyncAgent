@@ -1,5 +1,13 @@
 
+#include <cassert>
 
+/*
+ * Record of a Clique merging into a better Clique.
+ *
+ * Invariant: Role.isMerger => CliqueMerger.isActive()
+ *
+ * Singleton.
+ */
 class CliqueMerger {
 
 public:
@@ -7,16 +15,35 @@ public:
 	//SyncAgent();
 	//static Schedule schedule;
 
-	void adjust(Message msg) {
+	void adjustBySyncMsg(Message msg) {
 		// TODO
 		;
 	}
 
 	bool isActive() {
+		return active;
+	}
+
+	bool shouldScheduleMerge() {
+		assert(isActive());	// require
+		// TODO CA, random chance
 		return true;
-		// TODO
+	}
+	// called after sending a merging sync
+	bool checkCompletionOfMergerRole() {
+		assert(isActive());	// require
+		notifyCountdown--;
+		bool result = false;
+		if ( notifyCountdown <= 0 ){
+			result = true;
+			active = false;
+		}
+		return result;
 	}
 
 private:
-
+	static bool active;
+	static int offsetToMergee;
+	static int masterID;
+	static int notifyCountdown;
 };

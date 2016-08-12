@@ -1,5 +1,19 @@
 
-// SyncAgent methods for syncSlot
+/*
+ * SyncAgent methods used during THE sync slot of my schedule.
+ * (sync slot is not a class.)
+ * All private
+ *
+ * Each Clique is on a Schedule that includes a sync slot.
+ *
+ * One clique's sleeping slot may be near the time one of another clique's sleeping slots.
+ * A clique's Master xmits sync FROM its sync slot.
+ * A Merger xmits sync FROM a sleeping slot INTO another clique's sync slot.
+ * Contention (two syncs in same interval of a sync slot):
+ * - two cliques may unwittingly be in sync (two MASTERS xmitting in same interval)
+ * - merging: a Merger of a better clique may be xmitting sync FROM its sleeping slot to merge this clique into an offset syncSlot
+ *
+ */
 
 #include <cassert>
 #include "syncAgent.h"
@@ -20,12 +34,12 @@ void SyncAgent::onSyncWake() {
 	}
 
 	sleep();
-	// ensure some SyncAgent task is scheduled or App wakingTask is scheduled
+	// ensure endSyncSlotTask is scheduled or App wakingTask is scheduled
 }
 
 
 void SyncAgent::loseSync() {
-	// Not enough power to continue in sync
+	// Not enough power for self to continue in sync
 	// Other units might still have power and assume mastership of my clique
 
 	// assert radio not on
@@ -50,10 +64,27 @@ void SyncAgent::scheduleSyncWake() {
 	scheduleTask(onSyncWake);
 }
 
+void SyncAgent::scheduleNextSyncRelatedTask() {
+	if (role.isMerger()) {
+		// avoid collision
+		if (cliqueMerger.shouldScheduleMerge()) { scheduleTask(onMergeWake); }
+		else { scheduleTask(onSyncWake); }
+	}
+	else {
+		// Fish every period
+		scheduleTask(onFishWake);
+	}
+	// assert some task scheduled
+	// onSyncWake: start of next period
+	// onMergeWake or onFishWake: in a normally-sleeping slot of this period
+}
+
+
 
 void SyncAgent::maintainSyncSlot() {
 	doRoleAproposSyncXmit();
-	listen(onMsgReceivedInSyncSlot);
+	// even a Master listens for remainder of sync slot
+	turnRadioOnWithCallback(onMsgReceivedInSyncSlot);
 	scheduleTask(onSyncSlotEnd);
 	sleep();
     // assert radio on
@@ -63,10 +94,8 @@ void SyncAgent::maintainSyncSlot() {
 
 void SyncAgent::doRoleAproposSyncXmit() {
 	// Assert self is in sync slot.
-	// Only master xmits in sync slot.
-	// Contention:
-	//    two cliques may unwittingly by in sync
-	//    merging: a better clique may be xmitting sync to merge this clique into an offset syncSlot
+
+	// Only master xmits FROM its sync slot.
 	if ( clique.isSelfMaster() && clique.masterXmitSyncPolicy.shouldXmitSync() ) {
 		xmit(Sync);
 	}
@@ -94,11 +123,15 @@ void SyncAgent::onSyncSlotEnd() {
 	// end of sync slot
 	// TODO This may be late, since message spanning this delays this, OR message spanning is received after end?
 
-	// TODO we could do this elsewhere
+	// TODO we could do this elsewhere, e.g. start of sync slot
 	if (dropoutMonitor.check()) {
 		dropoutMonitor.heardSync();	// reset
 		clique.onMasterDropout();
 	}
+
+	scheduleNextSyncRelatedTask();
+
+
 
 }
 
@@ -123,7 +156,7 @@ void SyncAgent::doSyncMsgInSyncSlot(Message msg){
 		// TODO assume master is best?
 	}
 
-	// Sync is valid
+	// Regardless who sent sync: is a valid heartbeat, I am synchronized
 	dropoutMonitor.heardSync();
 
 	// Regardless: from my master (small offset) or from another clique (large offset)
@@ -133,7 +166,7 @@ void SyncAgent::doSyncMsgInSyncSlot(Message msg){
 
 	if (cliqueMerger.isActive()) {
 		// Already merging another clique, now merge to updated sync slot time
-		cliqueMerger.adjust(msg);
+		cliqueMerger.adjustBySyncMsg(msg);
 	}
 }
 
@@ -147,6 +180,10 @@ void SyncAgent::doWorkMsgInSyncSlot(Message msg){
 	// TODO
 }
 
+void SyncAgent::onFishWake() {
+}
 
+void SyncAgent::onMergeWake() {
+}
 
 
