@@ -1,10 +1,13 @@
 
 /*
  * SyncAgent methods used during THE sync slot of my schedule.
- * (sync slot is not a class.)
- * All private
+ *
+ * General notes about slot implementations.
+ * Slot is not a class.
+ * All methods belong to SyncAgent, private.
  *
  * Each Clique is on a Schedule that includes a sync slot.
+ * See general notes in Schedule.
  *
  * One clique's sleeping slot may be near the time one of another clique's sleeping slots.
  * A clique's Master xmits sync FROM its sync slot.
@@ -180,9 +183,6 @@ void SyncAgent::doAbandonMastershipMsgInSyncSlot(Message msg){
 void SyncAgent::doWorkMsgInSyncSlot(Message msg){
 	// Msg received in wrong slot, from an out-of-sync clique
 	// TODO
-}
-
-void SyncAgent::onFishWake() {
 }
 
 void SyncAgent::onMergeWake() {

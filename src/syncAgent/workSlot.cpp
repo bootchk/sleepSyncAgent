@@ -28,17 +28,20 @@ void SyncAgent::xmitAproposWork() {
 void SyncAgent::onMsgReceivedInWorkSlot(Message msg){
 	switch(msg.type) {
 		case Sync:
-			// Another clique's sync slot at same time as my work slot.
-			// For now, ignore.  Assume fishing will find this other clique, or clocks drift.
-			// Alternative: merge other clique from within former work slot?
-			// doSyncMsgInWorkSlot(msg);
+			/* Unusual: Another clique's sync slot at same time as my work slot.
+			 * For now, ignore.  Assume fishing will find this other clique, or clocks drift.
+			 * Alternative: merge other clique from within former work slot?
+			 * doSyncMsgInWorkSlot(msg);
+			 */
 			break;
 		case AbandonMastership:
-			// Another clique's sync slot at same time as my work slot.
-			// For now ignore.  ???
-			// doAbandonMastershipMsgInWorkSlot(msg);
+			/*
+			 * Unusual: Another clique's sync slot at same time as my work slot.
+			 * For now ignore.  ??? doAbandonMastershipMsgInWorkSlot(msg);
+			 */
 			break;
 		case Work:
+			// Usual: work message in sync with my clique.
 			doWorkMsgInWorkSlot(msg);
 			break;
 		default:
