@@ -16,8 +16,7 @@ DropoutMonitor SyncAgent::dropoutMonitor;
 CliqueMerger SyncAgent::cliqueMerger;
 Role SyncAgent::role;
 
-// Static data members of singleton data members
-bool CliqueMerger::active;
+
 
 
 SyncAgent::SyncAgent(

@@ -63,6 +63,8 @@ private:
 
 	// scheduling
 	static void scheduleSyncWake();
+	static void scheduleFishWake();
+	static void scheduleMergeWake();
 	static void scheduleNextSyncRelatedTask();
 
 	// misc
@@ -85,6 +87,7 @@ private:
 	static void doSyncMsgInFishSlot(Message msg);
 
 	// merging
+	static void toMergerRole(Message msg);
 	static void mergeMyClique();
 	static void mergeOtherClique();
 

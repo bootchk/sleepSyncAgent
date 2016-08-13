@@ -2,7 +2,8 @@
 #pragma once
 
 enum MessageType {
-	Sync,
+	Sync,		// offset is zero
+	MergeSync,	// offset is non-zero
 	AbandonMastership,
 	Work
 };

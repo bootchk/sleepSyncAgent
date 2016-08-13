@@ -23,7 +23,7 @@ void SyncAgent::onMsgReceivedInFishSlot(Message msg){
 			 * Intended catch: another clique's sync slot.
 			 */
 			doSyncMsgInFishSlot(msg);
-			// Can't handle more than one
+			// Self can't handle more than one, or slot is busy with another merge
 			turnReceiverOff();
 			break;
 		case AbandonMastership:
@@ -45,6 +45,7 @@ void SyncAgent::onMsgReceivedInFishSlot(Message msg){
 	}
 	// assert endFishSlot is scheduled
 	// assert will resume sleep
+	// TODO does the OS enter deep sleep automatically when return from task?
 }
 
 
@@ -63,21 +64,15 @@ void SyncAgent::doSyncMsgInFishSlot(Message msg){
 		// Ignore: other clique is already merging
 	}
 	else {
-		// assert otherClique not already in use
-		otherClique.initFromMsg(msg);
-		if (clique.isOtherCliqueBetter(otherClique)){
-			mergeMyClique();
-		}
-		else{
-			mergeOtherClique();
-		}
-		// Assert cliqueMerger exists
+		toMergerRole(msg);
 	}
-	// Assert msg ignored or cliqueMerger exists
+	// Assert msg ignored or isMergerRole
 }
 
 
+
 /*
+ * TODO we might as well act on it even though we are out of sync
 void SyncAgent::doWorkMsgInFishSlot(Message msg) {
 	// Relay to app
 	onWorkMsgCallback(msg);

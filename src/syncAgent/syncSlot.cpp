@@ -61,25 +61,48 @@ void SyncAgent::loseSync() {
 }
 
 
+// Scheduling
+
 void SyncAgent::scheduleSyncWake() {
+	// assert in syncSlot?
+	// TODO next time is one period from now
 	scheduleTask(onSyncWake);
 }
 
 void SyncAgent::scheduleNextSyncRelatedTask() {
+	// assert in syncSlot
 	if (role.isMerger()) {
 		// avoid collision
-		if (cliqueMerger.shouldScheduleMerge()) { scheduleTask(onMergeWake); }
+		if (cliqueMerger.shouldScheduleMerge()) {
+			scheduleMergeWake();
+		}
 		else { scheduleTask(onSyncWake); }
 	}
 	else {
 		// Fish every period
-		scheduleTask(onFishWake);
+		scheduleFishWake();
 	}
 	// assert some task scheduled
 	// onSyncWake: start of next period
 	// onMergeWake or onFishWake: in a normally-sleeping slot of this period
 }
 
+void SyncAgent::scheduleFishWake(){
+	// assert in syncSlot
+	/*
+	 * Schedule for random sleeping slot.
+	 * Random set of units covers entire period.
+	 * Not to avoid collision of xmits, since fishing is receiving.
+	 */
+	// TODO random
+	scheduleTask(onFishWake);
+}
+
+void SyncAgent::scheduleMergeWake(){
+	// Knows how to schedule mergeSlot at some known slot of current period
+	// TODO calculate time
+	scheduleTask(onMergeWake);
+}
 
 
 void SyncAgent::maintainSyncSlot() {
