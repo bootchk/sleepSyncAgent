@@ -1,16 +1,19 @@
 /*
  * SyncAgent methods used during THE workSlot of my schedule.
- * (work slot is not a class.)
- * All private
+ * See general notes at syncSlot
+ *
+ * There is no onWorkWake: workSlot follows immediately after syncSlot
  */
 
 #include "syncAgent.h"
 
 
 void SyncAgent::startWorkSlot() {
+	// assert still in task onEndSyncSlot
 	xmitAproposWork();
 	turnReceiverOnWithCallback(onMsgReceivedInWorkSlot);
 	scheduleTask(onWorkSlotEnd);
+	// TODO are other tasks also scheduled?
 }
 
 
@@ -47,13 +50,16 @@ void SyncAgent::onMsgReceivedInWorkSlot(Message msg){
 		default:
 			break;
 	}
+	// assert radio on
+	// assert onWorkSlotEnd scheduled
+	// sleep
 }
 
 
 void SyncAgent::onWorkSlotEnd(){
 	turnReceiverOff();
-	sleep();
 	// assert a sync related task is scheduled e.g. fish, merge, or syncWake
+	// sleep
 }
 
 

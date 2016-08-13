@@ -34,8 +34,8 @@ void SyncAgent::onSyncWake() {
 		// assert receiver on and endSyncSlotTask is scheduled
 	}
 
-	sleep();
 	// ensure endSyncSlotTask is scheduled or App wakingTask is scheduled
+	// sleep
 }
 
 
@@ -110,9 +110,9 @@ void SyncAgent::maintainSyncSlot() {
 	// even a Master listens for remainder of sync slot
 	turnReceiverOnWithCallback(onMsgReceivedInSyncSlot);
 	scheduleTask(onSyncSlotEnd);
-	sleep();
     // assert radio on
 	// will wake on onMsgReceivedInSyncSlot or onSyncSlotEnd
+	// sleep
 }
 
 
@@ -162,7 +162,7 @@ void SyncAgent::onSyncSlotEnd() {
 	 *
 	 * assert radio on for work msgs
 	 */
-	sleep();
+	// sleep
 }
 
 // Message handlers for messages received in sync slot

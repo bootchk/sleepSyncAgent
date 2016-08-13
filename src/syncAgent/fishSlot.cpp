@@ -53,8 +53,8 @@ void SyncAgent::onFishSlotEnd(){
 	// not require receiver on
 	turnReceiverOff();
 	scheduleTask(onSyncWake);
-	sleep();
 	// assert syncWake task is scheduled
+	// sleep
 }
 
 

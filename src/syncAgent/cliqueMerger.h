@@ -39,5 +39,5 @@ private:
 	static bool active;
 	static int offsetToMergee;
 	static int masterID;
-	static int notifyCountdown;
+	//static int notifyCountdown;
 };

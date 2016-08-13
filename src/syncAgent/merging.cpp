@@ -67,6 +67,6 @@ void SyncAgent::onMergeWake() {
 	
 	// For now, only send one MergeSync per session of merger role
 	role.setFisher();	// Completed merger role
-	// TODO?? assert endFishSlot is scheduled
-	sleep();
+	scheduleSyncWake();
+	// sleep
 }

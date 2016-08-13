@@ -3,7 +3,7 @@
 #include "cliqueMerger.h"
 
 bool CliqueMerger::active;
-int CliqueMerger::notifyCountdown;
+//int CliqueMerger::notifyCountdown;
 
 
 
@@ -12,6 +12,7 @@ void CliqueMerger::adjustBySyncMsg(Message msg) {
 	;
 }
 
+// TODO no setter, public flag
 bool CliqueMerger::isActive() {
 	return active;
 }
