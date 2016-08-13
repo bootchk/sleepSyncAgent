@@ -12,12 +12,16 @@ class Clique {
 public:
 	static MasterXmitSyncPolicy masterXmitSyncPolicy;
 	static Schedule schedule;
+	static int masterID;	// self or other unit
 	
+
 	static void reset();
 	static bool isSelfMaster();
 	static void onMasterDropout();
+	static void initFromMsg(Message msg);
+	static bool isOtherCliqueBetter(Clique& other);
 
 private:
-	static int masterID;	// self or other unit
+
 
 };

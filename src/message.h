@@ -7,6 +7,9 @@ enum MessageType {
 	Work
 };
 
-struct Message {
+class Message {
+public:
 	MessageType type;
+
+	bool isOffsetSync() {return true;}
 };

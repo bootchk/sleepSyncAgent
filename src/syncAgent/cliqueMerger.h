@@ -41,6 +41,8 @@ public:
 		return result;
 	}
 
+	void setOffsetAndMasterID(){};
+
 private:
 	static bool active;
 	static int offsetToMergee;

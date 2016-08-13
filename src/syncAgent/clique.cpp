@@ -1,4 +1,5 @@
 
+#include <cassert>
 #include "../os.h"
 
 #include "clique.h"
@@ -11,6 +12,7 @@ MasterXmitSyncPolicy Clique::masterXmitSyncPolicy;
 int Clique::masterID;
 
 
+
 void Clique::reset(){
 	masterID = myID();
 	masterXmitSyncPolicy.reset();
@@ -20,6 +22,9 @@ bool Clique::isSelfMaster() {
 	return masterID == myID();
 }
 
+bool Clique::isOtherCliqueBetter(Clique& other){
+	return masterID < other.masterID;
+}
 
 void Clique::onMasterDropout() {
 	// Failed to hear sync from master
@@ -29,5 +34,12 @@ void Clique::onMasterDropout() {
 	reset();
 
 	// TODO: alternative is a history of masters
-
 }
+
+void Clique::initFromMsg(Message msg){
+	assert(msg.type == Sync);
+	//masterID = msg.content.masterID
+	// TODO get offset
+}
+
+

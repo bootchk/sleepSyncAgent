@@ -33,6 +33,7 @@ private:
 
 	// has-a, all singletons
 	static Clique clique;
+	static Clique otherClique;
 	static DropoutMonitor dropoutMonitor;
 	static CliqueMerger cliqueMerger;
 	static Role role;
@@ -80,4 +81,11 @@ private:
 	static void doWorkMsgInSyncSlot(Message msg);
 
 	static void doWorkMsgInWorkSlot(Message msg);
+
+	static void doSyncMsgInFishSlot(Message msg);
+
+	// merging
+	static void mergeMyClique();
+	static void mergeOtherClique();
+
 };

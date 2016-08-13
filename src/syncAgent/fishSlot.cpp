@@ -22,7 +22,9 @@ void SyncAgent::onMsgReceivedInFishSlot(Message msg){
 			/*
 			 * Intended catch: another clique's sync slot.
 			 */
-
+			doSyncMsgInFishSlot(msg);
+			// Can't handle more than one
+			turnReceiverOff();
 			break;
 		case AbandonMastership:
 			/*
@@ -41,14 +43,39 @@ void SyncAgent::onMsgReceivedInFishSlot(Message msg){
 		default:
 			break;
 	}
+	// assert endFishSlot is scheduled
+	// assert will resume sleep
 }
 
 
 void SyncAgent::onFishSlotEnd(){
+	// not require receiver on
 	turnReceiverOff();
+	scheduleTask(onSyncWake);
 	sleep();
 	// assert syncWake task is scheduled
 }
+
+
+void SyncAgent::doSyncMsgInFishSlot(Message msg){
+	// heard a sync in a fishing slot
+	if (msg.isOffsetSync()) {
+		// Ignore: other clique is already merging
+	}
+	else {
+		// assert otherClique not already in use
+		otherClique.initFromMsg(msg);
+		if (clique.isOtherCliqueBetter(otherClique)){
+			mergeMyClique();
+		}
+		else{
+			mergeOtherClique();
+		}
+		// Assert cliqueMerger exists
+	}
+	// Assert msg ignored or cliqueMerger exists
+}
+
 
 /*
 void SyncAgent::doWorkMsgInFishSlot(Message msg) {

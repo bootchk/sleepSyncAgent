@@ -185,7 +185,4 @@ void SyncAgent::doWorkMsgInSyncSlot(Message msg){
 	// TODO
 }
 
-void SyncAgent::onMergeWake() {
-}
-
 
