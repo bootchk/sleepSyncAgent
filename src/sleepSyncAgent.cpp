@@ -29,14 +29,6 @@ void onWorkMsg(Message msg) {
 
 SyncAgent syncAgent(&powerMgr, onSyncLost, onWorkMsg);
 
-/*
- void scheduleSyncTask(){
-	// Schedule a task with callback to 
-	// TBD schedule task
-	// TBD separate function ... casting problems
-	syncAgent.onSyncWake();
-}
-*/
 
 int main() {
 	//App app;
@@ -47,3 +39,23 @@ int main() {
 	// cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
 	return 0;
 }
+
+/*
+
+Test:
+without:
+- an os to schedule
+- a radio
+- a second unit
+
+create dummy messages and call a normal
+sequence of SyncAgent callbacks.
+syncAgent.onSyncWake();
+syncAgent.onMsgReceived();
+syncAgent.onSyncEnd();
+// work msg
+syncAgent.onWorkEnd();
+etc. fish and merge
+
+
+*/

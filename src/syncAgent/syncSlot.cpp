@@ -63,11 +63,6 @@ void SyncAgent::loseSync() {
 
 // Scheduling
 
-void SyncAgent::scheduleSyncWake() {
-	// assert in syncSlot?
-	// TODO next time is one period from now
-	scheduleTask(onSyncWake);
-}
 
 void SyncAgent::scheduleNextSyncRelatedTask() {
 	// assert in syncSlot
@@ -76,7 +71,7 @@ void SyncAgent::scheduleNextSyncRelatedTask() {
 		if (cliqueMerger.shouldScheduleMerge()) {
 			scheduleMergeWake();
 		}
-		else { scheduleTask(onSyncWake); }
+		else { scheduleSyncWake(); }
 	}
 	else {
 		// Fish every period
@@ -87,6 +82,12 @@ void SyncAgent::scheduleNextSyncRelatedTask() {
 	// onMergeWake or onFishWake: in a normally-sleeping slot of this period
 }
 
+void SyncAgent::scheduleSyncWake() {
+	// assert in syncSlot?
+	// TODO next time is one period from now
+	clique.schedule.scheduleStartSyncSlotTask(onSyncWake);
+}
+
 void SyncAgent::scheduleFishWake(){
 	// assert in syncSlot
 	/*
@@ -95,13 +96,13 @@ void SyncAgent::scheduleFishWake(){
 	 * Not to avoid collision of xmits, since fishing is receiving.
 	 */
 	// TODO random
-	scheduleTask(onFishWake);
+	clique.schedule.scheduleStartFishSlotTask(onFishWake);
 }
 
 void SyncAgent::scheduleMergeWake(){
 	// Knows how to schedule mergeSlot at some known slot of current period
 	// TODO calculate time
-	scheduleTask(onMergeWake);
+	clique.schedule.scheduleStartMergeSlotTask(onMergeWake);
 }
 
 
@@ -109,7 +110,7 @@ void SyncAgent::maintainSyncSlot() {
 	xmitRoleAproposSync();
 	// even a Master listens for remainder of sync slot
 	turnReceiverOnWithCallback(onMsgReceivedInSyncSlot);
-	scheduleTask(onSyncSlotEnd);
+	clique.schedule.scheduleEndSyncSlotTask(onSyncSlotEnd);
     // assert radio on
 	// will wake on onMsgReceivedInSyncSlot or onSyncSlotEnd
 	// sleep

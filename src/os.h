@@ -11,7 +11,7 @@
  * or until an interrupt from a device.
  * Convention: any method named "onFoo" is a task.  The system sleeps after the method end.
  */
-static void scheduleTask(void callback() ) {}
+
 //static void sleep() {}
 static void turnReceiverOnWithCallback(void callback(Message) ) {}
 static void turnReceiverOff() {}

@@ -11,7 +11,7 @@
 
 void SyncAgent::onFishWake() {
 	turnReceiverOnWithCallback(onMsgReceivedInFishSlot);
-	scheduleTask(onFishSlotEnd);
+	clique.schedule.scheduleEndFishSlotTask(onFishSlotEnd);
 }
 
 
@@ -52,7 +52,7 @@ void SyncAgent::onMsgReceivedInFishSlot(Message msg){
 void SyncAgent::onFishSlotEnd(){
 	// not require receiver on
 	turnReceiverOff();
-	scheduleTask(onSyncWake);
+	clique.schedule.scheduleEndSyncSlotTask(onSyncWake);
 	// assert syncWake task is scheduled
 	// sleep
 }

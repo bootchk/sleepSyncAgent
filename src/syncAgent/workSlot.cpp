@@ -12,7 +12,7 @@ void SyncAgent::startWorkSlot() {
 	// assert still in task onEndSyncSlot
 	xmitAproposWork();
 	turnReceiverOnWithCallback(onMsgReceivedInWorkSlot);
-	scheduleTask(onWorkSlotEnd);
+	clique.schedule.scheduleEndWorkSlotTask(onWorkSlotEnd);
 	// TODO are other tasks also scheduled?
 }
 
