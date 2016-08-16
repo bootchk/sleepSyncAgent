@@ -8,13 +8,18 @@ static void scheduleTask(void callback(), DeltaTime  ) {}
 
 
 // static singleton data
-static LongClock longClock;
+LongClock Schedule::longClock;
+LongTime Schedule::startTimeOfPeriod;   // Can change during current period.
+
 
 void Schedule::adjustBySyncMsg(Message msg) {/*TODO*/ };
 
 // Scheduling slots tasks
 void Schedule::scheduleEndSyncSlotTask(void callback()) {
-	DeltaTime deltaTime = longClock.getTicks();
+	DeltaTime deltaTime = longClock.clampedTimeDifference(
+			timeOfThisSyncSlotEnd(),
+			longClock.getTicks()
+			);
 	scheduleTask(callback, deltaTime );
 };
 
@@ -26,3 +31,8 @@ void Schedule::scheduleStartSyncSlotTask(void callback()) {};
 // Work slot follows sync without start callback
 void Schedule::scheduleStartFishSlotTask(void callback()) {};
 void Schedule::scheduleStartMergeSlotTask(void callback()) {};
+
+LongTime Schedule::timeOfThisSyncSlotEnd() {
+	return startTimeOfPeriod + SlotDuration;
+};
+LongTime Schedule::timeOfNextSyncSlotStart() {};

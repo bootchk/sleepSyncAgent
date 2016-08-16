@@ -33,6 +33,8 @@
 class Schedule {
 
 public:
+	static const DeltaTime SlotDuration = 100;
+
 	void adjustBySyncMsg(Message msg);
 
 	// Scheduling slots tasks
@@ -45,7 +47,13 @@ public:
 	// Work slot follows sync without start callback
 	void scheduleStartFishSlotTask(void callback());
 	void scheduleStartMergeSlotTask(void callback());
+
+	LongTime timeOfThisSyncSlotEnd();	// Of this period
+	LongTime timeOfNextSyncSlotStart();	// Of next period.
+
+
 private:
 	static LongClock longClock;
+	static LongTime startTimeOfPeriod;
 
 };
