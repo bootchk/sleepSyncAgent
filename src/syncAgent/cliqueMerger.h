@@ -39,9 +39,10 @@
  */
 class CliqueMerger {
 
-private:
-	static bool active;
+public:
+	static bool isActive;	// flag, no getter/setter
 
+private:
 	// attributes of otherClique
 	static DeltaTime offsetToMergee;	// in current schedule
 	static int masterID;
@@ -54,7 +55,6 @@ public:
 
 
 	static void adjustBySyncMsg(Message msg);
-	static bool isActive();
 	static bool shouldScheduleMerge();
 	// bool checkCompletionOfMergerRole();
 	//static void activateWithOffsetAndMasterID(

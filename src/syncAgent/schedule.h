@@ -2,7 +2,6 @@
 #pragma once
 
 
-
 #include "../message.h"
 #include "longClock.h"
 
@@ -23,12 +22,14 @@
  * The OS schedules tasks using a low-power timer peripheral that never is off.
  *
  * Because a message may be received after the intended end of a slot
- * (if a msg start is received during the slot and the radio is not turned while a msg is in progress.)
+ * (if a msg reception starts during the slot and the radio is not turned off while a msg is in progress.)
  * TODO ???
  *
  * Responsibilities:
  * - maintain period start time (in sync with members of clique)
- * - schedule tasks to run at slot start/end (interface to OS)
+ * - schedule tasks (interface to OS)
+ *
+ * Note scheduled tasks run at slot start/end or unaligned
  */
 class Schedule {
 private:

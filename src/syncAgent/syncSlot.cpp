@@ -100,8 +100,9 @@ void SyncAgent::scheduleFishWake(){
 }
 
 void SyncAgent::scheduleMergeWake(){
-	// Knows how to schedule mergeSlot at some known slot of current period
-	// TODO calculate time
+	// Knows how to schedule mergeSlot at some time in current period
+	// assert we have decided to send a mergeSync
+	// assert cliqueMerger.isActive()
 	clique.schedule.scheduleStartMergeSlotTask(onMergeWake);
 }
 
@@ -191,9 +192,9 @@ void SyncAgent::doSyncMsgInSyncSlot(Message msg){
 	// Regardless: from my master (small offset) or from another clique (large offset)
 	clique.schedule.adjustBySyncMsg(msg);
 
-	// TODO clique.historyOfMasters.update(msg);
+	// FUTURE clique.historyOfMasters.update(msg);
 
-	if (cliqueMerger.isActive()) {
+	if (cliqueMerger.isActive) {
 		// Already merging another clique, now merge to updated sync slot time
 		cliqueMerger.adjustBySyncMsg(msg);
 	}

@@ -4,7 +4,7 @@
 
 
 // Singleton data members
-bool CliqueMerger::active = false;
+bool CliqueMerger::isActive = false;
 DeltaTime CliqueMerger::offsetToMergee;
 int CliqueMerger::masterID;
 Clique* CliqueMerger::owningClique;
@@ -87,10 +87,7 @@ void CliqueMerger::adjustBySyncMsg(Message msg) {
 	// Also, if the mergeSlot now overlaps sync or work slot?
 }
 
-// TODO no setter, public flag
-bool CliqueMerger::isActive() {
-	return active;
-}
+
 
 bool CliqueMerger::shouldScheduleMerge() {
 	/*
@@ -102,7 +99,7 @@ bool CliqueMerger::shouldScheduleMerge() {
 	 * Alternative: choose once, a random time in the future, and schedule a mergeSlot in some distant sync period.
 	 * But then the task is scheduled for a long time.
 	 */
-	assert(isActive());	// require
+	assert(isActive);	// require
 	// TODO CA, random chance
 	return true;
 }

@@ -14,6 +14,8 @@ public:
 	int offset;	// data of sync msg
 	int masterID;	// data of sync msg
 
+	void init(MessageType type, int offset, int masterID);
+
 	bool isOffsetSync() {
 		return offset > 0;
 	}

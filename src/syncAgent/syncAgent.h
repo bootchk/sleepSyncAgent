@@ -88,5 +88,5 @@ private:
 
 	// merging
 	static void toMergerRole(Message msg);
-	// TODO toFishingRole
+	static void completeMergerRole();
 };

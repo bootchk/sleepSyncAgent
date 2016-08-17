@@ -9,13 +9,13 @@
 
 void SyncAgent::toMergerRole(Message msg){
 	// assert msg is masterSync msg received in fishSlot
-	assert( !cliqueMerger.isActive());
+	assert( !cliqueMerger.isActive);
 	assert(role.isFisher());
 	role.setMerger();
 	//otherClique.initFromMsg(msg);	// TODO elide otherClique
 	cliqueMerger.initFromMsg(msg);
 	// TODO adjust my schedule, or has it already been done
-	assert(cliqueMerger.isActive());
+	assert(cliqueMerger.isActive);
 	assert(role.isMerger());
 	// assert endFishSlot is scheduled
 	// assert it will schedule syncSlot.
@@ -24,10 +24,16 @@ void SyncAgent::toMergerRole(Message msg){
 
 
 void SyncAgent::onMergeWake() {
+	/*
+	 * Not aligned with my slots, aligned with mergee slots.
+	 */
+	assert(cliqueMerger.isActive);
+
 	// TODO construct MergeSync msg
 	xmit(MergeSync);
+
 	/*
-	TODO if multiple MergeSync xmits per merge
+	FUTURE if multiple MergeSync xmits per merge
 	if (cliqueMerger.checkCompletionOfMergerRole()){
 		assert(!cliqueMerger.isActive());
 		role.setFisher();	// switch from merger to fisher
@@ -37,9 +43,16 @@ void SyncAgent::onMergeWake() {
 		cliqueMerger.scheduleMergeWake();
 	}
 	*/
-	
+
 	// For now, only send one MergeSync per session of merger role
-	role.setFisher();	// Completed merger role
+	completeMergerRole();
+	assert(!cliqueMerger.isActive);
 	scheduleSyncWake();
 	// sleep
+}
+
+void SyncAgent::completeMergerRole(){
+	role.setFisher();
+	// role does not know about cliqueMerger
+	cliqueMerger.isActive = false;
 }
