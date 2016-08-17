@@ -9,44 +9,17 @@
 
 void SyncAgent::toMergerRole(Message msg){
 	// assert msg is masterSync msg received in fishSlot
-	// assert otherClique not already in use
+	assert( !cliqueMerger.isActive());
 	assert(role.isFisher());
 	role.setMerger();
-	otherClique.initFromMsg(msg);
-	if (clique.isOtherCliqueBetter(otherClique)){
-		mergeMyClique();
-	}
-	else{
-		mergeOtherClique();
-	}
+	//otherClique.initFromMsg(msg);	// TODO elide otherClique
+	cliqueMerger.initFromMsg(msg);
+	// TODO adjust my schedule, or has it already been done
 	assert(cliqueMerger.isActive());
 	assert(role.isMerger());
-	// assert will schedule syncSlot.
+	// assert endFishSlot is scheduled
+	// assert it will schedule syncSlot.
 	// assert some future syncSlot will schedule onMergerWake
-}
-
-/*
- * These just set state in cliqueMerger.
- * At endSyncSlot, we schedule any mergeSlot.
- */
- 
-void SyncAgent::mergeMyClique(){
-	/*
-	 * Arrange state to start sending sync to my clique telling members to merge to other
-	 * Self gets a new schedule.
-	 * This time becomes a syncSlot in my new schedule.
-	 * My old syncSlot becomes a mergeSlot in my new schedule.
-	 */
-	// TODO offset etc.
-	cliqueMerger.setOffsetAndMasterID();	// TODO activateWith
-}
-
-
-void SyncAgent::mergeOtherClique(){
-	// Start sending sync to other clique telling members to merge to self's clique
-	// Self keeps old schedule.
-	// This time becomes a mergeSlot in my new schedule.
-	// TODO
 }
 
 

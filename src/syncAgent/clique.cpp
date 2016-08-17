@@ -16,6 +16,8 @@ int Clique::masterID;
 void Clique::reset(){
 	masterID = myID();
 	masterXmitSyncPolicy.reset();
+	schedule.start();
+	// assert clock is running and first period started but no tasks scheduled
 }
 
 bool Clique::isSelfMaster() {
@@ -38,7 +40,7 @@ void Clique::onMasterDropout() {
 
 void Clique::initFromMsg(Message msg){
 	assert(msg.type == Sync);
-	//masterID = msg.content.masterID
+	masterID = msg.masterID;
 	// TODO get offset
 }
 

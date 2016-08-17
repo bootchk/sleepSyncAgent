@@ -44,15 +44,27 @@ void SyncAgent::onMsgReceivedInFishSlot(Message msg){
 			break;
 	}
 	// assert endFishSlot is scheduled
-	// assert will resume sleep
-	// TODO does the OS enter deep sleep automatically when return from task?
+	// sleep
 }
 
 
 void SyncAgent::onFishSlotEnd(){
+	/*
+	 * Conditions:
+	 * (no sync msg was heard and receiver still on)
+	 * OR (heard a sync msg and (adjusted my schedule OR changed role to Merger))
+	 *
+	 * In case we adjusted my schedule, now is near its beginning.
+	 * The next scheduled sync slot will be almost one full period from now.
+	 *
+	 * In case we adjusted changed role to Merger,
+	 * first mergeSlot will be after next syncSlot.
+	 */
 	// not require receiver on
 	turnReceiverOff();
-	clique.schedule.scheduleEndSyncSlotTask(onSyncWake);
+
+	// syncSlot after fishSlot
+	clique.schedule.scheduleStartSyncSlotTask(onSyncWake);
 	// assert syncWake task is scheduled
 	// sleep
 }

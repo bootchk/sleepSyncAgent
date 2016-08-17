@@ -9,13 +9,20 @@ DeltaTime OSClockTicks() { return 1; }
 
 // static singleton data members
 uint32_t LongClock::mostSignificantBits = 0;
-uint32_t LongClock::recentLeastSignificantBits = 0;	// as received from os kernel clock
-uint32_t LongClock::previousOSClockTicks;
+uint32_t LongClock::previousOSClockTicks;	// least significant
+
+
+void LongClock::reset(){
+	mostSignificantBits = 0;
+	previousOSClockTicks = OSClockTicks();
+	// assert nowTime() < max 32-bit int, but not zero.
+}
+
 
 /*
  * Called more often than OSClock wraps (rolls over.)
  */
-LongTime LongClock::getTicks() {
+LongTime LongClock::nowTime() {
 
 	// Account for quiet wrapping of OSClock (we are not notified by OS.)
 	DeltaTime currentOSClockTicks = OSClockTicks();
@@ -40,4 +47,9 @@ DeltaTime LongClock::clampedTimeDifference(LongTime laterTime, LongTime earlierT
 	else result = laterTime - earlierTime;	// Coerce result
 	assert(result >= 0);
 	return result;
+}
+
+
+DeltaTime LongClock::clampedTimeDifferenceFromNow(LongTime futureTime) {
+	return clampedTimeDifference(futureTime, nowTime());
 }

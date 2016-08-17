@@ -11,6 +11,10 @@ enum MessageType {
 class Message {
 public:
 	MessageType type;
+	int offset;	// data of sync msg
+	int masterID;	// data of sync msg
 
-	bool isOffsetSync() {return true;}
+	bool isOffsetSync() {
+		return offset > 0;
+	}
 };

@@ -31,9 +31,15 @@
  * - schedule tasks to run at slot start/end (interface to OS)
  */
 class Schedule {
+private:
+	static LongClock longClock;
+	static LongTime startTimeOfPeriod;
+
+	static const int CountSlots = 20;
+	static const DeltaTime SlotDuration = 100;
 
 public:
-	static const DeltaTime SlotDuration = 100;
+	void start();
 
 	void adjustBySyncMsg(Message msg);
 
@@ -48,12 +54,17 @@ public:
 	void scheduleStartFishSlotTask(void callback());
 	void scheduleStartMergeSlotTask(void callback());
 
+	// Unaligned.  This is usually not a multiple of slotDuration
+	int deltaNowToStartNextSync();
+	int deltaStartThisSyncToNow();
+
+	// Times
+	LongTime startTimeOfNextPeriod();
 	LongTime timeOfThisSyncSlotEnd();	// Of this period
+	LongTime timeOfThisWorkSlotEnd();
 	LongTime timeOfNextSyncSlotStart();	// Of next period.
 
 
-private:
-	static LongClock longClock;
-	static LongTime startTimeOfPeriod;
+
 
 };

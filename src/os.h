@@ -1,4 +1,5 @@
 
+#include <inttypes.h>
 #include "message.h"
 
 /*
@@ -16,5 +17,8 @@
 static void turnReceiverOnWithCallback(void callback(Message) ) {}
 static void turnReceiverOff() {}
 static void xmit(MessageType msgType ) {}
-static int myID() { return 1;}	// TI-RTOS see platform_
+static int myID() { return 1;}	// TI-RTOS see platform_  MAC of my radio
 static bool isQueuedWorkMsg(){ return true;}
+
+// time type must be same as DeltaTime
+static void scheduleTask(void callback(), uint32_t time ) {}

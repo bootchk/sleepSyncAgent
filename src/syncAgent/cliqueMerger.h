@@ -1,5 +1,6 @@
 
 #include "../message.h"
+#include "clique.h"
 
 /*
  * Record of a Clique merging into a better Clique.
@@ -27,17 +28,27 @@
  */
 class CliqueMerger {
 
-public:
-	static void adjustBySyncMsg(Message msg);
-	static bool isActive();
-	static bool shouldScheduleMerge();
-	// bool checkCompletionOfMergerRole();
-	static void setOffsetAndMasterID();
-	static int timeOfNextMergeWake();
-
 private:
 	static bool active;
 	static int offsetToMergee;
 	static int masterID;
+	static Clique* clique;
 	//static int notifyCountdown;
+
+public:
+	static void initFromMsg(Message msg);
+
+
+	static void adjustBySyncMsg(Message msg);
+	static bool isActive();
+	static bool shouldScheduleMerge();
+	// bool checkCompletionOfMergerRole();
+	//static void activateWithOffsetAndMasterID(
+		//	int offset,
+			//int MasterID);
+	static int timeOfNextMergeWake();
+
+private:
+	static void mergeMyClique(Message msg);
+	static void mergeOtherClique(Message msg);
 };
