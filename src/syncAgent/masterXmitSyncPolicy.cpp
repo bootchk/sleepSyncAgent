@@ -1,8 +1,9 @@
 
+#include "../types.h"
 #include "masterXmitSyncPolicy.h"
 
-int MasterXmitSyncPolicy::countDownToXmit;
-int MasterXmitSyncPolicy::countDownToRollover;
+ScheduleCount MasterXmitSyncPolicy::countDownToXmit;
+ScheduleCount MasterXmitSyncPolicy::countDownToRollover;
 
 void MasterXmitSyncPolicy::reset() {
 	countDownToXmit = 0;

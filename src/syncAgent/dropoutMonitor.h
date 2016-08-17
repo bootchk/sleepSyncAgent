@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include "../types.h"
+
 // Monitor loss of sync: too many sync slots without hearing sync
 class DropoutMonitor {
 
@@ -13,7 +15,7 @@ public:
 	static bool check();
 
 private:
-	static int countSyncSlotsWithoutSyncMsg;
+	static ScheduleCount countSyncSlotsWithoutSyncMsg;
 
 };
 

@@ -1,7 +1,7 @@
 
 #include "dropoutMonitor.h"
 
-int DropoutMonitor::countSyncSlotsWithoutSyncMsg;
+ScheduleCount DropoutMonitor::countSyncSlotsWithoutSyncMsg;
 
 void DropoutMonitor::heardSync() {
 	countSyncSlotsWithoutSyncMsg = 0;

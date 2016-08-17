@@ -1,15 +1,15 @@
 
 #include <cassert>
-#include "../os.h"
 
+#include "../types.h"
+#include "../radioWrapper.h"
 #include "clique.h"
-
 
 
 // static
 Schedule Clique::schedule;
 MasterXmitSyncPolicy Clique::masterXmitSyncPolicy;
-int Clique::masterID;
+SystemID Clique::masterID;
 
 
 
@@ -24,7 +24,7 @@ bool Clique::isSelfMaster() {
 	return masterID == myID();
 }
 
-bool Clique::isOtherCliqueBetter(int otherMasterID){
+bool Clique::isOtherCliqueBetter(SystemID otherMasterID){
 	return masterID < otherMasterID;
 }
 

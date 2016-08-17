@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include "../types.h"  // SystemID
+
 /*
  * SyncAgent specialized message
  *
@@ -20,10 +22,10 @@ enum MessageType {
 class Message {
 public:
 	MessageType type;
-	int offset;	// data of sync msg
-	int masterID;	// data of sync msg
+	SyncOffset offset;	// data of sync msg
+	SystemID masterID;	// data of sync msg
 
-	void init(MessageType aType, int aOffset, int aMasterID) {
+	void init(MessageType aType, SyncOffset aOffset, SystemID aMasterID) {
 		type = aType;
 		offset = aOffset;
 		masterID = aMasterID;
@@ -34,13 +36,13 @@ public:
 	}
 
 	// Dying breath message from master which is power failing.
-	void makeAbandonMastership(int aMasterID) {
+	void makeAbandonMastership(SystemID aMasterID) {
 		type = AbandonMastership;
 		offset = 0;
 		masterID = aMasterID;
 	};
 
-	void makeSync(int aMasterID) {
+	void makeSync(SystemID aMasterID) {
 		type = Sync;
 		offset = 0;	// FUTURE, corrections?
 		masterID = aMasterID;

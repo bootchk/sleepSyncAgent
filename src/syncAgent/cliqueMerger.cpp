@@ -6,7 +6,7 @@
 // Singleton data members
 bool CliqueMerger::isActive = false;
 DeltaTime CliqueMerger::offsetToMergee;
-int CliqueMerger::masterID;
+SystemID CliqueMerger::masterID;
 Clique* CliqueMerger::owningClique;
 
 // Alternative: multiple notifies
@@ -122,7 +122,7 @@ bool CliqueMerger::checkCompletionOfMergerRole() {
 */
 
 
-int CliqueMerger::timeOfNextMergeWake(){
+LongTime CliqueMerger::timeOfNextMergeWake(){
 	// Knows time of mergeSlot i.e. what normally sleeping slot of current period
 	// TODO calculate time
 	return 1;

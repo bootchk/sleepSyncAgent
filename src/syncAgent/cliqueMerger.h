@@ -45,7 +45,7 @@ public:
 private:
 	// attributes of otherClique
 	static DeltaTime offsetToMergee;	// in current schedule
-	static int masterID;
+	static SystemID masterID;
 
 	static Clique* owningClique;	// 2-way relation: Clique owns CliqueMerger, CliqueMerger uses owning Clique
 	//static int notifyCountdown;
@@ -56,11 +56,8 @@ public:
 
 	static void adjustBySyncMsg(Message msg);
 	static bool shouldScheduleMerge();
-	// bool checkCompletionOfMergerRole();
-	//static void activateWithOffsetAndMasterID(
-		//	int offset,
-			//int MasterID);
-	static int timeOfNextMergeWake();
+	// FUTURE bool checkCompletionOfMergerRole();
+	static LongTime timeOfNextMergeWake();
 	static void makeMergeSync(Message& msg);
 
 private:

@@ -8,7 +8,7 @@ public:
 	bool shouldXmitSync();
 
 private:
-	static int countDownToXmit;
-	static int countDownToRollover;
+	static ScheduleCount countDownToXmit;
+	static ScheduleCount countDownToRollover;
 
 };

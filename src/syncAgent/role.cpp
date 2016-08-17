@@ -1,3 +1,5 @@
 #include "role.h"
 
-int Role::role;
+// Methods defined in role.h
+
+RoleType Role::role;

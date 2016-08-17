@@ -1,6 +1,7 @@
+#pragma once
 
 #include <inttypes.h>
-#include "syncAgent/message.h"
+
 
 /*
  * OS abstraction layer
@@ -13,11 +14,6 @@
  * Convention: any method named "onFoo" is a task.  The system sleeps after the method end.
  */
 
-//static void sleep() {}
-static void turnReceiverOnWithCallback(void callback(Message) ) {}
-static void turnReceiverOff() {}
-static void xmit(Message msg) {}
-static int myID() { return 1;}	// TI-RTOS see platform_  MAC of my radio
 static bool isQueuedWorkMsg(){ return true;}
 
 // time type must be same as DeltaTime

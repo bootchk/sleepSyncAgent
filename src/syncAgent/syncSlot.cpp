@@ -19,6 +19,7 @@
  */
 
 #include <cassert>
+#include "../radioWrapper.h"
 #include "syncAgent.h"
 #include "schedule.h"
 

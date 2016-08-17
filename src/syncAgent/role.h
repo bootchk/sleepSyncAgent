@@ -1,10 +1,10 @@
-enum { Merger, Fisher };
+typedef enum { Merger, Fisher } RoleType;
 
 // Just the Merger/Fisher role.  Master/Slave role implemented by Clique.
 class Role {
 
 private:
-	static int role;
+	static RoleType role;
 
 public:
 	Role() { role = Fisher; }

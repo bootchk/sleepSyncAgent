@@ -7,6 +7,7 @@
  */
 
 #include "syncAgent.h"
+#include "../radioWrapper.h"
 
 
 void SyncAgent::onFishWake() {

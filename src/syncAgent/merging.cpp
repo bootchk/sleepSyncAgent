@@ -4,6 +4,7 @@
  * Every unit can merge (after fishing catches another clique.)
  */
 #include <cassert>
+#include "../radioWrapper.h"
 #include "syncAgent.h"
 
 

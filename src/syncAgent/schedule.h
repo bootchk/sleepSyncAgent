@@ -36,7 +36,7 @@ private:
 	static LongClock longClock;
 	static LongTime startTimeOfPeriod;
 
-	static const int CountSlots = 20;
+	static const ScheduleCount CountSlots = 20;
 	static const DeltaTime SlotDuration = 100;
 
 public:
