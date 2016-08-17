@@ -6,15 +6,18 @@
 
 
 
-// TODO adjust, random
+// TODO random
 
 // static singleton data
-LongClock Schedule::longClock;
-LongTime Schedule::startTimeOfPeriod;
+
+LongClock Schedule::longClock;	// has-a
+
 /*
  * Can change during current period.
  * Can be in future.
  */
+LongTime Schedule::startTimeOfPeriod;
+
 
 
 
@@ -51,53 +54,46 @@ void Schedule::adjustBySyncMsg(Message msg) {
 // End slots
 
 void Schedule::scheduleEndSyncSlotTask(void callback()) {
-	DeltaTime deltaTime = longClock.clampedTimeDifference(
-			timeOfThisSyncSlotEnd(),
-			longClock.nowTime()
-			);
-	scheduleTask(callback, deltaTime );
-}
+	scheduleTask(callback, longClock.clampedTimeDifference(timeOfThisSyncSlotEnd(), longClock.nowTime())); }
 
 void Schedule::scheduleEndWorkSlotTask(void callback()) {
-	scheduleTask(callback,
-			longClock.clampedTimeDifferenceFromNow(timeOfThisWorkSlotEnd())
-			);
-}
+	scheduleTask(callback, longClock.clampedTimeDifferenceFromNow(timeOfThisWorkSlotEnd())); }
 
 void Schedule::scheduleEndFishSlotTask(void callback()) {}
 void Schedule::scheduleEndMergeSlotTask(void callback()) {}
 
-// Start slots
-
+// Fixed start slots
 void Schedule::scheduleStartSyncSlotTask(void callback()) {
-	scheduleTask(callback,
-				longClock.clampedTimeDifferenceFromNow(startTimeOfNextPeriod())
-				);
-}
+	scheduleTask(callback, longClock.clampedTimeDifferenceFromNow(startTimeOfNextPeriod()));}
 // Not defined: scheduleStartWork : Work slot follows sync without start callback
+
+/*
+ * Chosen randomly from sleeping slots.
+ */
 void Schedule::scheduleStartFishSlotTask(void callback()) {}
+
+/*
+ * Chosen according to CliqueMerger
+ */
 void Schedule::scheduleStartMergeSlotTask(void callback()) {}
 
 
-int Schedule::deltaNowToStartNextSync() {}
-int Schedule::deltaStartThisSyncToNow() {}
+// Deltas
+DeltaTime  Schedule::deltaNowToStartNextSync() { return longClock.clampedTimeDifferenceFromNow(timeOfNextSyncSlotStart()); }
+DeltaTime  Schedule::deltaStartThisSyncToNow() { return longClock.clampedTimeDifference(longClock.nowTime(), startTimeOfPeriod); }
+
+
 
 // Times
-// These are future, as long as called at appropriate instant and delays not exceed
+// These return future times, as long as called at appropriate instant
+// and task processing times is smaller than slotDurations.
+/*
+ * Even if these return past times, the OS allows scheduling in the past,
+ * and scheduled task executes immediately after current task finishes?
+ */
 
-LongTime Schedule::startTimeOfNextPeriod() {
-	return startTimeOfPeriod + CountSlots * SlotDuration;
-}
+LongTime Schedule::startTimeOfNextPeriod() { return startTimeOfPeriod + CountSlots * SlotDuration; }
 
-LongTime Schedule::timeOfThisSyncSlotEnd() {
-	// Sync slot is first slot in period
-	return startTimeOfPeriod;
-};
-LongTime Schedule::timeOfThisWorkSlotEnd() {
-	// Work slot is second slot in period
-	return startTimeOfPeriod + SlotDuration;
-};
-
-LongTime Schedule::timeOfNextSyncSlotStart() {
-	return startTimeOfNextPeriod();
-};
+LongTime Schedule::timeOfThisSyncSlotEnd() { return startTimeOfPeriod + SlotDuration; }
+LongTime Schedule::timeOfThisWorkSlotEnd() { return startTimeOfPeriod + 2 * SlotDuration; }
+LongTime Schedule::timeOfNextSyncSlotStart() { return startTimeOfNextPeriod(); }

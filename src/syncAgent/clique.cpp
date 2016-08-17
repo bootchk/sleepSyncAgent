@@ -24,8 +24,8 @@ bool Clique::isSelfMaster() {
 	return masterID == myID();
 }
 
-bool Clique::isOtherCliqueBetter(Clique& other){
-	return masterID < other.masterID;
+bool Clique::isOtherCliqueBetter(int otherMasterID){
+	return masterID < otherMasterID;
 }
 
 void Clique::onMasterDropout() {

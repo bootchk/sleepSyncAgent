@@ -54,17 +54,14 @@ public:
 	void scheduleStartFishSlotTask(void callback());
 	void scheduleStartMergeSlotTask(void callback());
 
-	// Unaligned.  This is usually not a multiple of slotDuration
-	int deltaNowToStartNextSync();
-	int deltaStartThisSyncToNow();
+	// nowTime is not aligned with slot starts.  Result need not be multiple of slotDuration.
+	DeltaTime  deltaNowToStartNextSync();
+	DeltaTime  deltaStartThisSyncToNow();
 
 	// Times
 	LongTime startTimeOfNextPeriod();
 	LongTime timeOfThisSyncSlotEnd();	// Of this period
 	LongTime timeOfThisWorkSlotEnd();
 	LongTime timeOfNextSyncSlotStart();	// Of next period.
-
-
-
 
 };
