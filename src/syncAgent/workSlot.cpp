@@ -22,8 +22,8 @@ void SyncAgent::xmitAproposWork() {
 
 	// Other units might be contending
 	if ( isQueuedWorkMsg() ) {
-		// TODO get ms
-		xmit(Work);
+		msg.makeWork();
+		xmit(msg);
 	}
 }
 

@@ -1,6 +1,6 @@
 
 #include <inttypes.h>
-#include "message.h"
+#include "syncAgent/message.h"
 
 /*
  * OS abstraction layer
@@ -16,7 +16,7 @@
 //static void sleep() {}
 static void turnReceiverOnWithCallback(void callback(Message) ) {}
 static void turnReceiverOff() {}
-static void xmit(MessageType msgType ) {}
+static void xmit(Message msg) {}
 static int myID() { return 1;}	// TI-RTOS see platform_  MAC of my radio
 static bool isQueuedWorkMsg(){ return true;}
 

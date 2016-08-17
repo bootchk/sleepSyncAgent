@@ -1,9 +1,9 @@
 
 // external to project
 #include "../powerManager.h"
-#include "../message.h"
 #include "../os.h"
 
+#include "message.h"
 #include "clique.h"
 #include "dropoutMonitor.h"
 #include "cliqueMerger.h"
@@ -28,7 +28,7 @@ public:
 	// App can not stop synching.  SyncAgent monitors power and tells app onSyncLostCallback
 
 
-private:
+private:	// data members
 	static bool isSynching;
 
 	// has-a, all singletons
@@ -37,12 +37,14 @@ private:
 	static DropoutMonitor dropoutMonitor;
 	static CliqueMerger cliqueMerger;
 	static Role role;
+	static Message msg;	// Reused, only one message queued at a time
 
 	// uses
 	static PowerManager* powerMgr;	// owned by app
 	static void (*onSyncLostCallback)();	// callback to app
 	static void (*onWorkMsgCallback)(Message msg);	// callback to app
 
+private: // methods
 
 	// callbacks for scheduled tasks
 	// marking start of slots

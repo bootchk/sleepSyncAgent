@@ -49,7 +49,8 @@ void SyncAgent::loseSync() {
 	if (clique.isSelfMaster()) {
 		// With dying breath, ask another unit in my clique to assume mastership
 		// Might not be heard.
-		xmit(AbandonMastership);
+		msg.makeAbandonMastership(myID());
+		xmit(msg);
 	}
 	// else I am a slave, just drop out of clique
 
@@ -123,7 +124,8 @@ void SyncAgent::xmitRoleAproposSync() {
 
 	// Only master xmits FROM its sync slot.
 	if ( clique.isSelfMaster() && clique.masterXmitSyncPolicy.shouldXmitSync() ) {
-		xmit(Sync);
+		msg.makeSync(myID());
+		xmit(msg);
 	}
 }
 

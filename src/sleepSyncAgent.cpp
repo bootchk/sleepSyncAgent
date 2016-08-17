@@ -11,23 +11,25 @@
 //#include "app.h"
 #include "powerManager.h"
 #include "syncAgent/syncAgent.h"
-#include "message.h"
+#include "syncAgent/message.h"
 
-PowerManager powerMgr;
 
+// Callbacks from SyncAgent
 void onSyncLost() {
-	// Called by SyncAgent when power inadequate to continue sync
+	// SyncAgent determined power inadequate to continue sync.
 	// TODO schedule a wakeTask to monitor power
 }
 
 void onWorkMsg(Message msg) {
-	// Called by SyncAgent when work msg received
+	// SyncAgent received work msg.
 	// TODO schedule low priority task to do work
 	// realtime constrained
 }
 
 
+PowerManager powerMgr;
 SyncAgent syncAgent(&powerMgr, onSyncLost, onWorkMsg);
+
 
 
 int main() {

@@ -1,5 +1,5 @@
 
-#include "../message.h"
+#include "message.h"
 #include "clique.h"
 
 /*
@@ -61,6 +61,7 @@ public:
 		//	int offset,
 			//int MasterID);
 	static int timeOfNextMergeWake();
+	static void makeMergeSync(Message& msg);
 
 private:
 	static void mergeMyClique(Message msg);

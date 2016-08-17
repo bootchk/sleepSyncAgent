@@ -29,8 +29,8 @@ void SyncAgent::onMergeWake() {
 	 */
 	assert(cliqueMerger.isActive);
 
-	// TODO construct MergeSync msg
-	xmit(MergeSync);
+	cliqueMerger.makeMergeSync(msg);
+	xmit(msg);
 
 	/*
 	FUTURE if multiple MergeSync xmits per merge

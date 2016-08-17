@@ -128,4 +128,7 @@ int CliqueMerger::timeOfNextMergeWake(){
 	return 1;
 }
 
+void CliqueMerger::makeMergeSync(Message& msg){
+	msg.init(MergeSync, offsetToMergee, masterID);
+}
 

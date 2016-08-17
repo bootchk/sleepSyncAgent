@@ -15,6 +15,7 @@ Clique SyncAgent::otherClique;
 DropoutMonitor SyncAgent::dropoutMonitor;
 CliqueMerger SyncAgent::cliqueMerger;
 Role SyncAgent::role;
+Message SyncAgent::msg;
 
 
 
