@@ -93,7 +93,7 @@ bool CliqueMerger::shouldScheduleMerge() {
 	/*
 	 * Collision avoidance: choose randomly whether to schedule mergeSlot.
 	 *
-	 * This implementation may remain in role isMerger a long time (a long random sequence of heads.)
+	 * This implementation may remain in role isMerger a long time (a long random sequence of coin flips yielding heads.)
 	 * The intent is to minimize scheduled tasks: we don't schedule mergeSlot until the start of period it occurs in.
 	 *
 	 * Alternative: choose once, a random time in the future, and schedule a mergeSlot in some distant sync period.

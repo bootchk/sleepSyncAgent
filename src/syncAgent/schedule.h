@@ -23,7 +23,7 @@
  *
  * Because a message may be received after the intended end of a slot
  * (if a msg reception starts during the slot and the radio is not turned off while a msg is in progress.)
- * TODO ???
+ * TODO msg received after radio off
  *
  * Responsibilities:
  * - maintain period start time (in sync with members of clique)

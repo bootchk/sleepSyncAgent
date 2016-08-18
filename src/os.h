@@ -14,6 +14,8 @@
  * Convention: any method named "onFoo" is a task.  The system sleeps after the method end.
  */
 
+static void log(char* string) {};
+
 static bool isQueuedWorkMsg(){ return true;}
 
 // time type must be same as DeltaTime

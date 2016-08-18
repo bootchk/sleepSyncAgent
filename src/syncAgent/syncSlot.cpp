@@ -19,6 +19,7 @@
  */
 
 #include <cassert>
+#include "../os.h"	// log()
 #include "../radioWrapper.h"
 #include "syncAgent.h"
 #include "schedule.h"
@@ -172,35 +173,63 @@ void SyncAgent::onSyncSlotEnd() {
 
 // Message handlers for messages received in sync slot
 
+/*
+ * Cases for sync messages:
+ * 1. my cliques current master (usual)
+ * 2. other clique master happened to start schedule coincident with my schedule
+ * 3. other clique master clock drifts so schedules coincide
+ * 4. member (master or slave) of other, better clique fished, caught my clique and is merging my clique
+ * 5. a member of my clique failed to hear sync and is assuming mastership
+ *
+ * Cannot assert sender is a master (msg.masterID could be different from senderID)
+ * Cannot assert self is slave
+ * Cannot assert msg.masterID equals clique.masterID
+ */
 void SyncAgent::doSyncMsgInSyncSlot(Message msg){
-	// Received sync msg in sync slot.
-	// require self is master (rare!) OR self is slave (usually)
 	// Cannot receive sync from self (xmitter and receiver are exclusive)
 
-	if (clique.isSelfMaster()) {
-		// rare!  Another clique sent sync in my sync slot
+	if (isBetterSync(msg)) {
+		clique.masterID = msg.masterID;
+		// I might not be master anymore
+
+		// Regardless who sent sync: is a valid heartbeat, I am synchronized
+		dropoutMonitor.heardSync();
+
+		// Regardless: from my master (small offset) or from another clique (large offset)
+		clique.schedule.adjustBySyncMsg(msg);
+
+		// FUTURE clique.historyOfMasters.update(msg);
+
+		if (cliqueMerger.isActive) {
+			// Already merging an other clique, now merge other clique to updated sync slot time
+			cliqueMerger.adjustBySyncMsg(msg);
+		}
 	}
-	else {
-		// usual: self isSlave
-		// sync is from my master
-		// OR from member of a usurping clique
-		// OR from master of clique that happens to be in sync
+}
 
-		// TODO assume master is best?
+bool SyncAgent::isBetterSync(Message msg){
+	bool result = clique.isOtherCliqueBetter(msg.masterID);
+
+	// Debug unusual, transient conditions
+	if (!result){
+		if (clique.isSelfMaster()) {
+			// Sender has not heard my sync
+			// Since I am still alive, they should not be assuming mastership.
+			// Could be assymetric communication (I can hear they, they cannot hear me.)
+			log("Worse sync while self is master.");
+		}
+		else { // self is slave
+			// Sender has not heard my master's sync
+			// My master may dropout, and they are assuming mastership.
+			// Wait until I discover my master dropout
+			// FUTURE: if msg.masterID < myID(), I should assume mastership instead of sender
+			// FUTURE: if msg.masterID > myID() record msg.masterID in my historyOfMasters
+			// so when I discover dropout, I will defer to msg.masterID
+			log("Worse sync while self is slave.");
+		}
 	}
 
-	// Regardless who sent sync: is a valid heartbeat, I am synchronized
-	dropoutMonitor.heardSync();
-
-	// Regardless: from my master (small offset) or from another clique (large offset)
-	clique.schedule.adjustBySyncMsg(msg);
-
-	// FUTURE clique.historyOfMasters.update(msg);
-
-	if (cliqueMerger.isActive) {
-		// Already merging another clique, now merge to updated sync slot time
-		cliqueMerger.adjustBySyncMsg(msg);
-	}
+	return result;
 }
 
 void SyncAgent::doAbandonMastershipMsgInSyncSlot(Message msg){
@@ -209,8 +238,8 @@ void SyncAgent::doAbandonMastershipMsgInSyncSlot(Message msg){
 }
 
 void SyncAgent::doWorkMsgInSyncSlot(Message msg){
-	// Msg received in wrong slot, from an out-of-sync clique
-	// TODO
+	// Msg received in wrong slot, from out-of-sync clique
+	// TODO work
 }
 
 

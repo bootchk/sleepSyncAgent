@@ -3,12 +3,11 @@
 
 ScheduleCount DropoutMonitor::countSyncSlotsWithoutSyncMsg;
 
-void DropoutMonitor::heardSync() {
-	countSyncSlotsWithoutSyncMsg = 0;
-};
+
+void DropoutMonitor::heardSync() { reset(); }
 
 bool DropoutMonitor::check(){
 	countSyncSlotsWithoutSyncMsg++;
-	bool result = countSyncSlotsWithoutSyncMsg > 6;	// TODO symbolic
+	bool result = countSyncSlotsWithoutSyncMsg > maxMissingSyncsPerDropout;
 	return result;
 }

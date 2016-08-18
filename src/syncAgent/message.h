@@ -11,6 +11,7 @@
  * - work related
  */
 
+// TODO subclass for Sync msg
 
 enum MessageType {
 	Sync,		// offset is zero
@@ -21,9 +22,14 @@ enum MessageType {
 
 class Message {
 public:
+	// provided by wireless stack
+	SystemID senderID;
+
+	// Our content of msg (not necessarily from wireless stack)
 	MessageType type;
 	SyncOffset offset;	// data of sync msg
 	SystemID masterID;	// data of sync msg
+
 
 	void init(MessageType aType, SyncOffset aOffset, SystemID aMasterID) {
 		type = aType;

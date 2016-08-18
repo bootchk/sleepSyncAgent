@@ -70,6 +70,8 @@ private: // methods
 
 	// misc
 	static void startWorkSlot();
+
+	static bool isBetterSync(Message msg);
 	static void loseSync();
 	static void maintainSyncSlot();
 

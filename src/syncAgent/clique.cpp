@@ -6,11 +6,10 @@
 #include "clique.h"
 
 
-// static
+// static singleton
 Schedule Clique::schedule;
 MasterXmitSyncPolicy Clique::masterXmitSyncPolicy;
 SystemID Clique::masterID;
-
 
 
 void Clique::reset(){
@@ -20,28 +19,21 @@ void Clique::reset(){
 	// assert clock is running and first period started but no tasks scheduled
 }
 
-bool Clique::isSelfMaster() {
-	return masterID == myID();
-}
-
-bool Clique::isOtherCliqueBetter(SystemID otherMasterID){
-	return masterID < otherMasterID;
-}
+bool Clique::isSelfMaster() { return masterID == myID(); }
+bool Clique::isOtherCliqueBetter(SystemID otherMasterID){ return masterID < otherMasterID; }
 
 void Clique::onMasterDropout() {
-	// Failed to hear sync from master
-
 	// Brute force: assume mastership.
-	// Many may do this and suffer contention.
+	// Many units may do this and suffer contention.
 	reset();
 
-	// TODO: alternative is a history of masters
+	// FUTURE: history of masters
 }
 
-void Clique::initFromMsg(Message msg){
-	assert(msg.type == Sync);
+void Clique::initFromSyncMsg(Message msg){
+	assert(msg.type == Sync);	// require
+	assert(msg.masterID != myID());	// invariant: we can't hear our own sync
 	masterID = msg.masterID;
-	// TODO get offset
 }
 
 
