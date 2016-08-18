@@ -19,7 +19,7 @@
  */
 
 #include <cassert>
-#include "../os.h"	// log()
+#include "../log.h"
 #include "../radioWrapper.h"
 #include "syncAgent.h"
 #include "schedule.h"

@@ -2,7 +2,6 @@
 
 #include <inttypes.h>
 
-
 /*
  * OS abstraction layer
  *
@@ -13,8 +12,6 @@
  * or until an interrupt from a device.
  * Convention: any method named "onFoo" is a task.  The system sleeps after the method end.
  */
-
-static void log(char* string) {};
 
 static bool isQueuedWorkMsg(){ return true;}
 
