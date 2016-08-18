@@ -34,7 +34,6 @@ private:	// data members
 
 	// has-a, all singletons
 	static Clique clique;
-	static Clique otherClique;
 	static DropoutMonitor dropoutMonitor;
 	static CliqueMerger cliqueMerger;
 	static Role role;

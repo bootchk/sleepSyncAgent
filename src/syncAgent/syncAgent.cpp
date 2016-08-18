@@ -11,7 +11,6 @@ void (*SyncAgent::onSyncLostCallback)();
 void (*SyncAgent::onWorkMsgCallback)(Message msg);
 
 Clique SyncAgent::clique;
-Clique SyncAgent::otherClique;
 DropoutMonitor SyncAgent::dropoutMonitor;
 CliqueMerger SyncAgent::cliqueMerger;
 Role SyncAgent::role;

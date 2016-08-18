@@ -13,7 +13,6 @@ void SyncAgent::toMergerRole(Message msg){
 	assert( !cliqueMerger.isActive);
 	assert(role.isFisher());
 	role.setMerger();
-	//otherClique.initFromMsg(msg);	// TODO elide otherClique
 	cliqueMerger.initFromMsg(msg);
 	// TODO adjust my schedule, or has it already been done
 	assert(cliqueMerger.isActive);

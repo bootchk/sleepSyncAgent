@@ -43,7 +43,7 @@ public:
 	static bool isActive;	// flag, no getter/setter
 
 
-	// attributes of otherClique
+	// attributes of other clique
 	static DeltaTime offsetToMergee;	// in current schedule
 private:
 	static SystemID masterID;
