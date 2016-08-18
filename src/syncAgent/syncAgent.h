@@ -46,20 +46,24 @@ private:	// data members
 private: // methods
 
 	// callbacks for scheduled tasks
-	// marking start of slots
+
+	// start of slots
 	static void onSyncWake();
+	// work slot starts without an event
 	static void onFishWake();
 	static void onMergeWake();
-	// marking end of slots
+
+	// end of slots
 	static void onSyncSlotEnd();
 	static void onWorkSlotEnd();
 	static void onFishSlotEnd();
-	// Merge slots over as soon as xmit
+	// Merge slots over without event, as soon as xmit
 
 	// callback for external event (varied time within slot)
 	static void onMsgReceivedInSyncSlot(Message msg);
 	static void onMsgReceivedInWorkSlot(Message msg);
 	static void onMsgReceivedInFishSlot(Message msg);
+	// Merge slot only xmits
 
 
 	// scheduling
@@ -68,8 +72,10 @@ private: // methods
 	static void scheduleMergeWake();
 	static void scheduleNextSyncRelatedTask();
 
-	// misc
+	// work
 	static void startWorkSlot();
+	static void relayWorkToApp(Message msg);
+
 
 	static bool isBetterSync(Message msg);
 	static void loseSync();
@@ -80,16 +86,17 @@ private: // methods
 	static void xmitRoleAproposSync();
 	static void xmitAproposWork();
 
-	// msg handlers
+	// msg handlers: messageType x slotType, with omissions
 	static void doSyncMsgInSyncSlot(Message msg);
+	static void doSyncMsgInFishSlot(Message msg);
 	static void doAbandonMastershipMsgInSyncSlot(Message msg);
 	static void doWorkMsgInSyncSlot(Message msg);
-
 	static void doWorkMsgInWorkSlot(Message msg);
 
-	static void doSyncMsgInFishSlot(Message msg);
-
-	// merging
+	// merge
 	static void toMergerRole(Message msg);
 	static void completeMergerRole();
+
+	// abandon
+	static void tryAssumeMastership(Message msg);
 };

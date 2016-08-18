@@ -66,7 +66,11 @@ void SyncAgent::onWorkSlotEnd(){
 
 
 void SyncAgent::doWorkMsgInWorkSlot(Message msg) {
-	// Relay to app
+	relayWorkToApp(msg);
+}
+
+
+void SyncAgent::relayWorkToApp(Message msg) {
 	onWorkMsgCallback(msg);
 }
 

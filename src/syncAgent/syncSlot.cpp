@@ -234,12 +234,28 @@ bool SyncAgent::isBetterSync(Message msg){
 
 void SyncAgent::doAbandonMastershipMsgInSyncSlot(Message msg){
 	// Master of my clique is abandoning
-	// TODO assume mastership?
+	tryAssumeMastership(msg);
 }
 
+void SyncAgent::tryAssumeMastership(Message msg){
+	/*
+	 * My clique is still in sync, but master is dropout.
+	 *
+	 * Naive design: all units that hear master abandon assume mastership.
+	 * FUTURE: keep historyOfMasters, and better slaves assume mastership.
+	 */
+	clique.masterID = myID();
+	assert(clique.isSelfMaster());
+}
+
+
 void SyncAgent::doWorkMsgInSyncSlot(Message msg){
-	// Msg received in wrong slot, from out-of-sync clique
-	// TODO work
+	// Received in wrong slot, from out-of-sync clique
+	/*
+	 * Design decision: if work should only be done in sync with others, change this to ignore the msg.
+	 */
+	relayWorkToApp(msg);
+	// FUTURE: treat this like fishing, we caught an out-of-sync clique
 }
 
 
