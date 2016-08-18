@@ -15,5 +15,11 @@
 
 static bool isQueuedWorkMsg(){ return true;}
 
-// time type must be same as DeltaTime
+/*
+ * !!!
+ * type of 'time' parameter must be same as DeltaTime.
+ * Be careful passing a long long, LongTime, or other 64-bit type as compiler
+ * will (possibly without warning) convert with possible loss of data (typically lower 32-bits)
+ * but only defined by the compiler implementation!!! not by the C standard.
+ */
 static void scheduleTask(void callback(), uint32_t time ) {}

@@ -1,8 +1,10 @@
 
 #include <cassert>
+#include "../os.h"	// scheduleTask()
+#include "../random.h"
+
 #include "schedule.h"
-#include "time.h"
-#include "../os.h"
+
 
 
 
@@ -13,11 +15,14 @@
 LongClock Schedule::longClock;	// has-a
 
 /*
- * Can change during current period.
- * Can be in future.
+ * !!!
+ * Can change during current period.  See adjustBySyncMsg()
+ * Can be in future, advances forward in time.
  */
 LongTime Schedule::startTimeOfPeriod;
 
+// Remembered during fish slot
+LongTime Schedule::startTimeOfFishSlot;
 
 
 
@@ -49,23 +54,18 @@ void Schedule::adjustBySyncMsg(Message msg) {
 
 
 
-// Scheduling slots tasks
+// Scheduling slots tasks, start and end
 
-// End slots
 
+// Sync is first slot of next period
+void Schedule::scheduleStartSyncSlotTask(void callback()) {
+	scheduleTask(callback, clampedTimeDifferenceFromNow(startTimeOfNextPeriod()));}
 void Schedule::scheduleEndSyncSlotTask(void callback()) {
 	scheduleTask(callback, clampedTimeDifference(timeOfThisSyncSlotEnd(), longClock.nowTime())); }
 
+
 void Schedule::scheduleEndWorkSlotTask(void callback()) {
 	scheduleTask(callback, clampedTimeDifferenceFromNow(timeOfThisWorkSlotEnd())); }
-
-void Schedule::scheduleEndFishSlotTask(void callback()) {}
-void Schedule::scheduleEndMergeSlotTask(void callback()) {}
-
-// Fixed start slots
-void Schedule::scheduleStartSyncSlotTask(void callback()) {
-	scheduleTask(callback, clampedTimeDifferenceFromNow(startTimeOfNextPeriod()));}
-// Not defined: scheduleStartWork : Work slot follows sync without start callback
 
 
 void Schedule::scheduleStartFishSlotTask(void callback()) {
@@ -73,9 +73,19 @@ void Schedule::scheduleStartFishSlotTask(void callback()) {
 	 * Chosen randomly from sleeping slots.
 	 * Remember it, to schedule end.
 	 */
-	// Long
-	scheduleTask(callback, clampedTimeDifferenceFromNow(startTimeOfNextPeriod()));
-
+	startTimeOfFishSlot = startTimeOfPeriod + randInt(FirstSleepingSlotOrdinal-1, CountSlots-1) * SlotDuration;
+	assert(startTimeOfFishSlot >= longClock.nowTime());
+	assert(startTimeOfFishSlot <= startTimeOfNextPeriod());
+	scheduleTask(callback, clampedTimeDifferenceFromNow(startTimeOfFishSlot));
+}
+void Schedule::scheduleEndFishSlotTask(void callback()) {
+	// Require called during fish slot
+	// i.e. assert startTimeOfFishSlot > nowTime > startTimeOfFishSlot + SlotDuration
+	// else fish slot end is in the past.
+	LongTime time = startTimeOfFishSlot + SlotDuration;
+	assert(time >= longClock.nowTime());
+	assert(time <= startTimeOfNextPeriod());
+	scheduleTask(callback, clampedTimeDifferenceFromNow(time));
 }
 
 
@@ -88,11 +98,13 @@ void Schedule::scheduleStartMergeSlotTask(void callback(), DeltaTime offset) {
 	LongTime time = startTimeOfPeriod + offset;
 	assert(time >= longClock.nowTime());
 	assert(time <= startTimeOfNextPeriod());
-	scheduleTask(callback, time);
+	scheduleTask(callback, clampedTimeDifferenceFromNow(time));
 }
 
 
+
 // Deltas
+
 DeltaTime  Schedule::deltaNowToStartNextSync() { return clampedTimeDifferenceFromNow(timeOfNextSyncSlotStart()); }
 DeltaTime  Schedule::deltaStartThisSyncToNow() { return clampedTimeDifference(longClock.nowTime(), startTimeOfPeriod); }
 

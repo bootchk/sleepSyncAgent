@@ -30,17 +30,28 @@ typedef uint32_t DeltaTime;
  * TODO msg received after radio off
  *
  * Responsibilities:
+ * - own an infinite duration clock based on OSClock()
  * - maintain period start time (in sync with members of clique)
  * - schedule tasks (interface to OS)
  *
  * Note scheduled tasks run at slot start/end or unaligned
+ *
+ * !!! Be careful with time math.
+ * Compiler will convert longer ints to shorter quietly, with possible loss of data.
+ * OS scheduling requires a DeltaTime (known as a timeout in some RTOS) from now.
+ * OS scheduling does NOT take a LongTime, but compiler does not give warning
+ * (as this code is currently written.)
  */
 class Schedule {
 private:
 	static LongClock longClock;
-	static LongTime startTimeOfPeriod;
 
+	static LongTime startTimeOfPeriod;		// TODO: updated every period
+	static LongTime startTimeOfFishSlot;	// initialized when fish slot starts
+
+	// !!! Parameters of schedule
 	static const ScheduleCount CountSlots = 20;
+	static const ScheduleCount FirstSleepingSlotOrdinal = 3;  // Sync, Work, Sleep, ...
 	static const DeltaTime SlotDuration = 100;
 
 public:
@@ -49,20 +60,25 @@ public:
 	void adjustBySyncMsg(Message msg);
 
 	// Scheduling slots tasks
-	void scheduleEndSyncSlotTask(void callback());
-	void scheduleEndWorkSlotTask(void callback());
-	void scheduleEndFishSlotTask(void callback());
-	void scheduleEndMergeSlotTask(void callback());
 
 	void scheduleStartSyncSlotTask(void callback());
+	void scheduleEndSyncSlotTask(void callback());
+
 	// Work slot follows sync without start callback
+	void scheduleEndWorkSlotTask(void callback());
+
 	void scheduleStartFishSlotTask(void callback());
+	void scheduleEndFishSlotTask(void callback());
+
 	void scheduleStartMergeSlotTask(void callback(), DeltaTime offset);
+	// Merge slot ends w/o event, next event is startSyncSlot
 
 	// nowTime is not aligned with slot starts.  Result need not be multiple of slotDuration.
+	// Used by CliqueMerger()
 	DeltaTime  deltaNowToStartNextSync();
 	DeltaTime  deltaStartThisSyncToNow();
 
+private:
 	// Times
 	LongTime startTimeOfNextPeriod();
 	LongTime timeOfThisSyncSlotEnd();	// Of this period
@@ -72,5 +88,4 @@ public:
 	// Arithmetic on LongTime
 	static DeltaTime clampedTimeDifference(LongTime laterTime, LongTime earlierTime);
 	static DeltaTime clampedTimeDifferenceFromNow(LongTime laterTime);
-
 };
