@@ -5,6 +5,10 @@
 #include "message.h"
 #include "longClock.h"
 
+// time that os accepts for scheduling
+typedef uint32_t DeltaTime;
+
+
 /*
  * Schedule is infinite sequence of periods, aligned with global clock of clique.
  * Period is sequence of slots: sync, work, sleeping, ...., sleeping
@@ -64,5 +68,9 @@ public:
 	LongTime timeOfThisSyncSlotEnd();	// Of this period
 	LongTime timeOfThisWorkSlotEnd();
 	LongTime timeOfNextSyncSlotStart();	// Of next period.
+
+	// Arithmetic on LongTime
+	static DeltaTime clampedTimeDifference(LongTime laterTime, LongTime earlierTime);
+	static DeltaTime clampedTimeDifferenceFromNow(LongTime laterTime);
 
 };

@@ -1,5 +1,4 @@
 #include <inttypes.h>
-#include "time.h"
 
 /*
 64-bit clock with resolution same as os kernel clock (typically mSec.)
@@ -17,19 +16,24 @@ An alternative implementation is to set a task on the OSClock wrap.
 When it wraps, increment MSB.
 Instead, every call to nowTime() we check for OSClock wrap.
 */
+
+typedef uint32_t OSTime;
+
+// long time with same, high resolution as OSClock
+typedef uint64_t LongTime;
+
+
+
 class LongClock {
 private:
 	static uint32_t mostSignificantBits;
-	static uint32_t recentLeastSignificantBits;	// as received from os kernel clock
+	static OSTime recentLeastSignificantBits;	// as received from os kernel clock
 
-	static DeltaTime previousOSClockTicks;
+	static OSTime previousOSClockTicks;
 
 public:
 	static void reset();
 
 	// getters
 	static LongTime nowTime();
-	static DeltaTime clampedTimeDifference(LongTime laterTime, LongTime earlierTime);
-	static DeltaTime clampedTimeDifferenceFromNow(LongTime laterTime);
-
 };

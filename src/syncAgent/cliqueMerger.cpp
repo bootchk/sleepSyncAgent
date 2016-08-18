@@ -1,6 +1,7 @@
 
 #include <cassert>
 #include "cliqueMerger.h"
+#include "../random.h"
 
 
 // Singleton data members
@@ -104,8 +105,7 @@ bool CliqueMerger::shouldScheduleMerge() {
 	 * But then the task is scheduled for a long time and many sync periods may happen meanwhile.
 	 */
 	assert(isActive);	// require
-	// TODO CA, random chance
-	return true;
+	return randBool();	// Fair coin flip
 }
 
 

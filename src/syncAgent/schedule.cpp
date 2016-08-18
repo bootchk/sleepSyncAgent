@@ -54,23 +54,29 @@ void Schedule::adjustBySyncMsg(Message msg) {
 // End slots
 
 void Schedule::scheduleEndSyncSlotTask(void callback()) {
-	scheduleTask(callback, longClock.clampedTimeDifference(timeOfThisSyncSlotEnd(), longClock.nowTime())); }
+	scheduleTask(callback, clampedTimeDifference(timeOfThisSyncSlotEnd(), longClock.nowTime())); }
 
 void Schedule::scheduleEndWorkSlotTask(void callback()) {
-	scheduleTask(callback, longClock.clampedTimeDifferenceFromNow(timeOfThisWorkSlotEnd())); }
+	scheduleTask(callback, clampedTimeDifferenceFromNow(timeOfThisWorkSlotEnd())); }
 
 void Schedule::scheduleEndFishSlotTask(void callback()) {}
 void Schedule::scheduleEndMergeSlotTask(void callback()) {}
 
 // Fixed start slots
 void Schedule::scheduleStartSyncSlotTask(void callback()) {
-	scheduleTask(callback, longClock.clampedTimeDifferenceFromNow(startTimeOfNextPeriod()));}
+	scheduleTask(callback, clampedTimeDifferenceFromNow(startTimeOfNextPeriod()));}
 // Not defined: scheduleStartWork : Work slot follows sync without start callback
 
-/*
- * Chosen randomly from sleeping slots.
- */
-void Schedule::scheduleStartFishSlotTask(void callback()) {}
+
+void Schedule::scheduleStartFishSlotTask(void callback()) {
+	/*
+	 * Chosen randomly from sleeping slots.
+	 * Remember it, to schedule end.
+	 */
+	// Long
+	scheduleTask(callback, clampedTimeDifferenceFromNow(startTimeOfNextPeriod()));
+
+}
 
 
 void Schedule::scheduleStartMergeSlotTask(void callback(), DeltaTime offset) {
@@ -87,8 +93,8 @@ void Schedule::scheduleStartMergeSlotTask(void callback(), DeltaTime offset) {
 
 
 // Deltas
-DeltaTime  Schedule::deltaNowToStartNextSync() { return longClock.clampedTimeDifferenceFromNow(timeOfNextSyncSlotStart()); }
-DeltaTime  Schedule::deltaStartThisSyncToNow() { return longClock.clampedTimeDifference(longClock.nowTime(), startTimeOfPeriod); }
+DeltaTime  Schedule::deltaNowToStartNextSync() { return clampedTimeDifferenceFromNow(timeOfNextSyncSlotStart()); }
+DeltaTime  Schedule::deltaStartThisSyncToNow() { return clampedTimeDifference(longClock.nowTime(), startTimeOfPeriod); }
 
 
 
@@ -105,3 +111,22 @@ LongTime Schedule::startTimeOfNextPeriod() { return startTimeOfPeriod + CountSlo
 LongTime Schedule::timeOfThisSyncSlotEnd() { return startTimeOfPeriod + SlotDuration; }
 LongTime Schedule::timeOfThisWorkSlotEnd() { return startTimeOfPeriod + 2 * SlotDuration; }
 LongTime Schedule::timeOfNextSyncSlotStart() { return startTimeOfNextPeriod(); }
+
+
+
+// LongTime math
+
+// Can be called if you are not sure laterTime is after earlierTime
+DeltaTime Schedule::clampedTimeDifference(LongTime laterTime, LongTime earlierTime) {
+	// Returns positive time difference or zero
+	DeltaTime result;
+	if (earlierTime > laterTime) result = 0;
+	else result = laterTime - earlierTime;	// !!! Coerce to 32-bit
+	assert(result >= 0);
+	return result;
+}
+
+// Requires futureTime less than 32-bit from now
+DeltaTime Schedule::clampedTimeDifferenceFromNow(LongTime futureTime) {
+	return clampedTimeDifference(futureTime, longClock.nowTime());	// !!! coerce to 32-bit
+}

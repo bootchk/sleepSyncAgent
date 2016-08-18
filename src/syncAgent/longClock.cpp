@@ -5,7 +5,8 @@
 
 
 // OS
-DeltaTime OSClockTicks() { return 1; }
+OSTime OSClockTicks() { return 1; } // TODO move to os.h
+
 
 // static singleton data members
 uint32_t LongClock::mostSignificantBits = 0;
@@ -25,7 +26,7 @@ void LongClock::reset(){
 LongTime LongClock::nowTime() {
 
 	// Account for quiet wrapping of OSClock (we are not notified by OS.)
-	DeltaTime currentOSClockTicks = OSClockTicks();
+	OSTime currentOSClockTicks = OSClockTicks();
 	if (currentOSClockTicks < previousOSClockTicks) {
 		// OSClock wrapped
 		mostSignificantBits++;	// Tick most significant bits
@@ -39,17 +40,3 @@ LongTime LongClock::nowTime() {
 	return result;
 };
 
-// Can be called if you are not sure laterTime is after earlierTime
-DeltaTime LongClock::clampedTimeDifference(LongTime laterTime, LongTime earlierTime) {
-	// Returns positive time difference or zero
-	DeltaTime result;
-	if (earlierTime > laterTime) result = 0;
-	else result = laterTime - earlierTime;	// Coerce result
-	assert(result >= 0);
-	return result;
-}
-
-
-DeltaTime LongClock::clampedTimeDifferenceFromNow(LongTime futureTime) {
-	return clampedTimeDifference(futureTime, nowTime());
-}
