@@ -72,10 +72,18 @@ void Schedule::scheduleStartSyncSlotTask(void callback()) {
  */
 void Schedule::scheduleStartFishSlotTask(void callback()) {}
 
-/*
- * Chosen according to CliqueMerger
- */
-void Schedule::scheduleStartMergeSlotTask(void callback()) {}
+
+void Schedule::scheduleStartMergeSlotTask(void callback(), DeltaTime offset) {
+	/*
+	 * !!!Not like others, is not aligned with slots.
+	 * Is scheduled within some usual sleepSlot of this period, but need not at start of slot.
+	 * offset is from CliqueMerger.
+	 */
+	LongTime time = startTimeOfPeriod + offset;
+	assert(time >= longClock.nowTime());
+	assert(time <= startTimeOfNextPeriod());
+	scheduleTask(callback, time);
+}
 
 
 // Deltas

@@ -42,9 +42,10 @@ class CliqueMerger {
 public:
 	static bool isActive;	// flag, no getter/setter
 
-private:
+
 	// attributes of otherClique
 	static DeltaTime offsetToMergee;	// in current schedule
+private:
 	static SystemID masterID;
 
 	static Clique* owningClique;	// 2-way relation: Clique owns CliqueMerger, CliqueMerger uses owning Clique
@@ -53,11 +54,10 @@ private:
 public:
 	static void initFromMsg(Message msg);
 
-
 	static void adjustBySyncMsg(Message msg);
 	static bool shouldScheduleMerge();
 	// FUTURE bool checkCompletionOfMergerRole();
-	static LongTime timeOfNextMergeWake();
+	//OBSOLETE static LongTime timeOfNextMergeWake();
 	static void makeMergeSync(Message& msg);
 
 private:

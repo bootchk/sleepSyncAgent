@@ -53,7 +53,7 @@ public:
 	void scheduleStartSyncSlotTask(void callback());
 	// Work slot follows sync without start callback
 	void scheduleStartFishSlotTask(void callback());
-	void scheduleStartMergeSlotTask(void callback());
+	void scheduleStartMergeSlotTask(void callback(), DeltaTime offset);
 
 	// nowTime is not aligned with slot starts.  Result need not be multiple of slotDuration.
 	DeltaTime  deltaNowToStartNextSync();

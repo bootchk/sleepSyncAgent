@@ -105,8 +105,8 @@ void SyncAgent::scheduleFishWake(){
 void SyncAgent::scheduleMergeWake(){
 	// Knows how to schedule mergeSlot at some time in current period
 	// assert we have decided to send a mergeSync
-	// assert cliqueMerger.isActive()
-	clique.schedule.scheduleStartMergeSlotTask(onMergeWake);
+	assert(cliqueMerger.isActive);
+	clique.schedule.scheduleStartMergeSlotTask(onMergeWake, cliqueMerger.offsetToMergee);
 }
 
 
