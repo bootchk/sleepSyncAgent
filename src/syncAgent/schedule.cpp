@@ -6,10 +6,6 @@
 #include "schedule.h"
 
 
-
-
-// TODO random
-
 // static singleton data
 
 LongClock Schedule::longClock;	// has-a
@@ -26,10 +22,30 @@ LongTime Schedule::startTimeOfFishSlot;
 
 
 
-void Schedule::start(){
+
+
+void Schedule::startFreshAfterHWReset(){
 	longClock.reset();
 	startTimeOfPeriod = longClock.nowTime();
 	// Out of sync with other cliques
+}
+
+void Schedule::resumeAfterPowerRestored(){
+	// Roll period forward to nearest period boundary after nowTime()
+
+	// Integer division.
+	int periodsMissed = (longClock.nowTime() - startTimeOfPeriod) / SlotDuration;
+	int rollTime = (periodsMissed + 1 ) * SlotDuration;
+	startTimeOfPeriod = startTimeOfPeriod + rollTime;
+	assert(startTimeOfPeriod > longClock.nowTime() );
+	// caller will call scheduleStartSyncSlot()
+}
+
+void Schedule::startPeriod() {
+	// called by onStartSyncWake
+	startTimeOfPeriod += SlotDuration;
+	// assert startTimeOfPeriod is close to nowTime()
+	// ow we have missed a period or otherwise delayed unexpectedly.
 }
 
 
@@ -45,7 +61,7 @@ void Schedule::adjustBySyncMsg(Message msg) {
 	// assert some task (endFishSlot) might be scheduled.
 
 	// assert not much time has elapsed since msg arrived.
-	// For more accuracy, we could timestamp msg arrival
+	// For more accuracy, we could timestamp msg arrival as early as possible.
 	startTimeOfPeriod = longClock.nowTime() + msg.offset;
 	// assert new startTimeOfPeriod < old startTimeOfPeriod + 2*period length
 	// i.e. new startTimeOfPeriod is within the old current period or in the period following

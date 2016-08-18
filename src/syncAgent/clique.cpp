@@ -15,7 +15,7 @@ SystemID Clique::masterID;
 void Clique::reset(){
 	masterID = myID();
 	masterXmitSyncPolicy.reset();
-	schedule.start();
+	schedule.startFreshAfterHWReset();
 	// assert clock is running and first period started but no tasks scheduled
 }
 

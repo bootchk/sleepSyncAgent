@@ -32,7 +32,7 @@ void SyncAgent::onSyncWake() {
 		// assert App scheduled a wakingTask
 	}
 	else {
-		maintainSyncSlot();
+		doSyncSlot();
 		// assert receiver on and endSyncSlotTask is scheduled
 	}
 
@@ -110,8 +110,12 @@ void SyncAgent::scheduleMergeWake(){
 }
 
 
-void SyncAgent::maintainSyncSlot() {
+void SyncAgent::doSyncSlot() {
+	// Start of sync slot is start of period.
+	clique.schedule.startPeriod();
+
 	xmitRoleAproposSync();
+
 	// even a Master listens for remainder of sync slot
 	turnReceiverOnWithCallback(onMsgReceivedInSyncSlot);
 	clique.schedule.scheduleEndSyncSlotTask(onSyncSlotEnd);

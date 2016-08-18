@@ -20,6 +20,8 @@ void onSyncLost() {
 	// TODO schedule a wakeTask to monitor power
 }
 
+
+
 void onWorkMsg(Message msg) {
 	// SyncAgent received work msg.
 	// TODO schedule low priority task to do work
@@ -30,6 +32,10 @@ void onWorkMsg(Message msg) {
 PowerManager powerMgr;
 SyncAgent syncAgent(&powerMgr, onSyncLost, onWorkMsg);
 
+
+void onPowerRestored() {
+	syncAgent.resumeAfterPowerRestored();
+}
 
 
 int main() {

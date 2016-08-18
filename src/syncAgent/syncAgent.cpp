@@ -52,6 +52,16 @@ void SyncAgent::startSyncing() {
 	// calling app should sleep, self will wake
 }
 
+void SyncAgent::resumeAfterPowerRestored() {
+	/*
+	 * Not reset clique.  Resume previous role and schedule.
+	 * If little time has passed since lost power, might still be in sync.
+	 * Otherwise self has drifted, and will experience masterDropout.
+	 */
+	clique.schedule.resumeAfterPowerRestored();
+	scheduleSyncWake();
+}
+
 
 
 

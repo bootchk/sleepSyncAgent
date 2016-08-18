@@ -9,11 +9,8 @@
 #include "role.h"
 
 
-/*
- * Singleton: all members static, no this.
- */
+// Singleton: all members static, no this.
 class SyncAgent {
-
 
 public:
 	SyncAgent(
@@ -22,10 +19,15 @@ public:
 			void (*onWorkMsgCallback)(Message msg)
 			);
 	
-	//void setTaskScheduler(void callback());
+	/*
+	 * App calls startSyncing on mcu power on reset POR.
+	 * App can not stop synching.
+	 * SyncAgent monitors power and tells app onSyncLostCallback.
+	 * App continues with mcu in low power, radio not on.
+	 * When power is restored, app calls SyncAgent.resume()
+	 */
 	static void startSyncing();
-	// App can not stop synching.  SyncAgent monitors power and tells app onSyncLostCallback
-
+	static void resumeAfterPowerRestored();
 
 private:	// data members
 	static bool isSynching;
@@ -79,7 +81,7 @@ private: // methods
 
 	static bool isBetterSync(Message msg);
 	static void loseSync();
-	static void maintainSyncSlot();
+	static void doSyncSlot();
 
 	// transmissions
 	// Depending on OS, might be asynchronous (no waiting)

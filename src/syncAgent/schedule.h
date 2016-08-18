@@ -41,6 +41,14 @@ typedef uint32_t DeltaTime;
  * OS scheduling requires a DeltaTime (known as a timeout in some RTOS) from now.
  * OS scheduling does NOT take a LongTime, but compiler does not give warning
  * (as this code is currently written.)
+ *
+ * Power:
+ * When power is low, SyncAgent returns to app without scheduling next period.
+ * When power is restored, SyncAgent's schedule may still be in sync and schedule is resumed.
+ * The LongClock continues to be accurate (since it is derived from a hw clock that continues.)
+ * Resuming schedule means taking the last known startTimeOfPeriod
+ * (which is more than one period in the past)
+ * and advancing it to now by a multiple of PeriodDuration.
  */
 class Schedule {
 private:
@@ -55,8 +63,11 @@ private:
 	static const DeltaTime SlotDuration = 100;
 
 public:
-	void start();
+	// Start schedule (long duration sequence of periods)
+	void startFreshAfterHWReset();
+	void resumeAfterPowerRestored();
 
+	void startPeriod();
 	void adjustBySyncMsg(Message msg);
 
 	// Scheduling slots tasks
