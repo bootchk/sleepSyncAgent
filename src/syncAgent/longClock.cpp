@@ -1,10 +1,7 @@
 
+#include "../os.h"
 #include "longClock.h"
 
-
-
-// OS
-OSTime OSClockTicks() { return 1; } // TODO move to os.h
 
 
 // static singleton data members

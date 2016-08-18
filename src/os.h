@@ -13,6 +13,12 @@
  * Convention: any method named "onFoo" is a task.  The system sleeps after the method end.
  */
 
+
+typedef uint32_t OSTime;
+
+static OSTime OSClockTicks() { return 1; }
+
+
 static bool isQueuedWorkMsg(){ return true;}
 
 /*

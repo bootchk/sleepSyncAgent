@@ -95,10 +95,9 @@ void SyncAgent::scheduleFishWake(){
 	// assert in syncSlot
 	/*
 	 * Schedule for random sleeping slot.
-	 * Random set of units covers entire period.
 	 * Not to avoid collision of xmits, since fishing is receiving.
+	 * Random to better cover time.
 	 */
-	// TODO random
 	clique.schedule.scheduleStartFishSlotTask(onFishWake);
 }
 
