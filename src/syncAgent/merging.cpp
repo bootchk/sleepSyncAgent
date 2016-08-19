@@ -9,12 +9,12 @@
 
 
 void SyncAgent::toMergerRole(SyncMessage msg){
-	// assert msg is masterSync msg received in fishSlot
+	// assert msg is master sync msg received in fishSlot
 	assert( !cliqueMerger.isActive);
 	assert(role.isFisher());
 	role.setMerger();
 	cliqueMerger.initFromMsg(msg);
-	// TODO adjust my schedule, or has it already been done
+	// assert my schedule might have been adjusted
 	assert(cliqueMerger.isActive);
 	assert(role.isMerger());
 	// assert endFishSlot is scheduled

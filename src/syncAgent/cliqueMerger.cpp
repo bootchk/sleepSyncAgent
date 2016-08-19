@@ -18,7 +18,7 @@ Clique* CliqueMerger::owningClique;
 void CliqueMerger::initFromMsg(SyncMessage msg){
 	/*
 	 * assert msg is sync heard in a fishing slot.
-	 * Responsibility: know design.
+	 * Responsibility: know design and possibly adjust my schedule
 	 * Save design so later, at endSyncSlot, we can schedule any mergeSlot.
 	 */
 
@@ -26,6 +26,7 @@ void CliqueMerger::initFromMsg(SyncMessage msg){
 		mergeMyClique(msg);
 	else
 		mergeOtherClique(msg);
+	// assert my schedule might have been adjusted
 }
 
 

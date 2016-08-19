@@ -25,9 +25,9 @@ typedef uint32_t DeltaTime;
  * The mcu and radio may be sleeping(low-power idle) during any slot, not just sleeping slots.
  * The OS schedules tasks using a low-power timer peripheral that never is off.
  *
- * Because a message may be received after the intended end of a slot
+ * FUTURE message may be received after the intended end of a slot??? or race, msg received after radio off ?
  * (if a msg reception starts during the slot and the radio is not turned off while a msg is in progress.)
- * TODO msg received after radio off
+ *
  *
  * Responsibilities:
  * - own an infinite duration clock based on OSClock()

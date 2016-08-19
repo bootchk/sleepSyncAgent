@@ -85,7 +85,7 @@ void SyncAgent::doSyncMsgInFishSlot(SyncMessage msg){
 
 
 /*
- * TODO we might as well act on it even though we are out of sync
+ * FUTURE act on it even though we are out of sync
 void SyncAgent::doWorkMsgInFishSlot(SyncMessage msg) {
 	// Relay to app
 	onWorkMsgCallback(msg);

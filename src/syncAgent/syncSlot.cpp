@@ -156,10 +156,14 @@ void SyncAgent::onMsgReceivedInSyncSlot(SyncMessage msg) {
 
 
 void SyncAgent::onSyncSlotEnd() {
-	// end of sync slot
-	// TODO This may be late, since message spanning this delays this, OR message spanning is received after end?
+	/*
+	 * This may be late, when message receive thread this delays this.
+	 * Also, there could be a race to deliver message with this event.
+	 * FUTURE check for those cases.
+	 * Scheduling of subsequent events does not depend on timely this event.
+	 */
 
-	// TODO we could do this elsewhere, e.g. start of sync slot
+	// FUTURE we could do this elsewhere, e.g. start of sync slot
 	if (dropoutMonitor.check()) {
 		dropoutMonitor.heardSync();	// reset
 		clique.onMasterDropout();

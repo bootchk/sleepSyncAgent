@@ -60,6 +60,7 @@ void SyncAgent::onMsgReceivedInWorkSlot(SyncMessage msg){
 void SyncAgent::onWorkSlotEnd(){
 	turnReceiverOff();
 	// assert a sync related task is scheduled e.g. fish, merge, or syncWake
+	// TODO not true?  move scheduling here.
 	// sleep
 }
 
