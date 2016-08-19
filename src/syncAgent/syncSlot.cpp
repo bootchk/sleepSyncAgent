@@ -28,8 +28,8 @@
 void SyncAgent::onSyncWake() {
 	// sync slot starts
 	if ( !powerMgr->isPowerForRadio() ) {
-		loseSync();
-		// assert App scheduled a wakingTask
+		pauseSyncing();
+		// assert App has a scheduled event; SyncAgent has no events scheduled
 	}
 	else {
 		doSyncSlot();
@@ -41,28 +41,32 @@ void SyncAgent::onSyncWake() {
 }
 
 
-void SyncAgent::loseSync() {
-	// Not enough power for self to continue in sync
-	// Other units might still have power and assume mastership of my clique
+void SyncAgent::pauseSyncing() {
+	/*
+	 * Not enough power for self to continue syncing.
+	 * Other units might still have power and assume mastership of my clique
+	 */
 
 	// assert radio not on
 
+	isPaused = true;
+
 	// TODO if clique is probably not empty
-	if (clique.isSelfMaster()) {
-		// With dying breath, ask another unit in my clique to assume mastership
-		// Might not be heard.
-		msg.makeAbandonMastership(myID());
-		xmit(msg);
-	}
+	if (clique.isSelfMaster()) doDyingBreath();
 	// else I am a slave, just drop out of clique
 
-	// Let app schedule a wakeTask
-	onSyncLostCallback();
+	onSyncingPausedCallback();	// Tell app
 
-	// ensure no sync related task is scheduled
-	// ensure app has scheduled its own wakeTask (else will not wake from sleep)
+	// ensure SyncAgent scheduled no event
+	// ensure app has scheduled its own events (else will not wake from sleep)
 }
 
+void SyncAgent::doDyingBreath() {
+	// Ask another unit in my clique to assume mastership
+	// Might not be heard.
+	msg.makeAbandonMastership(myID());
+	xmit(msg);
+}
 
 // Scheduling
 
@@ -86,13 +90,12 @@ void SyncAgent::scheduleNextSyncRelatedTask() {
 }
 
 void SyncAgent::scheduleSyncWake() {
-	// assert in syncSlot?
-	// TODO next time is one period from now
+	// assert in work or fish or merge slot
 	clique.schedule.scheduleStartSyncSlotTask(onSyncWake);
 }
 
 void SyncAgent::scheduleFishWake(){
-	// assert in syncSlot
+	// assert in workSlot
 	/*
 	 * Schedule for random sleeping slot.
 	 * Not to avoid collision of xmits, since fishing is receiving.

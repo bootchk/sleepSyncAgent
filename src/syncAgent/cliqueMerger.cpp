@@ -10,11 +10,10 @@ DeltaTime CliqueMerger::offsetToMergee;
 SystemID CliqueMerger::masterID;
 Clique* CliqueMerger::owningClique;
 
-// Alternative: multiple notifies
+// FUTURE: multiple notifies
 //int CliqueMerger::notifyCountdown;
 
 
-// TODO adjust, end merger
 
 void CliqueMerger::initFromMsg(Message msg){
 	/*
@@ -23,12 +22,10 @@ void CliqueMerger::initFromMsg(Message msg){
 	 * Save design so later, at endSyncSlot, we can schedule any mergeSlot.
 	 */
 
-	if (owningClique->isOtherCliqueBetter(msg.masterID)){
-			mergeMyClique(msg);
-	}
-	else{
-			mergeOtherClique(msg);
-	}
+	if (owningClique->isOtherCliqueBetter(msg.masterID))
+		mergeMyClique(msg);
+	else
+		mergeOtherClique(msg);
 }
 
 

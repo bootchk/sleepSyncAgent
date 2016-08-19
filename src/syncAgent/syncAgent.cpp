@@ -5,9 +5,9 @@
 
 
 // Static data members
-bool SyncAgent::isSynching = false;
+bool SyncAgent::isPaused = false;
 PowerManager* SyncAgent::powerMgr;
-void (*SyncAgent::onSyncLostCallback)();
+void (*SyncAgent::onSyncingPausedCallback)();
 void (*SyncAgent::onWorkMsgCallback)(Message msg);
 
 Clique SyncAgent::clique;
@@ -21,11 +21,11 @@ Message SyncAgent::msg;
 
 SyncAgent::SyncAgent(
 		PowerManager* aPowerMgr,
-		void (*aOnSyncLostCallback)(),
+		void (*aOnSyncingPausedCallback)(),
 		void (*aOnWorkMsgCallback)(Message msg)
 	) {
 	powerMgr = aPowerMgr;
-	onSyncLostCallback = aOnSyncLostCallback;
+	onSyncingPausedCallback = aOnSyncingPausedCallback;
 	onWorkMsgCallback = aOnWorkMsgCallback;
 
 	// ensure initial state of SyncAgent
@@ -35,20 +35,21 @@ SyncAgent::SyncAgent(
 }
 
 void SyncAgent::startSyncing() {
-	// TODO don't use this flag; state is in the clique
-	assert(! isSynching);
+
+	assert(! isPaused);
 	// Assert never had sync, or lost sync
 
 	// Alternative: try recovering lost sync
 	// Here, brute force: start my own clique
 
 	clique.reset();
-	// self is master of clique with no slaves
+	assert(clique.isSelfMaster());
+	// clique schedule starts now, at time of this call.
+	// clique is not in sync with others, except by chance.
 
 	scheduleSyncWake();
 
-	// ensure app scheduled onSyncWakeTask ow sleep forever
-	// calling app should sleep, self will wake
+	// calling app can sleep, wake event onSynchWake()
 }
 
 void SyncAgent::resumeAfterPowerRestored() {
@@ -57,6 +58,8 @@ void SyncAgent::resumeAfterPowerRestored() {
 	 * If little time has passed since lost power, might still be in sync.
 	 * Otherwise self has drifted, and will experience masterDropout.
 	 */
+	assert(isPaused);
+	isPaused = false;
 	clique.schedule.resumeAfterPowerRestored();
 	scheduleSyncWake();
 }

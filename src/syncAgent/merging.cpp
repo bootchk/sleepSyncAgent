@@ -25,6 +25,8 @@ void SyncAgent::toMergerRole(Message msg){
 
 void SyncAgent::onMergeWake() {
 	/*
+	 * xmit mergeSync
+	 *
 	 * Not aligned with my slots, aligned with mergee slots.
 	 */
 	assert(cliqueMerger.isActive);
@@ -45,13 +47,14 @@ void SyncAgent::onMergeWake() {
 	*/
 
 	// For now, only send one MergeSync per session of merger role
-	completeMergerRole();
+	endMergerRole();
 	assert(!cliqueMerger.isActive);
+	assert(role.isFisher());
 	scheduleSyncWake();
 	// sleep
 }
 
-void SyncAgent::completeMergerRole(){
+void SyncAgent::endMergerRole(){
 	role.setFisher();
 	// role does not know about cliqueMerger
 	cliqueMerger.isActive = false;

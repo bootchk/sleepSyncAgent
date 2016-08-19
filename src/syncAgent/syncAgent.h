@@ -15,7 +15,7 @@ class SyncAgent {
 public:
 	SyncAgent(
 			PowerManager* powerMgr,
-			void (*onSyncLostCallback)(),
+			void (*onSyncingPausedCallback)(),
 			void (*onWorkMsgCallback)(Message msg)
 			);
 	
@@ -25,12 +25,14 @@ public:
 	 * SyncAgent monitors power and tells app onSyncLostCallback.
 	 * App continues with mcu in low power, radio not on.
 	 * When power is restored, app calls SyncAgent.resume()
+	 *
+	 * Proper sequence:  POR, startSynching, onSyncingPausedCallback, resumeSyncing, onSyncingPausedCallback, resumeSyncing,...
 	 */
 	static void startSyncing();
 	static void resumeAfterPowerRestored();
 
 private:	// data members
-	static bool isSynching;
+	static bool isPaused;	// state
 
 	// has-a, all singletons
 	static Clique clique;
@@ -41,7 +43,7 @@ private:	// data members
 
 	// uses
 	static PowerManager* powerMgr;	// owned by app
-	static void (*onSyncLostCallback)();	// callback to app
+	static void (*onSyncingPausedCallback)();	// callback to app
 	static void (*onWorkMsgCallback)(Message msg);	// callback to app
 
 private: // methods
@@ -79,7 +81,8 @@ private: // methods
 
 
 	static bool isBetterSync(Message msg);
-	static void loseSync();
+	static void pauseSyncing();
+	static void doDyingBreath();
 	static void doSyncSlot();
 
 	// transmissions
@@ -96,7 +99,7 @@ private: // methods
 
 	// merge
 	static void toMergerRole(Message msg);
-	static void completeMergerRole();
+	static void endMergerRole();
 
 	// abandon
 	static void tryAssumeMastership(Message msg);

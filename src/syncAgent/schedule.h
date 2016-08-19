@@ -54,13 +54,32 @@ class Schedule {
 private:
 	static LongClock longClock;
 
-	static LongTime startTimeOfPeriod;		// TODO: updated every period
+	static LongTime startTimeOfPeriod;		// updated every period
 	static LongTime startTimeOfFishSlot;	// initialized when fish slot starts
 
-	// !!! Parameters of schedule
-	static const ScheduleCount CountSlots = 20;
+	/*
+	 * !!! Parameters of schedule
+	 * Other params of algorithm at DropoutMonitor.h
+	 *
+	 *
+	 * Duty cycle is 1% == 1/DutyCycleInverse
+	 */
+	static const int           DutyCycleInverse = 100;
+
+	/*
+	 * OSClock freq is 32khz, tick is 0.03ms
+	 * SlotDuration should be at least long enough for one message.
+	 * e.g. if Bluetooth, one message is 1msec
+	 */
+	static const DeltaTime     SlotDuration = 300;	// ~ 10msec
+
+	// Fixed by algorithm design
 	static const ScheduleCount FirstSleepingSlotOrdinal = 3;  // Sync, Work, Sleep, ...
-	static const DeltaTime SlotDuration = 100;
+
+	// Derived.  Average of 3 slots radio on (Sync, Work, Fish)
+	static const ScheduleCount CountSlots = 3*DutyCycleInverse;
+
+
 
 public:
 	// Start schedule (long duration sequence of periods)
