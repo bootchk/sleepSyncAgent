@@ -15,7 +15,7 @@ Clique* CliqueMerger::owningClique;
 
 
 
-void CliqueMerger::initFromMsg(Message msg){
+void CliqueMerger::initFromMsg(SyncMessage msg){
 	/*
 	 * assert msg is sync heard in a fishing slot.
 	 * Responsibility: know design.
@@ -30,7 +30,7 @@ void CliqueMerger::initFromMsg(Message msg){
 
 
 
-void CliqueMerger::mergeMyClique(Message msg){
+void CliqueMerger::mergeMyClique(SyncMessage msg){
 	/*
 	 * Arrange state to start sending sync to my clique telling members to merge to other.
 	 *
@@ -55,7 +55,7 @@ void CliqueMerger::mergeMyClique(Message msg){
 }
 
 
-void CliqueMerger::mergeOtherClique(Message msg){
+void CliqueMerger::mergeOtherClique(SyncMessage msg){
 	/*
 	 * Start sending sync to other clique telling members to merge to self's clique.
 	 * Self keeps current schedule.
@@ -73,7 +73,7 @@ void CliqueMerger::mergeOtherClique(Message msg){
 }
 
 
-void CliqueMerger::adjustBySyncMsg(Message msg) {
+void CliqueMerger::adjustBySyncMsg(SyncMessage msg) {
 	/*
 	 * This unit isMerger but heard a sync message in syncSlot that adjusts schedule.
 	 * Make similar adjustment to this CliqueMerger, so that any MergeSync sent is at the correct time.
@@ -124,7 +124,7 @@ bool CliqueMerger::checkCompletionOfMergerRole() {
 */
 
 
-void CliqueMerger::makeMergeSync(Message& msg){
-	msg.init(MergeSync, offsetToMergee, masterID);
+void CliqueMerger::makeMergeSync(SyncMessage& msg){
+	msg.makeMergeSync(offsetToMergee, masterID);
 }
 

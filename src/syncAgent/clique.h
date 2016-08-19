@@ -19,6 +19,6 @@ public:
 	static void reset();
 	static bool isSelfMaster();
 	static void onMasterDropout();
-	static void initFromSyncMsg(Message msg);
+	static void initFromSyncMsg(SyncMessage msg);
 	static bool isOtherCliqueBetter(SystemID otherMasterID);
 };

@@ -87,7 +87,7 @@ public:
 	void resumeAfterPowerRestored();
 
 	void startPeriod();
-	void adjustBySyncMsg(Message msg);
+	void adjustBySyncMsg(SyncMessage msg);
 
 	// Scheduling slots tasks
 

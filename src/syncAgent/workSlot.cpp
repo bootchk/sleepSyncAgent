@@ -15,7 +15,6 @@ void SyncAgent::startWorkSlot() {
 	xmitAproposWork();
 	turnReceiverOnWithCallback(onMsgReceivedInWorkSlot);
 	clique.schedule.scheduleEndWorkSlotTask(onWorkSlotEnd);
-	// TODO are other tasks also scheduled?
 }
 
 
@@ -24,13 +23,13 @@ void SyncAgent::xmitAproposWork() {
 
 	// Other units might be contending
 	if ( isQueuedWorkMsg() ) {
-		msg.makeWork();
-		xmit(msg);
+		workMsg.make();
+		xmit(workMsg);
 	}
 }
 
 
-void SyncAgent::onMsgReceivedInWorkSlot(Message msg){
+void SyncAgent::onMsgReceivedInWorkSlot(SyncMessage msg){
 	switch(msg.type) {
 		case Sync:
 			/* Unusual: Another clique's sync slot at same time as my work slot.
@@ -65,12 +64,12 @@ void SyncAgent::onWorkSlotEnd(){
 }
 
 
-void SyncAgent::doWorkMsgInWorkSlot(Message msg) {
+void SyncAgent::doWorkMsgInWorkSlot(SyncMessage msg) {
 	relayWorkToApp(msg);
 }
 
 
-void SyncAgent::relayWorkToApp(Message msg) {
+void SyncAgent::relayWorkToApp(SyncMessage msg) {
 	onWorkMsgCallback(msg);
 }
 

@@ -50,7 +50,7 @@ void Schedule::startPeriod() {
 
 
 // Crux
-void Schedule::adjustBySyncMsg(Message msg) {
+void Schedule::adjustBySyncMsg(SyncMessage msg) {
 	/*
 	 * A sync message adjusts start of period forward by an offset
 	 *

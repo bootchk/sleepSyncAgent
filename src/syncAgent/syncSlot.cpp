@@ -51,7 +51,7 @@ void SyncAgent::pauseSyncing() {
 
 	isPaused = true;
 
-	// TODO if clique is probably not empty
+	// FUTURE if clique is probably not empty
 	if (clique.isSelfMaster()) doDyingBreath();
 	// else I am a slave, just drop out of clique
 
@@ -138,7 +138,7 @@ void SyncAgent::xmitRoleAproposSync() {
 }
 
 
-void SyncAgent::onMsgReceivedInSyncSlot(Message msg) {
+void SyncAgent::onMsgReceivedInSyncSlot(SyncMessage msg) {
 	switch(msg.type) {
 	case Sync:
 		doSyncMsgInSyncSlot(msg);
@@ -177,7 +177,7 @@ void SyncAgent::onSyncSlotEnd() {
 	// sleep
 }
 
-// Message handlers for messages received in sync slot
+// SyncMessage handlers for messages received in sync slot
 
 /*
  * Cases for sync messages:
@@ -191,7 +191,7 @@ void SyncAgent::onSyncSlotEnd() {
  * Cannot assert self is slave
  * Cannot assert msg.masterID equals clique.masterID
  */
-void SyncAgent::doSyncMsgInSyncSlot(Message msg){
+void SyncAgent::doSyncMsgInSyncSlot(SyncMessage msg){
 	// Cannot receive sync from self (xmitter and receiver are exclusive)
 
 	if (isBetterSync(msg)) {
@@ -213,7 +213,7 @@ void SyncAgent::doSyncMsgInSyncSlot(Message msg){
 	}
 }
 
-bool SyncAgent::isBetterSync(Message msg){
+bool SyncAgent::isBetterSync(SyncMessage msg){
 	bool result = clique.isOtherCliqueBetter(msg.masterID);
 
 	// Debug unusual, transient conditions
@@ -238,12 +238,12 @@ bool SyncAgent::isBetterSync(Message msg){
 	return result;
 }
 
-void SyncAgent::doAbandonMastershipMsgInSyncSlot(Message msg){
+void SyncAgent::doAbandonMastershipMsgInSyncSlot(SyncMessage msg){
 	// Master of my clique is abandoning
 	tryAssumeMastership(msg);
 }
 
-void SyncAgent::tryAssumeMastership(Message msg){
+void SyncAgent::tryAssumeMastership(SyncMessage msg){
 	/*
 	 * My clique is still in sync, but master is dropout.
 	 *
@@ -255,7 +255,7 @@ void SyncAgent::tryAssumeMastership(Message msg){
 }
 
 
-void SyncAgent::doWorkMsgInSyncSlot(Message msg){
+void SyncAgent::doWorkMsgInSyncSlot(SyncMessage msg){
 	// Received in wrong slot, from out-of-sync clique
 	/*
 	 * Design decision: if work should only be done in sync with others, change this to ignore the msg.

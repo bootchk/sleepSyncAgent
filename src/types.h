@@ -3,7 +3,7 @@
  * Fundamental types, some must match os and radio
  */
 
-// TODO make these match os
+// TODO OS wrapper
 
 /*
  * MAC id of radio, unique system/unit identifier.

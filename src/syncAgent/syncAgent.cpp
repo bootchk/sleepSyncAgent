@@ -8,13 +8,14 @@
 bool SyncAgent::isPaused = false;
 PowerManager* SyncAgent::powerMgr;
 void (*SyncAgent::onSyncingPausedCallback)();
-void (*SyncAgent::onWorkMsgCallback)(Message msg);
+void (*SyncAgent::onWorkMsgCallback)(SyncMessage msg);
 
 Clique SyncAgent::clique;
 DropoutMonitor SyncAgent::dropoutMonitor;
 CliqueMerger SyncAgent::cliqueMerger;
 Role SyncAgent::role;
-Message SyncAgent::msg;
+SyncMessage SyncAgent::msg;
+WorkMessage SyncAgent::workMsg;
 
 
 
@@ -22,7 +23,7 @@ Message SyncAgent::msg;
 SyncAgent::SyncAgent(
 		PowerManager* aPowerMgr,
 		void (*aOnSyncingPausedCallback)(),
-		void (*aOnWorkMsgCallback)(Message msg)
+		void (*aOnWorkMsgCallback)(SyncMessage msg)
 	) {
 	powerMgr = aPowerMgr;
 	onSyncingPausedCallback = aOnSyncingPausedCallback;

@@ -8,7 +8,7 @@
 #include "syncAgent.h"
 
 
-void SyncAgent::toMergerRole(Message msg){
+void SyncAgent::toMergerRole(SyncMessage msg){
 	// assert msg is masterSync msg received in fishSlot
 	assert( !cliqueMerger.isActive);
 	assert(role.isFisher());

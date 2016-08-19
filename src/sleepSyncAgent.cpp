@@ -1,28 +1,19 @@
-//============================================================================
-// Name        : sleepSyncAgent.cpp
-// Author      : lloyd konneker
-// Version     :
-// Copyright   : 2016
-// Description : 
-//============================================================================
 
-// #include <iostream>
-// using namespace std;
-//#include "app.h"
+// Copyright   : 2016, lloyd konneker
+
 #include "powerManager.h"
 #include "syncAgent/syncAgent.h"
 #include "syncAgent/message.h"
 
 
 // Callbacks from SyncAgent
+
 void onSyncLost() {
 	// SyncAgent determined power inadequate to continue sync.
 	// TODO schedule a wakeTask to monitor power
 }
 
-
-
-void onWorkMsg(Message msg) {
+void onWorkMsg(SyncMessage msg) {
 	// SyncAgent received work msg.
 	// TODO schedule low priority task to do work
 	// realtime constrained

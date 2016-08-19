@@ -17,7 +17,7 @@ void SyncAgent::onFishWake() {
 
 
 
-void SyncAgent::onMsgReceivedInFishSlot(Message msg){
+void SyncAgent::onMsgReceivedInFishSlot(SyncMessage msg){
 	switch(msg.type) {
 		case Sync:
 			/*
@@ -71,7 +71,7 @@ void SyncAgent::onFishSlotEnd(){
 }
 
 
-void SyncAgent::doSyncMsgInFishSlot(Message msg){
+void SyncAgent::doSyncMsgInFishSlot(SyncMessage msg){
 	// heard a sync in a fishing slot
 	if (msg.isOffsetSync()) {
 		// Ignore: other clique is already merging
@@ -86,7 +86,7 @@ void SyncAgent::doSyncMsgInFishSlot(Message msg){
 
 /*
  * TODO we might as well act on it even though we are out of sync
-void SyncAgent::doWorkMsgInFishSlot(Message msg) {
+void SyncAgent::doWorkMsgInFishSlot(SyncMessage msg) {
 	// Relay to app
 	onWorkMsgCallback(msg);
 }
