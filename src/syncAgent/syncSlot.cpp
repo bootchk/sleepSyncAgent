@@ -32,7 +32,7 @@ void SyncAgent::onSyncWake() {
 		// assert App has a scheduled event; SyncAgent has no events scheduled
 	}
 	else {
-		doSyncSlot();
+		startSyncSlot();
 		// assert receiver on and endSyncSlotTask is scheduled
 	}
 
@@ -62,7 +62,7 @@ void SyncAgent::pauseSyncing() {
 }
 
 void SyncAgent::doDyingBreath() {
-	// Ask another unit in my clique to assume mastership
+	// Ask another unit in my clique to assume mastership.
 	// Might not be heard.
 	msg.makeAbandonMastership(myID());
 	xmit(msg);
@@ -112,8 +112,8 @@ void SyncAgent::scheduleMergeWake(){
 }
 
 
-void SyncAgent::doSyncSlot() {
-	// Start of sync slot is start of period.
+void SyncAgent::startSyncSlot() {
+	// Start of sync slot coincident with start of period.
 	clique.schedule.startPeriod();
 
 	xmitRoleAproposSync();

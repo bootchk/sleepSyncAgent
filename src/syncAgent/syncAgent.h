@@ -31,7 +31,10 @@ public:
 	static void startSyncing();
 	static void resumeAfterPowerRestored();
 
-private:	// data members
+private:
+	static void loop();
+
+// data members
 	static bool isPaused;	// state
 
 	// has-a, all singletons
@@ -47,7 +50,7 @@ private:	// data members
 	static void (*onSyncingPausedCallback)();	// callback to app
 	static void (*onWorkMsgCallback)(SyncMessage msg);	// callback to app
 
-private: // methods
+// methods
 
 	// callbacks for scheduled tasks
 
@@ -84,7 +87,7 @@ private: // methods
 	static bool isBetterSync(SyncMessage msg);
 	static void pauseSyncing();
 	static void doDyingBreath();
-	static void doSyncSlot();
+	static void startSyncSlot();
 
 	// transmissions
 	// Depending on OS, might be asynchronous (no waiting)
