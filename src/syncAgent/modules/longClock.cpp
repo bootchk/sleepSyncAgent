@@ -1,5 +1,4 @@
 
-#include "../platform/os.h"
 #include "longClock.h"
 
 
@@ -10,7 +9,7 @@ uint32_t LongClock::previousOSClockTicks;	// least significant
 
 
 void LongClock::reset(){
-	mostSignificantBits = 0;
+	mostSignificantBits = 0;	// aka epoch
 	previousOSClockTicks = OSClockTicks();
 	// assert nowTime() < max 32-bit int, but not zero.
 }

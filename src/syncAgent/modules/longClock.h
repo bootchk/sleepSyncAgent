@@ -1,5 +1,5 @@
 #include <inttypes.h>
-#include "../platform/os.h"
+#include "../../platform/os.h"	// Depends on 32-bit OSClock
 
 /*
 64-bit clock with resolution same as os kernel clock (typically mSec.)
@@ -18,8 +18,14 @@ When it wraps, increment MSB.
 Instead, every call to nowTime() we check for OSClock wrap.
 */
 
+
+
 // long time with same, high resolution as OSClock
 typedef uint64_t LongTime;
+
+// time that os accepts for scheduling
+typedef uint32_t DeltaTime;
+
 
 
 

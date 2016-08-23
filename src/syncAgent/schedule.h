@@ -3,10 +3,9 @@
 
 
 #include "message.h"
-#include "longClock.h"
+#include "modules/longClock.h"
 
-// time that os accepts for scheduling
-typedef uint32_t DeltaTime;
+
 
 
 /*
@@ -57,13 +56,15 @@ private:
 	static LongTime startTimeOfPeriod;		// updated every period
 	static LongTime startTimeOfFishSlot;	// initialized when fish slot starts
 
+
+
 	/*
 	 * !!! Parameters of schedule
 	 * Other params of algorithm at DropoutMonitor.h
-	 *
-	 *
-	 * Duty cycle is 1% == 1/DutyCycleInverse
 	 */
+
+	// Duty cycle is 1% == 1/DutyCycleInverse
+	//  i.e. we sleep about 99% of time
 	static const int           DutyCycleInverse = 100;
 
 	/*
@@ -76,8 +77,13 @@ private:
 	// Fixed by algorithm design
 	static const ScheduleCount FirstSleepingSlotOrdinal = 3;  // Sync, Work, Sleep, ...
 
-	// Derived.  Average of 3 slots radio on (Sync, Work, Fish)
+	/*
+	 * If a period was really slotted, how many slots would it have.
+	 * Only used in PeriodDuration
+	 * Average of 3 slots radio on (Sync, Work, Fish)
+	 */
 	static const ScheduleCount CountSlots = 3*DutyCycleInverse;
+	static const DeltaTime PeriodDuration = CountSlots * SlotDuration;
 
 
 // static member funcs

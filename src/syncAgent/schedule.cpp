@@ -126,12 +126,21 @@ DeltaTime  Schedule::deltaStartThisSyncToNow() { return clampedTimeDifference(lo
 
 
 /*
- * Uint math is modulo: these are correct as long as OSClock has not wrapped twice since called previously.
+ * Uint32 math is modulo: a delta is correct if laterTime > earlierTime
+ * (even if the uint32 clock has wrapped).
+ * But is incorrect if earlierTime > laterTime.
+ * So if you are calculating a timeout to a future deadline time,
+ * and the deadline is already
+ * blah blah, its hard to explain
+ * TODO
+ *
+ * Anyway we use a LongClock to avoid the issue.
+ *
+ * All these involve a conversion to OSTime i.e. take lower 32 bits of result.
+ *
  */
 OSTime Schedule::timeTilThisSyncSlotEnd(){
-
-	// TODO
-	return 1; //timeOfThisSyncSlotEnd() - OSClockTicks();
+	return 1; // TODO return clampedTimeDifferenceFromNow(timeOfThisSyncSlotEnd());
 }
 
 // Times
@@ -143,7 +152,7 @@ OSTime Schedule::timeTilThisSyncSlotEnd(){
  */
 
 
-LongTime Schedule::startTimeOfNextPeriod() { return startTimeOfPeriod + CountSlots * SlotDuration; }
+LongTime Schedule::startTimeOfNextPeriod() { return startTimeOfPeriod + PeriodDuration; }
 
 LongTime Schedule::timeOfThisSyncSlotEnd() { return startTimeOfPeriod + SlotDuration; }
 LongTime Schedule::timeOfThisWorkSlotEnd() { return startTimeOfPeriod + 2 * SlotDuration; }
@@ -161,6 +170,7 @@ DeltaTime Schedule::clampedTimeDifference(LongTime laterTime, LongTime earlierTi
 	if (earlierTime > laterTime) result = 0;
 	else result = laterTime - earlierTime;	// !!! Coerce to 32-bit
 	assert(result >= 0);
+	assert(result < 3 * PeriodDuration);	// Sanity, app does not schedule far in the future.
 	return result;
 }
 
