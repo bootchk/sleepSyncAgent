@@ -1,11 +1,8 @@
 
 #pragma once
 
-
 #include "message.h"
 #include "modules/longClock.h"
-
-
 
 
 /*
@@ -89,38 +86,38 @@ private:
 // static member funcs
 public:
 	// Start schedule (long duration sequence of periods)
-	void startFreshAfterHWReset();
-	void resumeAfterPowerRestored();
+	static void startFreshAfterHWReset();
+	static void resumeAfterPowerRestored();
 
-	void startPeriod();
-	void adjustBySyncMsg(SyncMessage* msg);
+	static void startPeriod();
+	static void adjustBySyncMsg(SyncMessage* msg);
 
 	// Scheduling slots tasks
 
-	void scheduleStartSyncSlotTask(void callback());
-	void scheduleEndSyncSlotTask(void callback());
+	static void scheduleStartSyncSlotTask(void callback());
+	static void scheduleEndSyncSlotTask(void callback());
 
 	// Work slot follows sync without start callback
-	void scheduleEndWorkSlotTask(void callback());
+	static void scheduleEndWorkSlotTask(void callback());
 
-	void scheduleStartFishSlotTask(void callback());
-	void scheduleEndFishSlotTask(void callback());
+	static void scheduleStartFishSlotTask(void callback());
+	static void scheduleEndFishSlotTask(void callback());
 
-	void scheduleStartMergeSlotTask(void callback(), DeltaTime offset);
+	static void scheduleStartMergeSlotTask(void callback(), DeltaTime offset);
 	// Merge slot ends w/o event, next event is startSyncSlot
 
 	// nowTime is not aligned with slot starts.  Result need not be multiple of slotDuration.
 	// Used by CliqueMerger()
-	DeltaTime  deltaNowToStartNextSync();
-	DeltaTime  deltaStartThisSyncToNow();
+	static DeltaTime  deltaNowToStartNextSync();
+	static DeltaTime  deltaStartThisSyncToNow();
 
 
 	static OSTime timeTilThisSyncSlotEnd();
 
 	// Times
-	LongTime startTimeOfNextPeriod();
-	LongTime timeOfThisSyncSlotEnd();	// Of this period
-	LongTime timeOfThisWorkSlotEnd();
-	LongTime timeOfNextSyncSlotStart();	// Of next period.
+	static LongTime startTimeOfNextPeriod();
+	static LongTime timeOfThisSyncSlotEnd();	// Of this period
+	static LongTime timeOfThisWorkSlotEnd();
+	static LongTime timeOfNextSyncSlotStart();	// Of next period.
 
 };

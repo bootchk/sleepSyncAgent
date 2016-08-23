@@ -140,7 +140,7 @@ DeltaTime  Schedule::deltaStartThisSyncToNow() { return longClock.clampedTimeDif
  *
  */
 OSTime Schedule::timeTilThisSyncSlotEnd(){
-	return 1; // TODO return clampedTimeDifferenceFromNow(timeOfThisSyncSlotEnd());
+	return longClock.clampedTimeDifferenceFromNow(timeOfThisSyncSlotEnd());
 }
 
 // Times
