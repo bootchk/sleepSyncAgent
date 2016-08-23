@@ -63,8 +63,8 @@ void SyncAgent::pauseSyncing() {
 void SyncAgent::doDyingBreath() {
 	// Ask another unit in my clique to assume mastership.
 	// Might not be heard.
-	msg.makeAbandonMastership(myID());
-	xmit(msg);
+	outwardSyncMsg.makeAbandonMastership(myID());
+	xmit(&outwardSyncMsg);
 }
 
 // Scheduling
@@ -118,7 +118,7 @@ void SyncAgent::startSyncSlot() {
 	xmitRoleAproposSync();
 
 	// even a Master listens for remainder of sync slot
-	turnReceiverOnWithCallback(onMsgReceivedInSyncSlot);
+	turnReceiverOn();	// turnReceiverOnWithCallback(onMsgReceivedInSyncSlot);
 }
 
 /*OBS
@@ -142,27 +142,11 @@ void SyncAgent::xmitRoleAproposSync() {
 
 	// Only master xmits FROM its sync slot.
 	if ( clique.isSelfMaster() && clique.masterXmitSyncPolicy.shouldXmitSync() ) {
-		msg.makeSync(myID());
-		xmit(msg);
+		outwardSyncMsg.makeSync(myID());
+		xmit(&outwardSyncMsg);
 	}
 }
 
-
-void SyncAgent::onMsgReceivedInSyncSlot(SyncMessage msg) {
-	switch(msg.type) {
-	case Sync:
-		doSyncMsgInSyncSlot(msg);
-		break;
-	case AbandonMastership:
-		doAbandonMastershipMsgInSyncSlot(msg);
-		break;
-	case Work:
-		doWorkMsgInSyncSlot(msg);
-		break;
-	default:
-		break;
-	}
-}
 
 void SyncAgent::endSyncSlot() {
 	/*
@@ -223,11 +207,11 @@ void SyncAgent::onSyncSlotEnd() {
  * Cannot assert self is slave
  * Cannot assert msg.masterID equals clique.masterID
  */
-void SyncAgent::doSyncMsgInSyncSlot(SyncMessage msg){
+void SyncAgent::doSyncMsgInSyncSlot(SyncMessage* msg){
 	// Cannot receive sync from self (xmitter and receiver are exclusive)
 
 	if (isBetterSync(msg)) {
-		clique.masterID = msg.masterID;
+		clique.masterID = msg->masterID;
 		// I might not be master anymore
 
 		// Regardless who sent sync: is a valid heartbeat, I am synchronized
@@ -245,8 +229,8 @@ void SyncAgent::doSyncMsgInSyncSlot(SyncMessage msg){
 	}
 }
 
-bool SyncAgent::isBetterSync(SyncMessage msg){
-	bool result = clique.isOtherCliqueBetter(msg.masterID);
+bool SyncAgent::isBetterSync(SyncMessage* msg){
+	bool result = clique.isOtherCliqueBetter(msg->masterID);
 
 	// Debug unusual, transient conditions
 	if (!result){
@@ -270,12 +254,12 @@ bool SyncAgent::isBetterSync(SyncMessage msg){
 	return result;
 }
 
-void SyncAgent::doAbandonMastershipMsgInSyncSlot(SyncMessage msg){
+void SyncAgent::doAbandonMastershipMsgInSyncSlot(SyncMessage* msg){
 	// Master of my clique is abandoning
 	tryAssumeMastership(msg);
 }
 
-void SyncAgent::tryAssumeMastership(SyncMessage msg){
+void SyncAgent::tryAssumeMastership(SyncMessage* msg){
 	/*
 	 * My clique is still in sync, but master is dropout.
 	 *
@@ -287,7 +271,7 @@ void SyncAgent::tryAssumeMastership(SyncMessage msg){
 }
 
 
-void SyncAgent::doWorkMsgInSyncSlot(SyncMessage msg){
+void SyncAgent::doWorkMsgInSyncSlot(WorkMessage* msg){
 	// Received in wrong slot, from out-of-sync clique
 	/*
 	 * Design decision: if work should only be done in sync with others, change this to ignore the msg.

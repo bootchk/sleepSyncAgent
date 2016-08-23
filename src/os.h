@@ -13,14 +13,6 @@
  * Convention: any method named "onFoo" is a task.  The system sleeps after the method end.
  */
 
-
-typedef uint32_t OSTime;
-
-static OSTime OSClockTicks() { return 1; }
-
-
-static bool isQueuedWorkMsg(){ return true;}
-
 /*
  * !!!
  * type of 'time' parameter must be same as DeltaTime.
@@ -28,7 +20,15 @@ static bool isQueuedWorkMsg(){ return true;}
  * will (possibly without warning) convert with possible loss of data (typically lower 32-bits)
  * but only defined by the compiler implementation!!! not by the C standard.
  */
+typedef uint32_t OSTime;
+
+OSTime OSClockTicks();
+
+bool isQueuedWorkMsg();
+
+// TODO OBS
 static void scheduleTask(void callback(), uint32_t time ) {}
 
-void sleepUntilMsgOrTimeout();
+void sleepUntilMsgOrTimeout(OSTime);
 void sleepUntilTimeout();
+

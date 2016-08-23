@@ -30,10 +30,10 @@ void Clique::onMasterDropout() {
 	// FUTURE: history of masters
 }
 
-void Clique::initFromSyncMsg(SyncMessage msg){
-	assert(msg.type == Sync);	// require
-	assert(msg.masterID != myID());	// invariant: we can't hear our own sync
-	masterID = msg.masterID;
+void Clique::initFromSyncMsg(SyncMessage* msg){
+	assert(msg->type == Sync);	// require
+	assert(msg->masterID != myID());	// invariant: we can't hear our own sync
+	masterID = msg->masterID;
 }
 
 

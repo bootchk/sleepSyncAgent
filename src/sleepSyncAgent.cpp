@@ -14,7 +14,7 @@ void onSyncLost() {
 }
 */
 
-void onWorkMsg(SyncMessage msg) {
+void onWorkMsg(WorkMessage* msg) {
 	// SyncAgent received work msg.
 	// TODO schedule low priority task to do work
 	// realtime constrained

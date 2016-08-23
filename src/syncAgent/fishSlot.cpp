@@ -11,40 +11,7 @@
 
 
 void SyncAgent::startFishSlot() {
-	turnReceiverOnWithCallback(onMsgReceivedInFishSlot);
-}
-
-
-
-void SyncAgent::onMsgReceivedInFishSlot(SyncMessage msg){
-	switch(msg.type) {
-		case Sync:
-			/*
-			 * Intended catch: another clique's sync slot.
-			 */
-			doSyncMsgInFishSlot(msg);
-			// Self can't handle more than one, or slot is busy with another merge
-			turnReceiverOff();
-			break;
-		case AbandonMastership:
-			/*
-			 * Unintended catch: Another clique's master is abandoning (exhausted power)
-			 * For now ignore. Should catch clique again later, after another member assumes mastership.
-			 */
-			break;
-		case Work:
-			/*
-			 * Unintended catch: Another clique's work slot.
-			 * For now ignore. Should catch clique again later, when we fish earlier, at it's syncSlot.
-			 * Alternative: since work slot follows syncSlot, could calculate syncSlot of catch, and merge it.
-			 * Alternative: if work can be done when out of sync, do work.
-			 */
-			break;
-		default:
-			break;
-	}
-	// assert endFishSlot is scheduled
-	// sleep
+	turnReceiverOn();	// OBS WithCallback(onMsgReceivedInFishSlot);
 }
 
 
@@ -65,9 +32,8 @@ void SyncAgent::endFishSlot(){
 }
 
 
-void SyncAgent::doSyncMsgInFishSlot(SyncMessage msg){
-	// heard a sync in a fishing slot
-	if (msg.isOffsetSync()) {
+void SyncAgent::doSyncMsgInFishSlot(SyncMessage* msg){
+	if (msg->isOffsetSync()) {
 		// Ignore: other clique is already merging
 	}
 	else {

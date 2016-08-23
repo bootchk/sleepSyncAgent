@@ -15,7 +15,7 @@ class SyncAgent {
 public:
 	SyncAgent(
 			PowerManager* powerMgr,
-			void (*onWorkMsgCallback)(SyncMessage msg)
+			void (*onWorkMsgCallback)(WorkMessage* msg)
 			);
 	static void loop();
 	
@@ -44,19 +44,21 @@ private:
 	static DropoutMonitor dropoutMonitor;
 	static CliqueMerger cliqueMerger;
 	static Role role;
-	static SyncMessage msg;	// Reused, only one message queued at a time
+	static SyncMessage outwardSyncMsg;	// Reused, only one message queued at a time // TODO dynamic?
 	static WorkMessage workMsg;	// Many may be queued??
 
 	// uses
 	static PowerManager* powerMgr;	// owned by app
 	static void (*onSyncingPausedCallback)();	// callback to app
-	static void (*onWorkMsgCallback)(SyncMessage msg);	// callback to app
+	static void (*onWorkMsgCallback)(WorkMessage* msg);	// callback to app
 
 // methods
 
 	static void startSyncing();
 	static void doSyncPeriod();
-	static void dispatchMsgUntil();
+	static void dispatchMsgUntil(
+			bool (*dispatchQueuedMsg)(),
+			OSTime (*func)());
 
 	// start of slots
 	static void startSyncSlot();
@@ -70,11 +72,12 @@ private:
 	static void endFishSlot();
 	// Merge over without event, as soon as xmit
 
-	// callback for external event (varied time within slot)
-	static void onMsgReceivedInSyncSlot(SyncMessage msg);
-	static void onMsgReceivedInWorkSlot(SyncMessage msg);
-	static void onMsgReceivedInFishSlot(SyncMessage msg);
-	// Merge slot only xmits
+
+	// dispatch
+	static bool dispatchMsgReceivedInSyncSlot();
+	static bool dispatchMsgReceivedInWorkSlot();
+	static bool dispatchMsgReceivedInFishSlot();
+	// Merge slot only xmits, not receive messages
 
 
 	// scheduling
@@ -88,10 +91,10 @@ private:
 
 	// work
 	static void startWorkSlot();
-	static void relayWorkToApp(SyncMessage msg);
+	static void relayWorkToApp(WorkMessage* msg);
 
 
-	static bool isBetterSync(SyncMessage msg);
+	static bool isBetterSync(SyncMessage* msg);
 	static void pauseSyncing();
 	static void doDyingBreath();
 
@@ -101,16 +104,16 @@ private:
 	static void xmitAproposWork();
 
 	// msg handlers: messageType x slotType, with omissions
-	static void doSyncMsgInSyncSlot(SyncMessage msg);
-	static void doSyncMsgInFishSlot(SyncMessage msg);
-	static void doAbandonMastershipMsgInSyncSlot(SyncMessage msg);
-	static void doWorkMsgInSyncSlot(SyncMessage msg);
-	static void doWorkMsgInWorkSlot(SyncMessage msg);
+	static void doSyncMsgInSyncSlot(SyncMessage* msg);
+	static void doSyncMsgInFishSlot(SyncMessage* msg);
+	static void doAbandonMastershipMsgInSyncSlot(SyncMessage* msg);
+	static void doWorkMsgInSyncSlot(WorkMessage* msg);
+	static void doWorkMsgInWorkSlot(WorkMessage* msg);
 
 	// merge
-	static void toMergerRole(SyncMessage msg);
+	static void toMergerRole(SyncMessage* msg);
 	static void endMergerRole();
 
 	// abandon
-	static void tryAssumeMastership(SyncMessage msg);
+	static void tryAssumeMastership(SyncMessage* msg);
 };

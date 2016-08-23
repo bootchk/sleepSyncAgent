@@ -15,14 +15,14 @@ Clique* CliqueMerger::owningClique;
 
 
 
-void CliqueMerger::initFromMsg(SyncMessage msg){
+void CliqueMerger::initFromMsg(SyncMessage* msg){
 	/*
 	 * assert msg is sync heard in a fishing slot.
 	 * Responsibility: know design and possibly adjust my schedule
 	 * Save design so later, at endSyncSlot, we can schedule any mergeSlot.
 	 */
 
-	if (owningClique->isOtherCliqueBetter(msg.masterID))
+	if (owningClique->isOtherCliqueBetter(msg->masterID))
 		mergeMyClique(msg);
 	else
 		mergeOtherClique(msg);
@@ -31,7 +31,7 @@ void CliqueMerger::initFromMsg(SyncMessage msg){
 
 
 
-void CliqueMerger::mergeMyClique(SyncMessage msg){
+void CliqueMerger::mergeMyClique(SyncMessage* msg){
 	/*
 	 * Arrange state to start sending sync to my clique telling members to merge to other.
 	 *
@@ -52,11 +52,11 @@ void CliqueMerger::mergeMyClique(SyncMessage msg){
 	// after using current schedule above, can adjust to new schedule
 	owningClique->schedule.adjustBySyncMsg(msg);
 
-	masterID = msg.masterID;
+	masterID = msg->masterID;
 }
 
 
-void CliqueMerger::mergeOtherClique(SyncMessage msg){
+void CliqueMerger::mergeOtherClique(SyncMessage* msg){
 	/*
 	 * Start sending sync to other clique telling members to merge to self's clique.
 	 * Self keeps current schedule.
@@ -67,6 +67,7 @@ void CliqueMerger::mergeOtherClique(SyncMessage msg){
 	 *   |S |W |  |  | |M ||  |S |
 	 *   mergeSlot is not aligned with slots in schedule.
 	 */
+	// msg is unused ???
 	offsetToMergee = owningClique->schedule.deltaStartThisSyncToNow();
 	// Self fished and caught other clique, and I will send MergeSync (contending with current other master)
 	// but saying the new master is clique.masterID, not myID
@@ -74,14 +75,14 @@ void CliqueMerger::mergeOtherClique(SyncMessage msg){
 }
 
 
-void CliqueMerger::adjustBySyncMsg(SyncMessage msg) {
+void CliqueMerger::adjustBySyncMsg(SyncMessage* msg) {
 	/*
 	 * This unit isMerger but heard a sync message in syncSlot that adjusts schedule.
 	 * Make similar adjustment to this CliqueMerger, so that any MergeSync sent is at the correct time.
 	 *
 	 * My sync slot is moving later, merge time must move earlier in schedule to stay at same wall time.
 	 */
-	offsetToMergee -= msg.offset;
+	offsetToMergee -= msg->offset;
 	// TODO this is not right, result could be negative.  Need modulo.
 	// Also, if the mergeSlot now overlaps sync or work slot?
 }
@@ -125,7 +126,7 @@ bool CliqueMerger::checkCompletionOfMergerRole() {
 */
 
 
-void CliqueMerger::makeMergeSync(SyncMessage& msg){
-	msg.makeMergeSync(offsetToMergee, masterID);
+void CliqueMerger::makeMergeSync(SyncMessage* msg){
+	msg->makeMergeSync(offsetToMergee, masterID);
 }
 

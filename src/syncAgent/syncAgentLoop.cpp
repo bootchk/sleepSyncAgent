@@ -22,6 +22,7 @@ void SyncAgent::loop(){
 			doSyncPeriod();
 		}
 		else {
+			// sleep a sync period, then check power again.
 			if (isSyncing) {
 				pauseSyncing();
 			}
@@ -35,31 +36,44 @@ void SyncAgent::loop(){
  * Active sync period is structured sequence of slots, some varying
  */
 void SyncAgent::doSyncPeriod() {
+
 	startSyncSlot();
 	// radio on, listening for other's sync
-	dispatchMsgUntil();
-
+	dispatchMsgUntil(
+			dispatchMsgReceivedInSyncSlot,
+			clique.schedule.timeTilThisSyncSlotEnd);
 	//waitForMsgOrTimeout(timeToSyncSlotEnd);
 	endSyncSlot();
+
 	// work slot follows sync slot with no delay
 	startWorkSlot();
 	// radio on
 	//waitForMsgOrTimeout(timeToWorkSlotEnd);
-	dispatchMsgUntil();
+	dispatchMsgUntil(
+			dispatchMsgReceivedInSyncSlot,
+			clique.schedule.timeTilThisSyncSlotEnd);
 	endWorkSlot();
 
-	// Variation: next event if any is some varying time into a large sleeping time
+	// Variation: next event if any occurs within a large sleeping time (lots of 'slots')
 	if (role.isMerger()) {
-			// avoid collision
-			if (cliqueMerger.shouldScheduleMerge())  sleepUntilTimeout();	//scheduleMergeWake();
-			else sleepUntilTimeout(); // scheduleSyncWake(); }
+		// avoid collision
+		if (cliqueMerger.shouldScheduleMerge())  {
+
+			sleepUntilTimeout();	//scheduleMergeWake();
+			startMergeSlot();	// doMerge
+			// Merge is xmit only, no sleeping til end of slot
 		}
-		else {
-			sleepUntilTimeout(); // Fish every period       scheduleFishWake();
-			startFishSlot();
-			dispatchMsgUntil();
-			endFishSlot();
-		}
+		// else sleep until end of sync period
+	}
+	else {
+		// A fish slot need not be aligned with other slots, and different duration???
+		sleepUntilTimeout(); // Fish every period       scheduleFishWake();
+		startFishSlot();
+		dispatchMsgUntil(
+				dispatchMsgReceivedInSyncSlot,
+				clique.schedule.timeTilThisSyncSlotEnd);
+		endFishSlot();
+	}
 	//sleepTilNextSlot(nextSlotEnd);
 	// radio off
 	sleepUntilTimeout();

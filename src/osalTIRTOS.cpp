@@ -4,7 +4,15 @@
 #include "os.h"
 
 
-void sleepUntilMsgOrTimeout() {
+OSTime OSClockTicks() {
+	return 1;
+}
+
+bool isQueuedWorkMsg(){
+	return true;
+}
+
+void sleepUntilMsgOrTimeout(OSTime) {
 	/*
 	 * ICall_wait(timeout);
 	 */

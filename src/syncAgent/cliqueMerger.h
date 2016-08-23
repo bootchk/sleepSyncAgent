@@ -52,15 +52,15 @@ private:
 	//static int notifyCountdown;
 
 public:
-	static void initFromMsg(SyncMessage msg);
+	static void initFromMsg(SyncMessage* msg);
 
-	static void adjustBySyncMsg(SyncMessage msg);
+	static void adjustBySyncMsg(SyncMessage* msg);
 	static bool shouldScheduleMerge();
 	// FUTURE bool checkCompletionOfMergerRole();
 	//OBSOLETE static LongTime timeOfNextMergeWake();
-	static void makeMergeSync(SyncMessage& msg);
+	static void makeMergeSync(SyncMessage* msg);
 
 private:
-	static void mergeMyClique(SyncMessage msg);
-	static void mergeOtherClique(SyncMessage msg);
+	static void mergeMyClique(SyncMessage* msg);
+	static void mergeOtherClique(SyncMessage* msg);
 };

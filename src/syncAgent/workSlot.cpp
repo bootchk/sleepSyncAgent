@@ -13,7 +13,7 @@
 void SyncAgent::startWorkSlot() {
 	// assert still in task onEndSyncSlot
 	xmitAproposWork();
-	turnReceiverOnWithCallback(onMsgReceivedInWorkSlot);
+	turnReceiverOn();	// WithCallback(onMsgReceivedInWorkSlot);
 	// OBS clique.schedule.scheduleEndWorkSlotTask(onWorkSlotEnd);
 }
 
@@ -24,37 +24,12 @@ void SyncAgent::xmitAproposWork() {
 	// Other units might be contending
 	if ( isQueuedWorkMsg() ) {
 		workMsg.make();
-		xmit(workMsg);
+		xmit(&workMsg);
 	}
 }
 
 
-void SyncAgent::onMsgReceivedInWorkSlot(SyncMessage msg){
-	switch(msg.type) {
-		case Sync:
-			/* Unusual: Another clique's sync slot at same time as my work slot.
-			 * For now, ignore.  Assume fishing will find this other clique, or clocks drift.
-			 * Alternative: merge other clique from within former work slot?
-			 * doSyncMsgInWorkSlot(msg);
-			 */
-			break;
-		case AbandonMastership:
-			/*
-			 * Unusual: Another clique's sync slot at same time as my work slot.
-			 * For now ignore.  ??? doAbandonMastershipMsgInWorkSlot(msg);
-			 */
-			break;
-		case Work:
-			// Usual: work message in sync with my clique.
-			doWorkMsgInWorkSlot(msg);
-			break;
-		default:
-			break;
-	}
-	// assert radio on
-	// assert onWorkSlotEnd scheduled
-	// sleep
-}
+
 
 
 void SyncAgent::endWorkSlot(){
@@ -65,12 +40,12 @@ void SyncAgent::endWorkSlot(){
 }
 
 
-void SyncAgent::doWorkMsgInWorkSlot(SyncMessage msg) {
+void SyncAgent::doWorkMsgInWorkSlot(WorkMessage* msg) {
 	relayWorkToApp(msg);
 }
 
 
-void SyncAgent::relayWorkToApp(SyncMessage msg) {
+void SyncAgent::relayWorkToApp(WorkMessage* msg) {
 	onWorkMsgCallback(msg);
 }
 

@@ -6,9 +6,11 @@
 
 #include "syncAgent/message.h"
 
-//static void sleep() {}
-static void turnReceiverOnWithCallback(void callback(SyncMessage) ) {}
+static bool isReceiverOn() {return true; }
+//OBS static void turnReceiverOnWithCallback(void callback(SyncMessage) ) {}
+static void turnReceiverOn() {};
 static void turnReceiverOff() {}
-static void xmit(SyncMessage msg) {}
-static void xmit(WorkMessage msg) {}
+static void xmit(SyncMessage* msg) {}
+static void xmit(WorkMessage* msg) {}
 static SystemID myID() { return 1;}	// TI-RTOS see platform_  MAC of my radio
+static Message* unqueueMsg() {};

@@ -50,7 +50,7 @@ void Schedule::startPeriod() {
 
 
 // Crux
-void Schedule::adjustBySyncMsg(SyncMessage msg) {
+void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 	/*
 	 * A sync message adjusts start of period forward by an offset
 	 *
@@ -62,7 +62,7 @@ void Schedule::adjustBySyncMsg(SyncMessage msg) {
 
 	// assert not much time has elapsed since msg arrived.
 	// For more accuracy, we could timestamp msg arrival as early as possible.
-	startTimeOfPeriod = longClock.nowTime() + msg.offset;
+	startTimeOfPeriod = longClock.nowTime() + msg->offset;
 	// assert new startTimeOfPeriod < old startTimeOfPeriod + 2*period length
 	// i.e. new startTimeOfPeriod is within the old current period or in the period following
 	// ????
@@ -125,6 +125,14 @@ DeltaTime  Schedule::deltaNowToStartNextSync() { return clampedTimeDifferenceFro
 DeltaTime  Schedule::deltaStartThisSyncToNow() { return clampedTimeDifference(longClock.nowTime(), startTimeOfPeriod); }
 
 
+/*
+ * Uint math is modulo: these are correct as long as OSClock has not wrapped twice since called previously.
+ */
+OSTime Schedule::timeTilThisSyncSlotEnd(){
+
+	// TODO
+	return 1; //timeOfThisSyncSlotEnd() - OSClockTicks();
+}
 
 // Times
 // These return future times, as long as called at appropriate instant
@@ -134,6 +142,7 @@ DeltaTime  Schedule::deltaStartThisSyncToNow() { return clampedTimeDifference(lo
  * and scheduled task executes immediately after current task finishes?
  */
 
+
 LongTime Schedule::startTimeOfNextPeriod() { return startTimeOfPeriod + CountSlots * SlotDuration; }
 
 LongTime Schedule::timeOfThisSyncSlotEnd() { return startTimeOfPeriod + SlotDuration; }
@@ -142,6 +151,7 @@ LongTime Schedule::timeOfNextSyncSlotStart() { return startTimeOfNextPeriod(); }
 
 
 
+// TODO OBS
 // LongTime math
 
 // Can be called if you are not sure laterTime is after earlierTime

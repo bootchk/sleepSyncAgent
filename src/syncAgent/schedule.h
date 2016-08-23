@@ -80,14 +80,14 @@ private:
 	static const ScheduleCount CountSlots = 3*DutyCycleInverse;
 
 
-
+// static member funcs
 public:
 	// Start schedule (long duration sequence of periods)
 	void startFreshAfterHWReset();
 	void resumeAfterPowerRestored();
 
 	void startPeriod();
-	void adjustBySyncMsg(SyncMessage msg);
+	void adjustBySyncMsg(SyncMessage* msg);
 
 	// Scheduling slots tasks
 
@@ -108,13 +108,15 @@ public:
 	DeltaTime  deltaNowToStartNextSync();
 	DeltaTime  deltaStartThisSyncToNow();
 
-private:
+
+	static OSTime timeTilThisSyncSlotEnd();
+
 	// Times
 	LongTime startTimeOfNextPeriod();
 	LongTime timeOfThisSyncSlotEnd();	// Of this period
 	LongTime timeOfThisWorkSlotEnd();
 	LongTime timeOfNextSyncSlotStart();	// Of next period.
-
+private:
 	// Arithmetic on LongTime
 	static DeltaTime clampedTimeDifference(LongTime laterTime, LongTime earlierTime);
 	static DeltaTime clampedTimeDifferenceFromNow(LongTime laterTime);
