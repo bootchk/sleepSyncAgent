@@ -122,8 +122,5 @@ public:
 	LongTime timeOfThisSyncSlotEnd();	// Of this period
 	LongTime timeOfThisWorkSlotEnd();
 	LongTime timeOfNextSyncSlotStart();	// Of next period.
-private:
-	// Arithmetic on LongTime
-	static DeltaTime clampedTimeDifference(LongTime laterTime, LongTime earlierTime);
-	static DeltaTime clampedTimeDifferenceFromNow(LongTime laterTime);
+
 };

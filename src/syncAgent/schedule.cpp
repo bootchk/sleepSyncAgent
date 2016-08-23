@@ -121,8 +121,8 @@ void Schedule::scheduleStartMergeSlotTask(void callback(), DeltaTime offset) {
 
 // Deltas
 
-DeltaTime  Schedule::deltaNowToStartNextSync() { return clampedTimeDifferenceFromNow(timeOfNextSyncSlotStart()); }
-DeltaTime  Schedule::deltaStartThisSyncToNow() { return clampedTimeDifference(longClock.nowTime(), startTimeOfPeriod); }
+DeltaTime  Schedule::deltaNowToStartNextSync() { return longClock.clampedTimeDifferenceFromNow(timeOfNextSyncSlotStart()); }
+DeltaTime  Schedule::deltaStartThisSyncToNow() { return longClock.clampedTimeDifference(longClock.nowTime(), startTimeOfPeriod); }
 
 
 /*
@@ -161,20 +161,4 @@ LongTime Schedule::timeOfNextSyncSlotStart() { return startTimeOfNextPeriod(); }
 
 
 // TODO OBS
-// LongTime math
 
-// Can be called if you are not sure laterTime is after earlierTime
-DeltaTime Schedule::clampedTimeDifference(LongTime laterTime, LongTime earlierTime) {
-	// Returns positive time difference or zero
-	DeltaTime result;
-	if (earlierTime > laterTime) result = 0;
-	else result = laterTime - earlierTime;	// !!! Coerce to 32-bit
-	assert(result >= 0);
-	assert(result < 3 * PeriodDuration);	// Sanity, app does not schedule far in the future.
-	return result;
-}
-
-// Requires futureTime less than 32-bit from now
-DeltaTime Schedule::clampedTimeDifferenceFromNow(LongTime futureTime) {
-	return clampedTimeDifference(futureTime, longClock.nowTime());	// !!! coerce to 32-bit
-}

@@ -41,4 +41,8 @@ public:
 
 	// getters
 	static LongTime nowTime();
+
+	// Arithmetic on LongTime
+	static DeltaTime clampedTimeDifference(LongTime laterTime, LongTime earlierTime);
+	static DeltaTime clampedTimeDifferenceFromNow(LongTime laterTime);
 };

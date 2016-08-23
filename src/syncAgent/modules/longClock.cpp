@@ -1,4 +1,4 @@
-
+#include <cassert>
 #include "longClock.h"
 
 
@@ -35,3 +35,25 @@ LongTime LongClock::nowTime() {
 	return result;
 };
 
+
+/*
+ * LongTime math
+ *
+ * These return shorter ints as returned by OSClock and used by other OS methods
+ */
+
+// Can be called if you are not sure laterTime is after earlierTime
+DeltaTime LongClock::clampedTimeDifference(LongTime laterTime, LongTime earlierTime) {
+	// Returns positive time difference or zero
+	DeltaTime result;
+	if (earlierTime > laterTime) result = 0;
+	else result = laterTime - earlierTime;	// !!! Coerce to 32-bit
+	assert(result >= 0);
+	// assert(result < 3 * PeriodDuration);	// Sanity, app does not schedule far in the future.
+	return result;
+}
+
+// Requires futureTime less than 32-bit from now
+DeltaTime LongClock::clampedTimeDifferenceFromNow(LongTime futureTime) {
+	return clampedTimeDifference(futureTime, nowTime());	// !!! coerce to 32-bit
+}
