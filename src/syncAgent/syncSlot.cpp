@@ -24,7 +24,7 @@
 #include "syncAgent.h"
 #include "schedule.h"
 
-
+#ifdef OBS
 void SyncAgent::onSyncWake() {
 	// sync slot starts
 	if ( !powerMgr->isPowerForRadio() ) {
@@ -39,6 +39,7 @@ void SyncAgent::onSyncWake() {
 	// ensure endSyncSlotTask is scheduled or App wakingTask is scheduled
 	// sleep
 }
+#endif
 
 
 void SyncAgent::pauseSyncing() {
@@ -49,13 +50,11 @@ void SyncAgent::pauseSyncing() {
 
 	// assert radio not on
 
-	isPaused = true;
-
 	// FUTURE if clique is probably not empty
 	if (clique.isSelfMaster()) doDyingBreath();
 	// else I am a slave, just drop out of clique
 
-	onSyncingPausedCallback();	// Tell app
+	// onSyncingPausedCallback();	// Tell app
 
 	// ensure SyncAgent scheduled no event
 	// ensure app has scheduled its own events (else will not wake from sleep)
@@ -70,7 +69,7 @@ void SyncAgent::doDyingBreath() {
 
 // Scheduling
 
-
+/*OBS
 void SyncAgent::scheduleNextSyncRelatedTask() {
 	// assert in syncSlot
 	if (role.isMerger()) {
@@ -89,11 +88,14 @@ void SyncAgent::scheduleNextSyncRelatedTask() {
 	// onMergeWake or onFishWake: in a normally-sleeping slot of this period
 }
 
+
 void SyncAgent::scheduleSyncWake() {
 	// assert in work or fish or merge slot
 	clique.schedule.scheduleStartSyncSlotTask(onSyncWake);
 }
+*/
 
+#ifdef OBS
 void SyncAgent::scheduleFishWake(){
 	// assert in workSlot
 	/*
@@ -110,8 +112,16 @@ void SyncAgent::scheduleMergeWake(){
 	assert(cliqueMerger.isActive);
 	clique.schedule.scheduleStartMergeSlotTask(onMergeWake, cliqueMerger.offsetToMergee);
 }
+#endif
 
+void SyncAgent::startSyncSlot() {
+	xmitRoleAproposSync();
 
+	// even a Master listens for remainder of sync slot
+	turnReceiverOnWithCallback(onMsgReceivedInSyncSlot);
+}
+
+/*OBS
 void SyncAgent::startSyncSlot() {
 	// Start of sync slot coincident with start of period.
 	clique.schedule.startPeriod();
@@ -124,7 +134,7 @@ void SyncAgent::startSyncSlot() {
     // assert radio on
 	// will wake on onMsgReceivedInSyncSlot or onSyncSlotEnd
 	// sleep
-}
+*/
 
 
 void SyncAgent::xmitRoleAproposSync() {
@@ -154,7 +164,23 @@ void SyncAgent::onMsgReceivedInSyncSlot(SyncMessage msg) {
 	}
 }
 
+void SyncAgent::endSyncSlot() {
+	/*
+	 * This may be late, when message receive thread this delays this.
+	 * Also, there could be a race to deliver message with this event.
+	 * FUTURE check for those cases.
+	 * Scheduling of subsequent events does not depend on timely this event.
+	 */
 
+	// FUTURE we could do this elsewhere, e.g. start of sync slot
+	if (dropoutMonitor.check()) {
+		dropoutMonitor.heardSync();	// reset
+		clique.onMasterDropout();
+	}
+}
+
+
+#ifdef OBS
 void SyncAgent::onSyncSlotEnd() {
 	/*
 	 * This may be late, when message receive thread this delays this.
@@ -180,6 +206,8 @@ void SyncAgent::onSyncSlotEnd() {
 	 */
 	// sleep
 }
+#endif
+
 
 // SyncMessage handlers for messages received in sync slot
 

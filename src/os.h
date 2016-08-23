@@ -29,3 +29,6 @@ static bool isQueuedWorkMsg(){ return true;}
  * but only defined by the compiler implementation!!! not by the C standard.
  */
 static void scheduleTask(void callback(), uint32_t time ) {}
+
+void sleepUntilMsgOrTimeout();
+void sleepUntilTimeout();

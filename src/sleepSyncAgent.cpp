@@ -7,11 +7,12 @@
 
 
 // Callbacks from SyncAgent
-
+/* OBS
 void onSyncLost() {
 	// SyncAgent determined power inadequate to continue sync.
 	// TODO schedule a wakeTask to monitor power
 }
+*/
 
 void onWorkMsg(SyncMessage msg) {
 	// SyncAgent received work msg.
@@ -21,19 +22,16 @@ void onWorkMsg(SyncMessage msg) {
 
 
 PowerManager powerMgr;
-SyncAgent syncAgent(&powerMgr, onSyncLost, onWorkMsg);
+SyncAgent syncAgent(&powerMgr, onWorkMsg);
 
-
+/*OBS
 void onPowerRestored() {
 	syncAgent.resumeAfterPowerRestored();
 }
-
+*/
 
 int main() {
-	//App app;
-	
-	//syncAgent.setTaskScheduler(scheduleSyncTask);
-	syncAgent.startSyncing();
+	syncAgent.loop();
 	
 	// cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
 	return 0;

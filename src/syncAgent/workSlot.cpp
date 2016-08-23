@@ -14,7 +14,7 @@ void SyncAgent::startWorkSlot() {
 	// assert still in task onEndSyncSlot
 	xmitAproposWork();
 	turnReceiverOnWithCallback(onMsgReceivedInWorkSlot);
-	clique.schedule.scheduleEndWorkSlotTask(onWorkSlotEnd);
+	// OBS clique.schedule.scheduleEndWorkSlotTask(onWorkSlotEnd);
 }
 
 
@@ -57,7 +57,7 @@ void SyncAgent::onMsgReceivedInWorkSlot(SyncMessage msg){
 }
 
 
-void SyncAgent::onWorkSlotEnd(){
+void SyncAgent::endWorkSlot(){
 	turnReceiverOff();
 	// assert a sync related task is scheduled e.g. fish, merge, or syncWake
 	// TODO not true?  move scheduling here.

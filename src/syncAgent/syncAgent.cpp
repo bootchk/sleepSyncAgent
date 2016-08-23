@@ -5,7 +5,7 @@
 
 
 // Static data members
-bool SyncAgent::isPaused = false;
+bool SyncAgent::isSyncing = false;
 PowerManager* SyncAgent::powerMgr;
 void (*SyncAgent::onSyncingPausedCallback)();
 void (*SyncAgent::onWorkMsgCallback)(SyncMessage msg);
@@ -22,22 +22,22 @@ WorkMessage SyncAgent::workMsg;
 
 SyncAgent::SyncAgent(
 		PowerManager* aPowerMgr,
-		void (*aOnSyncingPausedCallback)(),
 		void (*aOnWorkMsgCallback)(SyncMessage msg)
 	) {
 	powerMgr = aPowerMgr;
-	onSyncingPausedCallback = aOnSyncingPausedCallback;
 	onWorkMsgCallback = aOnWorkMsgCallback;
 
+	clique.reset();
 	// ensure initial state of SyncAgent
 	assert(role.isFisher());
 	assert(clique.isSelfMaster());
 	// assert no tasks scheduled until startSyncing()
 }
 
+#ifdef OBS
 void SyncAgent::startSyncing() {
 
-	assert(! isPaused);
+	assert(! isSyncing);
 	// Assert never had sync, or lost sync
 
 	// Alternative: try recovering lost sync
@@ -48,10 +48,11 @@ void SyncAgent::startSyncing() {
 	// clique schedule starts now, at time of this call.
 	// clique is not in sync with others, except by chance.
 
-	scheduleSyncWake();
+	// OBS scheduleSyncWake();
 
-	// calling app can sleep, wake event onSynchWake()
+	// OBS calling app can sleep, wake event onSynchWake()
 }
+
 
 void SyncAgent::resumeAfterPowerRestored() {
 	/*
@@ -64,6 +65,7 @@ void SyncAgent::resumeAfterPowerRestored() {
 	clique.schedule.resumeAfterPowerRestored();
 	scheduleSyncWake();
 }
+#endif
 
 
 

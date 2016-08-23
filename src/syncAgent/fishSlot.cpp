@@ -10,9 +10,8 @@
 #include "../radioWrapper.h"
 
 
-void SyncAgent::onFishWake() {
+void SyncAgent::startFishSlot() {
 	turnReceiverOnWithCallback(onMsgReceivedInFishSlot);
-	clique.schedule.scheduleEndFishSlotTask(onFishSlotEnd);
 }
 
 
@@ -49,7 +48,7 @@ void SyncAgent::onMsgReceivedInFishSlot(SyncMessage msg){
 }
 
 
-void SyncAgent::onFishSlotEnd(){
+void SyncAgent::endFishSlot(){
 	/*
 	 * Conditions:
 	 * (no sync msg was heard and receiver still on)
@@ -63,11 +62,6 @@ void SyncAgent::onFishSlotEnd(){
 	 */
 	// not require receiver on
 	turnReceiverOff();
-
-	// syncSlot after fishSlot
-	clique.schedule.scheduleStartSyncSlotTask(onSyncWake);
-	// assert syncWake task is scheduled
-	// sleep
 }
 
 

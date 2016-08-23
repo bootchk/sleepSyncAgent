@@ -15,11 +15,12 @@ class SyncAgent {
 public:
 	SyncAgent(
 			PowerManager* powerMgr,
-			void (*onSyncingPausedCallback)(),
 			void (*onWorkMsgCallback)(SyncMessage msg)
 			);
+	static void loop();
 	
 	/*
+	 * OBS
 	 * App calls startSyncing on mcu power on reset POR.
 	 * App can not stop synching.
 	 * SyncAgent monitors power and tells app onSyncLostCallback.
@@ -28,14 +29,15 @@ public:
 	 *
 	 * Proper sequence:  POR, startSynching, onSyncingPausedCallback, resumeSyncing, onSyncingPausedCallback, resumeSyncing,...
 	 */
-	static void startSyncing();
-	static void resumeAfterPowerRestored();
+
+	//static void resumeAfterPowerRestored();
+
 
 private:
-	static void loop();
+
 
 // data members
-	static bool isPaused;	// state
+	static bool isSyncing;	// state
 
 	// has-a, all singletons
 	static Clique clique;
@@ -52,19 +54,21 @@ private:
 
 // methods
 
-	// callbacks for scheduled tasks
+	static void startSyncing();
+	static void doSyncPeriod();
+	static void dispatchMsgUntil();
 
 	// start of slots
-	static void onSyncWake();
+	static void startSyncSlot();
 	// work slot starts without an event
-	static void onFishWake();
-	static void onMergeWake();
+	static void startFishSlot();
+	static void startMergeSlot();
 
 	// end of slots
-	static void onSyncSlotEnd();
-	static void onWorkSlotEnd();
-	static void onFishSlotEnd();
-	// Merge slots over without event, as soon as xmit
+	static void endSyncSlot();
+	static void endWorkSlot();
+	static void endFishSlot();
+	// Merge over without event, as soon as xmit
 
 	// callback for external event (varied time within slot)
 	static void onMsgReceivedInSyncSlot(SyncMessage msg);
@@ -74,10 +78,13 @@ private:
 
 
 	// scheduling
+	/*
 	static void scheduleSyncWake();
+	*/
 	static void scheduleFishWake();
 	static void scheduleMergeWake();
 	static void scheduleNextSyncRelatedTask();
+
 
 	// work
 	static void startWorkSlot();
@@ -87,7 +94,6 @@ private:
 	static bool isBetterSync(SyncMessage msg);
 	static void pauseSyncing();
 	static void doDyingBreath();
-	static void startSyncSlot();
 
 	// transmissions
 	// Depending on OS, might be asynchronous (no waiting)

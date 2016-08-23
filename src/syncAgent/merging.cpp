@@ -23,7 +23,7 @@ void SyncAgent::toMergerRole(SyncMessage msg){
 }
 
 
-void SyncAgent::onMergeWake() {
+void SyncAgent::startMergeSlot() {
 	/*
 	 * xmit mergeSync
 	 *
@@ -50,8 +50,6 @@ void SyncAgent::onMergeWake() {
 	endMergerRole();
 	assert(!cliqueMerger.isActive);
 	assert(role.isFisher());
-	scheduleSyncWake();
-	// sleep
 }
 
 void SyncAgent::endMergerRole(){
