@@ -5,8 +5,8 @@
  * There is no onWorkWake: workSlot follows immediately after syncSlot
  */
 
-#include "../os.h"
-#include "../radioWrapper.h"
+#include "../platform/os.h"
+#include "../platform/radioWrapper.h"
 #include "syncAgent.h"
 
 

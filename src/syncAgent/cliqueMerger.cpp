@@ -1,7 +1,7 @@
 
 #include <cassert>
+#include "../platform/random.h"
 #include "cliqueMerger.h"
-#include "../random.h"
 
 
 // Singleton data members

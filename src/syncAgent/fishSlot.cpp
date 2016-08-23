@@ -7,7 +7,7 @@
  */
 
 #include "syncAgent.h"
-#include "../radioWrapper.h"
+#include "../platform/radioWrapper.h"
 
 
 void SyncAgent::startFishSlot() {

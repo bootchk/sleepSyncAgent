@@ -7,7 +7,7 @@
  */
 
 #include <cassert>
-#include "../radioWrapper.h"
+#include "../platform/radioWrapper.h"
 #include "syncAgent.h"
 
 bool SyncAgent::dispatchMsgReceivedInSyncSlot() {

@@ -1,19 +1,22 @@
 
-// Copyright   : 2016, lloyd konneker
+/*
+ * Main for app using SleepSyncAgent.
+ *
+ * Deal with RTOS:
+ * - tasks
+ * - queues
+ * - standard boilerplate
+ *
+ * Copyright 2016 lloyd konneker
+ */
 
-#include "powerManager.h"
+
+#include "powerManager/powerManager.h"
 #include "syncAgent/syncAgent.h"
 #include "syncAgent/message.h"
 
 
-// Callbacks from SyncAgent
-/* OBS
-void onSyncLost() {
-	// SyncAgent determined power inadequate to continue sync.
-	// TODO schedule a wakeTask to monitor power
-}
-*/
-
+// TODO work thread
 void onWorkMsg(WorkMessage* msg) {
 	// SyncAgent received work msg.
 	// TODO schedule low priority task to do work
@@ -31,7 +34,7 @@ void onPowerRestored() {
 */
 
 int main() {
-	syncAgent.loop();
+	syncAgent.loop();	// never returns
 	
 	// cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
 	return 0;

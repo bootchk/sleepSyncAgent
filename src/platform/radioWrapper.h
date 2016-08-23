@@ -4,7 +4,7 @@
  * Wrapper aka abstraction layer for software stack for radio/wireless
  */
 
-#include "syncAgent/message.h"
+#include "../syncAgent/message.h"
 
 static bool isReceiverOn() {return true; }
 //OBS static void turnReceiverOnWithCallback(void callback(SyncMessage) ) {}

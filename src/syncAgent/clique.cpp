@@ -2,7 +2,7 @@
 #include <cassert>
 
 #include "../types.h"
-#include "../radioWrapper.h"
+#include "../platform/radioWrapper.h"
 #include "clique.h"
 
 

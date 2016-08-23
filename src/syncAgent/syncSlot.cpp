@@ -19,8 +19,8 @@
  */
 
 #include <cassert>
-#include "../log.h"
-#include "../radioWrapper.h"
+#include "../platform/log.h"
+#include "../platform/radioWrapper.h"
 #include "syncAgent.h"
 #include "schedule.h"
 

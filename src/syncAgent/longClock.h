@@ -1,5 +1,5 @@
 #include <inttypes.h>
-#include "../os.h"
+#include "../platform/os.h"
 
 /*
 64-bit clock with resolution same as os kernel clock (typically mSec.)

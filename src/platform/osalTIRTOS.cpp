@@ -1,7 +1,11 @@
 /*
  * OSAL for platform TI-RTOS
  *
- * Implements os.h and radioWrapper.h
+ * Implements os.h and radioWrapper.h etc
+ *
+ * The OS and radio stack are independent.
+ *
+ * Also, some (random.h) may depend on the target board/chip.
  */
 #include "os.h"
 
