@@ -24,11 +24,11 @@ typedef uint32_t OSTime;
 
 OSTime OSClockTicks();
 
-bool isQueuedWorkMsg();
+bool isQueuedInMsg();
+bool isQueuedWorkOutMsg();
+void freeMsg(void* msg);
 
-// TODO OBS
-static void scheduleTask(void callback(), uint32_t time ) {}
 
 void sleepUntilMsgOrTimeout(OSTime);
-void sleepUntilTimeout();
+void sleepUntilTimeout(OSTime);
 

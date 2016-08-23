@@ -72,7 +72,7 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 
 // Scheduling slots tasks, start and end
 
-
+#ifdef OBS
 // Sync is first slot of next period
 void Schedule::scheduleStartSyncSlotTask(void callback()) {
 	scheduleTask(callback, clampedTimeDifferenceFromNow(startTimeOfNextPeriod()));}
@@ -116,7 +116,7 @@ void Schedule::scheduleStartMergeSlotTask(void callback(), DeltaTime offset) {
 	assert(time <= startTimeOfNextPeriod());
 	scheduleTask(callback, clampedTimeDifferenceFromNow(time));
 }
-
+#endif
 
 
 // Deltas

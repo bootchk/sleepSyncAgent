@@ -4,14 +4,17 @@
 #include "syncAgent.h"
 
 /*
-SyncAgent is a task(thread) that infinite loops.
-
-Define high level flow: a repeating sequence of slots.
+ * SyncAgent is a task(thread) that infinite sequence of sync periods.
+ *
+ * Sync periods are active if enough power.
+ * In inactive sync periods, schedule advances.
+ * After enough inactive sync periods, schedule is much drifted.
+ * After inactive sync periods, we attempt to resume drifted schedule.
 */
 
 void SyncAgent::loop(){
 	assert(clique.isSelfMaster());
-	//startSyncing();
+	//TODO startSyncing();
 	while (true){
 		// Sync period is either active or idle, but still advances schedule
 		clique.schedule.startPeriod();
@@ -27,7 +30,7 @@ void SyncAgent::loop(){
 				pauseSyncing();
 			}
 			isSyncing = false;
-			sleepUntilTimeout();
+			sleepUntilTimeout(1);
 		}
 	}
 }
@@ -59,7 +62,7 @@ void SyncAgent::doSyncPeriod() {
 		// avoid collision
 		if (cliqueMerger.shouldScheduleMerge())  {
 
-			sleepUntilTimeout();	//scheduleMergeWake();
+			sleepUntilTimeout(1);	//scheduleMergeWake();
 			startMergeSlot();	// doMerge
 			// Merge is xmit only, no sleeping til end of slot
 		}
@@ -67,7 +70,7 @@ void SyncAgent::doSyncPeriod() {
 	}
 	else {
 		// A fish slot need not be aligned with other slots, and different duration???
-		sleepUntilTimeout(); // Fish every period       scheduleFishWake();
+		sleepUntilTimeout(1); // Fish every period       scheduleFishWake();
 		startFishSlot();
 		dispatchMsgUntil(
 				dispatchMsgReceivedInSyncSlot,
@@ -76,6 +79,6 @@ void SyncAgent::doSyncPeriod() {
 	}
 	//sleepTilNextSlot(nextSlotEnd);
 	// radio off
-	sleepUntilTimeout();
+	sleepUntilTimeout(1);
 	// Period over
 }

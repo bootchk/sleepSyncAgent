@@ -8,7 +8,8 @@
  * Sleep until duration with radio on.
  * Wake from sleep to dispatch messsages received.
  *
- * timeoutFunc gives remaining duration (duration is known only to caller, but is generally fixed.)
+ * timeoutFunc gives remaining duration at time of call
+ * (duration is known only to caller, but is generally fixed.)
  * dispatchQueuedMsg dispatches message on queue
  *
  * On dispatcher returns true (finds a desired message type),
@@ -28,10 +29,10 @@ void SyncAgent::dispatchMsgUntil(
 	while (true) {
 		sleepUntilMsgOrTimeout(timeoutFunc());
 		// reason for wake
-		if (isQueuedWorkMsg()) {
+		if (isQueuedInMsg()) {
 			if (dispatchQueuedMsg()) {
 				// sleep remainder of duration
-				sleepUntilTimeout(); //timeoutFunc());
+				sleepUntilTimeout(timeoutFunc());
 				break;
 			}
 			// assert msg queue is empty except for race

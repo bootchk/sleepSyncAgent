@@ -2,6 +2,8 @@
  * for different slots: sync, work, and fish
  *
  * All have same structure, only differ in semantics of message types handled in slot types.
+ *
+ * All unqueue a msg, and must free it (or requeue it and then recipient must free it.)
  */
 
 #include <cassert>
@@ -9,6 +11,7 @@
 #include "syncAgent.h"
 
 bool SyncAgent::dispatchMsgReceivedInSyncSlot() {
+	// TODO while any messages
 	bool foundDesiredMessage;
 	Message* msg = unqueueMsg();
 	if (msg != nullptr) {
@@ -17,6 +20,8 @@ bool SyncAgent::dispatchMsgReceivedInSyncSlot() {
 			doSyncMsgInSyncSlot((SyncMessage*) msg);
 			// Multiple syncs or sync
 			foundDesiredMessage = true;
+			// TODO discard other queued messages
+			freeMsg((void*) msg);
 			break;
 		case AbandonMastership:
 			doAbandonMastershipMsgInSyncSlot((SyncMessage*) msg);
@@ -29,7 +34,7 @@ bool SyncAgent::dispatchMsgReceivedInSyncSlot() {
 		}
 	}
 	else foundDesiredMessage = false;
-	assert(msg==nullptr);	// callee freed memory and nulled ptr
+	// TODO use handle and assert(msgHandle==nullptr);	// callee freed memory and nulled handle, or just nulled handle
 	return foundDesiredMessage;
 }
 
@@ -60,6 +65,7 @@ bool SyncAgent::dispatchMsgReceivedInWorkSlot(){
 			break;
 		}
 	}
+	// TODO
 	// assert radio on
 	// assert onWorkSlotEnd scheduled
 	// sleep
@@ -97,6 +103,5 @@ bool SyncAgent::dispatchMsgReceivedInFishSlot(){
 			break;
 		}
 	}
-	// assert endFishSlot is scheduled
-	// sleep
+	// TODO
 }
