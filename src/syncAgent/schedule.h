@@ -92,6 +92,7 @@ public:
 	static void startPeriod();
 	static void adjustBySyncMsg(SyncMessage* msg);
 
+#ifdef OBS
 	// Scheduling slots tasks
 
 	static void scheduleStartSyncSlotTask(void callback());
@@ -105,19 +106,24 @@ public:
 
 	static void scheduleStartMergeSlotTask(void callback(), DeltaTime offset);
 	// Merge slot ends w/o event, next event is startSyncSlot
+#endif
 
 	// nowTime is not aligned with slot starts.  Result need not be multiple of slotDuration.
 	// Used by CliqueMerger()
 	static DeltaTime  deltaNowToStartNextSync();
 	static DeltaTime  deltaStartThisSyncToNow();
 
-
-	static OSTime timeTilThisSyncSlotEnd();
+	static DeltaTime deltaToThisSyncSlotEnd();
+	static DeltaTime deltaToThisFishSlotEnd();
+	static DeltaTime deltaToThisMergeStart(DeltaTime offset);
 
 	// Times
 	static LongTime startTimeOfNextPeriod();
 	static LongTime timeOfThisSyncSlotEnd();	// Of this period
 	static LongTime timeOfThisWorkSlotEnd();
+	static LongTime timeOfThisFishSlotEnd();
+	static LongTime timeOfThisMergeStart();
+
 	static LongTime timeOfNextSyncSlotStart();	// Of next period.
 
 };

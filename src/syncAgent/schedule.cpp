@@ -139,8 +139,16 @@ DeltaTime  Schedule::deltaStartThisSyncToNow() { return longClock.clampedTimeDif
  * All these involve a conversion to OSTime i.e. take lower 32 bits of result.
  *
  */
-OSTime Schedule::timeTilThisSyncSlotEnd(){
+DeltaTime Schedule::deltaToThisSyncSlotEnd(){
 	return longClock.clampedTimeDifferenceFromNow(timeOfThisSyncSlotEnd());
+}
+
+DeltaTime Schedule::deltaToThisFishSlotEnd(){
+	return longClock.clampedTimeDifferenceFromNow(timeOfThisFishSlotEnd());
+}
+
+DeltaTime Schedule::deltaToThisMergeStart(DeltaTime offset){
+	return longClock.clampedTimeDifferenceFromNow(timeOfThisMergeStart());
 }
 
 // Times
@@ -156,6 +164,8 @@ LongTime Schedule::startTimeOfNextPeriod() { return startTimeOfPeriod + PeriodDu
 
 LongTime Schedule::timeOfThisSyncSlotEnd() { return startTimeOfPeriod + SlotDuration; }
 LongTime Schedule::timeOfThisWorkSlotEnd() { return startTimeOfPeriod + 2 * SlotDuration; }
+LongTime Schedule::timeOfThisFishSlotEnd() { return startTimeOfFishSlot + SlotDuration; }
+LongTime Schedule::timeOfThisMergeStart() { return startTimeOfPeriod + 2; }	// TODO cliqueMerger.offset
 LongTime Schedule::timeOfNextSyncSlotStart() { return startTimeOfNextPeriod(); }
 
 

@@ -44,7 +44,7 @@ void SyncAgent::doSyncPeriod() {
 	// radio on, listening for other's sync
 	dispatchMsgUntil(
 			dispatchMsgReceivedInSyncSlot,
-			clique.schedule.timeTilThisSyncSlotEnd);
+			clique.schedule.deltaToThisSyncSlotEnd);
 	//waitForMsgOrTimeout(timeToSyncSlotEnd);
 	endSyncSlot();
 
@@ -54,7 +54,7 @@ void SyncAgent::doSyncPeriod() {
 	//waitForMsgOrTimeout(timeToWorkSlotEnd);
 	dispatchMsgUntil(
 			dispatchMsgReceivedInSyncSlot,
-			clique.schedule.timeTilThisSyncSlotEnd);
+			clique.schedule.deltaToThisSyncSlotEnd);
 	endWorkSlot();
 
 	// Variation: next event if any occurs within a large sleeping time (lots of 'slots')
@@ -62,7 +62,7 @@ void SyncAgent::doSyncPeriod() {
 		// avoid collision
 		if (cliqueMerger.shouldScheduleMerge())  {
 
-			sleepUntilTimeout(1);	//scheduleMergeWake();
+			sleepUntilTimeout(clique.schedule.deltaToThisMergeStart(cliqueMerger.offsetToMergee));	//scheduleMergeWake();
 			startMergeSlot();	// doMerge
 			// Merge is xmit only, no sleeping til end of slot
 		}
@@ -74,7 +74,7 @@ void SyncAgent::doSyncPeriod() {
 		startFishSlot();
 		dispatchMsgUntil(
 				dispatchMsgReceivedInSyncSlot,
-				clique.schedule.timeTilThisSyncSlotEnd);
+				clique.schedule.deltaToThisFishSlotEnd);
 		endFishSlot();
 	}
 	//sleepTilNextSlot(nextSlotEnd);
