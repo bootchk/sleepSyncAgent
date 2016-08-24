@@ -12,7 +12,7 @@
 
 bool SyncAgent::dispatchMsgReceivedInSyncSlot() {
 	// TODO while any messages
-	bool foundDesiredMessage;
+	bool foundDesiredMessage = false;
 	Message* msg = unqueueMsg();
 	if (msg != nullptr) {
 		switch(msg->type) {
@@ -25,22 +25,23 @@ bool SyncAgent::dispatchMsgReceivedInSyncSlot() {
 			break;
 		case AbandonMastership:
 			doAbandonMastershipMsgInSyncSlot((SyncMessage*) msg);
+			freeMsg((void*) msg);
 			break;
 		case Work:
 			doWorkMsgInSyncSlot((WorkMessage*) msg);
+			// !!! msg is requeued, not freed
 			break;
 		default:
 			break;
 		}
 	}
-	else foundDesiredMessage = false;
 	// TODO use handle and assert(msgHandle==nullptr);	// callee freed memory and nulled handle, or just nulled handle
 	return foundDesiredMessage;
 }
 
 
 bool SyncAgent::dispatchMsgReceivedInWorkSlot(){
-	bool foundDesiredMessage;
+	bool foundDesiredMessage = false;
 	Message* msg = unqueueMsg();
 	if (msg != nullptr) {
 		switch(msg->type) {
@@ -50,25 +51,26 @@ bool SyncAgent::dispatchMsgReceivedInWorkSlot(){
 			 * Alternative: merge other clique from within former work slot?
 			 * doSyncMsgInWorkSlot(msg);
 			 */
+			freeMsg((void*) msg);
 			break;
 		case AbandonMastership:
 			/*
 			 * Unusual: Another clique's sync slot at same time as my work slot.
 			 * For now ignore.  ??? doAbandonMastershipMsgInWorkSlot(msg);
 			 */
+			freeMsg((void*) msg);
 			break;
 		case Work:
 			// Usual: work message in sync with my clique.
 			doWorkMsgInWorkSlot((WorkMessage*) msg);
+			// msg requeued, not freed
+			foundDesiredMessage = true;
 			break;
 		default:
 			break;
 		}
 	}
-	// TODO
-	// assert radio on
-	// assert onWorkSlotEnd scheduled
-	// sleep
+	return foundDesiredMessage;
 }
 
 
@@ -84,6 +86,7 @@ bool SyncAgent::dispatchMsgReceivedInFishSlot(){
 			doSyncMsgInFishSlot((SyncMessage*) msg);
 			// Self can't handle more than one, or slot is busy with another merge
 			turnReceiverOff();
+			foundDesiredMessage = true;
 			break;
 		case AbandonMastership:
 			/*
@@ -102,6 +105,8 @@ bool SyncAgent::dispatchMsgReceivedInFishSlot(){
 		default:
 			break;
 		}
+		// All msg types freed
+		freeMsg((void*) msg);
 	}
-	// TODO
+	return foundDesiredMessage;
 }

@@ -14,4 +14,4 @@ static void turnReceiverOff() {}
 static void xmit(SyncMessage* msg) {}
 static void xmit(WorkMessage* msg) {}
 static SystemID myID() { return 1;}	// TI-RTOS see platform_  MAC of my radio
-static Message* unqueueMsg() {};
+static Message* unqueueMsg() { return nullptr; };

@@ -22,14 +22,14 @@ LongTime Schedule::startTimeOfFishSlot;
 
 
 
-
-
 void Schedule::startFreshAfterHWReset(){
 	longClock.reset();
 	startTimeOfPeriod = longClock.nowTime();
 	// Out of sync with other cliques
 }
 
+#ifdef OBS
+This obsolete design did not advance startTimeOfPeriod when power is low
 void Schedule::resumeAfterPowerRestored(){
 	// Roll period forward to nearest period boundary after nowTime()
 
@@ -40,10 +40,11 @@ void Schedule::resumeAfterPowerRestored(){
 	assert(startTimeOfPeriod > longClock.nowTime() );
 	// caller will call scheduleStartSyncSlot()
 }
+#endif
 
 void Schedule::startPeriod() {
-	// called by onStartSyncWake
 	startTimeOfPeriod += SlotDuration;
+	// Called when period should start.
 	// assert startTimeOfPeriod is close to nowTime()
 	// ow we have missed a period or otherwise delayed unexpectedly.
 }
@@ -69,10 +70,8 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 }
 
 
-
-// Scheduling slots tasks, start and end
-
 #ifdef OBS
+This obsolete design used a scheduler.  Currently using sleepUntil...
 // Sync is first slot of next period
 void Schedule::scheduleStartSyncSlotTask(void callback()) {
 	scheduleTask(callback, clampedTimeDifferenceFromNow(startTimeOfNextPeriod()));}

@@ -42,6 +42,7 @@ void SyncAgent::loop(){
 void SyncAgent::doSyncPeriod() {
 
 	startSyncSlot();
+	// TODO: xmit sync in middle of sync slot
 	assert(isReceiverOn()); // listening for other's sync
 	dispatchMsgUntil(
 			dispatchMsgReceivedInSyncSlot,
