@@ -119,56 +119,69 @@ void Schedule::scheduleStartMergeSlotTask(void callback(), DeltaTime offset) {
 #endif
 
 
-// Deltas
 
-DeltaTime  Schedule::deltaNowToStartNextSync() { return longClock.clampedTimeDifferenceFromNow(timeOfNextSyncSlotStart()); }
-DeltaTime  Schedule::deltaStartThisSyncToNow() { return longClock.clampedTimeDifference(longClock.nowTime(), startTimeOfPeriod); }
 
 
 /*
+ * Deltas
+ *
  * Uint32 math is modulo: a delta is correct if laterTime > earlierTime
  * (even if the uint32 clock has wrapped).
  * But is incorrect if earlierTime > laterTime.
  * So if you are calculating a timeout to a future deadline time,
- * and the deadline is already
- * blah blah, its hard to explain
- * TODO
- *
- * Anyway we use a LongClock to avoid the issue.
+ * and the deadline is already in the past, simple math on uint32 is wrong.
+ * Use a LongClock to avoid the issue.
  *
  * All these involve a conversion to OSTime i.e. take lower 32 bits of result.
  *
+ * If zero, a sleep...(0) executes immediately without delay.
  */
+//DeltaTime  Schedule::deltaNowToStartNextSync() {
+DeltaTime  Schedule::deltaNowToNextSyncPeriod() {
+	return longClock.clampedTimeDifferenceFromNow(timeOfNextSyncSlotStart());
+}
+// Different: backwards from others: from past time to now
+DeltaTime  Schedule::deltaStartThisSyncPeriodToNow() {
+	return longClock.clampedTimeDifference(longClock.nowTime(), startTimeOfPeriod);
+}
 DeltaTime Schedule::deltaToThisSyncSlotEnd(){
 	return longClock.clampedTimeDifferenceFromNow(timeOfThisSyncSlotEnd());
 }
-
+DeltaTime Schedule::deltaToThisWorkSlotEnd(){
+	return longClock.clampedTimeDifferenceFromNow(timeOfThisWorkSlotEnd());
+}
+DeltaTime Schedule::deltaToThisFishSlotStart(){
+	return longClock.clampedTimeDifferenceFromNow(timeOfThisFishSlotStart());
+}
 DeltaTime Schedule::deltaToThisFishSlotEnd(){
 	return longClock.clampedTimeDifferenceFromNow(timeOfThisFishSlotEnd());
 }
-
 DeltaTime Schedule::deltaToThisMergeStart(DeltaTime offset){
-	return longClock.clampedTimeDifferenceFromNow(timeOfThisMergeStart());
+	return longClock.clampedTimeDifferenceFromNow(timeOfThisMergeStart(offset));
 }
 
-// Times
-// These return future times, as long as called at appropriate instant
-// and task processing times is smaller than slotDurations.
 /*
- * Even if these return past times, the OS allows scheduling in the past,
- * and scheduled task executes immediately after current task finishes?
+ * Times
+ *
+ * These return future times, as long as called at appropriate instant
+ * and task processing times is smaller than slotDurations.
+ * When these return past times, calculation of DeltaTime clamps to zero.
  */
-
-
-LongTime Schedule::startTimeOfNextPeriod() { return startTimeOfPeriod + PeriodDuration; }
+// Start of period and start of syncSlot coincide.
+// FUTURE: Choice of sync slot at start of period is arbitrary, allow it to be anywhere in period.
+LongTime Schedule::timeOfNextSyncPeriodStart() { return startTimeOfPeriod + PeriodDuration; }
+LongTime Schedule::timeOfNextSyncSlotStart() { return timeOfNextSyncPeriodStart(); }
 
 LongTime Schedule::timeOfThisSyncSlotEnd() { return startTimeOfPeriod + SlotDuration; }
 LongTime Schedule::timeOfThisWorkSlotEnd() { return startTimeOfPeriod + 2 * SlotDuration; }
+// Fish slot: starts at random time.  Ends after remembered start.
+LongTime Schedule::timeOfThisFishSlotStart() {
+	LongTime startTimeOfFishSlot = startTimeOfPeriod + randInt(FirstSleepingSlotOrdinal-1, CountSlots-1) * SlotDuration;
+	assert(startTimeOfFishSlot >= longClock.nowTime());
+	assert(startTimeOfFishSlot <= timeOfNextSyncPeriodStart());
+	return startTimeOfFishSlot;
+}
 LongTime Schedule::timeOfThisFishSlotEnd() { return startTimeOfFishSlot + SlotDuration; }
-LongTime Schedule::timeOfThisMergeStart() { return startTimeOfPeriod + 2; }	// TODO cliqueMerger.offset
-LongTime Schedule::timeOfNextSyncSlotStart() { return startTimeOfNextPeriod(); }
-
-
-
-// TODO OBS
+// Merge slot: offset from cliqueMerger, and no slotEnd needed
+LongTime Schedule::timeOfThisMergeStart(DeltaTime offset) { return startTimeOfPeriod + offset; }
 

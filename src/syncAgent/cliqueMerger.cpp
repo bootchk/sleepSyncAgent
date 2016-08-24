@@ -47,7 +47,7 @@ void CliqueMerger::mergeMyClique(SyncMessage* msg){
 	 * and mergeSlot is not aligned with slots in adjusted schedule.
 	 */
 	// calculate delta from current schedule
-	offsetToMergee = owningClique->schedule.deltaNowToStartNextSync();
+	offsetToMergee = owningClique->schedule.deltaNowToNextSyncPeriod();
 
 	// after using current schedule above, can adjust to new schedule
 	owningClique->schedule.adjustBySyncMsg(msg);
@@ -68,7 +68,7 @@ void CliqueMerger::mergeOtherClique(SyncMessage* msg){
 	 *   mergeSlot is not aligned with slots in schedule.
 	 */
 	// msg is unused ???
-	offsetToMergee = owningClique->schedule.deltaStartThisSyncToNow();
+	offsetToMergee = owningClique->schedule.deltaStartThisSyncPeriodToNow();
 	// Self fished and caught other clique, and I will send MergeSync (contending with current other master)
 	// but saying the new master is clique.masterID, not myID
 	masterID = owningClique->masterID;

@@ -108,22 +108,38 @@ public:
 	// Merge slot ends w/o event, next event is startSyncSlot
 #endif
 
+	/*
+	 * Deltas from past time to now.
+	 */
 	// nowTime is not aligned with slot starts.  Result need not be multiple of slotDuration.
 	// Used by CliqueMerger()
-	static DeltaTime  deltaNowToStartNextSync();
-	static DeltaTime  deltaStartThisSyncToNow();
 
+	static DeltaTime deltaNowToStartNextSync();
+	static DeltaTime deltaStartThisSyncPeriodToNow();
+
+	/*
+	 * Deltas from now to future time.
+	 * Positive or zero and < SyncPeriodDuration
+	 */
+	static DeltaTime deltaNowToNextSyncPeriod();
+
+	//static DeltaTime deltaToThisSyncSlotStart();
 	static DeltaTime deltaToThisSyncSlotEnd();
+	static DeltaTime deltaToThisWorkSlotEnd();
+
+	static DeltaTime deltaToThisFishSlotStart();
 	static DeltaTime deltaToThisFishSlotEnd();
+
 	static DeltaTime deltaToThisMergeStart(DeltaTime offset);
 
-	// Times
-	static LongTime startTimeOfNextPeriod();
+	/*
+	 *  Times
+	 */
+	static LongTime timeOfNextSyncPeriodStart();
+	static LongTime timeOfNextSyncSlotStart();	// Of next period.
 	static LongTime timeOfThisSyncSlotEnd();	// Of this period
 	static LongTime timeOfThisWorkSlotEnd();
+	static LongTime timeOfThisFishSlotStart();
 	static LongTime timeOfThisFishSlotEnd();
-	static LongTime timeOfThisMergeStart();
-
-	static LongTime timeOfNextSyncSlotStart();	// Of next period.
-
+	static LongTime timeOfThisMergeStart(DeltaTime offset);
 };

@@ -7,6 +7,7 @@
 #include "../syncAgent/message.h"
 
 static bool isReceiverOn() {return true; }
+static bool isTransmitterOn() {return true; }
 //OBS static void turnReceiverOnWithCallback(void callback(SyncMessage) ) {}
 static void turnReceiverOn() {};
 static void turnReceiverOff() {}

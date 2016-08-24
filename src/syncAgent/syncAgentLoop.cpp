@@ -1,6 +1,7 @@
 
 
 #include <cassert>
+#include "../platform/radioWrapper.h"
 #include "syncAgent.h"
 
 /*
@@ -41,44 +42,44 @@ void SyncAgent::loop(){
 void SyncAgent::doSyncPeriod() {
 
 	startSyncSlot();
-	// radio on, listening for other's sync
+	assert(isReceiverOn()); // listening for other's sync
 	dispatchMsgUntil(
 			dispatchMsgReceivedInSyncSlot,
 			clique.schedule.deltaToThisSyncSlotEnd);
-	//waitForMsgOrTimeout(timeToSyncSlotEnd);
 	endSyncSlot();
 
 	// work slot follows sync slot with no delay
 	startWorkSlot();
-	// radio on
-	//waitForMsgOrTimeout(timeToWorkSlotEnd);
+	assert(isReceiverOn());   // listening for other's work
 	dispatchMsgUntil(
 			dispatchMsgReceivedInSyncSlot,
-			clique.schedule.deltaToThisSyncSlotEnd);
+			clique.schedule.deltaToThisWorkSlotEnd);
 	endWorkSlot();
+	assert(!isReceiverOn());	// Low power until next slot
 
-	// Variation: next event if any occurs within a large sleeping time (lots of 'slots')
+	// Variation: next event (if any) occurs within a large sleeping time (lots of 'slots')
 	if (role.isMerger()) {
 		// avoid collision
 		if (cliqueMerger.shouldScheduleMerge())  {
 
-			sleepUntilTimeout(clique.schedule.deltaToThisMergeStart(cliqueMerger.offsetToMergee));	//scheduleMergeWake();
+			sleepUntilTimeout(clique.schedule.deltaToThisMergeStart(cliqueMerger.offsetToMergee));
 			startMergeSlot();	// doMerge
 			// Merge is xmit only, no sleeping til end of slot
 		}
 		// else sleep until end of sync period
 	}
 	else {
-		// A fish slot need not be aligned with other slots, and different duration???
-		sleepUntilTimeout(1); // Fish every period       scheduleFishWake();
+		// Fish every period
+		// FUTURE: A fish slot need not be aligned with other slots, and different duration???
+		sleepUntilTimeout(clique.schedule.deltaToThisFishSlotStart());
 		startFishSlot();
 		dispatchMsgUntil(
 				dispatchMsgReceivedInSyncSlot,
 				clique.schedule.deltaToThisFishSlotEnd);
 		endFishSlot();
 	}
-	//sleepTilNextSlot(nextSlotEnd);
-	// radio off
-	sleepUntilTimeout(1);
+	assert(!isReceiverOn());	// Low power for remainder of this sync period
+	assert(!isTransmitterOn());
+	sleepUntilTimeout(clique.schedule.deltaNowToNextSyncPeriod());
 	// Period over
 }
