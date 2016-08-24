@@ -33,8 +33,16 @@ void sleepUntilTimeout(timeout) {
 	Task_wait(timeout);
 }
 
+// From TI_RTOS BLE Developer's Guide
 void* unqueueMsg(){
-	//TODO
+	if (!Queue_empty(appMsgQueue))
+	{
+		sbpEvt_t *pMsg = (sbpEvt_t*)Util_dequeueMsg(appMsgQueue);
+		if (pMsg)
+		{
+			return pMsg;
+		}
+	}
 }
 
 #else

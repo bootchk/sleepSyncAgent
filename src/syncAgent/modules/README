@@ -1,1 +1,3 @@
-This directory includes classes that might be more generally useful.
+This directory includes classes that SyncAgent uses.
+
+Only LongClock and random might be more generally useful.

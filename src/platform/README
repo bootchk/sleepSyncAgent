@@ -1,0 +1,17 @@
+This directory contains wrapper (abstraction layer) to OS and radio stack.
+
+The idea is that SyncAgent is platform independent, if OS and radio stack are abstracted.
+
+Each .cpp file includes stubs, and implementations by platform, using #ifdefs.
+
+To compile for a platform, #define the platform. 
+
+Stubs give a clean compile, but won't execute.
+
+Platforms:
+- stubs
+- PLATFORM_TIRTOS
+
+- FUTURE: wireless network simulator
+- FUTURE: PLATFORM_CMSIS (when it has a BT stack?)
+- FUTURE:  others: myNewt, mBed, FreeRTOS with Linux BT stack?

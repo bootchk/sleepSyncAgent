@@ -2,8 +2,8 @@
 #include <cassert>
 
 #include "../types.h"
-#include "../platform/radioWrapper.h"
 #include "clique.h"
+#include "../platform/radio.h"
 
 
 // static singleton

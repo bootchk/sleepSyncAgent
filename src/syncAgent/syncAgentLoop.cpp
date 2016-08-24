@@ -1,7 +1,8 @@
 
 
 #include <cassert>
-#include "../platform/radioWrapper.h"
+
+#include "../platform/radio.h"
 #include "syncAgent.h"
 
 /*
