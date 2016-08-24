@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include <inttypes.h>
+
+
 /*
  * Understands:
  * - apps power requirements
@@ -17,9 +20,11 @@
 class PowerManager {
 
 public:
-	bool isPowerForRadio();
-	bool isPowerForWork();
+
+	static bool isPowerForRadio();
+	static bool isPowerForWork();
 
 private:
-
+	static uint8_t percentVccMeasure();
+	static uint8_t convertVoltageToPercent(uint32_t voltage);
 };

@@ -14,7 +14,7 @@
 // OS is TI-RTOS with BTLE stack
 
 OSTime OSClockTicks() {
-	return 1;
+	return Clock_ticks();
 }
 
 bool isQueuedMsg(){
