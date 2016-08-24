@@ -13,7 +13,7 @@
 bool SyncAgent::dispatchMsgReceivedInSyncSlot() {
 	// TODO while any messages
 	bool foundDesiredMessage = false;
-	Message* msg = unqueueMsg();
+	Message* msg = serializer.unserialize(unqueueMsg());
 	if (msg != nullptr) {
 		switch(msg->type) {
 		case Sync:
@@ -42,7 +42,7 @@ bool SyncAgent::dispatchMsgReceivedInSyncSlot() {
 
 bool SyncAgent::dispatchMsgReceivedInWorkSlot(){
 	bool foundDesiredMessage = false;
-	Message* msg = unqueueMsg();
+	Message* msg = serializer.unserialize(unqueueMsg());
 	if (msg != nullptr) {
 		switch(msg->type) {
 		case Sync:
@@ -76,7 +76,7 @@ bool SyncAgent::dispatchMsgReceivedInWorkSlot(){
 
 bool SyncAgent::dispatchMsgReceivedInFishSlot(){
 	bool foundDesiredMessage;
-	Message* msg = unqueueMsg();
+	Message* msg = serializer.unserialize(unqueueMsg());
 	if (msg != nullptr) {
 		switch(msg->type) {
 		case Sync:

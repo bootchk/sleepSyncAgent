@@ -7,6 +7,7 @@
 #include "dropoutMonitor.h"
 #include "cliqueMerger.h"
 #include "role.h"
+#include "serializer.h"
 
 
 // Singleton: all members static, no this.
@@ -46,11 +47,12 @@ private:
 	static Role role;
 	static SyncMessage outwardSyncMsg;	// Reused, only one message queued at a time // TODO dynamic?
 	static WorkMessage workMsg;	// Many may be queued??
+	static Serializer serializer;
 
 	// uses
 	static PowerManager* powerMgr;	// owned by app
-	static void (*onSyncingPausedCallback)();	// callback to app
-	static void (*onWorkMsgCallback)(WorkMessage* msg);	// callback to app
+	// OBS static void (*onSyncingPausedCallback)();	// callback to app
+	// OBS static void (*onWorkMsgCallback)(WorkMessage* msg);	// callback to app
 
 // methods
 

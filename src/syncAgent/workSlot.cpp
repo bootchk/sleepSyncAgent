@@ -46,6 +46,7 @@ void SyncAgent::doWorkMsgInWorkSlot(WorkMessage* msg) {
 
 
 void SyncAgent::relayWorkToApp(WorkMessage* msg) {
-	onWorkMsgCallback(msg);
+	// TODO queue to worktask
+	//onWorkMsgCallback(msg);
 }
 

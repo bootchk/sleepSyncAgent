@@ -1,8 +1,11 @@
 
 #ifdef PLATFORM_TIRTOS
 
+#define RAND_MAX UINT_MAX	// TODO match to definition in Util?
+
 uint32 rant() {
-	// TODO TRNG
+	// High-level access to trng hw
+	return Util_GetTRNG();	// TODO trng types match
 }
 
 #else

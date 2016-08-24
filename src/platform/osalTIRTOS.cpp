@@ -33,6 +33,10 @@ void sleepUntilTimeout(timeout) {
 	Task_wait(timeout);
 }
 
+void* unqueueMsg(){
+	//TODO
+}
+
 #else
 
 // Stubs for clean compile
@@ -42,6 +46,7 @@ OSTime OSClockTicks() { return 1; }
 bool isQueuedInMsg(){ return true;}
 void freeMsg(void* msg) {}
 bool isQueuedWorkOutMsg(){ return false; }
+void* unqueueMsg(){ return nullptr; }
 
 void sleepUntilMsgOrTimeout(OSTime) {}
 void sleepUntilTimeout(OSTime) {}

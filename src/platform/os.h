@@ -30,6 +30,7 @@ OSTime OSClockTicks();
 bool isQueuedInMsg();
 bool isQueuedWorkOutMsg();
 void freeMsg(void* msg);
+void* unqueueMsg();
 
 
 void sleepUntilMsgOrTimeout(OSTime);

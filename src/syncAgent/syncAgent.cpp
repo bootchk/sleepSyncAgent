@@ -7,8 +7,8 @@
 // Static data members
 bool SyncAgent::isSyncing = false;
 PowerManager* SyncAgent::powerMgr;
-void (*SyncAgent::onSyncingPausedCallback)();
-void (*SyncAgent::onWorkMsgCallback)(WorkMessage* msg);
+//OBS void (*SyncAgent::onSyncingPausedCallback)();
+//OBS void (*SyncAgent::onWorkMsgCallback)(WorkMessage* msg);
 
 Clique SyncAgent::clique;
 DropoutMonitor SyncAgent::dropoutMonitor;
@@ -16,6 +16,7 @@ CliqueMerger SyncAgent::cliqueMerger;
 Role SyncAgent::role;
 SyncMessage SyncAgent::outwardSyncMsg;
 WorkMessage SyncAgent::workMsg;
+Serializer SyncAgent::serializer;
 
 
 
@@ -25,7 +26,7 @@ SyncAgent::SyncAgent(
 		void (*aOnWorkMsgCallback)(WorkMessage* msg)
 	) {
 	powerMgr = aPowerMgr;
-	onWorkMsgCallback = aOnWorkMsgCallback;
+	//OBSonWorkMsgCallback = aOnWorkMsgCallback;
 
 	clique.reset();
 	// ensure initial state of SyncAgent
