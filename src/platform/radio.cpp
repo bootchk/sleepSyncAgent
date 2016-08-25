@@ -4,7 +4,7 @@
  * Wrapper aka abstraction layer for software stack for radio/wireless
  */
 
-#include "../syncAgent/message.h"
+
 #include "radio.h"
 
 #ifndef PLATFORM_TIRTOS
@@ -14,14 +14,27 @@ bool isReceiverOn() {return true; }
 bool isTransmitterOn() {return true; }
 void turnReceiverOn() {};
 void turnReceiverOff() {}
-void xmit(SyncMessage* msg) {}
-void xmit(WorkMessage* msg) {}
+void xmit(uint8_t* msg) {}
 
 SystemID myID() { return 1;}
 
 #else
 // TIRTOS
 
+// Receiver is a BT GAP Observer Role.  Start discovery session (scan)
+void turnReceiverOn() {
+	GAPObserverRole_StartDiscovery(foo);	// TODO
+}
+
+void turnReceiverOff() {
+	GAPObserverRole_CancelDiscovery();
+}
+
+void xmit(msg) {
+	startAdvertising();
+	delay short time
+	stopAdvertising();
+}
 
 SystemID myID() {
 	// 48-bit MAC of radio

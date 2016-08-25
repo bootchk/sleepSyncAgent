@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../types.h"
+#include "../../types.h"
 
 /*
  * Dropout: the condition of failing to hear sync for a long time.

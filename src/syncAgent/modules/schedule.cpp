@@ -1,7 +1,7 @@
 
 #include <cassert>
-#include "../platform/os.h"	// scheduleTask()
-#include "../platform/random.h"
+#include "../../platform/os.h"	// scheduleTask()
+#include "../../platform/random.h"
 
 #include "schedule.h"
 

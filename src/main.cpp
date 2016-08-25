@@ -39,7 +39,7 @@
 
 #include "powerManager/powerManager.h"
 #include "syncAgent/syncAgent.h"
-#include "syncAgent/message.h"
+#include "syncAgent/modules/message.h"	//TODO elide this
 
 
 // TODO work thread

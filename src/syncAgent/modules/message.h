@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../types.h"  // SystemID
+#include "../../types.h"  // SystemID
 
 /*
  * SyncAgent specialized message

@@ -26,7 +26,9 @@ void freeMsg(void* msg) {
 }
 
 void sleepUntilMsgOrTimeout(OSTime) {
-	 ICall_wait(timeout);
+	// This also wakes from inter-task messages on the semaphore???
+	//  see simpleBLEBroadcaster.c
+	ICall_wait(timeout);
 }
 
 void sleepUntilTimeout(timeout) {
@@ -40,6 +42,8 @@ void* unqueueMsg(){
 		sbpEvt_t *pMsg = (sbpEvt_t*)Util_dequeueMsg(appMsgQueue);
 		if (pMsg)
 		{
+			// TODO this is wrapped in TIRTOS event baggage.
+			// unwrap it to a BT message and to an app type Message
 			return pMsg;
 		}
 	}

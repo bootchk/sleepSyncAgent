@@ -1,7 +1,7 @@
 
 #include <cassert>
 #include "syncAgent.h"
-//#include "os.h"
+#include "../platform/radio.h"	// xmit()
 
 
 // Static data members
@@ -19,7 +19,8 @@ WorkMessage SyncAgent::workMsg;
 Serializer SyncAgent::serializer;
 
 
-
+// This file only implements part of the class, see many other .cpp files.
+// Start at syncAgentLoop.cpp for high level algorithm.
 
 SyncAgent::SyncAgent(
 		PowerManager* aPowerMgr,
@@ -34,6 +35,16 @@ SyncAgent::SyncAgent(
 	assert(clique.isSelfMaster());
 	// assert no tasks scheduled until startSyncing()
 }
+
+
+void SyncAgent::xmitSync(SyncMessage& msg) {
+	xmit(serializer.serialize(msg));
+}
+
+void SyncAgent::xmitWork(WorkMessage& msg) {
+	xmit(serializer.serialize(msg));
+}
+
 
 #ifdef OBS
 void SyncAgent::startSyncing() {

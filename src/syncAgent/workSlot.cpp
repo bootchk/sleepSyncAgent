@@ -24,7 +24,7 @@ void SyncAgent::xmitAproposWork() {
 	// Other units might be contending
 	if ( isQueuedWorkOutMsg() ) {
 		workMsg.make();
-		xmit(&workMsg);
+		xmitWork(workMsg);
 	}
 }
 

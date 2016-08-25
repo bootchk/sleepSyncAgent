@@ -1,6 +1,6 @@
 #pragma once
-#include <inttypes.h>
 
+#include <inttypes.h>
 #include "message.h"
 
 class Serializer {
@@ -31,5 +31,6 @@ class Serializer {
 
 public:
 	static Message* unserialize(void* data);
-	static void* serialize(Message& msg);
+	static uint8_t* serialize(WorkMessage& msg);
+	static uint8_t* serialize(SyncMessage& msg);
 };

@@ -5,7 +5,6 @@
  */
 #include <cassert>
 
-#include "../platform/radio.h"
 #include "syncAgent.h"
 
 
@@ -33,7 +32,7 @@ void SyncAgent::startMergeSlot() {
 	assert(cliqueMerger.isActive);
 
 	cliqueMerger.makeMergeSync(&outwardSyncMsg);
-	xmit(&outwardSyncMsg);
+	xmitSync(outwardSyncMsg);
 
 	/*
 	FUTURE if multiple MergeSync xmits per merge

@@ -22,7 +22,7 @@
 #include "../platform/log.h"
 #include "../platform/radio.h"
 #include "syncAgent.h"
-#include "schedule.h"
+#include "modules/schedule.h"
 
 #ifdef OBS
 void SyncAgent::onSyncWake() {
@@ -64,8 +64,10 @@ void SyncAgent::doDyingBreath() {
 	// Ask another unit in my clique to assume mastership.
 	// Might not be heard.
 	outwardSyncMsg.makeAbandonMastership(myID());
-	xmit(&outwardSyncMsg);
+	xmitSync(outwardSyncMsg);
 }
+
+
 
 // Scheduling
 
@@ -143,7 +145,7 @@ void SyncAgent::xmitRoleAproposSync() {
 	// Only master xmits FROM its sync slot.
 	if ( clique.isSelfMaster() && clique.masterXmitSyncPolicy.shouldXmitSync() ) {
 		outwardSyncMsg.makeSync(myID());
-		xmit(&outwardSyncMsg);
+		xmitSync(outwardSyncMsg);
 	}
 }
 

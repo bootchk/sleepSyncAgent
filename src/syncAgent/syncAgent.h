@@ -2,15 +2,35 @@
 
 #include "../powerManager/powerManager.h"
 
-#include "message.h"
-#include "clique.h"
-#include "dropoutMonitor.h"
-#include "cliqueMerger.h"
-#include "role.h"
-#include "serializer.h"
+#include "modules/message.h"
+#include "modules/clique.h"
+#include "modules/dropoutMonitor.h"
+#include "modules/cliqueMerger.h"
+#include "modules/role.h"
+#include "modules/serializer.h"
 
+/*
+ * SyncAgent manages sleep synchronization for wireless network.
+ * System is low-power, sleeping much of the time.
+ *
+ * A task/thread that never returns.
+ * Collaborates with WirelessStack task (higher priority) and Work task (lower priority.)
+ *
+ * SyncAgent turns radio off and on (telling WirelessStack to do so.)
+ * While radio is on, SyncAgent waits on events from WirelessStack.
+ *
+ * A work thread sends work messages through SyncAgent via a queue.
+ * SyncAgent delivers received work messages to work thread via a queue.
+ *
+ * Collaborates with PowerManager.
+ * SyncAgent is always cycling through sync periods,
+ * but when not enough power, does not keep in sync using WirelessStack.
+ *
+ * Singleton: all members static, no this.
+ * Only use of heap is for messages
+ * TODO ???
+ */
 
-// Singleton: all members static, no this.
 class SyncAgent {
 
 public:
@@ -83,6 +103,7 @@ private:
 
 
 	// scheduling
+	// TODO OBS
 	/*
 	static void scheduleSyncWake();
 	*/
@@ -118,4 +139,7 @@ private:
 
 	// abandon
 	static void tryAssumeMastership(SyncMessage* msg);
+
+	static void xmitSync(SyncMessage&);
+	static void xmitWork(WorkMessage&);
 };
