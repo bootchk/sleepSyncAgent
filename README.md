@@ -1,7 +1,10 @@
 A sleep synchronization algorithm for ultra low power radio networks
 
 
-Work in progress.  I am designing the algorithm.  I plan to test it either using simulation or directly in hardware such as TI's CC2650.
+Work in progress. Status:
+Usually compiles clean.
+Main idea of algorithm is fleshed out.  
+Implementing a platform layer for TI-RTOS and Bluetooth stack on target TI's CC2650.
 
 
 Characteristics of the algorithm:
@@ -22,6 +25,8 @@ Contention with collision avoidance: the algorithm, in many places, probablistic
 Single-hop, broadcast: each unit hears all other units; no unit relays messages to others
 
 Isolated: no unit is a gateway to a larger network, and the system does not have an external clock reference
+
+Platform independent:  platform layer isolates the algorithm from the RTOS and wireless stack.
 
 
 Architecture:
@@ -55,6 +60,15 @@ A fisher periodically listens for syncs in normally sleeping slots of its schedu
 A merger decides which clique is better (the other, or its own.)  A merger broadcast syncs (with a large offset) to other cliques or its own clique, telling said clique to merge.
 
 
+Platforms
+-
+
+Platforms could be:
+
+- wireless network simulator
+- RTOS and wireless stack on target chip
+
+Currently I plan to use a Bluetooth stack with Broadcaster/Observer roles to implement a UDP like protocol, without connections.
 
 References
 -
