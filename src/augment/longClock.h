@@ -5,6 +5,8 @@
 64-bit clock with resolution same as os kernel clock (typically mSec.)
 Clock wraps in millions of years instead of os clock wraps in days.
 
+!!! This clock does not have alarms.  On most platforms, see Timer.
+
 Can be reset, but not to zero.  If the OSClock can be reset and is reset, this should be too.
 
 App must call getTicks() more often than OSClock wraps (getTicks checks for OSClock wrap.)
@@ -23,7 +25,8 @@ Instead, every call to nowTime() we check for OSClock wrap.
 // long time with same, high resolution as OSClock
 typedef uint64_t LongTime;
 
-// time that os accepts for scheduling
+// time that platform accepts for timeouts, scheduling
+// TODO NRF accepts 32 bits but only 24-bits valid
 typedef uint32_t DeltaTime;
 
 
@@ -32,7 +35,7 @@ typedef uint32_t DeltaTime;
 class LongClock {
 private:
 	static uint32_t mostSignificantBits;
-	static OSTime recentLeastSignificantBits;	// as received from os kernel clock
+	static OSTime recentLeastSignificantBits;	// as received from  platform clock (os kernel or otherwise)
 
 	static OSTime previousOSClockTicks;
 

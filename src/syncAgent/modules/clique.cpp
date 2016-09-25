@@ -1,8 +1,9 @@
 
 #include <cassert>
 
-#include "../../platform/radio.h"	// myID()
 #include "clique.h"
+
+#include "../../platform/radio.h"	// myID()
 
 
 // static singleton

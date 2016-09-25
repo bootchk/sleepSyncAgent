@@ -7,7 +7,7 @@
  *
  * Also, some (random.h) may depend on the target board/chip.
  */
-#include "platformAbstractionForSync.h"
+//#include "platformAbstractionForSync.h"
 
 #ifdef PLATFORM_TIRTOS
 
@@ -50,18 +50,6 @@ void* unqueueMsg(){
 }
 
 #else
-
-// Stubs for clean compile
-
-OSTime OSClockTicks() { return 1; }
-
-bool isQueuedInMsg(){ return true;}
-void freeMsg(void* msg) {}
-bool isQueuedWorkOutMsg(){ return false; }
-void* unqueueMsg(){ return nullptr; }
-
-void sleepUntilMsgOrTimeout(OSTime) {}
-void sleepUntilTimeout(OSTime) {}
 
 
 #endif

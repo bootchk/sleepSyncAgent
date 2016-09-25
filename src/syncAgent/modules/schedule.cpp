@@ -3,7 +3,6 @@
 #include "../../augment/random.h"
 
 #include "schedule.h"
-#include "../../platform/platformAbstractionForSync.h"	// scheduleTask()
 
 
 // static singleton data

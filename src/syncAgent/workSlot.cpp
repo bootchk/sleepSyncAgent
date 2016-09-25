@@ -5,8 +5,9 @@
  * There is no onWorkWake: workSlot follows immediately after syncSlot
  */
 
-#include "../platform/platformAbstractionForSync.h"
+#include "../platform/mailbox.h"
 #include "../platform/radio.h"
+
 #include "syncAgent.h"
 
 

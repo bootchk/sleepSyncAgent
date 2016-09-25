@@ -2,6 +2,7 @@
 #include <cassert>
 
 #include "../platform/radio.h"
+#include "../platform/mailbox.h"
 #include "syncAgent.h"
 
 

@@ -1,11 +1,20 @@
 #pragma once
 
-#include <inttypes.h>
+
 
 /*
  * platform abstraction layer
  *
+ * A platform must define all the functions declared here (including nested .h files.)
+ * Note that SyncAgent implementation may include the nested .h files, without including this file.
+ */
+
+/*
  * !!! Not assume  an RTOS with task scheduling.
+ * The platform may provide basic libraries such as mailbox, timer, etc.
+ *
+ *
+ * When using an RTOS with task scheduling:
  *
  * Assumes an idle (lowest priority) task that puts system in low-power sleep
  * until a timer wakes up for the next scheduled task
@@ -26,20 +35,10 @@
 // std C lib provides suitable implementation
 #include <cstdlib>
 
-
-typedef uint32_t OSTime;
-
-OSTime OSClockTicks();
-
-/*
- * Queue protocol: queue a pointer, returns a pointer, caller must free what is pointed to.
- */
-bool isQueuedInMsg();
-bool isQueuedWorkOutMsg();
-void freeMsg(void* msg);
-void* unqueueMsg();
+#include "tickCounter.h"
+#include "radio.h"
+#include "mailbox.h"
+#include "sleep.h"
 
 
-void sleepUntilMsgOrTimeout(OSTime);
-void sleepUntilTimeout(OSTime);
 
