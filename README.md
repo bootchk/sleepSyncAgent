@@ -1,10 +1,17 @@
 A sleep synchronization algorithm for ultra low power radio networks
 
 
-Work in progress. Status:
-Usually compiles clean.
-Main idea of algorithm is fleshed out.  
-Implementing a platform layer for TI-RTOS and Bluetooth stack on target TI's CC2650.
+Work in progress. 
+
+Status:
+-usually compiles clean.
+-main idea of algorithm is fleshed out
+-building it as a static library
+-designing platform layers (both ARM architecture)
+-- target Nordic nrf52, without OS, using raw protocol
+-- target TI CC2650, with TI-RTOS, and datagram on Bluetooth stack
+
+Platform layers are implemented elsewhere.  This project, as library, wedges into another project that implements platform.
 
 
 Characteristics of the algorithm:

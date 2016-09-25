@@ -22,9 +22,9 @@ Serializer SyncAgent::serializer;
 // This file only implements part of the class, see many other .cpp files.
 // Start at syncAgentLoop.cpp for high level algorithm.
 
-SyncAgent::SyncAgent(
+void SyncAgent::init(
 		PowerManager* aPowerMgr,
-		void (*aOnWorkMsgCallback)(WorkMessage* msg)
+		void (*aOnWorkMsgCallback)()
 	) {
 	powerMgr = aPowerMgr;
 	//OBSonWorkMsgCallback = aOnWorkMsgCallback;

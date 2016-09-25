@@ -34,9 +34,9 @@
 class SyncAgent {
 
 public:
-	SyncAgent(
+	static void init(
 			PowerManager* powerMgr,
-			void (*onWorkMsgCallback)(WorkMessage* msg)
+			void (*onWorkMsgQueued)()
 			);
 	static void loop();
 	

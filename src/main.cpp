@@ -1,11 +1,11 @@
 
 /*
- * Main for app using SleepSyncAgent.
+ * Example main for app using SleepSyncAgent.
  *
  * Deal with RTOS:
  * - tasks
  * - queues
- * - standard boilerplate
+ * - standard startup boilerplate
  *
  * RTOS objects:
  *
@@ -37,56 +37,23 @@
  */
 
 
-#include "powerManager/powerManager.h"
-#include "syncAgent/syncAgent.h"
-#include "syncAgent/modules/message.h"	//TODO elide this
+
+#include "sleepSyncAgent.h"
 
 
-// TODO work thread
-void onWorkMsg(WorkMessage* msg) {
-	// SyncAgent received work msg.
-	// TODO schedule low priority task to do work
+
+void onWorkMsgQueued() {
+	// SleepSyncAgent received and queued a work msg.
+	// TODO schedule low priority work thread/task to do work
 	// realtime constrained
 }
 
 
-PowerManager powerMgr;
-SyncAgent syncAgent(&powerMgr, onWorkMsg);
+SleepSyncAgent sleepSyncAgent(onWorkMsgQueued);
 
-/*OBS
-void onPowerRestored() {
-	syncAgent.resumeAfterPowerRestored();
-}
-*/
 
 int main() {
-	syncAgent.loop();	// never returns
-	
-	// cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
+	// assert embedded system startup is done and calls main.
+	sleepSyncAgent.loopOnEvents();	// never returns
 	return 0;
 }
-
-/*
-Compile:
-there are stubs so it should compile without a platform implementation.
-
-Test:
-without:
-- an os to schedule
-- a radio
-- a second unit
-
-create dummy messages and call a normal
-sequence of SyncAgent callbacks.
-syncAgent.onSyncWake();
-syncAgent.onMsgReceived();
-syncAgent.onSyncEnd();
-// work msg
-syncAgent.onWorkEnd();
-etc. fish and merge
-
-Two-unit test
-
-Multiple unit test
-
-*/
