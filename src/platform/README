@@ -1,16 +1,24 @@
 This directory contains wrapper (abstraction layer) to OS and radio stack.
 
-The idea is that SyncAgent is platform independent, if OS and radio stack are abstracted.
+SyncAgent is platform independent, if OS and radio stack are abstracted.
 
-Each .cpp file includes stubs, and implementations by platform, using #ifdefs.
+Each .cpp file is a stub, so the library compiles cleanly when producing an executable artifact.
+(But the executable won't execute.)
 
-To compile for a platform, #define the platform. 
+A .cpp may also include incomplete implementations by platform, using #ifdefs.
+But implementations should be separate and conform to API given by the .h files.
 
-Stubs give a clean compile, but won't execute.
+When linking to this project as static library,
+the calling project must implement API given by platformAbstractionForSync.h.
+You can either copy platformAbstractionForSync.h to the calling project, 
+or just insure the calling project implements the API.
+
+
 
 Platforms:
 - stubs
 - PLATFORM_TIRTOS
+- PLATFORM_NRF
 
 - FUTURE: wireless network simulator
 - FUTURE: PLATFORM_CMSIS (when it has a BT stack?)

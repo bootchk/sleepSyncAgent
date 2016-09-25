@@ -1,9 +1,9 @@
 
 #include <cassert>
-#include "../../platform/os.h"	// scheduleTask()
-#include "../../platform/random.h"
+#include "../../augment/random.h"
 
 #include "schedule.h"
+#include "../../platform/platformAbstractionForSync.h"	// scheduleTask()
 
 
 // static singleton data

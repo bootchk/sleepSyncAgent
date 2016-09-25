@@ -1,3 +1,5 @@
-This directory includes classes that SyncAgent uses.
+This directory includes most classes that SyncAgent uses.
 
-Only LongClock and random might be more generally useful.
+Not generally useful beyond SyncAgent, i.e. specific to SyncAgent.
+
+See also augment directory.

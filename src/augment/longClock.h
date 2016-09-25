@@ -1,5 +1,5 @@
 #include <inttypes.h>
-#include "../../platform/os.h"	// Depends on 32-bit OSClock
+#include "../platform/platformAbstractionForSync.h"	// Depends on 32-bit OSClock
 
 /*
 64-bit clock with resolution same as os kernel clock (typically mSec.)

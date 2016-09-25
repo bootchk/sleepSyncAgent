@@ -7,7 +7,7 @@
  *
  * Also, some (random.h) may depend on the target board/chip.
  */
-#include "os.h"
+#include "platformAbstractionForSync.h"
 
 #ifdef PLATFORM_TIRTOS
 

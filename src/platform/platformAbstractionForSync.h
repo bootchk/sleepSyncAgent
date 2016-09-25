@@ -3,9 +3,9 @@
 #include <inttypes.h>
 
 /*
- * OS abstraction layer
+ * platform abstraction layer
  *
- * Assume  an RTOS with task scheduling.
+ * !!! Not assume  an RTOS with task scheduling.
  *
  * Assumes an idle (lowest priority) task that puts system in low-power sleep
  * until a timer wakes up for the next scheduled task
@@ -20,6 +20,13 @@
  * will (possibly without warning) convert with possible loss of data (typically lower 32-bits)
  * but only defined by the compiler implementation!!! not by the C standard.
  */
+
+
+// platform must provide :  uint32_t rand()
+// std C lib provides suitable implementation
+#include <cstdlib>
+
+
 typedef uint32_t OSTime;
 
 OSTime OSClockTicks();

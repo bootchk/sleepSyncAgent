@@ -1,5 +1,5 @@
 
-#include <cstdlib>
+#include "../platform/platformAbstractionForSync.h"	// rand()
 
 
 // Wrapper to platform provided std lib functions

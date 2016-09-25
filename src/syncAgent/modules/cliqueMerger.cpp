@@ -1,6 +1,6 @@
 
 #include <cassert>
-#include "../../platform/random.h"
+#include "../../augment/random.h"
 #include "cliqueMerger.h"
 
 
