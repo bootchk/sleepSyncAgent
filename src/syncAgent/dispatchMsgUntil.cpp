@@ -29,18 +29,26 @@ void SyncAgent::dispatchMsgUntil(
 		OSTime (*timeoutFunc)()) {
 	assert(isReceiverOn());
 	while (true) {
-		sleepUntilMsgOrTimeout(timeoutFunc());
+		sleepUntilEventWithTimeout(timeoutFunc());
 		// reason for wake
-		if (isQueuedInMsg()) {
+		if (reasonForWakeIsMsg()) {
 			if (dispatchQueuedMsg()) {
 				// sleep remainder of duration
-				sleepUntilTimeout(timeoutFunc());
+				// assert radio still on, more messages
+				sleepUntilEventWithTimeout(timeoutFunc());
 				break;
 			}
+			// TODO what does else mean?
 			// assert msg queue is empty except for race
 		}
-		else {	// timeout, msg queue empty
+		else if (reasonForWakeIsTimerExpired()) {
+			// msg queue empty
 			break;
+		}
+		else {
+			// Unexpected wake from faults or brownout?
+			// TODO recover by continuing?
+			assert(false);
 		}
 	}
 	// radio is on or off

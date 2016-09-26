@@ -23,7 +23,7 @@ void SyncAgent::xmitAproposWork() {
 	// Assert self is in work slot.
 
 	// Other units might be contending
-	if ( isQueuedWorkOutMsg() ) {
+	if ( isQueuedWorkMsgFromApp() ) {
 		workMsg.make();
 		xmitWork(workMsg);
 	}

@@ -11,10 +11,13 @@
 #include "../platform/radio.h"
 #include "syncAgent.h"
 
+/*
+ * result indicates whether desired message was found.
+ */
 bool SyncAgent::dispatchMsgReceivedInSyncSlot() {
 	// TODO while any messages
 	bool foundDesiredMessage = false;
-	Message* msg = serializer.unserialize(unqueueMsg());
+	Message* msg = serializer.unserialize(unqueueReceivedMsg());
 	if (msg != nullptr) {
 		switch(msg->type) {
 		case Sync:
@@ -22,15 +25,15 @@ bool SyncAgent::dispatchMsgReceivedInSyncSlot() {
 			// Multiple syncs or sync
 			foundDesiredMessage = true;
 			// TODO discard other queued messages
-			freeMsg((void*) msg);
+			freeReceivedMsg((void*) msg);
 			break;
 		case AbandonMastership:
 			doAbandonMastershipMsgInSyncSlot((SyncMessage*) msg);
-			freeMsg((void*) msg);
+			freeReceivedMsg((void*) msg);
 			break;
 		case Work:
 			doWorkMsgInSyncSlot((WorkMessage*) msg);
-			// !!! msg is requeued, not freed
+			// !!! msg is moved to work queue, not freed
 			break;
 		default:
 			break;
@@ -43,7 +46,7 @@ bool SyncAgent::dispatchMsgReceivedInSyncSlot() {
 
 bool SyncAgent::dispatchMsgReceivedInWorkSlot(){
 	bool foundDesiredMessage = false;
-	Message* msg = serializer.unserialize(unqueueMsg());
+	Message* msg = serializer.unserialize(unqueueReceivedMsg());
 	if (msg != nullptr) {
 		switch(msg->type) {
 		case Sync:
@@ -52,19 +55,19 @@ bool SyncAgent::dispatchMsgReceivedInWorkSlot(){
 			 * Alternative: merge other clique from within former work slot?
 			 * doSyncMsgInWorkSlot(msg);
 			 */
-			freeMsg((void*) msg);
+			freeReceivedMsg((void*) msg);
 			break;
 		case AbandonMastership:
 			/*
 			 * Unusual: Another clique's sync slot at same time as my work slot.
 			 * For now ignore.  ??? doAbandonMastershipMsgInWorkSlot(msg);
 			 */
-			freeMsg((void*) msg);
+			freeReceivedMsg((void*) msg);
 			break;
 		case Work:
 			// Usual: work message in sync with my clique.
 			doWorkMsgInWorkSlot((WorkMessage*) msg);
-			// msg requeued, not freed
+			// TODO msg requeued, not freed
 			foundDesiredMessage = true;
 			break;
 		default:
@@ -77,7 +80,7 @@ bool SyncAgent::dispatchMsgReceivedInWorkSlot(){
 
 bool SyncAgent::dispatchMsgReceivedInFishSlot(){
 	bool foundDesiredMessage;
-	Message* msg = serializer.unserialize(unqueueMsg());
+	Message* msg = serializer.unserialize(unqueueReceivedMsg());
 	if (msg != nullptr) {
 		switch(msg->type) {
 		case Sync:
@@ -107,7 +110,7 @@ bool SyncAgent::dispatchMsgReceivedInFishSlot(){
 			break;
 		}
 		// All msg types freed
-		freeMsg((void*) msg);
+		freeReceivedMsg((void*) msg);
 	}
 	return foundDesiredMessage;
 }

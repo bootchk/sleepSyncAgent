@@ -27,12 +27,14 @@ void SyncAgent::loop(){
 			doSyncPeriod();
 		}
 		else {
-			// sleep a sync period, then check power again.
+			// sleep an entire sync period, then check power again.
 			if (isSyncing) {
 				pauseSyncing();
 			}
 			isSyncing = false;
-			sleepUntilTimeout(1);
+			// TODO symbolic constant, 1 is not right
+			sleepUntilEventWithTimeout(1);
+			// TODO assert radio off
 		}
 	}
 }
@@ -64,7 +66,7 @@ void SyncAgent::doSyncPeriod() {
 		// avoid collision
 		if (cliqueMerger.shouldScheduleMerge())  {
 
-			sleepUntilTimeout(clique.schedule.deltaToThisMergeStart(cliqueMerger.offsetToMergee));
+			sleepUntilEventWithTimeout(clique.schedule.deltaToThisMergeStart(cliqueMerger.offsetToMergee));
 			startMergeSlot();	// doMerge
 			// Merge is xmit only, no sleeping til end of slot
 		}
@@ -73,7 +75,7 @@ void SyncAgent::doSyncPeriod() {
 	else {
 		// Fish every period
 		// FUTURE: A fish slot need not be aligned with other slots, and different duration???
-		sleepUntilTimeout(clique.schedule.deltaToThisFishSlotStart());
+		sleepUntilEventWithTimeout(clique.schedule.deltaToThisFishSlotStart());
 		startFishSlot();
 		dispatchMsgUntil(
 				dispatchMsgReceivedInSyncSlot,
@@ -82,6 +84,6 @@ void SyncAgent::doSyncPeriod() {
 	}
 	assert(!isReceiverOn());	// Low power for remainder of this sync period
 	assert(!isTransmitterOn());
-	sleepUntilTimeout(clique.schedule.deltaNowToNextSyncPeriod());
+	sleepUntilEventWithTimeout(clique.schedule.deltaNowToNextSyncPeriod());
 	// Period over
 }
