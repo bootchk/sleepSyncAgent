@@ -4,7 +4,7 @@
  * Wrapper aka abstraction layer for software stack for radio/wireless
  */
 
-#include "../types.h"
+#include "types.h"	// SystemID
 
 bool isReceiverOn();
 bool isTransmitterOn();

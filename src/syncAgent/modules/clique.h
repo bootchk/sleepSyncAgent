@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../types.h"
+#include "../../platform/types.h"
 #include "schedule.h"
 #include "masterXmitSyncPolicy.h"
 
