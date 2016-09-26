@@ -1,7 +1,7 @@
 
 #include "sleepSyncAgent.h"
 
-#include "powerManager/powerManager.h"
+#include "augment/powerManager.h"
 #include "syncAgent/syncAgent.h"
 
 /*

@@ -39,6 +39,7 @@
 #include "radio.h"
 #include "mailbox.h"
 #include "sleep.h"
+#include "power.h"
 
 
 

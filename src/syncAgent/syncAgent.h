@@ -1,6 +1,6 @@
 
 
-#include "../powerManager/powerManager.h"
+#include "../augment/powerManager.h"
 
 #include "modules/message.h"
 #include "modules/clique.h"
