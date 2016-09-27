@@ -9,37 +9,25 @@
  * Each Clique is on a Schedule that includes a sync slot.
  * See general notes in Schedule.
  *
- * One clique's sleeping slot may be near the time one of another clique's sleeping slots.
- * A clique's Master xmits sync FROM its sync slot.
- * A Merger xmits sync FROM a sleeping slot INTO another clique's sync slot.
- * Contention (two syncs in same interval of a sync slot):
- * - two cliques may unwittingly be in sync (two MASTERS xmitting in same interval)
- * - merging: a Merger of a better clique may be xmitting sync FROM its sleeping slot to merge this clique into an offset syncSlot
+ * a) A clique's Master xmits sync FROM its sync slot.
  *
+ * b) A Merger xmits sync FROM a sleeping slot INTO another clique's sync slot.
+ *
+ * c) One clique's sleeping slot may coincidentally be near in time to another clique's sleeping slot, or drift into each other.
+ *
+ * Contention (two syncs in same interval of a sync slot):
+ * - situation c:
+ *   two cliques may unwittingly be in sync (two MASTERS xmitting in same interval)
+ * - situation b:
+ *   merging: a Merger of a better clique may be xmitting sync FROM its sleeping slot to merge this clique into an offset syncSlot
  */
 
 #include <cassert>
 #include "../platform/log.h"
 #include "../platform/uniqueID.h"
 #include "syncAgent.h"
-#include "modules/schedule.h"
 
-#ifdef OBS
-void SyncAgent::onSyncWake() {
-	// sync slot starts
-	if ( !powerMgr->isPowerForRadio() ) {
-		pauseSyncing();
-		// assert App has a scheduled event; SyncAgent has no events scheduled
-	}
-	else {
-		startSyncSlot();
-		// assert receiver on and endSyncSlotTask is scheduled
-	}
 
-	// ensure endSyncSlotTask is scheduled or App wakingTask is scheduled
-	// sleep
-}
-#endif
 
 
 void SyncAgent::pauseSyncing() {
@@ -48,17 +36,18 @@ void SyncAgent::pauseSyncing() {
 	 * Other units might still have power and assume mastership of my clique
 	 */
 
-	// assert radio not on
+	assert(!radio->isPowerOn());
 
 	// FUTURE if clique is probably not empty
 	if (clique.isSelfMaster()) doDyingBreath();
-	// else I am a slave, just drop out of clique
+	// else I am a slave, just drop out of clique, others may have enough power
 
-	// onSyncingPausedCallback();	// Tell app
+	// FUTURE onSyncingPausedCallback();	// Tell app
 
 	// ensure SyncAgent scheduled no event
 	// ensure app has scheduled its own events (else will not wake from sleep)
 }
+
 
 void SyncAgent::doDyingBreath() {
 	// Ask another unit in my clique to assume mastership.
@@ -69,52 +58,7 @@ void SyncAgent::doDyingBreath() {
 
 
 
-// Scheduling
 
-/*OBS
-void SyncAgent::scheduleNextSyncRelatedTask() {
-	// assert in syncSlot
-	if (role.isMerger()) {
-		// avoid collision
-		if (cliqueMerger.shouldScheduleMerge()) {
-			scheduleMergeWake();
-		}
-		else { scheduleSyncWake(); }
-	}
-	else {
-		// Fish every period
-		scheduleFishWake();
-	}
-	// assert some task scheduled
-	// onSyncWake: start of next period
-	// onMergeWake or onFishWake: in a normally-sleeping slot of this period
-}
-
-
-void SyncAgent::scheduleSyncWake() {
-	// assert in work or fish or merge slot
-	clique.schedule.scheduleStartSyncSlotTask(onSyncWake);
-}
-*/
-
-#ifdef OBS
-void SyncAgent::scheduleFishWake(){
-	// assert in workSlot
-	/*
-	 * Schedule for random sleeping slot.
-	 * Not to avoid collision of xmits, since fishing is receiving.
-	 * Random to better cover time.
-	 */
-	clique.schedule.scheduleStartFishSlotTask(onFishWake);
-}
-
-void SyncAgent::scheduleMergeWake(){
-	// Knows how to schedule mergeSlot at some time in current period
-	// assert we have decided to send a mergeSync
-	assert(cliqueMerger.isActive);
-	clique.schedule.scheduleStartMergeSlotTask(onMergeWake, cliqueMerger.offsetToMergee);
-}
-#endif
 
 void SyncAgent::startSyncSlot() {
 	radio->powerOn();
@@ -125,20 +69,6 @@ void SyncAgent::startSyncSlot() {
 	// race to sleep
 }
 
-/*OBS
-void SyncAgent::startSyncSlot() {
-	// Start of sync slot coincident with start of period.
-	clique.schedule.startPeriod();
-
-	xmitRoleAproposSync();
-
-	// even a Master listens for remainder of sync slot
-	turnReceiverOnWithCallback(onMsgReceivedInSyncSlot);
-	clique.schedule.scheduleEndSyncSlotTask(onSyncSlotEnd);
-    // assert radio on
-	// will wake on onMsgReceivedInSyncSlot or onSyncSlotEnd
-	// sleep
-*/
 
 
 void SyncAgent::xmitRoleAproposSync() {
@@ -168,33 +98,7 @@ void SyncAgent::endSyncSlot() {
 }
 
 
-#ifdef OBS
-void SyncAgent::onSyncSlotEnd() {
-	/*
-	 * This may be late, when message receive thread this delays this.
-	 * Also, there could be a race to deliver message with this event.
-	 * FUTURE check for those cases.
-	 * Scheduling of subsequent events does not depend on timely this event.
-	 */
 
-	// FUTURE we could do this elsewhere, e.g. start of sync slot
-	if (dropoutMonitor.check()) {
-		dropoutMonitor.heardSync();	// reset
-		clique.onMasterDropout();
-	}
-
-	scheduleNextSyncRelatedTask();
-	// workSlot follows syncSlot.  Fall into it.
-	startWorkSlot();
-	/*
-	 * Assert onWorkSlotEnd scheduled
-	 * AND some sync-related task is scheduled.
-	 *
-	 * assert radio on for work msgs
-	 */
-	// sleep
-}
-#endif
 
 
 // SyncMessage handlers for messages received in sync slot

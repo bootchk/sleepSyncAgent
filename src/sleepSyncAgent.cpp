@@ -26,8 +26,11 @@ SyncAgent syncAgent;
 
 
 
-SleepSyncAgent::SleepSyncAgent(void (*onWorkMsgQueued)()){
-	syncAgent.init(onWorkMsgQueued);
+SleepSyncAgent::SleepSyncAgent(
+		Radio* radio,
+		void (*onWorkMsgQueued)())
+{
+	syncAgent.init(radio, onWorkMsgQueued);
 }
 
 

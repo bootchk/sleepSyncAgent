@@ -24,15 +24,18 @@ void (*SyncAgent::onWorkMsgQueuedCallback)();
 // See syncAgentLoop.cpp for high level algorithm.
 
 void SyncAgent::init(
+		Radio * aRadio,
 		void (*aOnWorkMsgQueuedCallback)()
-	) {
+	)
+{
+	// require radio is initialized
+	radio = aRadio;
 	onWorkMsgQueuedCallback = aOnWorkMsgQueuedCallback;
 
 	clique.reset();
 	// ensure initial state of SyncAgent
 	assert(role.isFisher());
 	assert(clique.isSelfMaster());
-	// assert no tasks scheduled until startSyncing()
 }
 
 
@@ -41,7 +44,7 @@ void SyncAgent::xmitSync(SyncMessage& msg) {
 			Serializer::OnAirSyncMsgPayloadLength);
 }
 
-// TODO
+
 void SyncAgent::xmitWork(WorkMessage& msg) {
 	radio->transmit(serializer.serialize(msg),
 			Serializer::OnAirSyncMsgPayloadLength);

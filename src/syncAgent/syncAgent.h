@@ -17,43 +17,29 @@
  * A task/thread that never returns.
  * Collaborates with WirelessStack task (higher priority) and Work task (lower priority.)
  *
- * SyncAgent turns radio off and on (telling WirelessStack to do so.)
- * While radio is on, SyncAgent waits on events from WirelessStack.
+ * SyncAgent powers radio off and on.
+ * With radio receiver on, SyncAgent sleeps, waking on events from WirelessStack or Timer.
  *
  * A work thread sends work messages through SyncAgent via a queue.
  * SyncAgent delivers received work messages to work thread via a queue.
  *
- * Collaborates with PowerManager.
+ * Uses PowerManager.
  * SyncAgent is always cycling through sync periods,
- * but when not enough power, does not keep in sync using WirelessStack.
+ * but when not enough power, does not use radio to keep in sync.
+ * When power is restored, sync periods MIGHT still be in sync.
  *
  * Singleton: all members static, no this.
- * Only use of heap is for messages
- * TODO ???
+ *
+ * Does not use heap.
  */
 
 class SyncAgent {
 
 public:
-	static void init( void (*onWorkMsgQueued)() );
+	static void init( Radio* radio, void (*onWorkMsgQueued)() );
 	static void loop();
-	
-	/*
-	 * OBS
-	 * App calls startSyncing on mcu power on reset POR.
-	 * App can not stop synching.
-	 * SyncAgent monitors power and tells app onSyncLostCallback.
-	 * App continues with mcu in low power, radio not on.
-	 * When power is restored, app calls SyncAgent.resume()
-	 *
-	 * Proper sequence:  POR, startSynching, onSyncingPausedCallback, resumeSyncing, onSyncingPausedCallback, resumeSyncing,...
-	 */
-
-	//static void resumeAfterPowerRestored();
-
 
 private:
-
 
 // data members
 	static bool isSyncingState;
@@ -104,16 +90,6 @@ private:
 	// Merge slot only xmits, not receive messages
 
 
-	// scheduling
-	// TODO OBS
-	/*
-	static void scheduleSyncWake();
-	*/
-	static void scheduleFishWake();
-	static void scheduleMergeWake();
-	static void scheduleNextSyncRelatedTask();
-
-
 	// work
 	static void startWorkSlot();
 	static void relayWorkToApp(WorkMessage* msg);
@@ -145,3 +121,18 @@ private:
 	static void xmitSync(SyncMessage&);
 	static void xmitWork(WorkMessage&);
 };
+
+/*
+ * OBSOLETE
+ * App calls startSyncing on mcu power on reset POR.
+ * App can not stop synching.
+ * SyncAgent monitors power and tells app onSyncLostCallback.
+ * App continues with mcu in low power, radio not on.
+ * When power is restored, app calls SyncAgent.resume()
+ *
+ * Proper sequence:  POR, startSynching, onSyncingPausedCallback, resumeSyncing, onSyncingPausedCallback, resumeSyncing,...
+ */
+
+//static void resumeAfterPowerRestored();
+
+

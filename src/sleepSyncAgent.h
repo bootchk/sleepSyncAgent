@@ -1,3 +1,5 @@
+#include "platform/radio.h"
+
 /*
  * API of SleepSyncAgent
  *
@@ -17,6 +19,7 @@
 class SleepSyncAgent {
 public:
 	SleepSyncAgent(
+			Radio* radio,
 			void (*onWorkMsgQueued)()
 			);
 	static void loopOnEvents();	// never returns

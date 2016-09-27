@@ -1,9 +1,7 @@
 This directory augments the platform.
 
-Many people would name it "utility."
+Many people would name it "utility" or "trivial".
 
-Functions too trivial for their own classes,
-but not trivial enough to be provided on all platforms.
+Simple functions but not provided on all platforms.
 
 In other words, a layer between SyncAgent and the platform.
-

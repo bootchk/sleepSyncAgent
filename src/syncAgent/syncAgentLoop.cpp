@@ -82,5 +82,5 @@ void SyncAgent::doSyncPeriod() {
 	}
 	assert(!radio->isPowerOn());	// Low power for remainder of this sync period
 	sleepUntilEventWithTimeout(clique.schedule.deltaNowToNextSyncPeriod());
-	// Period over
+	// Sync period over
 }
