@@ -6,7 +6,6 @@
  */
 
 #include "../platform/mailbox.h"
-#include "../platform/radio.h"
 
 #include "syncAgent.h"
 

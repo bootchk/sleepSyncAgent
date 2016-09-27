@@ -8,7 +8,6 @@
 
 #include <cassert>
 
-#include "../platform/radio.h"
 #include "syncAgent.h"
 
 /*

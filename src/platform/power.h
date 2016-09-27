@@ -1,5 +1,8 @@
 
 
+// Optional to implement on platform depending on config.h
+// See #ifdef SYNC_AGENT_CONSERVE_POWER in augment/PowerManager
+
 
 // TODO not portable and should be a function
 #define VrefInVolts 3.6

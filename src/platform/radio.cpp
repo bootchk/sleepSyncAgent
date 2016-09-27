@@ -12,13 +12,15 @@
 
 // stubs
 
-bool isReceiverOn() {return true; }
-bool isTransmitterOn() {return true; }
-void turnReceiverOn() {};
-void turnReceiverOff() {}
-void xmit(uint8_t* data, uint8_t length) {}
 
-SystemID myID() { return 1;}
+bool Radio::isDisabled() {return false; }
+
+void Radio::powerOn() {}
+void Radio::powerOff() {}
+bool Radio::isPowerOn() {return true; }
+
+void Radio::transmit(uint8_t* data, uint8_t length) {}
+void Radio::receive(uint8_t* data, uint8_t length) {}
 
 #endif
 

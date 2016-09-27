@@ -1,7 +1,6 @@
 
 #include <cassert>
 
-#include "../platform/radio.h"
 #include "../platform/mailbox.h"
 #include "syncAgent.h"
 
@@ -36,6 +35,7 @@ void SyncAgent::dispatchMsgUntil(
 			if (dispatchQueuedMsg()) {
 				// sleep remainder of duration
 				// assert radio still on, more messages
+				// TODO this is not right, recurse??
 				sleepUntilEventWithTimeout(timeoutFunc());
 				break;
 			}

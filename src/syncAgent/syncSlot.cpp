@@ -20,7 +20,7 @@
 
 #include <cassert>
 #include "../platform/log.h"
-#include "../platform/radio.h"
+#include "../platform/uniqueID.h"
 #include "syncAgent.h"
 #include "modules/schedule.h"
 

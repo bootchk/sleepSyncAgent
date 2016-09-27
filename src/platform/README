@@ -1,18 +1,12 @@
-This directory contains wrapper (abstraction layer) to OS and radio stack.
-
-SyncAgent is platform independent, if OS and radio stack are abstracted.
+This directory contains abstraction layer to platform's lib and radio stack.
+SyncAgent is platform agnostic but requires platform support.
 
 Each .cpp file is a stub, so the library compiles cleanly when producing an executable artifact.
 (But the executable won't execute.)
 
-A .cpp may also include incomplete implementations by platform, using #ifdefs.
-But implementations should be separate and conform to API given by the .h files.
-
 When linking to this project as static library,
-the calling project must implement API given by platformAbstractionForSync.h.
-You can either copy platformAbstractionForSync.h to the calling project, 
-or just insure the calling project implements the API.
-
+the calling project must implement API given by platformAbstractionForSync.h (and nested includes).
+Insure the calling project implements the API.
 
 
 Platforms:

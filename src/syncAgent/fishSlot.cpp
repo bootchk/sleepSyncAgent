@@ -6,7 +6,6 @@
  * Fish for other cliques by listening.
  */
 
-#include "../platform/radio.h"
 #include "syncAgent.h"
 
 

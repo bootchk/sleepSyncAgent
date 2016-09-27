@@ -6,8 +6,6 @@
  * Wrapper aka abstraction layer for software stack for radio/wireless
  */
 
-#include "types.h"	// SystemID
-
 
 class Radio {
 public:
@@ -22,8 +20,16 @@ public:
 	 * Enable/disable receipt of messages.
 	 * Not about power to the radio.
 	 */
-	static void startReceiving();
-	static void stopReceiving();
+	//static void startReceiving();
+	//static void stopReceiving();
+
+	/*
+	 * is in idle state
+	 * receive completed OR transmit completed
+	 * Some platforms? radio enters this state after receiving a message
+	 * so there is a race after calling receive() to enter sleeping state expecting receive event.
+	 */
+	// TODO !isDisabled() equivalent to isReceiving() ?
 	static bool isDisabled();
 
 
@@ -46,7 +52,6 @@ public:
 };
 
 
-// Not Radio, but closely associated.
-SystemID myID();
+
 
 

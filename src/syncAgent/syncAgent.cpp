@@ -2,8 +2,6 @@
 #include <cassert>
 #include "syncAgent.h"
 
-#include "../platform/radio.h"	// xmit()
-
 
 // Static data members
 bool SyncAgent::isSyncingState = false;
