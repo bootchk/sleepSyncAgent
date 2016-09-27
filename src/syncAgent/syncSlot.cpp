@@ -117,10 +117,12 @@ void SyncAgent::scheduleMergeWake(){
 #endif
 
 void SyncAgent::startSyncSlot() {
+	radio->powerOn();
 	xmitRoleAproposSync();
 
 	// even a Master listens for remainder of sync slot
-	turnReceiverOn();	// turnReceiverOnWithCallback(onMsgReceivedInSyncSlot);
+	radio->receive(receiveBuffer, Radio::MaxMsgLength);	// turnReceiverOnWithCallback(onMsgReceivedInSyncSlot);
+	// race to sleep
 }
 
 /*OBS

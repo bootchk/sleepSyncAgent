@@ -11,7 +11,9 @@
 
 
 void SyncAgent::startFishSlot() {
-	turnReceiverOn();	// OBS WithCallback(onMsgReceivedInFishSlot);
+	radio->powerOn();
+	radio->receive(receiveBuffer, Radio::MaxMsgLength);
+	// assert can receive an event that wakes imminently: race to sleep
 }
 
 
@@ -28,7 +30,7 @@ void SyncAgent::endFishSlot(){
 	 * first mergeSlot will be after next syncSlot.
 	 */
 	// not require receiver on
-	turnReceiverOff();
+	radio->powerOff();
 }
 
 

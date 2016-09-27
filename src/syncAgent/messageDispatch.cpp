@@ -91,7 +91,7 @@ bool SyncAgent::dispatchMsgReceivedInFishSlot(){
 			 */
 			doSyncMsgInFishSlot((SyncMessage*) msg);
 			// Self can't handle more than one, or slot is busy with another merge
-			turnReceiverOff();
+			radio->powerOff();
 			foundDesiredMessage = true;
 			break;
 		case AbandonMastership:

@@ -13,8 +13,9 @@
 
 void SyncAgent::startWorkSlot() {
 	// assert still in task onEndSyncSlot
+	radio->powerOn();
 	xmitAproposWork();
-	turnReceiverOn();	// WithCallback(onMsgReceivedInWorkSlot);
+	radio->receive(receiveBuffer, Radio::MaxMsgLength);	// WithCallback(onMsgReceivedInWorkSlot);
 	// OBS clique.schedule.scheduleEndWorkSlotTask(onWorkSlotEnd);
 }
 
@@ -38,7 +39,7 @@ void SyncAgent::xmitAproposWork() {
 
 
 void SyncAgent::endWorkSlot(){
-	turnReceiverOff();
+	radio->powerOff();
 	// assert a sync related task is scheduled e.g. fish, merge, or syncWake
 	// TODO not true?  move scheduling here.
 	// sleep

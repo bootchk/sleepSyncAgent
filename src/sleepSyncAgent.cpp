@@ -21,14 +21,13 @@
 // Private data members.  Anonymous namespace similar to "static"
 namespace
 {
-PowerManager powerMgr;
 SyncAgent syncAgent;
 }
 
 
 
 SleepSyncAgent::SleepSyncAgent(void (*onWorkMsgQueued)()){
-	syncAgent.init(&powerMgr, onWorkMsgQueued);
+	syncAgent.init(onWorkMsgQueued);
 }
 
 

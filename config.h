@@ -33,10 +33,10 @@
  *
  * No:
  * SyncAgent implements a work slot,
- * but since no units are sending work,
- * never hears a work message.
+ * but since no units are sending work,  never hears a work message.
  * SyncAgent enqueues and dequeues are stubbed to no ops.
  * Platform layer need not implement work queue operations.
+ * The app is nil, all it does is keep sync.
  */
 #define SYNC_AGENT_CONVEY_WORK 1
 
@@ -52,3 +52,31 @@
  * (but it is non-functional.)
  */
 //#define SYNC_AGENT_IS_LIBRARY 1
+
+/*
+ * Define this if, on the platform, the radio peripheral is synchronous to the SyncAgent.
+ *
+ * Note the radio peripheral is usually an independent peripheral/device,
+ * but the platform may layer it so that messages are synchronous.
+ * A sleeping SyncAgent only means the mcu is idle, the radio peripheral may still be active.
+ *
+ * Yes: (synchronous)
+ * After platform receives msg, radio is disabled until SyncAgent starts it again.
+ * When platform receives msg:
+ * - sleeping sync agent is wakened because it was sleeping on any event
+ * - SyncAgent only knows the reason for wakening by calling isWakeReasonMsgReceived
+ * - the SyncAgent must read the received message before restarting the receiver.
+ *
+ *
+ * No:
+ * Radio peripheral is run in a separate thread.
+ * After platform receives msg, radio continues to receive without intervention by SyncAgent,
+ * whether or not SyncAgent keeps up.
+ * When platform receives msg:
+ *  - it is queued
+ *  - sleeping sync agent is wakened because it was blocked on the queue
+ */
+#define RECEIVE_IS_SYNCHRONOUS 1
+
+
+

@@ -2,6 +2,7 @@
 
 #include "serializer.h"
 
+// TODO serializer
 
 Message* Serializer::unserialize(void* data) {
 	return new Message();

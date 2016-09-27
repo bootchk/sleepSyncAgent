@@ -21,17 +21,17 @@ void SyncAgent::loop(){
 		// Sync period is either active or idle, but still advances schedule
 		clique.schedule.startPeriod();
 
-		if ( powerMgr->isPowerForRadio() ) {
+		if ( powerMgr.isPowerForRadio() ) {
 			// TODO resumesyncing
-			isSyncing = true;
+			isSyncingState = true;
 			doSyncPeriod();
 		}
 		else {
 			// sleep an entire sync period, then check power again.
-			if (isSyncing) {
+			if (isSyncingState) {
 				pauseSyncing();
 			}
-			isSyncing = false;
+			isSyncingState = false;
 			// TODO symbolic constant, 1 is not right
 			sleepUntilEventWithTimeout(1);
 			// TODO assert radio off
@@ -46,7 +46,7 @@ void SyncAgent::doSyncPeriod() {
 
 	startSyncSlot();
 	// TODO: xmit sync in middle of sync slot
-	assert(isReceiverOn()); // listening for other's sync
+	assert(!radio->isDisabled()); // listening for other's sync
 	dispatchMsgUntil(
 			dispatchMsgReceivedInSyncSlot,
 			clique.schedule.deltaToThisSyncSlotEnd);
@@ -54,12 +54,12 @@ void SyncAgent::doSyncPeriod() {
 
 	// work slot follows sync slot with no delay
 	startWorkSlot();
-	assert(isReceiverOn());   // listening for other's work
+	assert(!radio->isDisabled());   // listening for other's work
 	dispatchMsgUntil(
 			dispatchMsgReceivedInSyncSlot,
 			clique.schedule.deltaToThisWorkSlotEnd);
 	endWorkSlot();
-	assert(!isReceiverOn());	// Low power until next slot
+	assert(!radio->isPowerOn());	// Low power until next slot
 
 	// Variation: next event (if any) occurs within a large sleeping time (lots of 'slots')
 	if (role.isMerger()) {
@@ -82,8 +82,7 @@ void SyncAgent::doSyncPeriod() {
 				clique.schedule.deltaToThisFishSlotEnd);
 		endFishSlot();
 	}
-	assert(!isReceiverOn());	// Low power for remainder of this sync period
-	assert(!isTransmitterOn());
+	assert(!radio->isPowerOn());	// Low power for remainder of this sync period
 	sleepUntilEventWithTimeout(clique.schedule.deltaNowToNextSyncPeriod());
 	// Period over
 }

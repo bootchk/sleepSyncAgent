@@ -1,6 +1,7 @@
 
 
 #include "../augment/powerManager.h"
+#include "../platform/radio.h"
 
 #include "modules/message.h"
 #include "modules/clique.h"
@@ -34,10 +35,7 @@
 class SyncAgent {
 
 public:
-	static void init(
-			PowerManager* powerMgr,
-			void (*onWorkMsgQueued)()
-			);
+	static void init( void (*onWorkMsgQueued)() );
 	static void loop();
 	
 	/*
@@ -58,7 +56,8 @@ private:
 
 
 // data members
-	static bool isSyncing;	// state
+	static bool isSyncingState;
+	static uint8_t receiveBuffer[Radio::MaxMsgLength];
 
 	// has-a, all singletons
 	static Clique clique;
@@ -68,11 +67,14 @@ private:
 	static SyncMessage outwardSyncMsg;	// Reused, only one message queued at a time // TODO dynamic?
 	static WorkMessage workMsg;	// Many may be queued??
 	static Serializer serializer;
+	static PowerManager powerMgr;
 
-	// uses
-	static PowerManager* powerMgr;	// owned by app
-	// OBS static void (*onSyncingPausedCallback)();	// callback to app
-	// OBS static void (*onWorkMsgCallback)(WorkMessage* msg);	// callback to app
+
+
+	// Owned by app
+	static Radio* radio;
+	static void (*onWorkMsgQueuedCallback)();
+	// FUTURE static void (*onSyncingPausedCallback)();	// callback to app when syncing is paused
 
 // methods
 

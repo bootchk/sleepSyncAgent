@@ -6,10 +6,8 @@
 
 
 // Static data members
-bool SyncAgent::isSyncing = false;
-PowerManager* SyncAgent::powerMgr;
-//OBS void (*SyncAgent::onSyncingPausedCallback)();
-//OBS void (*SyncAgent::onWorkMsgCallback)(WorkMessage* msg);
+bool SyncAgent::isSyncingState = false;
+uint8_t SyncAgent::receiveBuffer[255];
 
 Clique SyncAgent::clique;
 DropoutMonitor SyncAgent::dropoutMonitor;
@@ -18,17 +16,19 @@ Role SyncAgent::role;
 SyncMessage SyncAgent::outwardSyncMsg;
 WorkMessage SyncAgent::workMsg;
 Serializer SyncAgent::serializer;
+PowerManager SyncAgent::powerMgr;
+
+Radio* SyncAgent::radio;
+void (*SyncAgent::onWorkMsgQueuedCallback)();
 
 
 // This file only implements part of the class, see many other .cpp files.
-// Start at syncAgentLoop.cpp for high level algorithm.
+// See syncAgentLoop.cpp for high level algorithm.
 
 void SyncAgent::init(
-		PowerManager* aPowerMgr,
-		void (*aOnWorkMsgCallback)()
+		void (*aOnWorkMsgQueuedCallback)()
 	) {
-	powerMgr = aPowerMgr;
-	//OBSonWorkMsgCallback = aOnWorkMsgCallback;
+	onWorkMsgQueuedCallback = aOnWorkMsgQueuedCallback;
 
 	clique.reset();
 	// ensure initial state of SyncAgent
@@ -39,11 +39,14 @@ void SyncAgent::init(
 
 
 void SyncAgent::xmitSync(SyncMessage& msg) {
-	xmit(serializer.serialize(msg));
+	radio->transmit(serializer.serialize(msg),
+			Serializer::OnAirSyncMsgPayloadLength);
 }
 
+// TODO
 void SyncAgent::xmitWork(WorkMessage& msg) {
-	xmit(serializer.serialize(msg));
+	radio->transmit(serializer.serialize(msg),
+			Serializer::OnAirSyncMsgPayloadLength);
 }
 
 

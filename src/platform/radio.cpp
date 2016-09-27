@@ -16,7 +16,7 @@ bool isReceiverOn() {return true; }
 bool isTransmitterOn() {return true; }
 void turnReceiverOn() {};
 void turnReceiverOff() {}
-void xmit(uint8_t* msg) {}
+void xmit(uint8_t* data, uint8_t length) {}
 
 SystemID myID() { return 1;}
 
