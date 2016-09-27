@@ -182,10 +182,12 @@
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Archive">
+			<resource resourceType="PROJECT" workspacePath="/sleepSyncAgent"/>
+		</configuration>
 		<configuration configurationName="library">
 			<resource resourceType="PROJECT" workspacePath="/sleepSyncAgent"/>
 		</configuration>
-		<configuration configurationName="Archive"/>
 		<configuration configurationName="Debug">
 			<resource resourceType="PROJECT" workspacePath="/sleepSyncAgent"/>
 		</configuration>

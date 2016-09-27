@@ -43,9 +43,6 @@ void SyncAgent::pauseSyncing() {
 	// else I am a slave, just drop out of clique, others may have enough power
 
 	// FUTURE onSyncingPausedCallback();	// Tell app
-
-	// ensure SyncAgent scheduled no event
-	// ensure app has scheduled its own events (else will not wake from sleep)
 }
 
 
