@@ -43,22 +43,27 @@ Implements a SleepSyncAgent.  SleepSyncAgent handles radio for app.  The app man
 
 SleepSyncAgent is a wedge into the app. Built as a library cross-compiled to the target.  Linked into the app.  The app project provides platform libs that SleepSyncAgent requires.
 
-    App               SleepSyncAgent
+    App                        SleepSyncAgent
 
     Startup
-    main()        --> loopOnEvents() never returns
+    main()                 --> loopOnEvents() never returns
     
     ISRs (highest priority)
+      RTC
+      Radio
+      Exceptions
     
-    platform libs <-- SyncAgent (higher priority)
+    platform libs (or RTOS) <-- SyncAgent (higher priority)
       radio
       clock
       timer
       readVcc
-      queue       <-- onWorkMsgReceive()
-        ^         --> isQueueEmpty()
-        |
-    work thread (lowest priority)   
+      queue      
+      
+    Work thread (lowest priority
+    	--> workFromAppQue  --> isQueueEmpty()
+    	<-- workToAppQue    <-- onWorkMsgReceive()
+ 
 
 The system can be in these states (in order of electrical power available):
 
@@ -112,6 +117,34 @@ Digi Corporation's Digimesh has sleep synchronization
 Building
 -
 
-To compile during development, choose Build Artifact: Executable  (or Eclipse's Debug configuration?)  Then stubs for the platform are compiled in.
+There are two different Eclipse build configurations:
 
-To compile a library to be linked into an app, choose Build Artifact: Static library (or Eclipse "library" configuration.)  Then platform stubs are excluded from the build, and the library depends on implementation in the app project of the platform API's.
+    - Debug: builds and links for the host architecture with stubs for platform libs.
+    - Archive: builds static lib for ARM architecture leaving undefined references to platform libs
+
+
+Debug configuration 
+
+In config.h, comment out the define SYNC_AGENT_IS_LIBRARY.  Then stubs for the platform are compiled and linked in.
+
+ProjectProperties>C/C++Builder>Settings>BuildArtifact>ArtifactType: Executable
+
+
+
+Archive configuration
+
+ProjectProperties>C/C++Builder>Settings>Build Artifact>ArtifactType: Static library
+ProjectProperties>C/C++Builder>Settings>Tool Chain>  compiler flags for ARM
+
+In config.h, define SYNC_AGENT_IS_LIBRARY   Then platform stubs are excluded from the build by #ifdefs, and the library depends on implementation in the app project of the platform API's.
+
+
+Linking with app
+-
+
+    Copy the archive to the app project.
+    Implement the API defined by platformAbstractionForSync.h
+    In the app's main, instantiate a SleepSyncAgent and call its loopOnEvents() method.  See main.cpp
+    Implement a work thread reading to and writing to work queues.
+    Build app project with same CFLAGS for ARM ISA.
+
