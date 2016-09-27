@@ -15,7 +15,9 @@
  * result indicates whether desired message was found.
  */
 bool SyncAgent::dispatchMsgReceivedInSyncSlot() {
+	assert(isQueuedReceivedMsg());
 	// TODO while any messages
+	// TODO depend on LOCKSTEP configuration, platform
 	bool foundDesiredMessage = false;
 	Message* msg = serializer.unserialize(unqueueReceivedMsg());
 	if (msg != nullptr) {

@@ -24,7 +24,11 @@ void SyncAgent::xmitAproposWork() {
 
 	// Other units might be contending
 	if ( isQueuedWorkMsgFromApp() ) {
+		void * workPayload = unqueueWorkMsgFromApp();
+		// TODO use payload to make on-air message
+		(void) workPayload;
 		workMsg.make();
+		freeWorkMsg(workPayload);
 		xmitWork(workMsg);
 	}
 }

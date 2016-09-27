@@ -1,6 +1,5 @@
 
-
-//void sleepUntilMsgOrTimeout(OSTime);
+#include "types.h"
 
 /*
  * Sleep until a waking event occurs, or until timeout.
@@ -9,7 +8,7 @@
  * - radio msg received (if radio is on.)
  * - Timer expired
  *
- * !!! No other events are allowed.
+ * !!! SleepSync expects no other events.
  * SyncAgent not currently equipped to handle e.g. GPIO e.g. button press events.
  *
  *
@@ -24,10 +23,11 @@
 void sleepUntilEventWithTimeout(OSTime);
 
 /*
- * Return true if reason for end of sleep was radio msg received
- * Else reason was Timer expired?
+ * Return true if reason for end of sleep is as stated.
+ *
+ * Usually implemented by returning a flag set in an ISR for event that woke.
  */
-bool reasonForWakeIsMsg();
+bool reasonForWakeIsMsgReceived();
 bool reasonForWakeIsTimerExpired();
 
 // TODO brownout and faults?

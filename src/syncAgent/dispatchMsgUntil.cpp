@@ -31,7 +31,7 @@ void SyncAgent::dispatchMsgUntil(
 	while (true) {
 		sleepUntilEventWithTimeout(timeoutFunc());
 		// reason for wake
-		if (reasonForWakeIsMsg()) {
+		if (reasonForWakeIsMsgReceived()) {
 			if (dispatchQueuedMsg()) {
 				// sleep remainder of duration
 				// assert radio still on, more messages

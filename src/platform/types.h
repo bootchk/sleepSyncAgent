@@ -3,10 +3,21 @@
 #include <inttypes.h>
 
 /*
- * Fundamental types, some must match os and radio
+ * Fundamental types between platform and SyncAgent.
  */
 
 // TODO OS wrapper
+
+
+/*
+ * Ticks delivered by platform's free-running, circular clock/counter.
+ * Called 'OS' but the platform need not have a true OS.
+ *
+ * On some platforms, only 24 bits valid.
+ */
+// TODO 24 bit NRF
+typedef uint32_t OSTime;
+
 
 /*
  * MAC id of radio, unique system/unit identifier.

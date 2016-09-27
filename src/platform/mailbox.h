@@ -21,24 +21,15 @@
 
 
 
-// Work queues
+// Work queue from app
 
-// is work message SyncAgent should broadcast?
+/*
+ * is queued a work message SyncAgent should broadcast?
+ * SyncAgent will free unqueued msg.
+ */
 bool isQueuedWorkMsgFromApp();
-
-/*
- * Get queued msg from Work queue.
- * SyncAgent will free the msg.
- */
-void* unqueueWorkOutMsg();
-void freeWorkMsg();
-// TODO never called?
-
-/*
- * Platform must copy msg.
- * App must free the copy.
- */
-bool queueWorkMsgToApp(void * msg, int length);
+void* unqueueWorkMsgFromApp();
+void freeWorkMsg(void *);
 
 
 // Received msg queue
@@ -46,10 +37,37 @@ bool queueWorkMsgToApp(void * msg, int length);
 /*
  * Get queued msg from Received queue.
  * SyncAgent will free the msg.
+ *
+ * If the platform does not implement a queue of received messages
+ * (if the wireless stack disables receive after one message is received,
+ * and the message is kept in one buffer in memory  )
+ * then unqueueReceivedMsg() should return a pointer to the message,
+ * and freeReceivedMsg() should do nothing.
+ * e.g. nRF52
  */
+// TODO discuss TI CC2650
+// TODO SyncAgent turnRadioOn() necessary at certain times.
+
+/*
+ * SyncAgent requires at least one byte of payload (MsgType)
+ * and then knows length of message.
+ * I.E. platform must ensure one byte, for security against buffer read-past.
+ *
+ * SyncAgent will call freeReceivedMsg() on msg pointer.
+ */
+// TODO need length?
+bool isQueuedReceivedMsg();
 void* unqueueReceivedMsg();
-
-
 void freeReceivedMsg(void* msg);
+
+
+// Work queue to app
+
+/*
+ * Platform must copy msg and enqueue it.
+ * I.E. msg is not a queue element but is memory managed by SyncAgent.
+ * (And app must free the copy after unqueuing it.)
+ */
+void queueWorkMsgToApp(void * msg, int length);
 
 

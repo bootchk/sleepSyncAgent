@@ -37,9 +37,16 @@
 
 #include "tickCounter.h"
 #include "radio.h"
-#include "mailbox.h"
 #include "sleep.h"
+
+
+
+/*
+ * These API's are optional to implement on platform.
+ * Depends on how SyncAgent is configured by definitions in config.h
+ */
 #include "power.h"
+#include "mailbox.h"
 
 
 

@@ -107,3 +107,11 @@ Digi Corporation's Digimesh has sleep synchronization
 "Reachback firefly algorithm".  But in firefly algorithms, all units xmit sync. Here, we decide a master.  Here, more than one unit (even slaves) may xmit sync, but in the ideal state, only one master does.
 
 "time triggered communication".  Units are synced and communicate on a schedule of slots.
+
+
+Building
+-
+
+To compile during development, choose Build Artifact: Executable  (or Eclipse's Debug configuration?)  Then stubs for the platform are compiled in.
+
+To compile a library to be linked into an app, choose Build Artifact: Static library (or Eclipse "library" configuration.)  Then platform stubs are excluded from the build, and the library depends on implementation in the app project of the platform API's.
