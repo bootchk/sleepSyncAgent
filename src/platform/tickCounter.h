@@ -3,6 +3,10 @@
 
 #include "types.h"
 
+
+// The size of the OSClock in bits.  Used in LongClock.
+const uint8_t OSClockCountBits = 24;
+
 /*
  * Now time of platform's free-running, circular clock.
  *

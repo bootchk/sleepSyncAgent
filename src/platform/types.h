@@ -13,9 +13,10 @@
  * Ticks delivered by platform's free-running, circular clock/counter.
  * Called 'OS' but the platform need not have a true OS.
  *
- * On some platforms, only 24 bits valid.
+ * On some platforms, only lower 24 bits valid.
  */
-// TODO 24 bit NRF
+// TODO implement enforcement in type of 24-bit limitation on some platforms.
+// For now, as long as don't schedule more than 512 seconds ahead, should be OK.
 typedef uint32_t OSTime;
 
 

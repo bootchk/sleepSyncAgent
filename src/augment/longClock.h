@@ -1,9 +1,11 @@
 #include <inttypes.h>
-#include "../platform/platformAbstractionForSync.h"	// Depends on 32-bit OSClock
+#include "../platform/platformAbstractionForSync.h"	// Depends on OSClock, e.g. tickCounter.h
 
 /*
-64-bit clock with resolution same as os kernel clock (typically mSec.)
-Clock wraps in millions of years instead of os clock wraps in days.
+56-bit OR 64-bit clock with resolution same as os kernel clock (typically 0.03 or 1 mSec.)
+Clock wraps in thousands OR millions of years instead of os clock wraps in minutes OR days.
+
+
 
 !!! This clock does not have alarms.  On most platforms, see Timer.
 
@@ -13,7 +15,7 @@ App must call getTicks() more often than OSClock wraps (getTicks checks for OSCl
 
 Implementation:
 MSB 32-bits lazily incremented by self (only when nowTime() is called)
-LSB 32-bits kept by the OS clock
+LSB 24-bits OR 32-bits kept by the OS clock
 
 An alternative implementation is to set a task on the OSClock wrap.
 When it wraps, increment MSB.

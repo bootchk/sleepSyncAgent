@@ -26,11 +26,12 @@ LongTime LongClock::nowTime() {
 		// OSClock wrapped
 		mostSignificantBits++;	// Tick most significant bits
 	}
+	// ??? Don't fetch OSClockTicks() again, we need the old value
 	previousOSClockTicks = currentOSClockTicks;
 
 	// Concatenate MSB and LSB.  Portable?
 	LongTime result = mostSignificantBits;
-	result = result << 32;	// Left shift, fill LSB with zero
+	result = result << OSClockCountBits;	// Left shift, fill LSB with zero
 	result = result | currentOSClockTicks;	// Bit-wise OR into LSB
 	return result;
 };
