@@ -39,13 +39,13 @@ public:
 	 *
 	 * Synchronous: blocks until complete.
 	 */
-	static void transmit(uint8_t data[], uint8_t length);
+	static void transmit(volatile uint8_t data[], uint8_t length);
 	/*
 	 * Receive into buffer.
 	 *
 	 * Asynchronous, does not block.
 	 */
-	static void receive(uint8_t data[], uint8_t length);	// octets
+	static void receive(volatile uint8_t data[], uint8_t length);	// octets
 
 	// TODO unused?
 	static void stopXmit();
