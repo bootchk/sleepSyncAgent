@@ -46,14 +46,17 @@ void SyncAgent::init(
 
 
 void SyncAgent::xmitSync(SyncMessage& msg) {
-	radio->transmit(serializer.serialize(msg),
-			Serializer::OnAirSyncMsgPayloadLength);
+	radio->transmitStaticSynchronously();	// blocks until transmit complete
+	// TODO serializer.serialize(msg),
+		//	Serializer::OnAirSyncMsgPayloadLength);
+	// assert transmit complete
 }
 
 
 void SyncAgent::xmitWork(WorkMessage& msg) {
-	radio->transmit(serializer.serialize(msg),
-			Serializer::OnAirSyncMsgPayloadLength);
+	// TODO (serializer.serialize(msg),
+	//			Serializer::OnAirSyncMsgPayloadLength);
+	radio->transmitStaticSynchronously();
 }
 
 

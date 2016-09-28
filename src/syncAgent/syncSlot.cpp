@@ -62,7 +62,7 @@ void SyncAgent::startSyncSlot() {
 	xmitRoleAproposSync();
 
 	// even a Master listens for remainder of sync slot
-	radio->receive(receiveBuffer, Radio::MaxMsgLength);	// turnReceiverOnWithCallback(onMsgReceivedInSyncSlot);
+	radio->receiveStatic(); // DYNAMIC (receiveBuffer, Radio::MaxMsgLength);
 	// race to sleep
 }
 

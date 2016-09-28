@@ -33,7 +33,7 @@ public:
 	// TODO !isDisabled() equivalent to isReceiving() ?
 	static bool isDisabled();
 
-
+#ifdef DYNAMIC
 	/*
 	 * Transmit given data.
 	 *
@@ -46,6 +46,11 @@ public:
 	 * Asynchronous, does not block.
 	 */
 	static void receive(volatile uint8_t data[], uint8_t length);	// octets
+#endif
+	static void transmitStaticSynchronously();
+	static void receiveStatic();
+	static void getBufferAddressAndLength(uint8_t** handle, uint8_t* lengthPtr);
+
 
 	// TODO unused?
 	static void stopXmit();
