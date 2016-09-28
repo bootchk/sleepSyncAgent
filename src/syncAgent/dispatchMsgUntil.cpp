@@ -29,20 +29,20 @@ void SyncAgent::dispatchMsgUntil(
 {
 	assert(!radio->isDisabled());	// is receiving
 	while (true) {
-		sleepUntilEventWithTimeout(timeoutFunc());
+		sleeper.sleepUntilEventWithTimeout(timeoutFunc());
 		// reason for wake
-		if (reasonForWakeIsMsgReceived()) {
+		if (sleeper.reasonForWakeIsMsgReceived()) {
 			if (dispatchQueuedMsg()) {
 				// sleep remainder of duration
 				// assert radio still on, more messages
 				// TODO this is not right, recurse??
-				sleepUntilEventWithTimeout(timeoutFunc());
+				sleeper.sleepUntilEventWithTimeout(timeoutFunc());
 				break;
 			}
 			// TODO what does else mean?
 			// assert msg queue is empty except for race
 		}
-		else if (reasonForWakeIsTimerExpired()) {
+		else if (sleeper.reasonForWakeIsTimerExpired()) {
 			// msg queue empty
 			break;
 		}

@@ -15,6 +15,7 @@ SyncMessage SyncAgent::outwardSyncMsg;
 WorkMessage SyncAgent::workMsg;
 Serializer SyncAgent::serializer;
 PowerManager SyncAgent::powerMgr;
+Sleeper SyncAgent::sleeper;
 
 Radio* SyncAgent::radio;
 void (*SyncAgent::onWorkMsgQueuedCallback)();
@@ -28,8 +29,13 @@ void SyncAgent::init(
 		void (*aOnWorkMsgQueuedCallback)()
 	)
 {
-	// require radio is initialized
+	sleeper.init();
+
 	radio = aRadio;
+	// Configure radio
+	// Connect radio IRQ to sleeper so it knows reason for wake
+	radio->init(sleeper.msgReceivedCallback);
+
 	onWorkMsgQueuedCallback = aOnWorkMsgQueuedCallback;
 
 	clique.reset();

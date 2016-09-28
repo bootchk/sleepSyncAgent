@@ -2,6 +2,7 @@
 
 #include "../augment/powerManager.h"
 #include "../platform/radio.h"
+#include "../platform/sleeper.h"
 
 #include "modules/message.h"
 #include "modules/clique.h"
@@ -54,7 +55,7 @@ private:
 	static WorkMessage workMsg;	// Many may be queued??
 	static Serializer serializer;
 	static PowerManager powerMgr;
-
+	static Sleeper sleeper;
 
 
 	// Owned by app

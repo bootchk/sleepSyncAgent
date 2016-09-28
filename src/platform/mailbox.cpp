@@ -3,7 +3,15 @@
 #include "mailbox.h"
 
 
-#ifndef SYNC_AGENT_IS_LIBRARY
+// if library and
+#if SYNC_AGENT_IS_LIBRARY==1  && SYNC_AGENT_CONVEY_WORK==1
+
+// platform implements queues
+
+#else
+
+// Is library but no conveyance of work
+// Stub out calls to work queues
 
 // stubs
 // is...Msg returning false means SyncAgent will not call unqueuing and freeing functions

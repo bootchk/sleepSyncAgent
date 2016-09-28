@@ -35,7 +35,7 @@ void SyncAgent::loop(){
 			isSyncingState = false;
 			assert(!radio->isPowerOn());
 			// TODO symbolic constant, 1 is not right
-			sleepUntilEventWithTimeout(1);
+			sleeper.sleepUntilEventWithTimeout(1);
 		}
 	}
 	// never returns
@@ -68,7 +68,7 @@ void SyncAgent::doSyncPeriod() {
 		// avoid collision
 		if (cliqueMerger.shouldScheduleMerge())  {
 
-			sleepUntilEventWithTimeout(clique.schedule.deltaToThisMergeStart(cliqueMerger.offsetToMergee));
+			sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisMergeStart(cliqueMerger.offsetToMergee));
 			startMergeSlot();	// doMerge
 			// Merge is xmit only, no sleeping til end of slot
 		}
@@ -77,7 +77,7 @@ void SyncAgent::doSyncPeriod() {
 	else {
 		// Fish every period
 		// FUTURE: A fish slot need not be aligned with other slots, and different duration???
-		sleepUntilEventWithTimeout(clique.schedule.deltaToThisFishSlotStart());
+		sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisFishSlotStart());
 		startFishSlot();
 		dispatchMsgUntil(
 				dispatchMsgReceivedInSyncSlot,
@@ -85,6 +85,6 @@ void SyncAgent::doSyncPeriod() {
 		endFishSlot();
 	}
 	assert(!radio->isPowerOn());	// Low power for remainder of this sync period
-	sleepUntilEventWithTimeout(clique.schedule.deltaNowToNextSyncPeriod());
+	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaNowToNextSyncPeriod());
 	// Sync period over
 }

@@ -26,7 +26,7 @@
 
 
 /*
- * Define this if SyncAgent should convey work messages to app.
+ * Define equal to 1 if this if SyncAgent should convey work messages to app.
  *
  * Yes:
  * SyncAgent unqueues and enqueues to work queues from platform.
@@ -38,7 +38,7 @@
  * Platform layer need not implement work queue operations.
  * The app is nil, all it does is keep sync.
  */
-#define SYNC_AGENT_CONVEY_WORK 1
+#define SYNC_AGENT_CONVEY_WORK 0
 
 
 /*

@@ -11,6 +11,7 @@ class Radio {
 public:
 	static const uint8_t MaxMsgLength = 255;
 
+	static void init(void (*onRcvMsgCallback)());
 	static void powerOn();
 	static void powerOff();
 	static bool isPowerOn();

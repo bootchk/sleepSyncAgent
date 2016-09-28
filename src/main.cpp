@@ -56,7 +56,6 @@ SleepSyncAgent sleepSyncAgent(&radio, onWorkMsgQueued);
 int main() {
 	// assert embedded system startup is done and calls main.
 	// assert platform initialized radio
-
 	sleepSyncAgent.loopOnEvents();	// never returns
 	return 0;
 }

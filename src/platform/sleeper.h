@@ -1,4 +1,6 @@
 
+#pragma once
+
 #include "types.h"	// OSTIme
 
 /*
@@ -20,14 +22,21 @@
  *
  * Platform must not put radio peripheral into low-power if SyncAgent has powered it.
  */
-void sleepUntilEventWithTimeout(OSTime);
+class Sleeper {
+public:
+	static void init();
+	static void sleepUntilEventWithTimeout(OSTime);
+	/*
+	 * Return true if reason for end of sleep is as stated.
+	 *
+	 * Usually implemented by returning a flag set in an ISR for event that woke.
+	 */
+	static bool reasonForWakeIsMsgReceived();
+	static bool reasonForWakeIsTimerExpired();
 
-/*
- * Return true if reason for end of sleep is as stated.
- *
- * Usually implemented by returning a flag set in an ISR for event that woke.
- */
-bool reasonForWakeIsMsgReceived();
-bool reasonForWakeIsTimerExpired();
+	// Public because passed to radio so it can hook IRQ into it
+	static void msgReceivedCallback();
+};
+
 
 // TODO brownout and faults?
