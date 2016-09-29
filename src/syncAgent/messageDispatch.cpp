@@ -15,22 +15,23 @@
  */
 bool SyncAgent::dispatchMsgReceivedInSyncSlot() {
 	assert(isQueuedReceivedMsg());
-	// TODO while any messages
-	// TODO depend on LOCKSTEP configuration, platform
+
 	bool foundDesiredMessage = false;
-	Message* msg = serializer.unserialize(unqueueReceivedMsg());
+	// FUTURE while any received messages queued
+	// FUTURE Message* msg = serializer.unserialize(unqueueReceivedMsg());
+	Message* msg = serializer.unserialize();
 	if (msg != nullptr) {
 		switch(msg->type) {
 		case Sync:
 			doSyncMsgInSyncSlot((SyncMessage*) msg);
 			// Multiple syncs or sync
 			foundDesiredMessage = true;
-			// TODO discard other queued messages
-			freeReceivedMsg((void*) msg);
+			// FUTURE discard other queued messages
+			// FUTURE freeReceivedMsg((void*) msg);
 			break;
 		case AbandonMastership:
 			doAbandonMastershipMsgInSyncSlot((SyncMessage*) msg);
-			freeReceivedMsg((void*) msg);
+			// FUTURE freeReceivedMsg((void*) msg);
 			break;
 		case Work:
 			doWorkMsgInSyncSlot((WorkMessage*) msg);
@@ -40,14 +41,19 @@ bool SyncAgent::dispatchMsgReceivedInSyncSlot() {
 			break;
 		}
 	}
-	// TODO use handle and assert(msgHandle==nullptr);	// callee freed memory and nulled handle, or just nulled handle
+	else {
+		// Msg type was garbled or other checks failed
+	}
+
+	// FUTURE use handle and assert(msgHandle==nullptr);	// callee freed memory and nulled handle, or just nulled handle
 	return foundDesiredMessage;
 }
 
 
 bool SyncAgent::dispatchMsgReceivedInWorkSlot(){
 	bool foundDesiredMessage = false;
-	Message* msg = serializer.unserialize(unqueueReceivedMsg());
+	//FUTURE Message* msg = serializer.unserialize(unqueueReceivedMsg());
+	Message* msg = serializer.unserialize();
 	if (msg != nullptr) {
 		switch(msg->type) {
 		case Sync:
@@ -81,7 +87,8 @@ bool SyncAgent::dispatchMsgReceivedInWorkSlot(){
 
 bool SyncAgent::dispatchMsgReceivedInFishSlot(){
 	bool foundDesiredMessage;
-	Message* msg = serializer.unserialize(unqueueReceivedMsg());
+	//FUTURE Message* msg = serializer.unserialize(unqueueReceivedMsg());
+	Message* msg = serializer.unserialize();
 	if (msg != nullptr) {
 		switch(msg->type) {
 		case Sync:

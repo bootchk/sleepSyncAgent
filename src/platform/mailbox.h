@@ -1,4 +1,4 @@
-
+#include <inttypes.h>
 
 /*
  * Platform must provide three queues of messages:
@@ -28,7 +28,7 @@
  * SyncAgent will free unqueued msg.
  */
 bool isQueuedWorkMsgFromApp();
-void* unqueueWorkMsgFromApp();
+uint8_t* unqueueWorkMsgFromApp();
 void freeWorkMsg(void *);
 
 
@@ -55,9 +55,8 @@ void freeWorkMsg(void *);
  *
  * SyncAgent will call freeReceivedMsg() on msg pointer.
  */
-// TODO need length?
 bool isQueuedReceivedMsg();
-void* unqueueReceivedMsg();
+uint8_t* unqueueReceivedMsg();
 void freeReceivedMsg(void* msg);
 
 

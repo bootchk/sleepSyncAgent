@@ -126,7 +126,8 @@ bool CliqueMerger::checkCompletionOfMergerRole() {
 */
 
 
-void CliqueMerger::makeMergeSync(SyncMessage* msg){
-	msg->makeMergeSync(offsetToMergee, masterID);
+SyncMessage& CliqueMerger::makeMergeSync(SyncMessage& msg){
+	msg.makeMergeSync(offsetToMergee, masterID);
+	return msg;	// Returns msg passed.
 }
 

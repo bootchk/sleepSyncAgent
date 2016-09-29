@@ -11,8 +11,7 @@ Clique SyncAgent::clique;
 DropoutMonitor SyncAgent::dropoutMonitor;
 CliqueMerger SyncAgent::cliqueMerger;
 Role SyncAgent::role;
-SyncMessage SyncAgent::outwardSyncMsg;
-WorkMessage SyncAgent::workMsg;
+
 Serializer SyncAgent::serializer;
 PowerManager SyncAgent::powerMgr;
 Sleeper SyncAgent::sleeper;
@@ -36,9 +35,13 @@ void SyncAgent::init(
 	// Connect radio IRQ to sleeper so it knows reason for wake
 	radio->init(sleeper.msgReceivedCallback);
 
+	// Serializer reads and writes directly to radio buffer
+	serializer.init(radio->getBufferAddress());
+
 	onWorkMsgQueuedCallback = aOnWorkMsgQueuedCallback;
 
 	clique.reset();
+
 	// ensure initial state of SyncAgent
 	assert(role.isFisher());
 	assert(clique.isSelfMaster());

@@ -43,14 +43,12 @@ public:
 	SyncOffset offset;
 	SystemID masterID;
 
-private:
 	void init(MessageType aType, SyncOffset aOffset, SystemID aMasterID) {
 		type = aType;
 		offset = aOffset;
 		masterID = aMasterID;
 	}
 
-public:
 	bool isOffsetSync() {
 		// i.e. used for merge sync
 		bool result = offset > 0;

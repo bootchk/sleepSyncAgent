@@ -58,7 +58,7 @@ public:
 	static bool shouldScheduleMerge();
 	// FUTURE bool checkCompletionOfMergerRole();
 	//OBSOLETE static LongTime timeOfNextMergeWake();
-	static void makeMergeSync(SyncMessage* msg);
+	static SyncMessage& makeMergeSync(SyncMessage& msg);
 
 private:
 	static void mergeMyClique(SyncMessage* msg);

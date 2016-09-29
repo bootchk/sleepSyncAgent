@@ -31,8 +31,7 @@ void SyncAgent::startMergeSlot() {
 	 */
 	assert(cliqueMerger.isActive);
 
-	cliqueMerger.makeMergeSync(&outwardSyncMsg);
-	xmitSync(outwardSyncMsg);
+	xmitSync(cliqueMerger.makeMergeSync(serializer.outwardCommonSyncMsg));
 
 	/*
 	FUTURE if multiple MergeSync xmits per merge

@@ -49,8 +49,8 @@ void SyncAgent::pauseSyncing() {
 void SyncAgent::doDyingBreath() {
 	// Ask another unit in my clique to assume mastership.
 	// Might not be heard.
-	outwardSyncMsg.makeAbandonMastership(myID());
-	xmitSync(outwardSyncMsg);
+	serializer.outwardCommonSyncMsg.makeAbandonMastership(myID());
+	xmitSync(serializer.outwardCommonSyncMsg);
 }
 
 
@@ -73,8 +73,8 @@ void SyncAgent::xmitRoleAproposSync() {
 
 	// Only master xmits FROM its sync slot.
 	if ( clique.isSelfMaster() && clique.masterXmitSyncPolicy.shouldXmitSync() ) {
-		outwardSyncMsg.makeSync(myID());
-		xmitSync(outwardSyncMsg);
+		serializer.outwardCommonSyncMsg.makeSync(myID());
+		xmitSync(serializer.outwardCommonSyncMsg);
 	}
 }
 

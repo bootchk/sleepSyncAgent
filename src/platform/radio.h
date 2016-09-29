@@ -49,12 +49,20 @@ public:
 #endif
 	static void transmitStaticSynchronously();
 	static void receiveStatic();
-	static void getBufferAddressAndLength(uint8_t** handle, uint8_t* lengthPtr);
+	//FUTURE static void getBufferAddressAndLength(uint8_t** handle, uint8_t* lengthPtr);
+	static uint8_t* getBufferAddress();
 
-
-	// TODO unused?
-	static void stopXmit();
-	static void stopReceive();
+	/*
+	 * FUTURE semantics: cancel radio operation or change mode without powering off
+	 * For now, we don't need since SyncAgent:
+	 * - xmits first, leaving radio ready to receive
+	 * - after msg received, radio ready to receive again
+	 * - uses powerOff() to end receive mode
+	 *
+	 * static void stopXmit();
+	 * static void stopReceive();
+	 */
+	// TODO we could use isReadyToReceive() to assert (instead of !isDisabled() )
 };
 
 

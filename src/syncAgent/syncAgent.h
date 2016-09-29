@@ -51,12 +51,9 @@ private:
 	static DropoutMonitor dropoutMonitor;
 	static CliqueMerger cliqueMerger;
 	static Role role;
-	static SyncMessage outwardSyncMsg;	// Reused, only one message queued at a time // TODO dynamic?
-	static WorkMessage workMsg;	// Many may be queued??
 	static Serializer serializer;
 	static PowerManager powerMgr;
 	static Sleeper sleeper;
-
 
 	// Owned by app
 	static Radio* radio;

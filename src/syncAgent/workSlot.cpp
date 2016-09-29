@@ -27,9 +27,9 @@ void SyncAgent::xmitAproposWork() {
 		void * workPayload = unqueueWorkMsgFromApp();
 		// TODO use payload to make on-air message
 		(void) workPayload;
-		workMsg.make();
+		serializer.outwardCommonWorkMsg.make();
 		freeWorkMsg(workPayload);
-		xmitWork(workMsg);
+		xmitWork(serializer.outwardCommonWorkMsg);
 	}
 }
 

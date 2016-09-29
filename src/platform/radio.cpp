@@ -19,8 +19,10 @@ void Radio::powerOn() {}
 void Radio::powerOff() {}
 bool Radio::isPowerOn() {return true; }
 
-void Radio::transmit(uint8_t* data, uint8_t length) {}
-void Radio::receive(uint8_t* data, uint8_t length) {}
+void Radio::transmitStaticSynchronously() {}
+void Radio::receiveStatic() {}
+
+uint8_t* Radio::getBufferAddress() {return nullptr; }
 
 #endif
 
