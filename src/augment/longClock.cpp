@@ -51,10 +51,13 @@ DeltaTime LongClock::clampedTimeDifference(LongTime laterTime, LongTime earlierT
 	else result = laterTime - earlierTime;	// !!! Coerce to 32-bit
 	assert(result >= 0);
 	// assert(result < 3 * PeriodDuration);	// Sanity, app does not schedule far in the future.
+	assert(result < MaxDeltaTime);
 	return result;
 }
 
-// Requires futureTime less than 32-bit from now
+// Requires futureTime less than MaxDeltaTime from now
 DeltaTime LongClock::clampedTimeDifferenceFromNow(LongTime futureTime) {
-	return clampedTimeDifference(futureTime, nowTime());	// !!! coerce to 32-bit
+	LongTime result = clampedTimeDifference(futureTime, nowTime());
+	assert(result < MaxDeltaTime);
+	return result;	// coerce to 32-bit
 }

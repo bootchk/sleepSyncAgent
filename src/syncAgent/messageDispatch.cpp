@@ -9,6 +9,7 @@
 #include <cassert>
 
 #include "syncAgent.h"
+#include "../platform/mailbox.h"
 
 /*
  * result indicates whether desired message was found.
@@ -74,7 +75,7 @@ bool SyncAgent::dispatchMsgReceivedInWorkSlot(){
 		case Work:
 			// Usual: work message in sync with my clique.
 			doWorkMsgInWorkSlot((WorkMessage*) msg);
-			// TODO msg requeued, not freed
+			// FUTURE msg requeued, not freed
 			foundDesiredMessage = true;
 			break;
 		default:

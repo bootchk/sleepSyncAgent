@@ -45,8 +45,6 @@ void freeWorkMsg(void *);
  * and freeReceivedMsg() should do nothing.
  * e.g. nRF52
  */
-// TODO discuss TI CC2650
-// TODO SyncAgent turnRadioOn() necessary at certain times.
 
 /*
  * SyncAgent requires at least one byte of payload (MsgType)

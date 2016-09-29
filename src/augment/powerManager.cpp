@@ -10,7 +10,7 @@
 #ifdef SYNC_AGENT_CONSERVE_POWER
 uint8_t PowerManager::percentVccMeasure() {
 	// Convert Vcc measurement from ADC to a percent
-	// TODO float and proper constants
+	// FUTURE float and proper constants
 	int vccValue = getVcc();
 	assert(vccValue < (2^10));
 	int result = (getVcc() * VrefInVolts) / 1024 ;

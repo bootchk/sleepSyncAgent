@@ -1,10 +1,9 @@
 #include <inttypes.h>
-#include "../platform/platformAbstractionForSync.h"	// Depends on OSClock, e.g. tickCounter.h
+#include "../platform/tickCounter.h"	// OSClockTicks
 
 /*
 56-bit OR 64-bit clock with resolution same as os kernel clock (typically 0.03 or 1 mSec.)
 Clock wraps in thousands OR millions of years instead of os clock wraps in minutes OR days.
-
 
 
 !!! This clock does not have alarms.  On most platforms, see Timer.
@@ -22,23 +21,21 @@ When it wraps, increment MSB.
 Instead, every call to nowTime() we check for OSClock wrap.
 */
 
-
+// FUTURE better enforcement of 24-bit DeltaTime
 
 // long time with same, high resolution as OSClock
 typedef uint64_t LongTime;
-
-// time that platform accepts for timeouts, scheduling
-// TODO NRF accepts 32 bits but only 24-bits valid
-typedef uint32_t DeltaTime;
 
 
 
 
 class LongClock {
 private:
+	// Components of LongTime
 	static uint32_t mostSignificantBits;
 	static OSTime recentLeastSignificantBits;	// as received from  platform clock (os kernel or otherwise)
 
+	// Used to detect OSClock rollover
 	static OSTime previousOSClockTicks;
 
 public:
@@ -47,7 +44,7 @@ public:
 	// getters
 	static LongTime nowTime();
 
-	// Arithmetic on LongTime
+	// Arithmetic on LongTime yielding a DeltaTime suitable for timeouts on platform
 	static DeltaTime clampedTimeDifference(LongTime laterTime, LongTime earlierTime);
 	static DeltaTime clampedTimeDifferenceFromNow(LongTime laterTime);
 };

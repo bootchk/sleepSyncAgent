@@ -35,7 +35,6 @@ uint8_t* unqueueReceivedMsg() {
 	uint8_t length;
 
 	//radio.getBufferAddressAndLength(&bufferPtr, *length);
-	// TODO
 	return nullptr;
 }
 #endif

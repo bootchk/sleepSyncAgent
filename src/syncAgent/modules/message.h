@@ -29,8 +29,8 @@ enum MessageType {
 // Superclass
 class Message {
 public:
-	// provided by wireless stack
-	SystemID senderID;
+	// provided by wireless stack??
+	// SystemID senderID;
 
 	// Our content of msg (not necessarily from wireless stack)
 	MessageType type;

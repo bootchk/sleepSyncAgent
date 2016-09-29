@@ -16,26 +16,22 @@ void SyncAgent::loop(){
 	// When first enter loop, each unit is master of its own clique
 	assert(clique.isSelfMaster());
 
-	//TODO ??? startSyncing();  // announce initial entry to loop?
 	assert(! isSyncingState);
 	while (true){
 		// Sync period is either active or idle, but still advances schedule
 		clique.schedule.startPeriod();
 
 		if ( powerMgr.isPowerForRadio() ) {
-			// FUTURE if !isSyncingState resumeSyncing
+			// FUTURE if !isSyncingState resumeSyncing  announce to app
 			isSyncingState = true;
 			doSyncPeriod();
 		}
 		else {
-			// sleep an entire sync period, then check power again.
-			if (isSyncingState) {
-				pauseSyncing();
-			}
+			if (isSyncingState) { pauseSyncing(); }
 			isSyncingState = false;
 			assert(!radio->isPowerOn());
-			// TODO symbolic constant, 1 is not right
-			sleeper.sleepUntilEventWithTimeout(1);
+			sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaNowToNextSyncPeriod());
+			// sleep an entire sync period, then check power again.
 		}
 	}
 	// never returns

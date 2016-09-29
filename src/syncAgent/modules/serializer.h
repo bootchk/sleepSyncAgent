@@ -10,7 +10,7 @@
  * Knows order and size of data elements in stream (message payload.)
  * type: 1
  * masterID: 6
- * syncOffset: 4   (2 is max of 128k ticks)
+ * syncOffset: 3   (OSTime is 24-bit. 2 is max of 128k ticks)
  *
  * !!! This assumes:
  * - the radio is half-duplex (can't xmit and receive at the same time)
@@ -29,7 +29,7 @@ public:
 	static WorkMessage outwardCommonWorkMsg;
 
 	// Sync messages are constant length.
-	static const uint8_t OnAirSyncMsgPayloadLength = 11;
+	static const uint8_t OnAirSyncMsgPayloadLength = 10;
 
 
 	// Methods

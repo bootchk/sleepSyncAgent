@@ -15,7 +15,7 @@
  *
  * On some platforms, only lower 24 bits valid.
  */
-// TODO implement enforcement in type of 24-bit limitation on some platforms.
+// FUTURE implement enforcement in type of 24-bit limitation on some platforms.
 // For now, as long as don't schedule more than 512 seconds ahead, should be OK.
 typedef uint32_t OSTime;
 

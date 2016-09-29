@@ -30,7 +30,7 @@ public:
 	 * Some platforms? radio enters this state after receiving a message
 	 * so there is a race after calling receive() to enter sleeping state expecting receive event.
 	 */
-	// TODO !isDisabled() equivalent to isReceiving() ?
+	// FUTURE !isDisabled() equivalent to isReceiving() ?
 	static bool isDisabled();
 
 #ifdef DYNAMIC

@@ -25,7 +25,7 @@ void SyncAgent::xmitAproposWork() {
 	// Other units might be contending
 	if ( isQueuedWorkMsgFromApp() ) {
 		void * workPayload = unqueueWorkMsgFromApp();
-		// TODO use payload to make on-air message
+		// FUTURE use payload to make on-air message
 		(void) workPayload;
 		serializer.outwardCommonWorkMsg.make();
 		freeWorkMsg(workPayload);
@@ -35,13 +35,8 @@ void SyncAgent::xmitAproposWork() {
 
 
 
-
-
 void SyncAgent::endWorkSlot(){
 	radio->powerOff();
-	// assert a sync related task is scheduled e.g. fish, merge, or syncWake
-	// TODO not true?  move scheduling here.
-	// sleep
 }
 
 
@@ -51,7 +46,11 @@ void SyncAgent::doWorkMsgInWorkSlot(WorkMessage* msg) {
 
 
 void SyncAgent::relayWorkToApp(WorkMessage* msg) {
-	// TODO queue to worktask
-	//onWorkMsgCallback(msg);
+	/*
+	 * FUTURE
+	 * Alternatives are:
+	 * - queue to worktask (unblock it)
+	 * - onWorkMsgCallback(msg);  (callback)
+	 */
 }
 

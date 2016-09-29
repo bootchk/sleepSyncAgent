@@ -48,7 +48,9 @@ void SyncAgent::dispatchMsgUntil(
 		}
 		else {
 			// Unexpected wake from faults or brownout?
-			// TODO recover by continuing?
+			// Brownout and bus faults (DMA?) could come while mcu is sleeping.
+			// Invalid op code faults can not come while mcu is sleeping.
+			// TODO recover from unexpected events by continuing?
 			assert(false);
 		}
 	}

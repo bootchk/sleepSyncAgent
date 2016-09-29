@@ -19,6 +19,7 @@
 
 // private data member
 namespace {
+// Must be same size as OnAirSyncMsgPayloadLength
 uint8_t* radioBuffer;
 }
 
@@ -71,7 +72,7 @@ void Serializer::unserializeSyncIntoCommon(MessageType aType) {
 // Overloaded
 
 uint8_t* Serializer::serialize(WorkMessage& msg) {
-	//TODO
+	//FUTURE
 	return (uint8_t*) 0;
 }
 

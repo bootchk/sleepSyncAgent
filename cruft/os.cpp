@@ -139,3 +139,13 @@ SystemID myID() {
 	  9
 	};
 #endif
+
+	ifdef PLATFORM_TIRTOS
+
+	#define RAND_MAX UINT_MAX	// TODO match to definition in Util?
+
+	uint32 rand() {
+		// High-level access to trng hw
+		return Util_GetTRNG();	// TODO trng types match
+	}
+
