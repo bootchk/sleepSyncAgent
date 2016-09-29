@@ -17,13 +17,15 @@
  * Work messages should be handled in a lower priority thread (say WorkThread.)
  * If the queue does not unblock readers, onWorkMsgQueued()
  * should signal the WorkThread.
+ *
+ * This wraps the public API of a larger object.
  */
 
 // FUTURE pass the queue.  For now, there is no queue, just the signal.
 
 class SleepSyncAgent {
 public:
-	SleepSyncAgent(
+	void init(
 			Radio* radio,
 			void (*onWorkMsgQueued)()
 			);

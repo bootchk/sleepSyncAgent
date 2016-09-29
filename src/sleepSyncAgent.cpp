@@ -25,8 +25,9 @@ SyncAgent syncAgent;
 }
 
 
+// Methods just pass through to wrapped object.
 
-SleepSyncAgent::SleepSyncAgent(
+void SleepSyncAgent::init(
 		Radio* radio,
 		void (*onWorkMsgQueued)())
 {
@@ -35,6 +36,6 @@ SleepSyncAgent::SleepSyncAgent(
 
 
 void SleepSyncAgent::loopOnEvents() {
-	syncAgent.loop();
+	syncAgent.loop();	// Never returns
 }
 
