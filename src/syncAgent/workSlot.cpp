@@ -12,7 +12,7 @@
 
 void SyncAgent::startWorkSlot() {
 	// assert still in task onEndSyncSlot
-	radio->powerOn();
+	radio->powerOnAndConfigure();
 	xmitAproposWork();
 	radio->receiveStatic();	//DYNAMIC receiveBuffer, Radio::MaxMsgLength);
 	// OBS clique.schedule.scheduleEndWorkSlotTask(onWorkSlotEnd);

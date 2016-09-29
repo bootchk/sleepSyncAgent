@@ -10,7 +10,7 @@
 
 
 void SyncAgent::startFishSlot() {
-	radio->powerOn();
+	radio->powerOnAndConfigure();
 	radio->receiveStatic();		// DYNAMIC receiveBuffer, Radio::MaxMsgLength);
 	// assert can receive an event that wakes imminently: race to sleep
 }

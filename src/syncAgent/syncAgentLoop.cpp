@@ -27,6 +27,8 @@ void SyncAgent::loop(){
 	while (true){
 		ledLogger.toggleLED(1);	// DEBUG
 
+		assert(!radio->isPowerOn());	// Radio is off after every sync period
+
 		// Sync period is either active or idle, but still advances schedule
 		clique.schedule.startPeriod();
 
@@ -38,7 +40,6 @@ void SyncAgent::loop(){
 		else {
 			if (isSyncingState) { pauseSyncing(); }
 			isSyncingState = false;
-			assert(!radio->isPowerOn());
 			sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaNowToNextSyncPeriod());
 			// sleep an entire sync period, then check power again.
 		}

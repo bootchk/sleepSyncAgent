@@ -58,7 +58,7 @@ void SyncAgent::doDyingBreath() {
 
 
 void SyncAgent::startSyncSlot() {
-	radio->powerOn();
+	radio->powerOnAndConfigure();
 	xmitRoleAproposSync();
 
 	// even a Master listens for remainder of sync slot
