@@ -24,8 +24,8 @@
  * Could be a race to empty message queue.
  */
 void SyncAgent::dispatchMsgUntil(
-		bool (*dispatchQueuedMsg)(), // function to dispatch a message
-		OSTime (*timeoutFunc)())	// function returning remaining duration
+		bool (*dispatchQueuedMsg)(), // function to dispatch a message, knows desired msg type
+		OSTime (*timeoutFunc)())	// function returning remaining duration of slot
 {
 	assert(!radio->isDisabled());	// is receiving
 	while (true) {
@@ -39,18 +39,23 @@ void SyncAgent::dispatchMsgUntil(
 				sleeper.sleepUntilEventWithTimeout(timeoutFunc());
 				break;
 			}
-			// TODO what does else mean?
-			// assert msg queue is empty except for race
+			else {
+				// We dispatched a message, but it was not of desired type.
+				// restart receiver, remain in loop, sleep until next message
+				// TODO restart receiver
+			}
+			// assert msg queue is empty (since we received and didn't restart receiver)
 		}
 		else if (sleeper.reasonForWakeIsTimerExpired()) {
-			// msg queue empty
+			// Slot done.
+			// msg queue empty, except for race between timeout and receiver
 			break;
 		}
 		else {
 			// Unexpected wake from faults or brownout?
 			// Brownout and bus faults (DMA?) could come while mcu is sleeping.
 			// Invalid op code faults can not come while mcu is sleeping.
-			// TODO recover from unexpected events by continuing?
+			// FUTURE recover from unexpected events by continuing?
 			assert(false);
 		}
 	}

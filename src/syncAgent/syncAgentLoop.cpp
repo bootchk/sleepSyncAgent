@@ -43,7 +43,7 @@ void SyncAgent::loop(){
 void SyncAgent::doSyncPeriod() {
 
 	startSyncSlot();
-	// TODO: xmit sync in middle of sync slot
+	// FUTURE: xmit sync in middle of sync slot instead of at start???
 	assert(!radio->isDisabled()); // listening for other's sync
 	dispatchMsgUntil(
 			dispatchMsgReceivedInSyncSlot,

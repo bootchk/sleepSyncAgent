@@ -56,7 +56,7 @@ Message* Serializer::unserialize() {
 		result = nullptr;
 	}
 	// assert validity of SystemID and offset have not been checked
-	// TODO check offset is in range that scheduling can handle
+	// FUTURE check offset is in range that scheduling can handle
 	return result;
 }
 

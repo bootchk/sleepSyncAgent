@@ -62,7 +62,7 @@ public:
 	 * static void stopXmit();
 	 * static void stopReceive();
 	 */
-	// TODO we could use isReadyToReceive() to assert (instead of !isDisabled() )
+	// FUTURE we could use isReadyToReceive() to assert (instead of !isDisabled() )
 };
 
 

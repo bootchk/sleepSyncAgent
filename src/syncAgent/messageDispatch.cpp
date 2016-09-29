@@ -26,9 +26,10 @@ bool SyncAgent::dispatchMsgReceivedInSyncSlot() {
 		case Sync:
 			doSyncMsgInSyncSlot((SyncMessage*) msg);
 			// Multiple syncs or sync
-			foundDesiredMessage = true;
+
 			// FUTURE discard other queued messages
 			// FUTURE freeReceivedMsg((void*) msg);
+			foundDesiredMessage = true;
 			break;
 		case AbandonMastership:
 			doAbandonMastershipMsgInSyncSlot((SyncMessage*) msg);

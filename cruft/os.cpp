@@ -42,7 +42,7 @@ void* unqueueMsg(){
 		sbpEvt_t *pMsg = (sbpEvt_t*)Util_dequeueMsg(appMsgQueue);
 		if (pMsg)
 		{
-			// TODO this is wrapped in TIRTOS event baggage.
+			// FUTURE this is wrapped in TIRTOS event baggage.
 			// unwrap it to a BT message and to an app type Message
 			return pMsg;
 		}

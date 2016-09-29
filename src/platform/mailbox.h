@@ -17,7 +17,7 @@
  * -platform implements trivial received queue (the single buffer the radio peripheral writes to)
  */
 
-// TODO queue only the payload, SyncAgent wraps in protocol header
+// FUTURE queue only the work payload, SyncAgent wraps in protocol header
 
 
 

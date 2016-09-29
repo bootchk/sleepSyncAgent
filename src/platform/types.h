@@ -6,7 +6,6 @@
  * Fundamental types between platform and SyncAgent.
  */
 
-// TODO OS wrapper
 
 
 /*

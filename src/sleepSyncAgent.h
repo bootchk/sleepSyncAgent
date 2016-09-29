@@ -19,7 +19,7 @@
  * should signal the WorkThread.
  */
 
-// TODo pass the queue.  For now, there is no queue, just the signal.
+// FUTURE pass the queue.  For now, there is no queue, just the signal.
 
 class SleepSyncAgent {
 public:
