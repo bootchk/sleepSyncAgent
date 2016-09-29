@@ -3,6 +3,8 @@
 #include <cassert>
 #include "syncAgent.h"
 
+#include "../platform/ledLogger.h"	// DEBUG
+
 /*
  * SyncAgent is a task(thread) that infinite sequence of sync periods.
  *
@@ -12,12 +14,19 @@
  * After inactive sync periods, we attempt to resume drifted schedule.
 */
 
+LEDLogger ledLogger;	// DEBUG
+
+
 void SyncAgent::loop(){
 	// When first enter loop, each unit is master of its own clique
 	assert(clique.isSelfMaster());
 
+	ledLogger.init();	// DEBUG
+
 	assert(! isSyncingState);
 	while (true){
+		ledLogger.toggleLED(1);	// DEBUG
+
 		// Sync period is either active or idle, but still advances schedule
 		clique.schedule.startPeriod();
 

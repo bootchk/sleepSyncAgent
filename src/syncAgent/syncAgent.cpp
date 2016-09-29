@@ -3,6 +3,7 @@
 #include "syncAgent.h"
 
 
+
 // Static data members
 bool SyncAgent::isSyncingState = false;
 uint8_t SyncAgent::receiveBuffer[255];
@@ -18,6 +19,7 @@ Sleeper SyncAgent::sleeper;
 
 Radio* SyncAgent::radio;
 void (*SyncAgent::onWorkMsgQueuedCallback)();
+
 
 
 // This file only implements part of the class, see many other .cpp files.
