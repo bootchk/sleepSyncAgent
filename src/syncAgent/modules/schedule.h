@@ -13,12 +13,21 @@
  * At most one sleeping slot is repurposed per period
  * (so that use of electrical power is not bursty.)
  *
+ * Division into slots is an ideal.
+ * Many sleeping slots go by without any marking by the algorithm.
+ * Merge-repurposed slots need not be aligned with my slot divisions
+ * (since they are talking to an other units slot divisions.)
+ *
  * Implementation here is mainly about aligning with global clock.
  *
- * Knowledge (implementation) of slot sequence is spread through SyncAgent.
- * (callbacks know which slot should follow.)
+ * Knowledge (implementation) of slot sequence is found in syncAgentLoop.cpp, doSyncPeriod().
  *
- * The mcu and radio may be sleeping(low-power idle) during any slot, not just sleeping slots.
+ * Power:
+ * The mcu may be sleeping(low-power idle) during any slot, not just sleeping slots.
+ * The radio is off during unrepurposed sleeping slots.
+ * The radio is on (xmitting or rcving) during Sync and Work slots.
+ * The radio is on (rcving) during Fish repurposed slot.
+ * The radio is briefly on (xmitting) during a Merge repurposed slot.
  * The OS schedules tasks using a low-power timer peripheral that never is off.
  *
  * FUTURE message may be received after the intended end of a slot??? or race, msg received after radio off ?
@@ -60,28 +69,49 @@ private:
 	 * Other params of algorithm at DropoutMonitor.h
 	 */
 
-	// Duty cycle is 1% == 1/DutyCycleInverse
-	// i.e. we sleep about 99% of time
-	// See types.h MaximumScheduleCount for upper limit
+	/*
+	 * Ratio of sync period duration to wake duration.
+	 * No units, a ratio.
+	 *
+	 * AKA inverse of "duty cycle"
+	 * E.G. 1% DutyCycle same as 100 DutyCycleInverse, sleep about 99% of time
+	 *
+	 * See types.h MaximumScheduleCount for upper limit:
+	 * This affects SyncPeriodDuration,
+	 * which cannot be longer than the duration
+	 * we can schedule on a Timer provided by OS and RTC hardware.
+	 */
 	static const int           DutyCycleInverse = 100;
 
 	/*
-	 * OSClock freq is 32khz, tick is 0.03ms
-	 * SlotDuration should be at least long enough for one message.
-	 * e.g. if Bluetooth, one message is 1msec
+	 * Duration of all slots.
+	 * Units: OSTicks
+	 * (When OSClock freq is 32khz, OSTick is 0.03ms)
+	 * SlotDuration should > on-air time of a message
+	 * since we want to send a message (Sync, Work) within a slot.
+	 * e.g. if Bluetooth, one message is ~ 1msec
+	 * e.g. if RawWireless, one message is ~0.1msec
 	 */
 	static const DeltaTime     SlotDuration = 300;	// ~ 10msec
 
-	// Fixed by algorithm design
-	static const ScheduleCount FirstSleepingSlotOrdinal = 3;  // Sync, Work, Sleep, ...
+	/*
+	 * Fixed by algorithm design.
+	 * Sync, Work, Sleep, ..., Sleep
+	 */
+	static const ScheduleCount FirstSleepingSlotOrdinal = 3;
 
 	/*
-	 * If a period was really slotted, how many slots would it have.
-	 * Only used in PeriodDuration
-	 * Average of 3 slots radio on (Sync, Work, Fish)
+	 * Count of slots in sync period.
+	 * Must be less than MAX_UINT16 (256k)
+	 *
+	 * Only used to calculate SyncPeriodDuration
+	 * Here 3 is the average count of active slots (with radio on) Sync, Work, Fish.
+	 * (Average, since Fish slot is alternative to Merge slot,
+	 * which is a short transmit, probablistically transmitted within a SyncPeriod.)
 	 */
 	static const ScheduleCount CountSlots = 3*DutyCycleInverse;
-	static const DeltaTime PeriodDuration = CountSlots * SlotDuration;
+
+	static const DeltaTime SyncPeriodDuration = CountSlots * SlotDuration;
 
 
 // static member funcs
@@ -93,21 +123,6 @@ public:
 	static void startPeriod();
 	static void adjustBySyncMsg(SyncMessage* msg);
 
-#ifdef OBS
-	// Scheduling slots tasks
-
-	static void scheduleStartSyncSlotTask(void callback());
-	static void scheduleEndSyncSlotTask(void callback());
-
-	// Work slot follows sync without start callback
-	static void scheduleEndWorkSlotTask(void callback());
-
-	static void scheduleStartFishSlotTask(void callback());
-	static void scheduleEndFishSlotTask(void callback());
-
-	static void scheduleStartMergeSlotTask(void callback(), DeltaTime offset);
-	// Merge slot ends w/o event, next event is startSyncSlot
-#endif
 
 	/*
 	 * Deltas from past time to now.

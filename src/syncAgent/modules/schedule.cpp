@@ -27,23 +27,12 @@ void Schedule::startFreshAfterHWReset(){
 	// Out of sync with other cliques
 }
 
-#ifdef OBS
-This obsolete design did not advance startTimeOfPeriod when power is low
-void Schedule::resumeAfterPowerRestored(){
-	// Roll period forward to nearest period boundary after nowTime()
 
-	// Integer division.
-	int periodsMissed = (longClock.nowTime() - startTimeOfPeriod) / SlotDuration;
-	int rollTime = (periodsMissed + 1 ) * SlotDuration;
-	startTimeOfPeriod = startTimeOfPeriod + rollTime;
-	assert(startTimeOfPeriod > longClock.nowTime() );
-	// caller will call scheduleStartSyncSlot()
-}
-#endif
-
+/*
+ * "start" is verb: called when period should start.
+ */
 void Schedule::startPeriod() {
 	startTimeOfPeriod += SlotDuration;
-	// Called when period should start.
 	// assert startTimeOfPeriod is close to nowTime()
 	// ow we have missed a period or otherwise delayed unexpectedly.
 }
@@ -69,61 +58,10 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 }
 
 
-#ifdef OBS
-This obsolete design used a scheduler.  Currently using sleepUntil...
-// Sync is first slot of next period
-void Schedule::scheduleStartSyncSlotTask(void callback()) {
-	scheduleTask(callback, clampedTimeDifferenceFromNow(startTimeOfNextPeriod()));}
-void Schedule::scheduleEndSyncSlotTask(void callback()) {
-	scheduleTask(callback, clampedTimeDifference(timeOfThisSyncSlotEnd(), longClock.nowTime())); }
-
-
-void Schedule::scheduleEndWorkSlotTask(void callback()) {
-	scheduleTask(callback, clampedTimeDifferenceFromNow(timeOfThisWorkSlotEnd())); }
-
-
-void Schedule::scheduleStartFishSlotTask(void callback()) {
-	/*
-	 * Chosen randomly from sleeping slots.
-	 * Remember it, to schedule end.
-	 */
-	startTimeOfFishSlot = startTimeOfPeriod + randInt(FirstSleepingSlotOrdinal-1, CountSlots-1) * SlotDuration;
-	assert(startTimeOfFishSlot >= longClock.nowTime());
-	assert(startTimeOfFishSlot <= startTimeOfNextPeriod());
-	scheduleTask(callback, clampedTimeDifferenceFromNow(startTimeOfFishSlot));
-}
-void Schedule::scheduleEndFishSlotTask(void callback()) {
-	// Require called during fish slot
-	// i.e. assert startTimeOfFishSlot > nowTime > startTimeOfFishSlot + SlotDuration
-	// else fish slot end is in the past.
-	LongTime time = startTimeOfFishSlot + SlotDuration;
-	assert(time >= longClock.nowTime());
-	assert(time <= startTimeOfNextPeriod());
-	scheduleTask(callback, clampedTimeDifferenceFromNow(time));
-}
-
-
-void Schedule::scheduleStartMergeSlotTask(void callback(), DeltaTime offset) {
-	/*
-	 * !!!Not like others, is not aligned with slots.
-	 * Is scheduled within some usual sleepSlot of this period, but need not at start of slot.
-	 * offset is from CliqueMerger.
-	 */
-	LongTime time = startTimeOfPeriod + offset;
-	assert(time >= longClock.nowTime());
-	assert(time <= startTimeOfNextPeriod());
-	scheduleTask(callback, clampedTimeDifferenceFromNow(time));
-}
-#endif
-
-
-
-
-
 /*
  * Deltas
  *
- * Uint32 math is modulo: a delta is correct if laterTime > earlierTime
+ * uint32 math is modulo: a delta is correct if laterTime > earlierTime
  * (even if the uint32 clock has wrapped).
  * But is incorrect if earlierTime > laterTime.
  * So if you are calculating a timeout to a future deadline time,
@@ -167,7 +105,7 @@ DeltaTime Schedule::deltaToThisMergeStart(DeltaTime offset){
  */
 // Start of period and start of syncSlot coincide.
 // FUTURE: Choice of sync slot at start of period is arbitrary, allow it to be anywhere in period.
-LongTime Schedule::timeOfNextSyncPeriodStart() { return startTimeOfPeriod + PeriodDuration; }
+LongTime Schedule::timeOfNextSyncPeriodStart() { return startTimeOfPeriod + SyncPeriodDuration; }
 LongTime Schedule::timeOfNextSyncSlotStart() { return timeOfNextSyncPeriodStart(); }
 
 LongTime Schedule::timeOfThisSyncSlotEnd() { return startTimeOfPeriod + SlotDuration; }
