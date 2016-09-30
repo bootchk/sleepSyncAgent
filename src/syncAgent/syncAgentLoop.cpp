@@ -24,6 +24,8 @@ void SyncAgent::loop(){
 	ledLogger.init();	// DEBUG
 
 	assert(! isSyncingState);
+	assert(!radio->isPowerOn());
+
 	while (true){
 		ledLogger.toggleLED(1);	// DEBUG
 

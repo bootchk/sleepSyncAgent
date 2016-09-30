@@ -10,8 +10,8 @@
 
 // stubs
 
-void LEDLogger::init();
-void LEDLogger::toggleLEDs();
-void LEDLogger::toggleLED(int ordinal);
+void LEDLogger::init() {}
+void LEDLogger::toggleLEDs() {}
+void LEDLogger::toggleLED(int ordinal) {}
 
 #endif

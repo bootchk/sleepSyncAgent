@@ -172,14 +172,42 @@ LongTime Schedule::timeOfNextSyncSlotStart() { return timeOfNextSyncPeriodStart(
 
 LongTime Schedule::timeOfThisSyncSlotEnd() { return startTimeOfPeriod + SlotDuration; }
 LongTime Schedule::timeOfThisWorkSlotEnd() { return startTimeOfPeriod + 2 * SlotDuration; }
-// Fish slot: starts at random time.  Ends after remembered start.
+
+
+/*
+ * Fish slot:
+ * - starts at random slot normally sleeping.
+ * - Ends after remembered start.
+ */
+/*
+ * Start time is calculated at instant:  just after end of work slot.
+ * Time til start is in [0, timeTilLastSleepingSlot]
+ */
 LongTime Schedule::timeOfThisFishSlotStart() {
-	LongTime startTimeOfFishSlot = startTimeOfPeriod + randInt(FirstSleepingSlotOrdinal-1, CountSlots-1) * SlotDuration;
-	assert(startTimeOfFishSlot >= longClock.nowTime());
+	LongTime startTimeOfFishSlot = startTimeOfPeriod
+			+ randUnsignedInt16(FirstSleepingSlotOrdinal-1, CountSlots-1) * SlotDuration;
+
+	/*
+	 * Since some cpu cycles have elapsed after end of work slot,
+	 * startTimeOfFishSlot can be < longClock.nowTime().
+	 * In other words, the case where randomly chosen fish slot is slot immediately following work slot,
+	 * and time to start fish slot is already past.
+	 * In this case, the subsequently calculated timeout will be zero,
+	 * and there will be no sleep.
+	 */
+
+	/*
+	 * Time to start fish slot must be no later than start time of last sleeping slot,
+	 * else we won't start the next sync period on time.
+	 */
+	// TODO this is not tight enough, should be minus SlotDuration
 	assert(startTimeOfFishSlot <= timeOfNextSyncPeriodStart());
+
 	return startTimeOfFishSlot;
 }
+
 LongTime Schedule::timeOfThisFishSlotEnd() { return startTimeOfFishSlot + SlotDuration; }
+
 // Merge slot: offset from cliqueMerger, and no slotEnd needed
 LongTime Schedule::timeOfThisMergeStart(DeltaTime offset) { return startTimeOfPeriod + offset; }
 

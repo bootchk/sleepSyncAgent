@@ -44,9 +44,13 @@ void SyncAgent::init(
 
 	clique.reset();
 
+	// radio device may be on from prior debugging w/o hard reset
+	radio->powerOff();
+
 	// ensure initial state of SyncAgent
 	assert(role.isFisher());
 	assert(clique.isSelfMaster());
+	assert(!radio->isPowerOn());
 }
 
 

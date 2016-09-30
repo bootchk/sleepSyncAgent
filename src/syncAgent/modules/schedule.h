@@ -61,7 +61,8 @@ private:
 	 */
 
 	// Duty cycle is 1% == 1/DutyCycleInverse
-	//  i.e. we sleep about 99% of time
+	// i.e. we sleep about 99% of time
+	// See types.h MaximumScheduleCount for upper limit
 	static const int           DutyCycleInverse = 100;
 
 	/*

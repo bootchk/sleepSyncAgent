@@ -5,7 +5,7 @@
 // Wrapper to platform provided std lib functions
 
 // depends on stdlib rand()
-int randInt(int min, int max);
+uint16_t randUnsignedInt16(uint16_t min, uint16_t max);
 
-// depends on randInt
+// depends on rand()
 bool randBool();
