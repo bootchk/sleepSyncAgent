@@ -141,6 +141,7 @@ public:
 
 	//static DeltaTime deltaToThisSyncSlotStart();
 	static DeltaTime deltaToThisSyncSlotEnd();
+	static DeltaTime deltaToThisSyncSlotMiddle();
 	static DeltaTime deltaToThisWorkSlotEnd();
 
 	static DeltaTime deltaToThisFishSlotStart();
@@ -154,6 +155,7 @@ public:
 	static LongTime timeOfNextSyncPeriodStart();
 	static LongTime timeOfNextSyncSlotStart();	// Of next period.
 	static LongTime timeOfThisSyncSlotEnd();	// Of this period
+	static LongTime timeOfThisSyncSlotMiddle();
 	static LongTime timeOfThisWorkSlotEnd();
 	static LongTime timeOfThisFishSlotStart();
 	static LongTime timeOfThisFishSlotEnd();

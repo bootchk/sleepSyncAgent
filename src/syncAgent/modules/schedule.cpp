@@ -83,6 +83,9 @@ DeltaTime  Schedule::deltaStartThisSyncPeriodToNow() {
 DeltaTime Schedule::deltaToThisSyncSlotEnd(){
 	return longClock.clampedTimeDifferenceFromNow(timeOfThisSyncSlotEnd());
 }
+DeltaTime Schedule::deltaToThisSyncSlotMiddle(){
+	return longClock.clampedTimeDifferenceFromNow(timeOfThisSyncSlotMiddle());
+}
 DeltaTime Schedule::deltaToThisWorkSlotEnd(){
 	return longClock.clampedTimeDifferenceFromNow(timeOfThisWorkSlotEnd());
 }
@@ -109,6 +112,7 @@ LongTime Schedule::timeOfNextSyncPeriodStart() { return startTimeOfPeriod + Sync
 LongTime Schedule::timeOfNextSyncSlotStart() { return timeOfNextSyncPeriodStart(); }
 
 LongTime Schedule::timeOfThisSyncSlotEnd() { return startTimeOfPeriod + SlotDuration; }
+LongTime Schedule::timeOfThisSyncSlotMiddle() { return startTimeOfPeriod + (SlotDuration/2); }
 LongTime Schedule::timeOfThisWorkSlotEnd() { return startTimeOfPeriod + 2 * SlotDuration; }
 
 

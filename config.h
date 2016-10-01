@@ -4,8 +4,9 @@
  * - library build
  */
 
+//TODO rename idle near brownout
 /*
- * Define this if SyncAgent should conserve power.
+ * Define this if SyncAgent should conserve power
  *
  * Yes:
  * SyncAgent checks Vcc and will not maintain sync or convey work if Vcc is low.

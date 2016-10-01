@@ -12,24 +12,31 @@
 #include "../platform/mailbox.h"
 
 /*
- * result indicates whether desired message was found.
+ * In all the dispatchers, result indicates whether desired message was found,
+ * where the kind of desired message depends on the the handler instance,
+ * and on the Message instance and other state.
+ *
+ * The caller uses the result to decide whether to continue to receive and dispatch messages.
  */
+
+
+
 bool SyncAgent::dispatchMsgReceivedInSyncSlot() {
 	assert(isQueuedReceivedMsg());
 
-	bool foundDesiredMessage = false;
+	bool isFoundSyncKeepingMsg = false;
+
 	// FUTURE while any received messages queued
 	// FUTURE Message* msg = serializer.unserialize(unqueueReceivedMsg());
 	Message* msg = serializer.unserialize();
 	if (msg != nullptr) {
 		switch(msg->type) {
 		case Sync:
-			doSyncMsgInSyncSlot((SyncMessage*) msg);
+			isFoundSyncKeepingMsg = doSyncMsgInSyncSlot((SyncMessage*) msg);
 			// Multiple syncs or sync
 
 			// FUTURE discard other queued messages
 			// FUTURE freeReceivedMsg((void*) msg);
-			foundDesiredMessage = true;
 			break;
 		case AbandonMastership:
 			doAbandonMastershipMsgInSyncSlot((SyncMessage*) msg);
@@ -48,7 +55,7 @@ bool SyncAgent::dispatchMsgReceivedInSyncSlot() {
 	}
 
 	// FUTURE use handle and assert(msgHandle==nullptr);	// callee freed memory and nulled handle, or just nulled handle
-	return foundDesiredMessage;
+	return isFoundSyncKeepingMsg;
 }
 
 

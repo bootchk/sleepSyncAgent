@@ -27,7 +27,7 @@ void SyncAgent::loop(){
 	assert(!radio->isPowerOn());
 
 	while (true){
-		ledLogger.toggleLED(1);	// DEBUG
+		ledLogger.toggleLED(1);	// DEBUG, use the only LED on some targets
 
 		assert(!radio->isPowerOn());	// Radio is off after every sync period
 
@@ -54,13 +54,7 @@ void SyncAgent::loop(){
  */
 void SyncAgent::doSyncPeriod() {
 
-	startSyncSlot();
-	// FUTURE: xmit sync in middle of sync slot instead of at start???
-	assert(!radio->isDisabled()); // listening for other's sync
-	dispatchMsgUntil(
-			dispatchMsgReceivedInSyncSlot,
-			clique.schedule.deltaToThisSyncSlotEnd);
-	endSyncSlot();
+	doSyncSlot();
 
 	// work slot follows sync slot with no delay
 	startWorkSlot();

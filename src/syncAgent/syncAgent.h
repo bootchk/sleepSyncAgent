@@ -64,7 +64,7 @@ private:
 
 	static void startSyncing();
 	static void doSyncPeriod();
-	static void dispatchMsgUntil(
+	static bool dispatchMsgUntil(
 			bool (*dispatchQueuedMsg)(),
 			OSTime (*func)());
 
@@ -87,13 +87,23 @@ private:
 	static bool dispatchMsgReceivedInFishSlot();
 	// Merge slot only xmits, not receive messages
 
+	// sync
+	static void doSyncSlot();
+	static void doMasterSyncSlot();
+	static void doSlaveSyncSlot();
+	static bool doMasterListenHalfSyncSlot(OSTime (*timeoutFunc)());
+	static void doIdleSlotRemainder();
+	static bool shouldTransmitSync();
+	static void transmitMasterSync();
+
 
 	// work
 	static void startWorkSlot();
 	static void relayWorkToApp(WorkMessage* msg);
 
 
-	static bool isBetterSync(SyncMessage* msg);
+	static bool isSyncFromBetterMaster(SyncMessage* msg);
+	static void changeMaster(SyncMessage* msg);
 	static void pauseSyncing();
 	static void doDyingBreath();
 
@@ -103,7 +113,7 @@ private:
 	static void xmitAproposWork();
 
 	// msg handlers: messageType x slotType, with omissions
-	static void doSyncMsgInSyncSlot(SyncMessage* msg);
+	static bool doSyncMsgInSyncSlot(SyncMessage* msg);
 	static void doSyncMsgInFishSlot(SyncMessage* msg);
 	static void doAbandonMastershipMsgInSyncSlot(SyncMessage* msg);
 	static void doWorkMsgInSyncSlot(WorkMessage* msg);
