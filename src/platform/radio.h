@@ -47,8 +47,25 @@ public:
 	 */
 	static void receive(volatile uint8_t data[], uint8_t length);	// octets
 #endif
+	/*
+	 * Transmit one message and wait til it is transmitted.
+	 */
 	static void transmitStaticSynchronously();
+	/*
+	 * Configure radio to receive one message.
+	 * Message might NOT be received (if no transmitters, or garbled receipt.)
+	 * If message is received, waked from sleep and reasonForWakeIsMsg() returns true, etc.
+	 * TODO what does etc. mean?
+	 */
 	static void receiveStatic();
+	/*
+	 * Undo the effect of receiveStatic.
+	 * This includes undoing enabling of any interrupts that wake on receive.
+	 * This does not include clearing any buffers from received messages
+	 * that might be in a race?
+	 */
+	static void stopReceive();
+
 	//FUTURE static void getBufferAddressAndLength(uint8_t** handle, uint8_t* lengthPtr);
 	static uint8_t* getBufferAddress();
 

@@ -29,6 +29,7 @@ void SyncAgent::endFishSlot(){
 	 * first mergeSlot will be after next syncSlot.
 	 */
 	// not require receiver on
+	radio->stopReceive();
 	radio->powerOff();
 }
 

@@ -36,6 +36,8 @@ void SyncAgent::xmitAproposWork() {
 
 
 void SyncAgent::endWorkSlot(){
+	// assert is receiving (we leave radio on for entire work slot?)
+	radio->stopReceive();
 	radio->powerOff();
 }
 

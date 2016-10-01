@@ -117,10 +117,13 @@ Digi Corporation's Digimesh has sleep synchronization
 Building
 -
 
-There are two different Eclipse build configurations:
+Different Eclipse build configurations:
 
     - Debug: builds and links for the host architecture with stubs for platform libs.
-    - Archive: builds static lib for ARM architecture leaving undefined references to platform libs
+    - Archive: builds static lib for ARM M4 architecture leaving undefined references to platform libs
+    - ArchiveArmM0: " for M0
+    
+CFLAGS for M0  -mthumb -mcpu=cortex-m0 -mabi=aapcs -mfloat-abi=soft
 
 
 Debug configuration 
