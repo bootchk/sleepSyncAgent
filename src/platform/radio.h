@@ -9,7 +9,10 @@
 
 class Radio {
 public:
-	static const uint8_t MaxMsgLength = 255;
+	/*
+	 * Length of payload buffer owned by device.
+	 */
+	// FUTURE, when messages are DYNAMIC (variable-length) static const uint8_t MaxMsgLength = 255;
 
 	static void init(void (*onRcvMsgCallback)());
 	static void powerOnAndConfigure();
@@ -19,8 +22,8 @@ public:
 
 
 	/*
-	 * is in idle state
-	 * receive completed OR transmit completed
+	 * is in idle state?
+	 * receive completed OR transmit completed OR just powered on
 	 * Some platforms? radio enters this state after receiving a message
 	 * so there is a race after calling receive() to enter sleeping state expecting receive event.
 	 */
