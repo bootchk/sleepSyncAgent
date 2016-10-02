@@ -92,14 +92,14 @@ private:
 	 * e.g. if Bluetooth, one message is ~ 1msec
 	 * e.g. if RawWireless, one message is ~0.1msec
 	 */
+public:	// for assertions
 	static const DeltaTime     SlotDuration = 300;	// ~ 10msec
-
 	/*
 	 * Fixed by algorithm design.
 	 * Sync, Work, Sleep, ..., Sleep
 	 */
 	static const ScheduleCount FirstSleepingSlotOrdinal = 3;
-
+private:
 	/*
 	 * Count of slots in sync period.
 	 * Must be less than MAX_UINT16 (256k)

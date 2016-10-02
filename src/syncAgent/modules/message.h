@@ -58,11 +58,29 @@ public:
 	// Dying breath message from master which is power failing.  Offset is moot.
 	void makeAbandonMastership(SystemID aMasterID) { init(AbandonMastership, 0, aMasterID); }
 
-	// Usual sync from a master.  Offset is zero FUTURE or small
-	void makeSync(SystemID aMasterID) { init(Sync, 0, aMasterID); }
+	/*
+	 * Message type is not distinguished MasterSync vs. MergeSync,
+	 * so have same implementation.
+	 */
+	/*
+	 * Usual sync from a unit in Master role.
+	 * Offset is typically small (less than one slot duration.)
+	 */
+	void makeMasterSync(SyncOffset aOffset,
+			SystemID aMasterID)
+	{
+		init(Sync, aOffset, aMasterID);
+	}
 
-	// sync from master or slave requesting change of sync time.  Offset is large
-	void makeMergeSync(SyncOffset aOffset, SystemID aMasterID) { init(Sync, aOffset, aMasterID); }
+	/*
+	 * Sync from unit in Merger role (master or slave) requesting other clique change its sync time.
+	 * Offset is typically but not always large, more than one slot duration.
+	 */
+	void makeMergeSync(SyncOffset aOffset,
+			SystemID aMasterID)
+	{
+		init(Sync, aOffset, aMasterID);
+	}
 
 };
 

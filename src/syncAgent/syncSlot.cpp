@@ -144,13 +144,14 @@ void SyncAgent::startSyncSlot() {
 }
 
 
-// Obsolete
+#ifdef Obsolete
 void SyncAgent::xmitRoleAproposSync() {
 	// Assert self is in sync slot.
 	if (shouldTransmitSync()) {
 		transmitMasterSync();
 	}
 }
+#endif
 
 bool SyncAgent::shouldTransmitSync() {
 	// Only master xmits FROM its sync slot
@@ -158,9 +159,13 @@ bool SyncAgent::shouldTransmitSync() {
 	return clique.isSelfMaster() && clique.masterXmitSyncPolicy.shouldXmitSync();
 }
 
+
 void SyncAgent::transmitMasterSync() {
 	// Make SyncMessage having self as Master
-	serializer.outwardCommonSyncMsg.makeSync(myID());
+	DeltaTime offset = clique.schedule.deltaStartThisSyncPeriodToNow();
+	// FUTURE
+	assert(offset < clique.schedule.SlotDuration); // we are not xmitting sync past end of syncSlot
+	serializer.outwardCommonSyncMsg.makeMasterSync(offset, myID());
 	xmitSync(serializer.outwardCommonSyncMsg);
 }
 
