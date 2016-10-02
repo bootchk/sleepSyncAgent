@@ -100,6 +100,7 @@ void SyncAgent::doMasterSyncSlot() {
 		// I was Master, but just relinquished it
 		assert(!clique.isSelfMaster());
 		// Leave radio powerOn (work slot requires it) but not receiving
+		assert(radio->isDisabled());	// not receiving
 		doIdleSlotRemainder();
 	}
 	else {
@@ -179,6 +180,12 @@ void SyncAgent::endSyncSlot() {
 		clique.onMasterDropout();
 	}
 	assert(radio->isPowerOn());
+
+	// Radio can be receiving or not.
+	// TODO only do this if we timedout (with receiver still enabled i.e. not isDisabled())
+
+	radio->stopReceive();
+	assert(radio->isDisabled());	// receiveStatic() in next slot requires radio disabled.
 }
 
 
