@@ -44,7 +44,8 @@ private:
 
 // data members
 	static bool isSyncingState;
-	static uint8_t receiveBuffer[Radio::MaxMsgLength];
+	// DYNAMIC static uint8_t receiveBuffer[Radio::MaxMsgLength];
+	// FIXED: Radio owns fixed length buffer
 
 	// has-a, all singletons
 	static Clique clique;

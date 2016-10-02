@@ -17,12 +17,6 @@ public:
 	static bool isPowerOn();
 
 
-	/*
-	 * Enable/disable receipt of messages.
-	 * Not about power to the radio.
-	 */
-	//static void startReceiving();
-	//static void stopReceiving();
 
 	/*
 	 * is in idle state
@@ -47,10 +41,12 @@ public:
 	 */
 	static void receive(volatile uint8_t data[], uint8_t length);	// octets
 #endif
+
 	/*
 	 * Transmit one message and wait til it is transmitted.
 	 */
 	static void transmitStaticSynchronously();
+
 	/*
 	 * Configure radio to receive one message.
 	 * Message might NOT be received (if no transmitters, or garbled receipt.)
@@ -58,14 +54,20 @@ public:
 	 * TODO what does etc. mean?
 	 */
 	static void receiveStatic();
+
 	/*
 	 * Undo the effect of receiveStatic.
 	 * This includes undoing enabling of any interrupts that wake on receive.
-	 * This does not include clearing any buffers from received messages
-	 * that might be in a race?
+	 * This does not include clearing any buffers from received messages.
+	 * This does not guarantee that any queue of received messages is empty,
+	 * since a message can be received just before the call to this
+	 * (a race after checking queue to stopReceive.)
 	 */
 	static void stopReceive();
 
+	/*
+	 * Get address of single buffer used by radio for single-buffered rcv and xmit.
+	 */
 	//FUTURE static void getBufferAddressAndLength(uint8_t** handle, uint8_t* lengthPtr);
 	static uint8_t* getBufferAddress();
 

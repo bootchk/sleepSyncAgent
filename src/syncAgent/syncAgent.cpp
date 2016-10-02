@@ -6,7 +6,7 @@
 
 // Static data members
 bool SyncAgent::isSyncingState = false;
-uint8_t SyncAgent::receiveBuffer[255];
+// DYNAMIC uint8_t SyncAgent::receiveBuffer[255];
 
 Clique SyncAgent::clique;
 DropoutMonitor SyncAgent::dropoutMonitor;
