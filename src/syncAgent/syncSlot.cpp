@@ -178,6 +178,7 @@ void SyncAgent::endSyncSlot() {
 		dropoutMonitor.heardSync();	// reset
 		clique.onMasterDropout();
 	}
+	assert(radio->isPowerOn());
 }
 
 

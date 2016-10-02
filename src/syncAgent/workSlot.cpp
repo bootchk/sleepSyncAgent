@@ -5,6 +5,8 @@
  * There is no onWorkWake: workSlot follows immediately after syncSlot
  */
 
+#include <cassert>
+
 #include "../platform/mailbox.h"
 
 #include "syncAgent.h"
@@ -12,7 +14,7 @@
 
 void SyncAgent::startWorkSlot() {
 	// assert still in task onEndSyncSlot
-	radio->powerOnAndConfigure();
+	assert(radio->isPowerOn());	// on at end sync slot, and work slot immediately follows
 	xmitAproposWork();
 	radio->receiveStatic();	//DYNAMIC receiveBuffer, Radio::MaxMsgLength);
 	// OBS clique.schedule.scheduleEndWorkSlotTask(onWorkSlotEnd);
