@@ -16,6 +16,8 @@
  * On dispatchQueuedMsg() returns true (finds a desired message type),
  * stop dispatching messages but continue sleeping remainder of duration, with radio powerOff
  * (When dispatchQueuedMsg returns true, radio might be off.) ???
+ * Kind of desired message is different for each dispatcher,
+ * and might also depend on a message and state?
  *
  * Returns no earlier than time of call plus duration.
  * Might return slightly later if msg dispatch takes too long.
@@ -23,6 +25,7 @@
  * Ensure message queue is nearly empty on return.
  * Could be a race to empty message queue.
  */
+
 bool SyncAgent::dispatchMsgUntil(
 		bool (*dispatchQueuedMsg)(), // function to dispatch a message, knows desired msg type
 		OSTime (*timeoutFunc)())	// function returning remaining duration of slot

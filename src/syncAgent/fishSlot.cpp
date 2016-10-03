@@ -10,6 +10,50 @@
 
 #include "syncAgent.h"
 
+#include "../platform/mailbox.h"
+
+
+// TODO each type of slot should be its own class
+
+bool SyncAgent::dispatchMsgReceivedInFishSlot(){
+	bool foundDesiredMessage;
+	//FUTURE Message* msg = serializer.unserialize(unqueueReceivedMsg());
+	Message* msg = serializer.unserialize();
+	if (msg != nullptr) {
+		switch(msg->type) {
+		case Sync:
+			/*
+			 * Intended catch: another clique's sync slot.
+			 */
+			doSyncMsgInFishSlot((SyncMessage*) msg);
+			// Self can't handle more than one, or slot is busy with another merge
+			radio->stopReceive();
+			radio->powerOff();
+			foundDesiredMessage = true;
+			break;
+		case AbandonMastership:
+			/*
+			 * Unintended catch: Another clique's master is abandoning (exhausted power)
+			 * For now ignore. Should catch clique again later, after another member assumes mastership.
+			 */
+			break;
+		case Work:
+			/*
+			 * Unintended catch: Another clique's work slot.
+			 * For now ignore. Should catch clique again later, when we fish earlier, at it's syncSlot.
+			 * Alternative: since work slot follows syncSlot, could calculate syncSlot of catch, and merge it.
+			 * Alternative: if work can be done when out of sync, do work.
+			 */
+			break;
+		default:
+			break;
+		}
+		// All msg types freed
+		freeReceivedMsg((void*) msg);
+	}
+	return foundDesiredMessage;
+}
+
 
 void SyncAgent::doFishSlot() {
 	// FUTURE: A fish slot need not be aligned with other slots, and different duration???
@@ -21,7 +65,7 @@ void SyncAgent::doFishSlot() {
 	// TODO calulate timeout before starting receiver, take out of race
 	startFishSlot();
 	dispatchMsgUntil(
-			dispatchMsgReceivedInSyncSlot,
+			dispatchMsgReceivedInFishSlot,
 			clique.schedule.deltaToThisFishSlotEnd);
 	endFishSlot();
 }
