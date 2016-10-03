@@ -12,6 +12,19 @@
 #include "syncAgent.h"
 
 
+void SyncAgent::doWorkSlot() {
+	// assert work slot follows sync slot with no delay
+	assert(radio->isDisabled());	// not xmit or rcv
+	startWorkSlot();
+	assert(!radio->isDisabled());   // receiving other's work
+	dispatchMsgUntil(
+			dispatchMsgReceivedInSyncSlot,
+			clique.schedule.deltaToThisWorkSlotEnd);
+	endWorkSlot();
+	assert(!radio->isPowerOn());
+}
+
+
 void SyncAgent::startWorkSlot() {
 	// assert still in task onEndSyncSlot
 	assert(radio->isPowerOn());	// on at end sync slot, and work slot immediately follows

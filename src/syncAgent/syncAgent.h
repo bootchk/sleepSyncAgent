@@ -99,6 +99,7 @@ private:
 
 
 	// work
+	static void doWorkSlot();
 	static void startWorkSlot();
 	static void relayWorkToApp(WorkMessage* msg);
 

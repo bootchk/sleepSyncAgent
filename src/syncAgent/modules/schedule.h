@@ -71,17 +71,18 @@ private:
 
 	/*
 	 * Ratio of sync period duration to wake duration.
-	 * No units, a ratio.
+	 * Unitless.
 	 *
-	 * AKA inverse of "duty cycle"
 	 * E.G. 1% DutyCycle same as 100 DutyCycleInverse, sleep about 99% of time
 	 *
-	 * See types.h MaximumScheduleCount for upper limit:
-	 * This affects SyncPeriodDuration,
+	 * Lower limit: 1 = always on (one fish slot), 2 = 50% duty cycle.
+	 *
+	 * Upper limit: See types.h MaximumScheduleCount
+	 * Upper limit is constrained because this affects SyncPeriodDuration,
 	 * which cannot be longer than the duration
 	 * we can schedule on a Timer provided by OS and RTC hardware.
 	 */
-	static const int           DutyCycleInverse = 100;
+	static const int           DutyCycleInverse = 10;
 
 	/*
 	 * Duration of all slots.

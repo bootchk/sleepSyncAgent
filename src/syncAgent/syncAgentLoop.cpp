@@ -56,13 +56,8 @@ void SyncAgent::doSyncPeriod() {
 
 	doSyncSlot();
 
-	// work slot follows sync slot with no delay
-	startWorkSlot();
-	assert(!radio->isDisabled());   // listening for other's work
-	dispatchMsgUntil(
-			dispatchMsgReceivedInSyncSlot,
-			clique.schedule.deltaToThisWorkSlotEnd);
-	endWorkSlot();
+	doWorkSlot();
+
 	assert(!radio->isPowerOn());	// Low power until next slot
 
 	// Variation: next event (if any) occurs within a large sleeping time (lots of 'slots')

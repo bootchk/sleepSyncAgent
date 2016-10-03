@@ -64,18 +64,18 @@
  * Yes: (synchronous)
  * After platform receives msg, radio is disabled until SyncAgent starts it again.
  * When platform receives msg:
- * - sleeping sync agent is wakened because it was sleeping on any event
- * - SyncAgent only knows the reason for wakening by calling isWakeReasonMsgReceived
- * - the SyncAgent must read the received message before restarting the receiver.
+ * - sleeping sync agent wakes because it was sleeping on ANY event
+ * - SyncAgent can know the reason for wakening by calling isWakeReasonMsgReceived()
+ * - SyncAgent must read the received message before restarting the receiver.
  *
  *
  * No:
- * Radio peripheral is run in a separate thread.
+ * Radio peripheral is run in a separate thread of an RTOS
  * After platform receives msg, radio continues to receive without intervention by SyncAgent,
  * whether or not SyncAgent keeps up.
  * When platform receives msg:
  *  - it is queued
- *  - sleeping sync agent is wakened because it was blocked on the queue
+ *  - sleeping sync agent wakes because it was blocked on the queue
  */
 #define RECEIVE_IS_SYNCHRONOUS 1
 

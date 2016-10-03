@@ -162,10 +162,12 @@ bool SyncAgent::shouldTransmitSync() {
 
 void SyncAgent::transmitMasterSync() {
 	// Make SyncMessage having self as Master
-	DeltaTime offset = clique.schedule.deltaStartThisSyncPeriodToNow();
-	// FUTURE
-	assert(offset < clique.schedule.SlotDuration); // we are not xmitting sync past end of syncSlot
-	serializer.outwardCommonSyncMsg.makeMasterSync(offset, myID());
+	DeltaTime reachbackOffset = clique.schedule.deltaStartThisSyncPeriodToNow();
+	// reachbackOffset is unsigned, but represents a delta backwards in time to start of SyncPeriod.
+	// About half a SlotDuration.
+	// FUTURE include correction for latency (on receiver's end)
+	assert(reachbackOffset < clique.schedule.SlotDuration); // we are not xmitting sync past end of syncSlot
+	serializer.outwardCommonSyncMsg.makeMasterSync(reachbackOffset, myID());
 	xmitSync(serializer.outwardCommonSyncMsg);
 }
 

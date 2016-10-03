@@ -195,7 +195,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.1121072382" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug">
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.exe.debug.option.optimization.level.1634857406" name="Optimization Level" superClass="gnu.c.compiler.exe.debug.option.optimization.level" useByScannerDiscovery="false" valueType="enumerated"/>
 								<option id="gnu.c.compiler.exe.debug.option.debugging.level.1032986976" name="Debug Level" superClass="gnu.c.compiler.exe.debug.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
-								<option id="gnu.c.compiler.option.dialect.std.1027941944" superClass="gnu.c.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.c.compiler.dialect.default" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.dialect.std.1027941944" name="Language standard" superClass="gnu.c.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.c.compiler.dialect.default" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.508332945" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.1582844734" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug"/>
@@ -243,6 +243,9 @@
 			<resource resourceType="PROJECT" workspacePath="/sleepSyncAgent"/>
 		</configuration>
 		<configuration configurationName="library">
+			<resource resourceType="PROJECT" workspacePath="/sleepSyncAgent"/>
+		</configuration>
+		<configuration configurationName="ArchiveArmM0">
 			<resource resourceType="PROJECT" workspacePath="/sleepSyncAgent"/>
 		</configuration>
 		<configuration configurationName="Debug">
