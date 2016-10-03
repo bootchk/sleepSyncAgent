@@ -82,7 +82,7 @@ private:
 	 * which cannot be longer than the duration
 	 * we can schedule on a Timer provided by OS and RTC hardware.
 	 */
-	static const int           DutyCycleInverse = 10;
+	static const int           DutyCycleInverse = 100;
 
 	/*
 	 * Duration of all slots.
