@@ -21,6 +21,7 @@ bool Radio::isPowerOn() {return true; }
 
 void Radio::transmitStaticSynchronously() {}
 void Radio::receiveStatic() {}
+void Radio::isEnabledInterruptForMsgReceived() { return true; }
 void Radio::stopReceive() {}
 
 uint8_t* Radio::getBufferAddress() {return nullptr; }

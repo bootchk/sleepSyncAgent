@@ -30,6 +30,7 @@ public:
 	static void init();
 	static void sleepUntilEventWithTimeout(OSTime);
 
+	static void clearReasonForWake();
 	/*
 	 * Return true if reason for end of sleep is as stated.
 	 *
@@ -37,6 +38,7 @@ public:
 	 */
 	static bool reasonForWakeIsMsgReceived();
 	static bool reasonForWakeIsTimerExpired();
+	static bool reasonForWakeIsCleared();
 
 	// Public because passed to radio so it can hook IRQ into it
 	static void msgReceivedCallback();

@@ -29,7 +29,13 @@ bool SyncAgent::dispatchMsgUntil(
 {
 	bool didReceiveDesiredMsg = false;
 
+	// There is a race here: caller just called receiveStatic()
+	// It takes ~0.1mSec per message (at 1Mb per second and 100bit messages)
+	// A receive must not complete before these assertions and the sleep,
+	// otherwise we will receive a message but sleep until timeout
 	assert(!radio->isDisabled());	// is receiving
+	assert(radio->isEnabledInterruptForMsgReceived());	// will interrupt
+	assert(sleeper.reasonForWakeIsCleared());	// we beat the radio race, i.e. msg not already received
 
 	while (true) {
 		sleeper.sleepUntilEventWithTimeout(timeoutFunc());

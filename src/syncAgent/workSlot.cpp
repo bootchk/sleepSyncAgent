@@ -29,6 +29,8 @@ void SyncAgent::startWorkSlot() {
 	// assert still in task onEndSyncSlot
 	assert(radio->isPowerOn());	// on at end sync slot, and work slot immediately follows
 	xmitAproposWork();
+	assert(radio->isDisabled());
+	sleeper.clearReasonForWake();
 	radio->receiveStatic();	//DYNAMIC receiveBuffer, Radio::MaxMsgLength);
 	// OBS clique.schedule.scheduleEndWorkSlotTask(onWorkSlotEnd);
 }

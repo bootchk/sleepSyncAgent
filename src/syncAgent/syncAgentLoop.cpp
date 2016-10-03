@@ -55,33 +55,26 @@ void SyncAgent::loop(){
 void SyncAgent::doSyncPeriod() {
 
 	doSyncSlot();
-
 	doWorkSlot();
-
 	assert(!radio->isPowerOn());	// Low power until next slot
 
 	// Variation: next event (if any) occurs within a large sleeping time (lots of 'slots')
 	if (role.isMerger()) {
 		// avoid collision
 		if (cliqueMerger.shouldScheduleMerge())  {
-
+			// TODO doMergeSlot
 			sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisMergeStart(cliqueMerger.offsetToMergee));
 			startMergeSlot();	// doMerge
 			// Merge is xmit only, no sleeping til end of slot
 		}
-		// else sleep until end of sync period
+		// else continue and sleep until end of sync period
 	}
 	else {
 		// Fish every period
-		// FUTURE: A fish slot need not be aligned with other slots, and different duration???
-		sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisFishSlotStart());
-		startFishSlot();
-		dispatchMsgUntil(
-				dispatchMsgReceivedInSyncSlot,
-				clique.schedule.deltaToThisFishSlotEnd);
-		endFishSlot();
+		doFishSlot();
+		// continue and sleep until end of sync period
 	}
 	assert(!radio->isPowerOn());	// Low power for remainder of this sync period
 	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaNowToNextSyncPeriod());
-	// Sync period over
+	// Sync period completed
 }

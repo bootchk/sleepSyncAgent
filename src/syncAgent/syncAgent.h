@@ -103,6 +103,8 @@ private:
 	static void startWorkSlot();
 	static void relayWorkToApp(WorkMessage* msg);
 
+	// fish
+	static void doFishSlot();
 
 	static bool isSyncFromBetterMaster(SyncMessage* msg);
 	static void changeMaster(SyncMessage* msg);

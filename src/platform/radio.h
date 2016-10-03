@@ -19,8 +19,6 @@ public:
 	static void powerOff();
 	static bool isPowerOn();
 
-
-
 	/*
 	 * is in idle state?
 	 * receive completed OR transmit completed OR just powered on
@@ -50,13 +48,28 @@ public:
 	 */
 	static void transmitStaticSynchronously();
 
+
+
+
 	/*
 	 * Configure radio to receive one message.
+	 * Post condition:
+	 *  isEnabledInterruptForMsgReceived()
+	 *  AND ! isDisabled()
+	 *
 	 * Message might NOT be received (if no transmitters, or garbled receipt.)
-	 * If message is received, waked from sleep and reasonForWakeIsMsg() returns true, etc.
+	 * If message is received:
+	 * - waked from sleep and reasonForWakeIsMsg() returns true
+	 * - radio's buffer ( at getBufferAddress) is changed
 	 * TODO what does etc. mean?
 	 */
 	static void receiveStatic();
+
+	/*
+	 * Is interrupt enabled on msg received event?
+	 */
+	static bool isEnabledInterruptForMsgReceived();
+
 
 	/*
 	 * Undo the effect of receiveStatic.

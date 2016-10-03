@@ -6,11 +6,30 @@
  * Fish for other cliques by listening.
  */
 
+#include <cassert>
+
 #include "syncAgent.h"
+
+
+void SyncAgent::doFishSlot() {
+	// FUTURE: A fish slot need not be aligned with other slots, and different duration???
+
+	// Sleep ultra low-power across normally sleeping slots to start of fish slot
+	assert(!radio->isPowerOn());
+	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisFishSlotStart());
+
+	// TODO calulate timeout before starting receiver, take out of race
+	startFishSlot();
+	dispatchMsgUntil(
+			dispatchMsgReceivedInSyncSlot,
+			clique.schedule.deltaToThisFishSlotEnd);
+	endFishSlot();
+}
 
 
 void SyncAgent::startFishSlot() {
 	radio->powerOnAndConfigure();
+	sleeper.clearReasonForWake();
 	radio->receiveStatic();		// DYNAMIC receiveBuffer, Radio::MaxMsgLength);
 	// assert can receive an event that wakes imminently: race to sleep
 }

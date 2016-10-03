@@ -113,6 +113,7 @@ void SyncAgent::doMasterSyncSlot() {
 
 
 bool SyncAgent::doMasterListenHalfSyncSlot(OSTime (*timeoutFunc)()) {
+	sleeper.clearReasonForWake();
 	radio->receiveStatic();
 	bool result = dispatchMsgUntil(
 					dispatchMsgReceivedInSyncSlot,
@@ -129,6 +130,7 @@ void SyncAgent::doIdleSlotRemainder() {
 
 void SyncAgent::doSlaveSyncSlot() {
 	// listen for sync the whole period
+	sleeper.clearReasonForWake();
 	radio->receiveStatic(); // DYNAMIC (receiveBuffer, Radio::MaxMsgLength);
 	assert(!radio->isDisabled()); // listening for other's sync
 	dispatchMsgUntil(
