@@ -19,7 +19,8 @@ bool SyncAgent::dispatchMsgReceivedInWorkSlot(){
 	Message* msg = serializer.unserialize();
 	if (msg != nullptr) {
 		switch(msg->type) {
-		case Sync:
+		case MasterSync:
+		case MergeSync:
 			/* Unusual: Another clique's sync slot at same time as my work slot.
 			 * For now, ignore.  Assume fishing will find this other clique, or clocks drift.
 			 * Alternative: merge other clique from within former work slot?

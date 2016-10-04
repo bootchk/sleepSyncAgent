@@ -7,10 +7,10 @@
  */
 
 /*
- * Time offset.  2-bytes, 16-bits, 128k
- * Content of sync msg to adjust sync.
+ * Delta time for adjusting SyncPoint.  2-bytes, 16-bits, 128k
+ * Content of SyncMessage to adjust sync.
  */
-typedef uint16_t SyncOffset;
+typedef uint16_t DeltaSync;
 
 
 /*

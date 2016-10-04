@@ -117,8 +117,9 @@ private:
 	static void xmitAproposWork();
 
 	// msg handlers: messageType x slotType, with omissions
-	static bool doSyncMsgInSyncSlot(SyncMessage* msg);
-	static void doSyncMsgInFishSlot(SyncMessage* msg);
+	static bool doMasterSyncMsgInSyncSlot(SyncMessage* msg);
+	// TODO FIX
+	static void doMasterSyncMsgInFishSlot(SyncMessage* msg);
 	static void doAbandonMastershipMsgInSyncSlot(SyncMessage* msg);
 	static void doWorkMsgInSyncSlot(WorkMessage* msg);
 	static void doWorkMsgInWorkSlot(WorkMessage* msg);

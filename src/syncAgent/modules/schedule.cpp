@@ -32,6 +32,7 @@ void Schedule::startFreshAfterHWReset(){
  * "start" is verb: called when period ends/starts.
  */
 void Schedule::rollPeriodForwardToNow() {
+	// TODO FIX
 	startTimeOfPeriod += SyncPeriodDuration;
 	/*
 	 * assert startTimeOfPeriod is close to nowTime().
@@ -48,7 +49,7 @@ void Schedule::rollPeriodForwardToNow() {
 // Crux
 void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 	/*
-	 * A sync message adjusts start of period forward by an offset
+	 * A sync message adjusts start of period forward from now by an offset
 	 *
 	 * assert offset < period length
 	 * assert startTimeOfPeriod < nowTime  < startTimeOfPeriod + period length
@@ -58,7 +59,9 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 
 	// assert not much time has elapsed since msg arrived.
 	// For more accuracy, we could timestamp msg arrival as early as possible.
-	startTimeOfPeriod = longClock.nowTime() + msg->offset;
+	// TODO FIX
+	startTimeOfPeriod = longClock.nowTime() + msg->deltaToNextSyncPoint;
+
 	// assert new startTimeOfPeriod < old startTimeOfPeriod + 2*period length
 	// i.e. new startTimeOfPeriod is within the old current period or in the period following
 	// ????

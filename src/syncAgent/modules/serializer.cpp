@@ -37,12 +37,12 @@ void Serializer::init(uint8_t * aRadioBuffer)
 Message* Serializer::unserialize() {
 	// assert valid data in radioBuffer, of proper length
 	Message * result;
-	if (radioBuffer[0] == Sync) {
-		unserializeSyncIntoCommon(Sync);
-		result = &inwardCommonSyncMsg;
-	}
-	else if (radioBuffer[0] == AbandonMastership) {
-		unserializeSyncIntoCommon(AbandonMastership);
+	if (       (radioBuffer[0] == MasterSync)
+			|| (radioBuffer[0] == MergeSync)
+			|| (radioBuffer[0] == AbandonMastership)
+	)
+	{
+		unserializeIntoCommonSyncMessage();
 		result = &inwardCommonSyncMsg;
 	}
 	/* FUTURE
@@ -60,9 +60,9 @@ Message* Serializer::unserialize() {
 	return result;
 }
 
-void Serializer::unserializeSyncIntoCommon(MessageType aType) {
-	assert(aType == Sync || aType == AbandonMastership);
-	inwardCommonSyncMsg.type = aType;
+void Serializer::unserializeIntoCommonSyncMessage() {
+	// assert(aType == MasterSync || aType == MergeSync || aType == AbandonMastership);
+	inwardCommonSyncMsg.type = (MessageType) radioBuffer[0];
 	unserializeMasterIDIntoCommon();
 	unserializeOffsetIntoCommon();
 }
@@ -77,7 +77,7 @@ uint8_t* Serializer::serialize(WorkMessage& msg) {
 }
 
 void Serializer::serialize(SyncMessage& msg) {
-	radioBuffer[0] = Sync;
+	radioBuffer[0] = msg.type;
 	serializeMasterIDCommonIntoStream(msg);
 	serializeOffsetCommonIntoStream(msg);
 }
@@ -96,10 +96,10 @@ void Serializer::serializeMasterIDCommonIntoStream(SyncMessage& msg) {
 
 void Serializer::unserializeOffsetIntoCommon() {
 	for (int i =7; i<11; i++)
-		((uint8_t *) &inwardCommonSyncMsg.offset)[i] = radioBuffer[i];
+		((uint8_t *) &inwardCommonSyncMsg.deltaToNextSyncPoint)[i] = radioBuffer[i];
 }
 void Serializer::serializeOffsetCommonIntoStream(SyncMessage& msg) {
 	for (int i =7; i<11; i++)
-		radioBuffer[i] = ((uint8_t *) &msg.offset)[i] ;
+		radioBuffer[i] = ((uint8_t *) &msg.deltaToNextSyncPoint)[i] ;
 }
 

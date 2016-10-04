@@ -40,13 +40,15 @@ bool SyncAgent::dispatchMsgReceivedInSyncSlot() {
 	Message* msg = serializer.unserialize();
 	if (msg != nullptr) {
 		switch(msg->type) {
-		case Sync:
-			isFoundSyncKeepingMsg = doSyncMsgInSyncSlot((SyncMessage*) msg);
+		case MasterSync:
+			isFoundSyncKeepingMsg = doMasterSyncMsgInSyncSlot((SyncMessage*) msg);
 			// Multiple syncs or sync
 
 			// FUTURE discard other queued messages
 			// FUTURE freeReceivedMsg((void*) msg);
 			break;
+		case MergeSync:
+			// TODO FIX
 		case AbandonMastership:
 			doAbandonMastershipMsgInSyncSlot((SyncMessage*) msg);
 			// FUTURE freeReceivedMsg((void*) msg);
@@ -261,7 +263,7 @@ void SyncAgent::endSyncSlot() {
 /*
  * Returns true if sync message keeps my sync (from current or new master of my clique.)
  */
-bool SyncAgent::doSyncMsgInSyncSlot(SyncMessage* msg){
+bool SyncAgent::doMasterSyncMsgInSyncSlot(SyncMessage* msg){
 
 	// assert sync not from self (xmitter and receiver are exclusive)
 	// assert self.isMaster || self.isSlave i.e. this code doesn't require any particular role

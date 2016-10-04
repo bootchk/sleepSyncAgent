@@ -16,11 +16,15 @@
 /*
  * application level type of message, carried as payload in radio messages
  *
- * A merge sync is of type Sync but with non-zero offset
+ * Subtypes of type Sync, but not separate classes
+ * - MergeSync, large adjustment
+ * - MasterSync, small adjustment
+ * - AbandonMastership, adjustment is unused
  */
 enum MessageType {
 	// Subclass SyncMessage
-	Sync,
+	MasterSync,
+	MergeSync,
 	AbandonMastership,
 	// Subclass WorkMessage
 	Work
@@ -40,22 +44,25 @@ public:
 // Messages used by SyncAgent, never received by app
 class SyncMessage : public Message {
 public:
-	SyncOffset offset;
+	DeltaSync deltaToNextSyncPoint;	// forward in time
 	SystemID masterID;
 
-	void init(MessageType aType, SyncOffset aOffset, SystemID aMasterID) {
+	void init(MessageType aType, DeltaSync aDeltaToNextSyncPoint, SystemID aMasterID) {
 		type = aType;
-		offset = aOffset;
+		deltaToNextSyncPoint = aDeltaToNextSyncPoint;
 		masterID = aMasterID;
 	}
 
+#ifdef OBSOLETE
+	// TODO FIX
 	bool isOffsetSync() {
 		// i.e. used for merge sync
-		bool result = offset > 0;
+		bool result = deltaToNextSyncPoint > 0;
 		return result;
 	}
+#endif
 
-	// Dying breath message from master which is power failing.  Offset is moot.
+	// Dying breath message from master which is power failing.  deltaToNextSyncPoint is moot.
 	void makeAbandonMastership(SystemID aMasterID) { init(AbandonMastership, 0, aMasterID); }
 
 	/*
@@ -64,22 +71,22 @@ public:
 	 */
 	/*
 	 * Usual sync from a unit in Master role.
-	 * Offset is typically small (less than one slot duration.)
+	 * DeltaToNextSyncPoint is typically small.
 	 */
-	void makeMasterSync(SyncOffset aOffset,
+	void makeMasterSync(DeltaSync aDeltaToNextSyncPoint,
 			SystemID aMasterID)
 	{
-		init(Sync, aOffset, aMasterID);
+		init(MasterSync, aDeltaToNextSyncPoint, aMasterID);
 	}
 
 	/*
 	 * Sync from unit in Merger role (master or slave) requesting other clique change its sync time.
-	 * Offset is typically but not always large, more than one slot duration.
+	 * DeltaToNextSyncPoint is typically but not always large, more than one slot duration.
 	 */
-	void makeMergeSync(SyncOffset aOffset,
+	void makeMergeSync(DeltaSync aDeltaToNextSyncPoint,
 			SystemID aMasterID)
 	{
-		init(Sync, aOffset, aMasterID);
+		init(MergeSync, aDeltaToNextSyncPoint, aMasterID);
 	}
 
 };

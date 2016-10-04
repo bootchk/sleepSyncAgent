@@ -21,16 +21,18 @@ bool SyncAgent::dispatchMsgReceivedInFishSlot(){
 	Message* msg = serializer.unserialize();
 	if (msg != nullptr) {
 		switch(msg->type) {
-		case Sync:
+		case MasterSync:
 			/*
 			 * Intended catch: another clique's sync slot.
 			 */
-			doSyncMsgInFishSlot((SyncMessage*) msg);
+			doMasterSyncMsgInFishSlot((SyncMessage*) msg);
 			// Self can't handle more than one, or slot is busy with another merge
 			radio->stopReceive();
 			radio->powerOff();
 			foundDesiredMessage = true;
 			break;
+		case MergeSync:
+			// TODO FIX
 		case AbandonMastership:
 			/*
 			 * Unintended catch: Another clique's master is abandoning (exhausted power)
@@ -97,14 +99,10 @@ void SyncAgent::endFishSlot(){
 }
 
 
-void SyncAgent::doSyncMsgInFishSlot(SyncMessage* msg){
-	if (msg->isOffsetSync()) {
-		// Ignore: other clique is already merging
-	}
-	else {
-		toMergerRole(msg);
-	}
-	// Assert msg ignored or isMergerRole
+void SyncAgent::doMasterSyncMsgInFishSlot(SyncMessage* msg){
+	// TODO FIX if better?
+	toMergerRole(msg);
+	// Assert isMergerRole
 }
 
 

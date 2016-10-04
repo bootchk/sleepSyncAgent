@@ -36,11 +36,12 @@ public:
 	static void init(uint8_t * radioBuffer);
 
 	static Message* unserialize();
+	// overloaded
 	static uint8_t* serialize(WorkMessage& msg);
 	static void serialize(SyncMessage& msg);
 
 private:
-	static void unserializeSyncIntoCommon(MessageType aType);
+	static void unserializeIntoCommonSyncMessage();
 
 	static void unserializeMasterIDIntoCommon();
 	static void serializeMasterIDCommonIntoStream(SyncMessage& msg);
