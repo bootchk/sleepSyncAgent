@@ -54,68 +54,35 @@
  * Resuming schedule means taking the last known startTimeOfPeriod
  * (which is more than one period in the past)
  * and advancing it to now by a multiple of PeriodDuration.
+ *
+ * Terminology:
+ * SyncPoint: point in time between consecutive SyncPeriods.
  */
 class Schedule {
 private:
 	static LongClock longClock;
 
-	static LongTime startTimeOfPeriod;		// updated every period
+	/*
+	 * Set every SyncPoint (when SyncPeriod starts) and never elsewhere.
+	 * I.E. It is history that we don't rewrite
+	 */
+	static LongTime startTimeOfSyncPeriod;
+
+	/*
+	 * Set every SyncPoint (when SyncPeriod starts) to normal end time
+	 * !!! but also might be adjusted further into the future
+	 * i.e. period extended
+	 * on hearing MasterSync or MergeSync.
+	 *
+	 * A property, with a getter that should always be used
+	 * in case we want to migrate calculations to the getter.
+	 */
+	static LongTime endTimeOfSyncPeriod;
+
 	static LongTime startTimeOfFishSlot;	// initialized when fish slot starts
 
-
-
-	/*
-	 * !!! Parameters of schedule
-	 * Other params of algorithm at DropoutMonitor.h
-	 */
-
-	/*
-	 * Ratio of sync period duration to wake duration.
-	 * Unitless.
-	 *
-	 * E.G. 1% DutyCycle same as 100 DutyCycleInverse, sleep about 99% of time
-	 *
-	 * Lower limit: 1 = always on (one fish slot), 2 = 50% duty cycle.
-	 *
-	 * Upper limit: See types.h MaximumScheduleCount
-	 * Upper limit is constrained because this affects SyncPeriodDuration,
-	 * which cannot be longer than the duration
-	 * we can schedule on a Timer provided by OS and RTC hardware.
-	 */
-	static const int           DutyCycleInverse = 100;
-
-	/*
-	 * Duration of all slots.
-	 * Units: OSTicks
-	 * (When OSClock freq is 32khz, OSTick is 0.03ms)
-	 * SlotDuration should > on-air time of a message
-	 * since we want to send a message (Sync, Work) within a slot.
-	 * e.g. if Bluetooth, one message is ~ 1msec
-	 * e.g. if RawWireless, one message is ~0.1msec
-	 */
-
-public:	// for assertions
-	static const DeltaTime     SlotDuration = 300;	// ~ 10msec
-
-	/*
-	 * Fixed by algorithm design.
-	 * Sync, Work, Sleep, ..., Sleep
-	 */
-	static const ScheduleCount FirstSleepingSlotOrdinal = 3;
-
-private:
-	/*
-	 * Count of slots in sync period.
-	 * Must be less than MAX_UINT16 (256k)
-	 *
-	 * Only used to calculate SyncPeriodDuration
-	 * Here 3 is the average count of active slots (with radio on) Sync, Work, Fish.
-	 * (Average, since Fish slot is alternative to Merge slot,
-	 * which is a short transmit, probablistically transmitted within a SyncPeriod.)
-	 */
-	static const ScheduleCount CountSlots = 3*DutyCycleInverse;
-
-	static const DeltaTime SyncPeriodDuration = CountSlots * SlotDuration;
+// Constants defined in more visible file
+#include "../scheduleParameters.h"
 
 
 // static member funcs
@@ -125,6 +92,7 @@ public:
 
 	static void rollPeriodForwardToNow();
 	static void adjustBySyncMsg(SyncMessage* msg);
+	static DeltaTime thisSyncPeriodDuration();
 
 
 	/*
@@ -134,15 +102,15 @@ public:
 	// Used by CliqueMerger()
 
 	static DeltaTime deltaNowToStartNextSync();
-	static DeltaTime deltaStartThisSyncPeriodToNow();
+	//static DeltaTime deltaStartThisSyncPeriodToNow();
 
 	/*
 	 * Deltas from now to future time.
 	 * Positive or zero and < SyncPeriodDuration
 	 */
-	static DeltaTime deltaNowToNextSyncPeriod();
-
-	//static DeltaTime deltaToThisSyncSlotStart();
+	static DeltaTime deltaNowToNextSyncPoint();
+	// deltas to slots
+	// OBSOLETE static DeltaTime deltaToThisSyncSlotStart();
 	static DeltaTime deltaToThisSyncSlotEnd();
 	static DeltaTime deltaToThisSyncSlotMiddle();
 	static DeltaTime deltaToThisWorkSlotEnd();
@@ -155,8 +123,9 @@ public:
 	/*
 	 *  Times
 	 */
-	static LongTime timeOfNextSyncPeriodStart();
-	static LongTime timeOfNextSyncSlotStart();	// Of next period.
+	static LongTime timeOfNextSyncPoint();
+	// slot times
+	// static LongTime timeOfNextSyncSlotStart();	// Of next period
 	static LongTime timeOfThisSyncSlotEnd();	// Of this period
 	static LongTime timeOfThisSyncSlotMiddle();
 	static LongTime timeOfThisWorkSlotEnd();

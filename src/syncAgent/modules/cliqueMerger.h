@@ -62,5 +62,5 @@ public:
 
 private:
 	static void mergeMyClique(SyncMessage* msg);
-	static void mergeOtherClique(SyncMessage* msg);
+	static void mergeOtherClique();
 };

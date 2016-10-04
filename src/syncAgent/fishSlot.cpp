@@ -32,7 +32,13 @@ bool SyncAgent::dispatchMsgReceivedInFishSlot(){
 			foundDesiredMessage = true;
 			break;
 		case MergeSync:
-			// TODO FIX
+			/*
+			 * Unintended catch: Other (master or slave)
+			 * is already xmitting into this time thinking it is SyncSlot of some third clique.
+			 * Ignore except to stop fishing this slot.
+			 */
+			foundDesiredMessage = true;
+			break;
 		case AbandonMastership:
 			/*
 			 * Unintended catch: Another clique's master is abandoning (exhausted power)

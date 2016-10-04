@@ -25,7 +25,7 @@ void CliqueMerger::initFromMsg(SyncMessage* msg){
 	if (owningClique->isOtherCliqueBetter(msg->masterID))
 		mergeMyClique(msg);
 	else
-		mergeOtherClique(msg);
+		mergeOtherClique();
 	// assert my schedule might have been adjusted
 }
 
@@ -47,7 +47,7 @@ void CliqueMerger::mergeMyClique(SyncMessage* msg){
 	 * and mergeSlot is not aligned with slots in adjusted schedule.
 	 */
 	// calculate delta from current schedule
-	offsetToMergee = owningClique->schedule.deltaNowToNextSyncPeriod();
+	offsetToMergee = owningClique->schedule.deltaNowToNextSyncPoint();
 
 	// after using current schedule above, can adjust to new schedule
 	owningClique->schedule.adjustBySyncMsg(msg);
@@ -56,19 +56,22 @@ void CliqueMerger::mergeMyClique(SyncMessage* msg){
 }
 
 
-void CliqueMerger::mergeOtherClique(SyncMessage* msg){
+void CliqueMerger::mergeOtherClique(){
 	/*
-	 * Start sending sync to other clique telling members to merge to self's clique.
-	 * Self keeps current schedule.
-	 * This time becomes a mergeSlot in my new schedule.
+	 * Start sending sync to other clique members telling them to merge to self's clique,
+	 * and pass them offset from now to next SyncPoint
+	 * Self (owning) schedule is unchanged.
+	 * Now time becomes a mergeSlot in self schedule.
 	 *
 	 * * |S |W |  |  |F |  |  |S |  current schedule
 	 *   ^-------------^            delta
 	 *   |S |W |  |  | |M ||  |S |
 	 *   mergeSlot is not aligned with slots in schedule.
+	 *
+	 * We don't care which SyncMessage we fished or which MasterID owned the other clique.
 	 */
-	// msg is unused ???
-	offsetToMergee = owningClique->schedule.deltaStartThisSyncPeriodToNow();
+
+	offsetToMergee = owningClique->schedule.deltaNowToNextSyncPoint();
 	// Self fished and caught other clique, and I will send MergeSync (contending with current other master)
 	// but saying the new master is clique.masterID, not myID
 	masterID = owningClique->masterID;

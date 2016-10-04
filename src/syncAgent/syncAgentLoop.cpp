@@ -42,7 +42,7 @@ void SyncAgent::loop(){
 		else {
 			if (isSyncingState) { pauseSyncing(); }
 			isSyncingState = false;
-			sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaNowToNextSyncPeriod());
+			sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaNowToNextSyncPoint());
 			// sleep an entire sync period, then check power again.
 		}
 	}
@@ -75,6 +75,6 @@ void SyncAgent::doSyncPeriod() {
 		// continue and sleep until end of sync period
 	}
 	assert(!radio->isPowerOn());	// Low power for remainder of this sync period
-	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaNowToNextSyncPeriod());
+	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaNowToNextSyncPoint());
 	// Sync period completed
 }

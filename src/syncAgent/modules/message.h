@@ -54,7 +54,6 @@ public:
 	}
 
 #ifdef OBSOLETE
-	// TODO FIX
 	bool isOffsetSync() {
 		// i.e. used for merge sync
 		bool result = deltaToNextSyncPoint > 0;

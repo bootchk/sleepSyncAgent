@@ -9,12 +9,15 @@
 
 LongClock Schedule::longClock;	// has-a
 
+
+LongTime Schedule::startTimeOfSyncPeriod;
+
 /*
  * !!!
  * Can change during current period.  See adjustBySyncMsg()
  * Can be in future, advances forward in time.
  */
-LongTime Schedule::startTimeOfPeriod;
+LongTime Schedule::endTimeOfSyncPeriod;
 
 // Remembered during fish slot
 LongTime Schedule::startTimeOfFishSlot;
@@ -23,50 +26,68 @@ LongTime Schedule::startTimeOfFishSlot;
 
 void Schedule::startFreshAfterHWReset(){
 	longClock.reset();
-	startTimeOfPeriod = longClock.nowTime();
+	startTimeOfSyncPeriod = longClock.nowTime();
+	endTimeOfSyncPeriod = startTimeOfSyncPeriod + NormalSyncPeriodDuration;
 	// Out of sync with other cliques
 }
 
 
 /*
- * "start" is verb: called when period ends/starts.
+ * "start" is verb: called at SyncPoint
  */
 void Schedule::rollPeriodForwardToNow() {
-	// TODO FIX
-	startTimeOfPeriod += SyncPeriodDuration;
 	/*
-	 * assert startTimeOfPeriod is close to nowTime().
-	 * This is called at the time that should be the end of a period.
+	 * One begins where other ends.  See following comment.
+	 */
+	startTimeOfSyncPeriod = endTimeOfSyncPeriod;
+	endTimeOfSyncPeriod = startTimeOfSyncPeriod + NormalSyncPeriodDuration;
+
+	// thisSyncPeriodDuration();
+	/*
+	 * assert startTimeOfSyncPeriod is close to nowTime().
+	 * This is called at the time that should be SyncPoint.
 	 * But since we can fish in the last slot before this time,
 	 * and fishing may delay us a short time,
 	 * this may be called a short time later than usual.
 	 * If not a short time, is error in algorithm.
 	 */
-	assert( longClock.timeDifferenceFromNow(startTimeOfPeriod) < SlotDuration );
+	assert( longClock.timeDifferenceFromNow(startTimeOfSyncPeriod) < SlotDuration );
 }
 
 
 // Crux
 void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 	/*
-	 * A sync message adjusts start of period forward from now by an offset
+	 * A sync message adds to ***end*** of period (farther into the future)
 	 *
-	 * assert offset < period length
-	 * assert startTimeOfPeriod < nowTime  < startTimeOfPeriod + period length
-	 * i.e. now in the current period, but may be near the end of it.
+	 *
+	 * assert startTimeOfSyncPeriod < nowTime()  < endTimeOfSyncPeriod
+	 * i.e. now in the current period, but may be near the end of it,
+	 * or beyond it because of delay in processing fished SyncMessage?
+	 *
+	 * assert some task (endFishSlot) might be scheduled, but this doesn't affect that.
 	 */
-	// assert some task (endFishSlot) might be scheduled.
 
-	// assert not much time has elapsed since msg arrived.
-	// For more accuracy, we could timestamp msg arrival as early as possible.
-	// TODO FIX
-	startTimeOfPeriod = longClock.nowTime() + msg->deltaToNextSyncPoint;
+	assert(msg->deltaToNextSyncPoint < NormalSyncPeriodDuration);
+	/*
+	 * assert not much time has elapsed since msg arrived.
+	 * I.E. nowTime() is approximate TOA of SyncMessage.
+	 * For more accuracy, we could timestamp msg arrival as early as possible.
+	 */
+	endTimeOfSyncPeriod = longClock.nowTime() + msg->deltaToNextSyncPoint + NormalSyncPeriodDuration;
 
-	// assert new startTimeOfPeriod < old startTimeOfPeriod + 2*period length
-	// i.e. new startTimeOfPeriod is within the old current period or in the period following
-	// ????
+	// assert old startTimeOfSyncPeriod < new endTimeOfSyncPeriod  < nowTime() + 2*periodDuration
+	// i.e. new endTimeOfSyncPeriod is within the span of old period or up to
 }
 
+#ifdef OBSOLETE
+/*
+ * Duration of this SyncPeriod, possibly as adjusted.
+ */
+DeltaTime Schedule::thisSyncPeriodDuration() {
+
+}
+#endif
 
 /*
  * Deltas
@@ -83,13 +104,18 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
  * If zero, a sleep...(0) executes immediately without delay.
  */
 //DeltaTime  Schedule::deltaNowToStartNextSync() {
-DeltaTime  Schedule::deltaNowToNextSyncPeriod() {
-	return longClock.clampedTimeDifferenceFromNow(timeOfNextSyncSlotStart());
+
+
+DeltaTime  Schedule::deltaNowToNextSyncPoint() {
+	return longClock.clampedTimeDifferenceFromNow(timeOfNextSyncPoint());
 }
+#ifdef OBSOLETE
 // Different: backwards from others: from past time to now
 DeltaTime  Schedule::deltaStartThisSyncPeriodToNow() {
-	return longClock.clampedTimeDifference(longClock.nowTime(), startTimeOfPeriod);
+	return longClock.clampedTimeDifference(longClock.nowTime(), startTimeOfSyncPeriod);
 }
+#endif
+
 DeltaTime Schedule::deltaToThisSyncSlotEnd(){
 	return longClock.clampedTimeDifferenceFromNow(timeOfThisSyncSlotEnd());
 }
@@ -116,14 +142,20 @@ DeltaTime Schedule::deltaToThisMergeStart(DeltaTime offset){
  * and task processing times is smaller than slotDurations.
  * When these return past times, calculation of DeltaTime clamps to zero.
  */
-// Start of period and start of syncSlot coincide.
-// FUTURE: Choice of sync slot at start of period is arbitrary, allow it to be anywhere in period.
-LongTime Schedule::timeOfNextSyncPeriodStart() { return startTimeOfPeriod + SyncPeriodDuration; }
-LongTime Schedule::timeOfNextSyncSlotStart() { return timeOfNextSyncPeriodStart(); }
 
-LongTime Schedule::timeOfThisSyncSlotEnd() { return startTimeOfPeriod + SlotDuration; }
-LongTime Schedule::timeOfThisSyncSlotMiddle() { return startTimeOfPeriod + (SlotDuration/2); }
-LongTime Schedule::timeOfThisWorkSlotEnd() { return startTimeOfPeriod + 2 * SlotDuration; }
+
+// Next
+LongTime Schedule::timeOfNextSyncPoint() {
+	return endTimeOfSyncPeriod;
+}
+
+// Start of period and start of syncSlot coincide.
+// FUTURE: Choice of sync slot at start of period is arbitrary, allow it to be anywhere in period?
+//LongTime Schedule::timeOfNextSyncSlotStart() { return timeOfNextSyncPeriodStart(); }
+
+LongTime Schedule::timeOfThisSyncSlotEnd() { return startTimeOfSyncPeriod + SlotDuration; }
+LongTime Schedule::timeOfThisSyncSlotMiddle() { return startTimeOfSyncPeriod + (SlotDuration/2); }
+LongTime Schedule::timeOfThisWorkSlotEnd() { return startTimeOfSyncPeriod + 2 * SlotDuration; }
 
 
 /*
@@ -136,7 +168,7 @@ LongTime Schedule::timeOfThisWorkSlotEnd() { return startTimeOfPeriod + 2 * Slot
  * Time til start is in [0, timeTilLastSleepingSlot]
  */
 LongTime Schedule::timeOfThisFishSlotStart() {
-	LongTime startTimeOfFishSlot = startTimeOfPeriod
+	LongTime startTimeOfFishSlot = startTimeOfSyncPeriod
 			+ randUnsignedInt16(FirstSleepingSlotOrdinal-1, CountSlots-1) * SlotDuration;
 
 	/*
@@ -150,10 +182,10 @@ LongTime Schedule::timeOfThisFishSlotStart() {
 
 	/*
 	 * Time to start fish slot must be no later than start time of last sleeping slot,
-	 * else we won't start the next sync period on time.
+	 * else we won't start next sync period on time.
 	 */
 	// TODO this is not tight enough, should be minus SlotDuration
-	assert(startTimeOfFishSlot <= timeOfNextSyncPeriodStart());
+	assert(startTimeOfFishSlot <= timeOfNextSyncPoint());
 
 	return startTimeOfFishSlot;
 }
@@ -161,5 +193,5 @@ LongTime Schedule::timeOfThisFishSlotStart() {
 LongTime Schedule::timeOfThisFishSlotEnd() { return startTimeOfFishSlot + SlotDuration; }
 
 // Merge slot: offset from cliqueMerger, and no slotEnd needed
-LongTime Schedule::timeOfThisMergeStart(DeltaTime offset) { return startTimeOfPeriod + offset; }
+LongTime Schedule::timeOfThisMergeStart(DeltaTime offset) { return startTimeOfSyncPeriod + offset; }
 

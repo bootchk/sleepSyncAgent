@@ -96,6 +96,7 @@ private:
 	static void doIdleSlotRemainder();
 	static bool shouldTransmitSync();
 	static void transmitMasterSync();
+	static void makeCommonMasterSyncMessage();
 
 
 	// work

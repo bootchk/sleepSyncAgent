@@ -11,7 +11,7 @@ void Sleeper::clearReasonForWake() {}
 
 bool Sleeper::reasonForWakeIsMsgReceived() { return false; }
 bool Sleeper::reasonForWakeIsTimerExpired() { return true; }
-bool Sleeper::reasonForWakeIsCleared() ( return true; }
+bool Sleeper::reasonForWakeIsCleared() { return true; }
 
 void Sleeper::msgReceivedCallback() {}
 

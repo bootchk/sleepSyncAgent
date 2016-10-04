@@ -204,16 +204,28 @@ bool SyncAgent::shouldTransmitSync() {
 
 
 void SyncAgent::transmitMasterSync() {
-	// Make SyncMessage having self as Master
-	DeltaTime reachbackOffset = clique.schedule.deltaStartThisSyncPeriodToNow();
-	// reachbackOffset is unsigned, but represents a delta backwards in time to start of SyncPeriod.
-	// About half a SlotDuration.
-	// FUTURE include correction for latency (on receiver's end)
-	assert(reachbackOffset < clique.schedule.SlotDuration); // we are not xmitting sync past end of syncSlot
-	serializer.outwardCommonSyncMsg.makeMasterSync(reachbackOffset, myID());
+	makeCommonMasterSyncMessage();
 	xmitSync(serializer.outwardCommonSyncMsg);
+	// assert xmit is completed over-the-air
 }
 
+
+void SyncAgent::makeCommonMasterSyncMessage() {
+	/*
+	 * forwardOffset is unsigned delta now to next SyncPoint
+	 */
+	DeltaTime forwardOffset = clique.schedule.deltaNowToNextSyncPoint();
+	// FUTURE include correction for latency (on receiver's end)
+
+	// Since sync slot is near front of sync period, and we are in sync slot
+	assert( forwardOffset > 0);
+	assert( forwardOffset < clique.schedule.NormalSyncPeriodDuration);
+
+	// FUTURE assert we are not xmitting sync past end of syncSlot?
+	// i.e. calculations are rapid and sync slot not too short?
+
+	serializer.outwardCommonSyncMsg.makeMasterSync(forwardOffset, myID());
+}
 
 void SyncAgent::endSyncSlot() {
 	/*
