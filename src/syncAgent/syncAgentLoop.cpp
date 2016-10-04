@@ -32,7 +32,7 @@ void SyncAgent::loop(){
 		assert(!radio->isPowerOn());	// Radio is off after every sync period
 
 		// Sync period is either active or idle, but still advances schedule
-		clique.schedule.startPeriod();
+		clique.schedule.rollPeriodForwardToNow();
 
 		if ( powerMgr.isPowerForRadio() ) {
 			// FUTURE if !isSyncingState resumeSyncing  announce to app

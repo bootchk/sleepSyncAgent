@@ -40,16 +40,26 @@ LongTime LongClock::nowTime() {
 /*
  * LongTime math
  *
- * These return shorter ints as returned by OSClock and used by other OS methods
+ * These return shorter uints as returned by OSClock and used by other OS methods.
+ *
+ * !!! C++ is mind-numbingly stupid: no warnings about coercions with loss?
  */
 
-// Can be called if you are not sure laterTime is after earlierTime
+/*
+ * Not require laterTime is after earlierTime
+ * Returns forward time difference when laterTime after earlierTime.
+ * Returns zero when laterTime before earlierTime.
+ * Requires difference < MaxDeltaTime.
+ */
 DeltaTime LongClock::clampedTimeDifference(LongTime laterTime, LongTime earlierTime) {
-	// Returns positive time difference or zero
+	//
 	DeltaTime result;
-	if (earlierTime > laterTime) result = 0;
-	else result = laterTime - earlierTime;	// !!! Coerce to 32-bit
+	if (earlierTime > laterTime)
+		result = 0;
+	else
+		result = laterTime - earlierTime;	// !!! Coerce to 32-bit
 	assert(result >= 0);
+	// TODO move this assertion to caller
 	// assert(result < 3 * PeriodDuration);	// Sanity, app does not schedule far in the future.
 	assert(result < MaxDeltaTime);
 	return result;
@@ -57,7 +67,19 @@ DeltaTime LongClock::clampedTimeDifference(LongTime laterTime, LongTime earlierT
 
 // Requires futureTime less than MaxDeltaTime from now
 DeltaTime LongClock::clampedTimeDifferenceFromNow(LongTime futureTime) {
+	// TODO this is already coerced then expanded
 	LongTime result = clampedTimeDifference(futureTime, nowTime());
+	assert(result < MaxDeltaTime);
+	return result;	// coerce to 32-bit
+}
+
+/*
+ * Difference of givenTime from now, where:
+ * - givenTime may be in the past
+ * - givenTime is less than MAX_DELTA_TIME from now.
+ */
+DeltaTime LongClock::timeDifferenceFromNow(LongTime givenTime) {
+	LongTime result = givenTime - nowTime();	// Unsigned, modulo arithmetic, no coercion
 	assert(result < MaxDeltaTime);
 	return result;	// coerce to 32-bit
 }

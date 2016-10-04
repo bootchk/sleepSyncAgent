@@ -47,4 +47,5 @@ public:
 	// Arithmetic on LongTime yielding a DeltaTime suitable for timeouts on platform
 	static DeltaTime clampedTimeDifference(LongTime laterTime, LongTime earlierTime);
 	static DeltaTime clampedTimeDifferenceFromNow(LongTime laterTime);
+	static DeltaTime timeDifferenceFromNow(LongTime givenTime);
 };

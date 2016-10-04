@@ -117,11 +117,10 @@ private:
 
 // static member funcs
 public:
-	// Start schedule (long duration sequence of periods)
 	static void startFreshAfterHWReset();
-	static void resumeAfterPowerRestored();
+	// FUTURE static void resumeAfterPowerRestored();
 
-	static void startPeriod();
+	static void rollPeriodForwardToNow();
 	static void adjustBySyncMsg(SyncMessage* msg);
 
 

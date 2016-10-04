@@ -29,12 +29,19 @@ void Schedule::startFreshAfterHWReset(){
 
 
 /*
- * "start" is verb: called when period should start.
+ * "start" is verb: called when period ends/starts.
  */
-void Schedule::startPeriod() {
-	startTimeOfPeriod += SlotDuration;
-	// assert startTimeOfPeriod is close to nowTime()
-	// ow we have missed a period or otherwise delayed unexpectedly.
+void Schedule::rollPeriodForwardToNow() {
+	startTimeOfPeriod += SyncPeriodDuration;
+	/*
+	 * assert startTimeOfPeriod is close to nowTime().
+	 * This is called at the time that should be the end of a period.
+	 * But since we can fish in the last slot before this time,
+	 * and fishing may delay us a short time,
+	 * this may be called a short time later than usual.
+	 * If not a short time, is error in algorithm.
+	 */
+	assert( longClock.timeDifferenceFromNow(startTimeOfPeriod) < SlotDuration );
 }
 
 
