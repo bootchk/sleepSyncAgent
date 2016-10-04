@@ -262,9 +262,11 @@ void SyncAgent::endSyncSlot() {
  * Returns true if sync message keeps my sync (from current or new master of my clique.)
  */
 bool SyncAgent::doSyncMsgInSyncSlot(SyncMessage* msg){
-	// Cannot receive sync from self (xmitter and receiver are exclusive)
 
+	// assert sync not from self (xmitter and receiver are exclusive)
 	// assert self.isMaster || self.isSlave i.e. this code doesn't require any particular role
+	// assert SyncMsg is subtype MasterSync OR MergeSync
+
 	bool doesMsgKeepSynch;
 
 	if (isSyncFromBetterMaster(msg)) {
@@ -291,13 +293,7 @@ bool SyncAgent::doSyncMsgInSyncSlot(SyncMessage* msg){
 void SyncAgent::changeMaster(SyncMessage* msg) {
 	assert(msg->masterID != clique.masterID);
 
-	clique.masterID = msg->masterID;
-	assert(!clique.isSelfMaster()); // even if I was before
-
-	// FUTURE clique.historyOfMasters.update(msg);
-
-	// Regardless: from my master (small offset) or from another clique (large offset)
-	clique.schedule.adjustBySyncMsg(msg);
+	clique.changeBySyncMessage(msg);
 
 	if (cliqueMerger.isActive) {
 		// Already merging an other clique, now merge other clique to updated sync slot time

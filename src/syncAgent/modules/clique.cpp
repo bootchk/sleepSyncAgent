@@ -28,10 +28,24 @@ void Clique::onMasterDropout() {
 	// FUTURE: history of masters
 }
 
+#ifdef NOT_USED
 void Clique::initFromSyncMsg(SyncMessage* msg){
 	assert(msg->type == Sync);	// require
 	assert(msg->masterID != myID());	// invariant: we can't hear our own sync
 	masterID = msg->masterID;
 }
+#endif
 
 
+
+void Clique::changeBySyncMessage(SyncMessage* msg) {
+
+	assert(msg->masterID != myID());	// we can't hear our own sync
+	masterID = msg->masterID;
+	assert(!isSelfMaster()); // even if I was before
+
+	// FUTURE clique.historyOfMasters.update(msg);
+
+	// Regardless: from my master (small offset) or from another clique (large offset)
+	schedule.adjustBySyncMsg(msg);
+}
