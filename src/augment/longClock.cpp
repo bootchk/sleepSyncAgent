@@ -44,6 +44,7 @@ LongTime LongClock::nowTime() {
  *
  * !!! C++ is mind-numbingly stupid: no warnings about coercions with loss?
  */
+// TODO more assertions to prevent coercions with loss
 
 /*
  * Not require laterTime is after earlierTime
@@ -57,7 +58,7 @@ DeltaTime LongClock::clampedTimeDifference(LongTime laterTime, LongTime earlierT
 	if (earlierTime > laterTime)
 		result = 0;
 	else
-		result = laterTime - earlierTime;	// !!! Coerce to 32-bit
+		result = laterTime - earlierTime;	// !!! Coerce to 32-bit, with possible loss
 	assert(result >= 0);
 	// TODO move this assertion to caller
 	// assert(result < 3 * PeriodDuration);	// Sanity, app does not schedule far in the future.
@@ -65,12 +66,15 @@ DeltaTime LongClock::clampedTimeDifference(LongTime laterTime, LongTime earlierT
 	return result;
 }
 
-// Requires futureTime less than MaxDeltaTime from now
+/*
+ * Not require futureTime later than now.
+ * Requires futureTime less than MaxDeltaTime from now
+ */
 DeltaTime LongClock::clampedTimeDifferenceFromNow(LongTime futureTime) {
 	// TODO this is already coerced then expanded
-	LongTime result = clampedTimeDifference(futureTime, nowTime());
-	assert(result < MaxDeltaTime);
-	return result;	// coerce to 32-bit
+	DeltaTime result = clampedTimeDifference(futureTime, nowTime()); // Coerced to 32-bit with possible loss
+	// Already asserted: assert(result < MaxDeltaTime);
+	return result;
 }
 
 /*
@@ -79,7 +83,7 @@ DeltaTime LongClock::clampedTimeDifferenceFromNow(LongTime futureTime) {
  * - givenTime is less than MAX_DELTA_TIME from now.
  */
 DeltaTime LongClock::timeDifferenceFromNow(LongTime givenTime) {
-	LongTime result = givenTime - nowTime();	// Unsigned, modulo arithmetic, no coercion
+	DeltaTime result = givenTime - nowTime();	// Unsigned, modulo arithmetic, with coercion and possible loss
 	assert(result < MaxDeltaTime);
-	return result;	// coerce to 32-bit
+	return result;
 }
