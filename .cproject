@@ -246,6 +246,9 @@
 		<configuration configurationName="library">
 			<resource resourceType="PROJECT" workspacePath="/sleepSyncAgent"/>
 		</configuration>
+		<configuration configurationName="ArchiveArmM4">
+			<resource resourceType="PROJECT" workspacePath="/sleepSyncAgent"/>
+		</configuration>
 		<configuration configurationName="ArchiveArmM0">
 			<resource resourceType="PROJECT" workspacePath="/sleepSyncAgent"/>
 		</configuration>

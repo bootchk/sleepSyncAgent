@@ -10,6 +10,8 @@
  * Delta time for adjusting SyncPoint.  2-bytes, 16-bits, 128k
  * Content of SyncMessage to adjust sync.
  */
+// TODO assertions on overflows DeltaSync
+// Currently we are transmitting 3 bytes of DeltaSync
 typedef uint16_t DeltaSync;
 
 

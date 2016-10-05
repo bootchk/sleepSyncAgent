@@ -85,8 +85,10 @@ void CliqueMerger::adjustBySyncMsg(SyncMessage* msg) {
 	 *
 	 * My sync slot is moving later, merge time must move earlier in schedule to stay at same wall time.
 	 */
-	// TODO fix
-	offsetToMergee -= msg->deltaToNextSyncPoint;
+	// TODO FUTURE fix
+	// For now, do nothing, and xmit MergeSyncs at wrong time
+
+	// offsetToMergee -= msg->deltaToNextSyncPoint;
 	// TODO this is not right, result could be negative.  Need modulo.
 	// Also, if the mergeSlot now overlaps sync or work slot?
 }

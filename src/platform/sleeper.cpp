@@ -5,6 +5,7 @@
 
 // stubs
 void Sleeper::init() {}
+bool Sleeper::isOSClockRunning() { return true; }
 void Sleeper::sleepUntilEventWithTimeout(OSTime) {}
 
 void Sleeper::clearReasonForWake() {}

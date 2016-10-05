@@ -41,22 +41,24 @@ bool SyncAgent::dispatchMsgReceivedInSyncSlot() {
 	if (msg != nullptr) {
 		switch(msg->type) {
 		case MasterSync:
-			isFoundSyncKeepingMsg = doMasterSyncMsgInSyncSlot((SyncMessage*) msg);
+		case MergeSync:
+			isFoundSyncKeepingMsg = doSyncMsgInSyncSlot((SyncMessage*) msg);
 			// Multiple syncs or sync
 
 			// FUTURE discard other queued messages
 			// FUTURE freeReceivedMsg((void*) msg);
 			break;
-		case MergeSync:
-			// TODO FIX
+
 		case AbandonMastership:
 			doAbandonMastershipMsgInSyncSlot((SyncMessage*) msg);
 			// FUTURE freeReceivedMsg((void*) msg);
 			break;
+
 		case Work:
 			doWorkMsgInSyncSlot((WorkMessage*) msg);
 			// !!! msg is moved to work queue, not freed
 			break;
+
 		default:
 			break;
 		}
@@ -275,11 +277,11 @@ void SyncAgent::endSyncSlot() {
 /*
  * Returns true if sync message keeps my sync (from current or new master of my clique.)
  */
-bool SyncAgent::doMasterSyncMsgInSyncSlot(SyncMessage* msg){
+bool SyncAgent::doSyncMsgInSyncSlot(SyncMessage* msg){
+	// assert SyncMsg is subtype MasterSync OR MergeSync
 
 	// assert sync not from self (xmitter and receiver are exclusive)
 	// assert self.isMaster || self.isSlave i.e. this code doesn't require any particular role
-	// assert SyncMsg is subtype MasterSync OR MergeSync
 
 	bool doesMsgKeepSynch;
 

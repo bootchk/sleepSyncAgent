@@ -42,8 +42,10 @@ void Schedule::rollPeriodForwardToNow() {
 	startTimeOfSyncPeriod = endTimeOfSyncPeriod;
 	endTimeOfSyncPeriod = startTimeOfSyncPeriod + NormalSyncPeriodDuration;
 
-	// thisSyncPeriodDuration();
 	/*
+	 * !!! This assertion can't be stepped-in while debugging
+	 * since the RTC continues to run while you are stepping.
+	 *
 	 * assert startTimeOfSyncPeriod is close to nowTime().
 	 * This is called at the time that should be SyncPoint.
 	 * But since we can fish in the last slot before this time,
@@ -51,7 +53,7 @@ void Schedule::rollPeriodForwardToNow() {
 	 * this may be called a short time later than usual.
 	 * If not a short time, is error in algorithm.
 	 */
-	assert( longClock.timeDifferenceFromNow(startTimeOfSyncPeriod) < SlotDuration );
+	//assert( longClock.timeDifferenceFromNow(startTimeOfSyncPeriod) < SlotDuration );
 }
 
 

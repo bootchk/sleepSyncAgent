@@ -5,11 +5,11 @@
 
 // static singleton data members
 uint32_t LongClock::mostSignificantBits = 0;
-uint32_t LongClock::previousOSClockTicks;	// least significant
+OSTime LongClock::previousOSClockTicks;	// least significant
 
 
 void LongClock::reset(){
-	mostSignificantBits = 0;	// aka epoch
+	mostSignificantBits = 1;	// aka epoch
 	previousOSClockTicks = OSClockTicks();
 	// assert nowTime() < max 32-bit int, but not zero.
 }
@@ -31,7 +31,7 @@ LongTime LongClock::nowTime() {
 
 	// Concatenate MSB and LSB.  Portable?
 	LongTime result = mostSignificantBits;
-	result = result << OSClockCountBits;	// Left shift, fill LSB with zero
+	result = result << OSClockCountBits;	// Left shift result, fill LSB with zero
 	result = result | currentOSClockTicks;	// Bit-wise OR into LSB
 	return result;
 };
@@ -67,23 +67,29 @@ DeltaTime LongClock::clampedTimeDifference(LongTime laterTime, LongTime earlierT
 }
 
 /*
- * Not require futureTime later than now.
+ * Not require futureTime later than now, returns 0 if it is.
  * Requires futureTime less than MaxDeltaTime from now
  */
 DeltaTime LongClock::clampedTimeDifferenceFromNow(LongTime futureTime) {
-	// TODO this is already coerced then expanded
 	DeltaTime result = clampedTimeDifference(futureTime, nowTime()); // Coerced to 32-bit with possible loss
 	// Already asserted: assert(result < MaxDeltaTime);
 	return result;
 }
 
 /*
- * Difference of givenTime from now, where:
+ * Smallest difference of givenTime from now, where:
  * - givenTime may be in the past
  * - givenTime is less than MAX_DELTA_TIME from now.
  */
 DeltaTime LongClock::timeDifferenceFromNow(LongTime givenTime) {
-	DeltaTime result = givenTime - nowTime();	// Unsigned, modulo arithmetic, with coercion and possible loss
+	LongTime now = nowTime();
+	DeltaTime result;
+
+	// Subtract past time from larger future time, else modulo math gives a large result
+	if (now < givenTime)
+		result = givenTime - now;	// Unsigned, modulo math, with coercion and possible loss
+	else
+		result = now - givenTime;
 	assert(result < MaxDeltaTime);
 	return result;
 }

@@ -31,6 +31,7 @@ void SyncAgent::init(
 	)
 {
 	sleeper.init();
+	// Assert OSClock is running
 
 	radio = aRadio;
 	// Configure radio
@@ -43,6 +44,7 @@ void SyncAgent::init(
 	onWorkMsgQueuedCallback = aOnWorkMsgQueuedCallback;
 
 	clique.reset();
+	// Assert LongClock is reset and running
 
 	// radio device may be on from prior debugging w/o hard reset
 	radio->powerOff();
@@ -51,6 +53,7 @@ void SyncAgent::init(
 	assert(role.isFisher());
 	assert(clique.isSelfMaster());
 	assert(!radio->isPowerOn());
+	assert(sleeper.isOSClockRunning());
 }
 
 

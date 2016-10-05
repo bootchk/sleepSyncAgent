@@ -3,10 +3,10 @@
 
 #include <inttypes.h>
 
-#include "types.h"
+#include "types.h"	// OSTime
 
 
-// time that platform accepts for timeouts, scheduling
+// Alias for OSTime: time that platform accepts for timeouts, scheduling
 typedef uint32_t DeltaTime;
 // NRF accepts 32 bits but only 24-bits valid
 

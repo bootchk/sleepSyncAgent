@@ -26,18 +26,23 @@ void SyncAgent::loop(){
 	assert(! isSyncingState);
 	assert(!radio->isPowerOn());
 
+	/*
+	 * assert schedule already started and not too much time has elapsed
+	 * Note that we roll forward at the end of the loop.
+	 * If we roll forward at the beginning of the loop,
+	 * we need to initialize schedule differently.
+	 */
+
 	while (true){
 		ledLogger.toggleLED(1);	// DEBUG, use the only LED on some targets
 
 		assert(!radio->isPowerOn());	// Radio is off after every sync period
 
-		// Sync period is either active or idle, but still advances schedule
-		clique.schedule.rollPeriodForwardToNow();
-
 		if ( powerMgr.isPowerForRadio() ) {
 			// FUTURE if !isSyncingState resumeSyncing  announce to app
 			isSyncingState = true;
 			doSyncPeriod();
+
 		}
 		else {
 			if (isSyncingState) { pauseSyncing(); }
@@ -45,6 +50,9 @@ void SyncAgent::loop(){
 			sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaNowToNextSyncPoint());
 			// sleep an entire sync period, then check power again.
 		}
+		// Sync period over, advance schedule.
+		// Keep schedule even if not enough power to xmit sync messages to maintain accuracy
+		clique.schedule.rollPeriodForwardToNow();
 	}
 	// never returns
 }
@@ -62,10 +70,7 @@ void SyncAgent::doSyncPeriod() {
 	if (role.isMerger()) {
 		// avoid collision
 		if (cliqueMerger.shouldScheduleMerge())  {
-			// TODO doMergeSlot
-			sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisMergeStart(cliqueMerger.offsetToMergee));
-			startMergeSlot();	// doMerge
-			// Merge is xmit only, no sleeping til end of slot
+			doMergeSlot();
 		}
 		// else continue and sleep until end of sync period
 	}

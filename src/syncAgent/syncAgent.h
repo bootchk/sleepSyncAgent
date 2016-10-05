@@ -118,8 +118,8 @@ private:
 	static void xmitAproposWork();
 
 	// msg handlers: messageType x slotType, with omissions
-	static bool doMasterSyncMsgInSyncSlot(SyncMessage* msg);
-	// TODO FIX
+	static bool doSyncMsgInSyncSlot(SyncMessage* msg);	//MasterSync OR MergeSync
+
 	static void doMasterSyncMsgInFishSlot(SyncMessage* msg);
 	static void doAbandonMastershipMsgInSyncSlot(SyncMessage* msg);
 	static void doWorkMsgInSyncSlot(WorkMessage* msg);
@@ -128,6 +128,7 @@ private:
 	// merge
 	static void toMergerRole(SyncMessage* msg);
 	static void endMergerRole();
+	static void doMergeSlot();
 
 	// abandon
 	static void tryAssumeMastership(SyncMessage* msg);

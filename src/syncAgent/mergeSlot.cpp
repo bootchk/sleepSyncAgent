@@ -7,6 +7,7 @@
 
 #include "syncAgent.h"
 
+// to and from Merger Role
 
 void SyncAgent::toMergerRole(SyncMessage* msg){
 	// assert msg is master sync msg received in fishSlot
@@ -17,9 +18,22 @@ void SyncAgent::toMergerRole(SyncMessage* msg){
 	// assert my schedule might have been adjusted
 	assert(cliqueMerger.isActive);
 	assert(role.isMerger());
-	// assert endFishSlot is scheduled
-	// assert it will schedule syncSlot.
-	// assert some future syncSlot will schedule onMergerWake
+}
+
+void SyncAgent::endMergerRole(){
+	role.setFisher();
+	// role does not know about cliqueMerger
+	cliqueMerger.isActive = false;
+}
+
+
+// Merge slot
+
+void SyncAgent::doMergeSlot() {
+	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisMergeStart(cliqueMerger.offsetToMergee));
+	startMergeSlot();	// doMerge
+	// Merge is xmit only, no sleeping til end of slot
+	// Slot is not full length of other slots.
 }
 
 
@@ -51,8 +65,4 @@ void SyncAgent::startMergeSlot() {
 	assert(role.isFisher());
 }
 
-void SyncAgent::endMergerRole(){
-	role.setFisher();
-	// role does not know about cliqueMerger
-	cliqueMerger.isActive = false;
-}
+

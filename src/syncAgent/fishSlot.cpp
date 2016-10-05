@@ -106,9 +106,11 @@ void SyncAgent::endFishSlot(){
 
 
 void SyncAgent::doMasterSyncMsgInFishSlot(SyncMessage* msg){
-	// TODO FIX if better?
 	toMergerRole(msg);
-	// Assert isMergerRole
+	// assert isMergerRole
+	// assert (schedule changed AND self is merging my former clique)
+	// OR (schedule unchanged AND self is merging other clique)
+	// assert my schedule might have changed
 }
 
 

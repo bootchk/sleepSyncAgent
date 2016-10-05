@@ -52,7 +52,7 @@
  * Stubs are compiled in so project builds and links cleanly
  * (but it is non-functional.)
  */
-//#define SYNC_AGENT_IS_LIBRARY 1
+#define SYNC_AGENT_IS_LIBRARY 1
 
 /*
  * Define this if, on the platform, the radio peripheral is synchronous to the SyncAgent.

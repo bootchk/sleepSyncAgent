@@ -11,7 +11,7 @@
 
 #include "syncAgent.h"
 
-// TODO should only be visible to WorkSlot class
+// FUTURE should only be visible to WorkSlot class
 
 bool SyncAgent::dispatchMsgReceivedInWorkSlot(){
 	bool foundDesiredMessage = false;
@@ -78,7 +78,7 @@ void SyncAgent::xmitAproposWork() {
 	// Assert self is in work slot.
 
 	// Other units might be contending
-	// TODO transmit with flip of coin, or delayed randomly
+	// FUTURE transmit with flip of coin, or delayed randomly
 
 	if ( isQueuedWorkMsgFromApp() ) {
 		void * workPayload = unqueueWorkMsgFromApp();

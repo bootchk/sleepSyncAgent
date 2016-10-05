@@ -37,7 +37,7 @@
  * Responsibilities:
  * - own an infinite duration clock based on OSClock()
  * - maintain period start time (in sync with members of clique)
- * - schedule tasks (interface to OS)
+ * - schedule tasks (interface to platform or OS)
  *
  * Note scheduled tasks run at slot start/end or unaligned
  *
@@ -57,6 +57,11 @@
  *
  * Terminology:
  * SyncPoint: point in time between consecutive SyncPeriods.
+ *
+ * !!!
+ * SyncAgent owns Clique owns Schedule owns LongClock which uses OSClock() platform function
+ * which depends on the Timer owned by Sleeper owned by SyncAgent.
+ * In other words, there is a deep unstated connection between LongClock and Timer.
  */
 class Schedule {
 private:
@@ -87,7 +92,7 @@ private:
 
 // static member funcs
 public:
-	static void startFreshAfterHWReset();
+	static void startFreshAfterHWReset();	// aka init()
 	// FUTURE static void resumeAfterPowerRestored();
 
 	static void rollPeriodForwardToNow();

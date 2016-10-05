@@ -61,7 +61,6 @@ public:
 	 * If message is received:
 	 * - waked from sleep and reasonForWakeIsMsg() returns true
 	 * - radio's buffer ( at getBufferAddress) is changed
-	 * TODO what does etc. mean?
 	 */
 	static void receiveStatic();
 

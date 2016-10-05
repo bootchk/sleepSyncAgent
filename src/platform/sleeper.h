@@ -28,6 +28,7 @@
 class Sleeper {
 public:
 	static void init();
+	static bool isOSClockRunning();
 	static void sleepUntilEventWithTimeout(OSTime);
 
 	static void clearReasonForWake();
