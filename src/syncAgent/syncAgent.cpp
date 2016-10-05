@@ -36,7 +36,7 @@ void SyncAgent::init(
 	radio = aRadio;
 	// Configure radio
 	// Connect radio IRQ to sleeper so it knows reason for wake
-	radio->init(sleeper.msgReceivedCallback);
+	radio->init(&sleeper.msgReceivedCallback);
 
 	// Serializer reads and writes directly to radio buffer
 	serializer.init(radio->getBufferAddress());
