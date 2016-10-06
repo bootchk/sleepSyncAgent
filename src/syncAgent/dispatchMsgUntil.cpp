@@ -38,7 +38,7 @@ bool SyncAgent::dispatchMsgUntil(
 	// otherwise we will receive a message but sleep until timeout
 	assert(radio->isEnabledInterruptForMsgReceived());	// will interrupt
 	// we beat the radio race, i.e. msg not already received
-	assert(!radio->isDisabled());	// is receiving
+	assert(!radio->isDisabledState());	// is receiving
 
 	//assert(sleeper.reasonForWakeIsCleared());	// This also checks we haven't received yet
 	// TODO currently, this is being cleared in sleepUntil but that suffers from races

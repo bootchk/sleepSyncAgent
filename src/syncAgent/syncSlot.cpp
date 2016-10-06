@@ -137,13 +137,13 @@ void SyncAgent::doMasterSyncSlot() {
 	// Transmit sync in middle
 
 	bool heardSyncKeepingSync = doMasterListenHalfSyncSlot(clique.schedule.deltaToThisSyncSlotMiddle);
-	assert(radio->isDisabled());
+	assert(radio->isDisabledState());
 
 	if (heardSyncKeepingSync) {
 		// I was Master, but just relinquished it
 		assert(!clique.isSelfMaster());
 		// Leave radio powerOn (work slot requires it) but not receiving
-		assert(radio->isDisabled());	// not receiving
+		assert(radio->isDisabledState());	// not receiving
 		doIdleSlotRemainder();
 	}
 	else {
@@ -175,7 +175,8 @@ void SyncAgent::doSlaveSyncSlot() {
 	// listen for sync the whole period
 	sleeper.clearReasonForWake();
 	radio->receiveStatic(); // DYNAMIC (receiveBuffer, Radio::MaxMsgLength);
-	assert(!radio->isDisabled()); // listening for other's sync
+	// This assertion is time sensitive, can't stay in production code
+	assert(!radio->isDisabledState()); // listening for other's sync
 	dispatchMsgUntil(
 				dispatchMsgReceivedInSyncSlot,
 				clique.schedule.deltaToThisSyncSlotEnd);
@@ -249,7 +250,7 @@ void SyncAgent::endSyncSlot() {
 	// TODO only do this if we timedout (with receiver still enabled i.e. not isDisabled())
 
 	radio->stopReceive();
-	assert(radio->isDisabled());	// receiveStatic() in next slot requires radio disabled.
+	assert(radio->isDisabledState());	// receiveStatic() in next slot requires radio disabled.
 }
 
 

@@ -52,9 +52,9 @@ bool SyncAgent::dispatchMsgReceivedInWorkSlot(){
 
 void SyncAgent::doWorkSlot() {
 	// assert work slot follows sync slot with no delay
-	assert(radio->isDisabled());	// not xmit or rcv
+	assert(radio->isDisabledState());	// not xmit or rcv
 	startWorkSlot();
-	assert(!radio->isDisabled());   // receiving other's work
+	assert(!radio->isDisabledState());   // receiving other's work
 	dispatchMsgUntil(
 			dispatchMsgReceivedInWorkSlot,
 			clique.schedule.deltaToThisWorkSlotEnd);
@@ -67,7 +67,7 @@ void SyncAgent::startWorkSlot() {
 	// assert still in task onEndSyncSlot
 	assert(radio->isPowerOn());	// on at end sync slot, and work slot immediately follows
 	xmitAproposWork();
-	assert(radio->isDisabled());
+	assert(radio->isDisabledState());
 	sleeper.clearReasonForWake();
 	radio->receiveStatic();	//DYNAMIC receiveBuffer, Radio::MaxMsgLength);
 	// OBS clique.schedule.scheduleEndWorkSlotTask(onWorkSlotEnd);

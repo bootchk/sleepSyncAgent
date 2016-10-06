@@ -25,8 +25,8 @@ public:
 	 * Some platforms? radio enters this state after receiving a message
 	 * so there is a race after calling receive() to enter sleeping state expecting receive event.
 	 */
-	// FUTURE !isDisabled() equivalent to isReceiving() ?
-	static bool isDisabled();
+	// FUTURE !isDisabledState() equivalent to isReceiving() ?
+	static bool isDisabledState();
 
 #ifdef DYNAMIC
 	/*
