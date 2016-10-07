@@ -34,6 +34,9 @@
  * Does not use heap.
  */
 
+// typedef (bool (*dispatchQueuedMsg)(Message *)) DispatchFuncPtr;
+typedef bool (*DispatchFuncPtr)(Message *) ;
+
 class SyncAgent {
 
 public:
@@ -66,7 +69,7 @@ private:
 	static void startSyncing();
 	static void doSyncPeriod();
 	static bool dispatchMsgUntil(
-			bool (*dispatchQueuedMsg)(),
+			DispatchFuncPtr,
 			OSTime (*func)());
 
 	// start of slots
@@ -83,9 +86,9 @@ private:
 
 
 	// dispatch
-	static bool dispatchMsgReceivedInSyncSlot();
-	static bool dispatchMsgReceivedInWorkSlot();
-	static bool dispatchMsgReceivedInFishSlot();
+	static bool dispatchMsgReceivedInSyncSlot(Message* msg);
+	static bool dispatchMsgReceivedInWorkSlot(Message* msg);
+	static bool dispatchMsgReceivedInFishSlot(Message* msg);
 	// Merge slot only xmits, not receive messages
 
 	// sync

@@ -15,50 +15,45 @@
 
 // TODO each type of slot should be its own class
 
-bool SyncAgent::dispatchMsgReceivedInFishSlot(){
+bool SyncAgent::dispatchMsgReceivedInFishSlot(Message* msg){
 	bool foundDesiredMessage;
-	//FUTURE Message* msg = serializer.unserialize(unqueueReceivedMsg());
-	Message* msg = serializer.unserialize();
-	if (msg != nullptr) {
-		switch(msg->type) {
-		case MasterSync:
-			/*
-			 * Intended catch: another clique's sync slot.
-			 */
-			doMasterSyncMsgInFishSlot((SyncMessage*) msg);
-			// Self can't handle more than one, or slot is busy with another merge
-			radio->stopReceive();
-			radio->powerOff();
-			foundDesiredMessage = true;
-			break;
-		case MergeSync:
-			/*
-			 * Unintended catch: Other (master or slave)
-			 * is already xmitting into this time thinking it is SyncSlot of some third clique.
-			 * Ignore except to stop fishing this slot.
-			 */
-			foundDesiredMessage = true;
-			break;
-		case AbandonMastership:
-			/*
-			 * Unintended catch: Another clique's master is abandoning (exhausted power)
-			 * For now ignore. Should catch clique again later, after another member assumes mastership.
-			 */
-			break;
-		case Work:
-			/*
-			 * Unintended catch: Another clique's work slot.
-			 * For now ignore. Should catch clique again later, when we fish earlier, at it's syncSlot.
-			 * Alternative: since work slot follows syncSlot, could calculate syncSlot of catch, and merge it.
-			 * Alternative: if work can be done when out of sync, do work.
-			 */
-			break;
-		default:
-			break;
-		}
-		// All msg types freed
-		freeReceivedMsg((void*) msg);
+
+	switch(msg->type) {
+	case MasterSync:
+		/*
+		 * Intended catch: another clique's sync slot.
+		 */
+		doMasterSyncMsgInFishSlot((SyncMessage*) msg);
+		// Self can't handle more than one, or slot is busy with another merge
+		// TODO migrate this elsewhere
+		radio->stopReceive();
+		radio->powerOff();
+		foundDesiredMessage = true;
+		break;
+	case MergeSync:
+		/*
+		 * Unintended catch: Other (master or slave)
+		 * is already xmitting into this time thinking it is SyncSlot of some third clique.
+		 * Ignore except to stop fishing this slot.
+		 */
+		foundDesiredMessage = true;
+		break;
+	case AbandonMastership:
+		/*
+		 * Unintended catch: Another clique's master is abandoning (exhausted power)
+		 * For now ignore. Should catch clique again later, after another member assumes mastership.
+		 */
+		break;
+	case Work:
+		/*
+		 * Unintended catch: Another clique's work slot.
+		 * For now ignore. Should catch clique again later, when we fish earlier, at it's syncSlot.
+		 * Alternative: since work slot follows syncSlot, could calculate syncSlot of catch, and merge it.
+		 * Alternative: if work can be done when out of sync, do work.
+		 */
+		break;
 	}
+
 	return foundDesiredMessage;
 }
 

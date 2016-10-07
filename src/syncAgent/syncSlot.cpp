@@ -30,41 +30,27 @@
 #include "syncAgent.h"
 
 
-bool SyncAgent::dispatchMsgReceivedInSyncSlot() {
-	assert(isQueuedReceivedMsg());	// TODO currently impotent, isQ.. always returns true
+bool SyncAgent::dispatchMsgReceivedInSyncSlot(Message* msg) {
 
 	bool isFoundSyncKeepingMsg = false;
 
-	// FUTURE while any received messages queued
-	// FUTURE Message* msg = serializer.unserialize(unqueueReceivedMsg());
-	Message* msg = serializer.unserialize();
-	if (msg != nullptr) {
-		switch(msg->type) {
-		case MasterSync:
-		case MergeSync:
-			isFoundSyncKeepingMsg = doSyncMsgInSyncSlot((SyncMessage*) msg);
-			// Multiple syncs or sync
+	switch(msg->type) {
+	case MasterSync:
+	case MergeSync:
+		isFoundSyncKeepingMsg = doSyncMsgInSyncSlot((SyncMessage*) msg);
+		// Multiple syncs or sync
 
-			// FUTURE discard other queued messages
-			// FUTURE freeReceivedMsg((void*) msg);
-			break;
+		// FUTURE discard other queued messages
+		break;
 
-		case AbandonMastership:
-			doAbandonMastershipMsgInSyncSlot((SyncMessage*) msg);
-			// FUTURE freeReceivedMsg((void*) msg);
-			break;
+	case AbandonMastership:
+		doAbandonMastershipMsgInSyncSlot((SyncMessage*) msg);
+		break;
 
-		case Work:
-			doWorkMsgInSyncSlot((WorkMessage*) msg);
-			// !!! msg is moved to work queue, not freed
-			break;
-
-		default:
-			break;
-		}
-	}
-	else {
-		// Msg type was garbled or other checks failed
+	case Work:
+		doWorkMsgInSyncSlot((WorkMessage*) msg);
+		// FUTURE !!! msg is moved to work queue, not freed?
+		break;
 	}
 
 	// FUTURE use handle and assert(msgHandle==nullptr);	// callee freed memory and nulled handle, or just nulled handle

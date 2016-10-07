@@ -27,7 +27,7 @@
  */
 
 bool SyncAgent::dispatchMsgUntil(
-		bool (*dispatchQueuedMsg)(), // function to dispatch a message, knows desired msg type
+		DispatchFuncPtr dispatchQueuedMsg, // function to dispatch a message, knows desired msg type
 		OSTime (*timeoutFunc)())	// function returning remaining duration of slot
 {
 	bool didReceiveDesiredMsg = false;
@@ -45,27 +45,37 @@ bool SyncAgent::dispatchMsgUntil(
 
 	while (true) {
 		sleeper.sleepUntilEventWithTimeout(timeoutFunc());
-		// dispatch on reason for wake
+		// switch on reason for wake
 		if (sleeper.reasonForWakeIsMsgReceived()) {
-			// call dispatcher
-			didReceiveDesiredMsg = dispatchQueuedMsg();
-			if (didReceiveDesiredMsg) {
-				// Ultra low power sleep remainder of duration (radio power off)
-				// assert radio not receiving, but still powered on
-				radio->powerOff();
-				// TODO but work slot requires it on?
-				// Continue to next iteration i.e. sleep
-				// assert since radio power off, reason for wake can only be timeout and will then exit loop
+			// FUTURE while any received messages queued
+			//FUTURE Message* msg = serializer.unserialize(unqueueReceivedMsg());
+			Message* msg = serializer.unserialize();
+			// TODO assert msg->type valid
+			if (msg != nullptr) {
+				// call dispatcher
+				didReceiveDesiredMsg = dispatchQueuedMsg(msg);
+				if (didReceiveDesiredMsg) {
+					// Ultra low power sleep remainder of duration (radio power off)
+					// assert radio not receiving, but still powered on
+					radio->powerOff();
+					// TODO but work slot requires it on?
+					// Continue to next iteration i.e. sleep
+					// assert since radio power off, reason for wake can only be timeout and will then exit loop
+				}
+				else {
+					/*
+					 * Dispatched message was not of desired type (but we could have done work, or other state changes.)
+					 * restart receive, remain in loop, sleep until next message
+					 */
+					radio->receiveStatic();
+					// continuation is sleep
+				}
+				// assert msg queue is empty (since we received and didn't restart receiver)
 			}
-			else {
-				/*
-				 * Dispatched message was not of desired type (but we could have done work, or other state changes.)
-				 * restart receiver, remain in loop, sleep until next message
-				 */
-				radio->receiveStatic();
-				// continuation is sleep
-			}
-			// assert msg queue is empty (since we received and didn't restart receiver)
+			// else message garbled, continue is sleep
+
+			// All msg types freed
+			freeReceivedMsg((void*) msg);
 		}
 		else if (sleeper.reasonForWakeIsTimerExpired()) {
 			// Slot done.

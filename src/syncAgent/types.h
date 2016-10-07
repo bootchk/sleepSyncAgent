@@ -32,3 +32,5 @@ typedef uint16_t ScheduleCount;
  */
 // TODO use this in some assertion
 static const uint16_t MaximumScheduleCount = 32767;	// !!! Same as std C RAND_MAX
+
+

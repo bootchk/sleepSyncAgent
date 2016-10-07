@@ -13,37 +13,30 @@
 
 // FUTURE should only be visible to WorkSlot class
 
-bool SyncAgent::dispatchMsgReceivedInWorkSlot(){
+bool SyncAgent::dispatchMsgReceivedInWorkSlot(Message* msg){
 	bool foundDesiredMessage = false;
-	//FUTURE Message* msg = serializer.unserialize(unqueueReceivedMsg());
-	Message* msg = serializer.unserialize();
-	if (msg != nullptr) {
-		switch(msg->type) {
-		case MasterSync:
-		case MergeSync:
-			/* Unusual: Another clique's sync slot at same time as my work slot.
-			 * For now, ignore.  Assume fishing will find this other clique, or clocks drift.
-			 * Alternative: merge other clique from within former work slot?
-			 * doSyncMsgInWorkSlot(msg);
-			 */
-			freeReceivedMsg((void*) msg);
-			break;
-		case AbandonMastership:
-			/*
-			 * Unusual: Another clique's sync slot at same time as my work slot.
-			 * For now ignore.  ??? doAbandonMastershipMsgInWorkSlot(msg);
-			 */
-			freeReceivedMsg((void*) msg);
-			break;
-		case Work:
-			// Usual: work message in sync with my clique.
-			doWorkMsgInWorkSlot((WorkMessage*) msg);
-			// FUTURE msg requeued, not freed
-			foundDesiredMessage = true;
-			break;
-		default:
-			break;
-		}
+
+	switch(msg->type) {
+	case MasterSync:
+	case MergeSync:
+		/* Unusual: Another clique's sync slot at same time as my work slot.
+		 * For now, ignore.  Assume fishing will find this other clique, or clocks drift.
+		 * Alternative: merge other clique from within former work slot?
+		 * doSyncMsgInWorkSlot(msg);
+		 */
+		break;
+	case AbandonMastership:
+		/*
+		 * Unusual: Another clique's sync slot at same time as my work slot.
+		 * For now ignore.  ??? doAbandonMastershipMsgInWorkSlot(msg);
+		 */
+		break;
+	case Work:
+		// Usual: work message in sync with my clique.
+		doWorkMsgInWorkSlot((WorkMessage*) msg);
+		// FUTURE msg requeued, not freed
+		foundDesiredMessage = true;
+		break;
 	}
 	return foundDesiredMessage;
 }
