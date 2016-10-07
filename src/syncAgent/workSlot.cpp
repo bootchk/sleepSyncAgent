@@ -46,24 +46,29 @@ bool SyncAgent::dispatchMsgReceivedInWorkSlot(Message* msg){
 void SyncAgent::doWorkSlot() {
 	// assert work slot follows sync slot with no delay
 	assert(radio->isDisabledState());	// not xmit or rcv
-	startWorkSlot();
+	startWorkSlot();	// might include a xmit
 	assert(!radio->isDisabledState());   // receiving other's work
 	dispatchMsgUntil(
 			dispatchMsgReceivedInWorkSlot,
 			clique.schedule.deltaToThisWorkSlotEnd);
+	assert(radio->isDisabledState());
 	endWorkSlot();
 	assert(!radio->isPowerOn());
 }
 
 
 void SyncAgent::startWorkSlot() {
-	// assert still in task onEndSyncSlot
-	assert(radio->isPowerOn());	// on at end sync slot, and work slot immediately follows
+	// Prior SyncSlot may have offed radio
+	if (!radio->isPowerOn()) radio->powerOnAndConfigure();
+
+	// Arbitrary design decision, xmit queued work at beginning of work slot
+	// TODO work should be transmitted in middle, guarded
 	xmitAproposWork();
+
+	// Rcv work from others
 	assert(radio->isDisabledState());
 	sleeper.clearReasonForWake();
 	radio->receiveStatic();	//DYNAMIC receiveBuffer, Radio::MaxMsgLength);
-	// OBS clique.schedule.scheduleEndWorkSlotTask(onWorkSlotEnd);
 }
 
 
@@ -86,8 +91,6 @@ void SyncAgent::xmitAproposWork() {
 
 
 void SyncAgent::endWorkSlot(){
-	// assert is receiving (we leave radio on for entire work slot?)
-	radio->stopReceive();
 	radio->powerOff();
 }
 
@@ -104,5 +107,6 @@ void SyncAgent::relayWorkToApp(WorkMessage* msg) {
 	 * - queue to worktask (unblock it)
 	 * - onWorkMsgCallback(msg);  (callback)
 	 */
+	//TODO FUTURE relayWork
 }
 

@@ -25,9 +25,6 @@ bool SyncAgent::dispatchMsgReceivedInFishSlot(Message* msg){
 		 */
 		doMasterSyncMsgInFishSlot((SyncMessage*) msg);
 		// Self can't handle more than one, or slot is busy with another merge
-		// TODO migrate this elsewhere
-		radio->stopReceive();
-		radio->powerOff();
 		foundDesiredMessage = true;
 		break;
 	case MergeSync:
@@ -70,6 +67,7 @@ void SyncAgent::doFishSlot() {
 	dispatchMsgUntil(
 			dispatchMsgReceivedInFishSlot,
 			clique.schedule.deltaToThisFishSlotEnd);
+	assert(radio->isDisabledState());
 	endFishSlot();
 }
 
@@ -94,8 +92,7 @@ void SyncAgent::endFishSlot(){
 	 * In case we adjusted changed role to Merger,
 	 * first mergeSlot will be after next syncSlot.
 	 */
-	// not require receiver on
-	radio->stopReceive();
+	// radio might be off already
 	radio->powerOff();
 }
 

@@ -76,7 +76,6 @@ private:
 	static void startSyncSlot();
 	// work slot starts without an event
 	static void startFishSlot();
-	static void startMergeSlot();
 
 	// end of slots
 	static void endSyncSlot();
@@ -132,6 +131,8 @@ private:
 	static void toMergerRole(SyncMessage* msg);
 	static void endMergerRole();
 	static void doMergeSlot();
+	static void sendMerge();
+
 
 	// abandon
 	static void tryAssumeMastership(SyncMessage* msg);

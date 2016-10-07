@@ -27,42 +27,47 @@ void SyncAgent::endMergerRole(){
 }
 
 
-// Merge slot
+/*
+ * Merge slot
+ *
+ * Unique subclass of slot:
+ * - xmit only, slot is not full length of other slots.
+ * - not aligned with normally sleeping slots
+ */
+
 
 void SyncAgent::doMergeSlot() {
-	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisMergeStart(cliqueMerger.offsetToMergee));
-	startMergeSlot();	// doMerge
-	// Merge is xmit only, no sleeping til end of slot
-	// Slot is not full length of other slots.
-}
-
-
-void SyncAgent::startMergeSlot() {
-	/*
-	 * xmit mergeSync
-	 *
-	 * Not aligned with my slots, aligned with mergee slots.
-	 */
+	assert(!radio->isPowerOn());
 	assert(cliqueMerger.isActive);
-
-	xmitSync(cliqueMerger.makeMergeSync(serializer.outwardCommonSyncMsg));
+	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisMergeStart(cliqueMerger.offsetToMergee));
+	// assert time aligned with mergee slots.
+	sendMerge();
 
 	/*
-	FUTURE if multiple MergeSync xmits per merge
-	if (cliqueMerger.checkCompletionOfMergerRole()){
-		assert(!cliqueMerger.isActive());
-		role.setFisher();	// switch from merger to fisher
-		// assert next syncSlot will schedule fishSlot
-	}
-	else {
-		cliqueMerger.scheduleMergeWake();
-	}
-	*/
+		FUTURE if multiple MergeSync xmits per merge
+		if (cliqueMerger.checkCompletionOfMergerRole()){
+			assert(!cliqueMerger.isActive());
+			role.setFisher();	// switch from merger to fisher
+			// assert next syncSlot will schedule fishSlot
+		}
+		else {
+			cliqueMerger.scheduleMergeWake();
+		}
+	 */
 
 	// For now, only send one MergeSync per session of merger role
+	// FUTURE, send many
 	endMergerRole();
 	assert(!cliqueMerger.isActive);
 	assert(role.isFisher());
+	assert(!radio->isPowerOn());
+}
+
+
+void SyncAgent::sendMerge() {
+	radio->powerOnAndConfigure();
+	xmitSync(cliqueMerger.makeMergeSync(serializer.outwardCommonSyncMsg));
+	radio->powerOff();
 }
 
 

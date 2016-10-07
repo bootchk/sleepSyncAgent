@@ -56,9 +56,8 @@ bool SyncAgent::dispatchMsgUntil(
 				didReceiveDesiredMsg = dispatchQueuedMsg(msg);
 				if (didReceiveDesiredMsg) {
 					// Ultra low power sleep remainder of duration (radio power off)
-					// assert radio not receiving, but still powered on
+					assert(radio->isDisabledState());
 					radio->powerOff();
-					// TODO but work slot requires it on?
 					// Continue to next iteration i.e. sleep
 					// assert since radio power off, reason for wake can only be timeout and will then exit loop
 				}
@@ -78,8 +77,9 @@ bool SyncAgent::dispatchMsgUntil(
 			freeReceivedMsg((void*) msg);
 		}
 		else if (sleeper.reasonForWakeIsTimerExpired()) {
-			// Slot done.
+			radio->stopReceive();
 			// assert msg queue empty, except for race between timeout and receiver
+			// Slot done.
 			break;
 		}
 		else {
@@ -90,6 +90,7 @@ bool SyncAgent::dispatchMsgUntil(
 			assert(false);
 		}
 	}
+	assert(radio->isDisabledState());  // not receiving
 	// radio is on or off
 	// ensure message queue nearly empty
 	// ensure time elapsed
