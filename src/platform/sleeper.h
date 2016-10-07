@@ -25,21 +25,25 @@
  *
  * Platform must not put radio peripheral into low-power if SyncAgent has powerOn()'d it.
  */
+
+typedef enum {
+	MsgReceived,
+	TimerExpired,
+	None
+} ReasonForWake;
+
+
 class Sleeper {
+private:
+	ReasonForWake reasonForWake;
+
 public:
 	static void init();
 	static bool isOSClockRunning();
 	static void sleepUntilEventWithTimeout(OSTime);
 
+	static ReasonForWake getReasonForWake();
 	static void clearReasonForWake();
-	/*
-	 * Return true if reason for end of sleep is as stated.
-	 *
-	 * Usually implemented by returning a flag set in an ISR for event that woke.
-	 */
-	static bool reasonForWakeIsMsgReceived();
-	static bool reasonForWakeIsTimerExpired();
-	static bool reasonForWakeIsCleared();
 
 	// Public because passed to radio so it can hook IRQ into it
 	static void msgReceivedCallback();

@@ -7,6 +7,17 @@
  */
 
 public:	// for assertions
+
+
+/*
+ * Duration of all slots.
+ * Units: OSTicks
+ * (When OSClock freq is 32khz, OSTick is 0.03ms)
+ * SlotDuration should > on-air time of a message
+ * since we want to send a message (Sync, Work) within a slot.
+ * e.g. if Bluetooth, one message is ~ 1msec
+ * e.g. if RawWireless, one message is ~0.1msec
+ */
 static const DeltaTime     SlotDuration = 300;	// ~ 10msec
 
 /*
@@ -22,17 +33,11 @@ static const DeltaTime     SlotDuration = 300;	// ~ 10msec
  * which cannot be longer than the duration
  * we can schedule on a Timer provided by OS and RTC hardware.
  */
-static const int           DutyCycleInverse = 100;
+// Production: 3 active slots, ~300 sleeping, ~3 second period
+// static const int           DutyCycleInverse = 100;
 
-/*
- * Duration of all slots.
- * Units: OSTicks
- * (When OSClock freq is 32khz, OSTick is 0.03ms)
- * SlotDuration should > on-air time of a message
- * since we want to send a message (Sync, Work) within a slot.
- * e.g. if Bluetooth, one message is ~ 1msec
- * e.g. if RawWireless, one message is ~0.1msec
- */
+// Testing: 3 active slots, ~60 sleeping, 0.6 second period
+static const int           DutyCycleInverse = 20;
 
 
 
@@ -55,3 +60,15 @@ static const ScheduleCount CountSlots = 3*DutyCycleInverse;
 
 // Duration of SyncPeriod not adjusted (extended)
 static const DeltaTime NormalSyncPeriodDuration = CountSlots * SlotDuration;
+
+
+//
+//
+/*
+ * Duration of message on air.
+ * Units ticks.
+ * Assuming 1 Mbit baud rate and ~100bit message = .1mSec
+ * Used in sanity assertions only?
+ */
+static const DeltaTime MsgDurationInTicks = 3;
+

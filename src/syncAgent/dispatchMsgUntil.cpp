@@ -46,7 +46,8 @@ bool SyncAgent::dispatchMsgUntil(
 	while (true) {
 		sleeper.sleepUntilEventWithTimeout(timeoutFunc());
 		// switch on reason for wake
-		if (sleeper.reasonForWakeIsMsgReceived()) {
+		ReasonForWake reasonForWake = sleeper.getReasonForWake();
+		if (reasonForWake == MsgReceived) {
 			// FUTURE while any received messages queued
 			//FUTURE Message* msg = serializer.unserialize(unqueueReceivedMsg());
 			Message* msg = serializer.unserialize();
@@ -76,11 +77,11 @@ bool SyncAgent::dispatchMsgUntil(
 			// All msg types freed
 			freeReceivedMsg((void*) msg);
 		}
-		else if (sleeper.reasonForWakeIsTimerExpired()) {
+		else if (reasonForWake == TimerExpired) {
 			radio->stopReceive();
 			// assert msg queue empty, except for race between timeout and receiver
 			// Slot done.
-			break;
+			break;	// while(true)
 		}
 		else {
 			// Unexpected wake from faults or brownout?

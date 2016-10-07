@@ -15,6 +15,7 @@
  *
  * Message objects need not be packed.
  * This code does not take a brute force approach (one loop over data into object/struct.)
+ * Instead, we loop over msg fields.
  */
 
 // private data member
@@ -83,10 +84,13 @@ void Serializer::serialize(SyncMessage& msg) {
 }
 
 
+// TODO Constants for field lengths and addresses
 // Matched pairs
 void Serializer::unserializeMasterIDIntoCommon() {
 	for (int i =1; i<7; i++)
-			((uint8_t *) &inwardCommonSyncMsg.masterID)[i] = radioBuffer[i];
+		// Fill LSB 6 bytes of a 64-bit
+		// TODO ensure MSB two bytes are zero.
+		((uint8_t *) &inwardCommonSyncMsg.masterID)[i] = radioBuffer[i];
 }
 void Serializer::serializeMasterIDCommonIntoStream(SyncMessage& msg) {
 	for (int i =1; i<7; i++)
@@ -96,6 +100,9 @@ void Serializer::serializeMasterIDCommonIntoStream(SyncMessage& msg) {
 
 void Serializer::unserializeOffsetIntoCommon() {
 	for (int i =7; i<11; i++)
+		// TODO, if 24-bit offset:
+		// Little-endian Into LSB three bytes of a 32-bit OSTime
+		// TODO ensure MSB byte is zero
 		((uint8_t *) &inwardCommonSyncMsg.deltaToNextSyncPoint)[i] = radioBuffer[i];
 }
 void Serializer::serializeOffsetCommonIntoStream(SyncMessage& msg) {

@@ -40,7 +40,7 @@ void SyncAgent::doMergeSlot() {
 	assert(!radio->isPowerOn());
 	assert(cliqueMerger.isActive);
 	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisMergeStart(cliqueMerger.offsetToMergee));
-	// assert time aligned with mergee slots.
+	// assert time aligned with middle of a mergee sync slots (same wall time as fished sync from mergee.)
 	sendMerge();
 
 	/*

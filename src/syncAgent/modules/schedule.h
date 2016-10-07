@@ -84,7 +84,7 @@ private:
 	 */
 	static LongTime endTimeOfSyncPeriod;
 
-	static LongTime startTimeOfFishSlot;	// initialized when fish slot starts
+	static LongTime memoStartTimeOfFishSlot;	// memoed when fish slot start calculated
 
 // Constants defined in more visible file
 #include "../scheduleParameters.h"

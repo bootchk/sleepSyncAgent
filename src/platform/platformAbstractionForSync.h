@@ -40,6 +40,7 @@
 #include "power.h"
 #include "mailbox.h"
 #include "sleeper.h"
+#include "uniqueID.h"
 
 
 

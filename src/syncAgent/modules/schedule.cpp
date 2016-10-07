@@ -20,7 +20,7 @@ LongTime Schedule::startTimeOfSyncPeriod;
 LongTime Schedule::endTimeOfSyncPeriod;
 
 // Remembered during fish slot
-LongTime Schedule::startTimeOfFishSlot;
+LongTime Schedule::memoStartTimeOfFishSlot;
 
 
 
@@ -170,7 +170,7 @@ LongTime Schedule::timeOfThisWorkSlotEnd() { return startTimeOfSyncPeriod + 2 * 
  * Time til start is in [0, timeTilLastSleepingSlot]
  */
 LongTime Schedule::timeOfThisFishSlotStart() {
-	LongTime startTimeOfFishSlot = startTimeOfSyncPeriod
+	LongTime result = startTimeOfSyncPeriod
 			+ randUnsignedInt16(FirstSleepingSlotOrdinal-1, CountSlots-1) * SlotDuration;
 
 	/*
@@ -187,12 +187,29 @@ LongTime Schedule::timeOfThisFishSlotStart() {
 	 * else we won't start next sync period on time.
 	 */
 	// TODO this is not tight enough, should be minus SlotDuration
-	assert(startTimeOfFishSlot <= timeOfNextSyncPoint());
+	assert(result <= timeOfNextSyncPoint());
 
-	return startTimeOfFishSlot;
+	// !!! Memoize
+	memoStartTimeOfFishSlot = result;
+
+	return result;
 }
 
-LongTime Schedule::timeOfThisFishSlotEnd() { return startTimeOfFishSlot + SlotDuration; }
+LongTime Schedule::timeOfThisFishSlotEnd() {
+	LongTime result = memoStartTimeOfFishSlot + SlotDuration;
+
+
+	// Both Soft assertions.  Both susceptible to breakpoints in received message IRQ handler.
+	// Already near end?  Soft assertion that calculations and interrupts did not delay us.
+	assert(result > (longClock.nowTime() + 3*MsgDurationInTicks));
+
+	// End is not past NextSyncPoint, else we delay it.
+	// A Fish slot can be the last slot
+	assert(result < timeOfNextSyncPoint() + 3*MsgDurationInTicks );
+	return result;
+}
+
+
 
 // Merge slot: offset from cliqueMerger, and no slotEnd needed
 LongTime Schedule::timeOfThisMergeStart(DeltaTime offset) { return startTimeOfSyncPeriod + offset; }
