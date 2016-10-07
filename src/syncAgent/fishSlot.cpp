@@ -62,7 +62,7 @@ void SyncAgent::doFishSlot() {
 	assert(!radio->isPowerOn());
 	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisFishSlotStart());
 
-	// TODO calulate timeout before starting receiver, take out of race
+
 	startFishSlot();
 	dispatchMsgUntil(
 			dispatchMsgReceivedInFishSlot,

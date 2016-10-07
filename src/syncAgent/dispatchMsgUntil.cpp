@@ -88,7 +88,9 @@ bool SyncAgent::dispatchMsgUntil(
 			// Brownout and bus faults (DMA?) could come while mcu is sleeping.
 			// Invalid op code faults can not come while mcu is sleeping.
 			// FUTURE recover from unexpected events by continuing?
-			assert(false);
+			// TODO temporarily commented out
+			// assert(false);
+			// Continue in loop and sleep again?
 		}
 	}
 	assert(radio->isDisabledState());  // not receiving

@@ -170,8 +170,8 @@ LongTime Schedule::timeOfThisWorkSlotEnd() { return startTimeOfSyncPeriod + 2 * 
  * Time til start is in [0, timeTilLastSleepingSlot]
  */
 LongTime Schedule::timeOfThisFishSlotStart() {
-	LongTime result = startTimeOfSyncPeriod
-			+ randUnsignedInt16(FirstSleepingSlotOrdinal-1, CountSlots-1) * SlotDuration;
+	ScheduleCount randomSleepingSlotOrdinal = randUnsignedInt16(FirstSleepingSlotOrdinal-1, CountSlots-1);
+	LongTime result = startTimeOfSyncPeriod +  randomSleepingSlotOrdinal * SlotDuration;
 
 	/*
 	 * Since some cpu cycles have elapsed after end of work slot,
@@ -186,8 +186,8 @@ LongTime Schedule::timeOfThisFishSlotStart() {
 	 * Time to start fish slot must be no later than start time of last sleeping slot,
 	 * else we won't start next sync period on time.
 	 */
-	// TODO this is not tight enough, should be minus SlotDuration
-	assert(result <= timeOfNextSyncPoint());
+	LongTime nextSyncPoint = timeOfNextSyncPoint();
+	assert(result <= (nextSyncPoint - SlotDuration + 10*MsgDurationInTicks));
 
 	// !!! Memoize
 	memoStartTimeOfFishSlot = result;
@@ -198,14 +198,14 @@ LongTime Schedule::timeOfThisFishSlotStart() {
 LongTime Schedule::timeOfThisFishSlotEnd() {
 	LongTime result = memoStartTimeOfFishSlot + SlotDuration;
 
+	// A Fish slot can be the last slot
+	// Fish slot should not end after next SyncPoint
+	if (result > timeOfNextSyncPoint())
+			result = timeOfNextSyncPoint();
 
-	// Both Soft assertions.  Both susceptible to breakpoints in received message IRQ handler.
+	// Soft assertions.  Both susceptible to breakpoints in received message IRQ handler.
 	// Already near end?  Soft assertion that calculations and interrupts did not delay us.
 	assert(result > (longClock.nowTime() + 3*MsgDurationInTicks));
-
-	// End is not past NextSyncPoint, else we delay it.
-	// A Fish slot can be the last slot
-	assert(result < timeOfNextSyncPoint() + 3*MsgDurationInTicks );
 	return result;
 }
 
