@@ -1,25 +1,39 @@
 
+#include <cassert>
+
+#include "../../augment/random.h"
 
 #include "masterXmitSyncPolicy.h"
 
-ScheduleCount MasterXmitSyncPolicy::countDownToXmit;
-ScheduleCount MasterXmitSyncPolicy::countDownToRollover;
 
-void MasterXmitSyncPolicy::reset() {
-	countDownToXmit = 0;
-	countDownToRollover = 0;
+// unsigned, counts upwards
+ScheduleCount RandomAlarmingCircularClock::alarmTick;
+ScheduleCount RandomAlarmingCircularClock::clockTick;
+
+
+void RandomAlarmingCircularClock::reset() {
+	// wrap clock circularly
+	clockTick = 0;
+	// set alarm when wrap
+	setAlarm();
 }
 
-// Called every sync slot
-bool MasterXmitSyncPolicy::shouldXmitSync(){
-	countDownToXmit--;
-	countDownToRollover--;
 
-	// Rollover
-	if (countDownToRollover == 0) {
-		countDownToRollover = 10;
-	}
-	bool result = countDownToXmit <= 0;
-	return result;
+bool RandomAlarmingCircularClock::tick(){
+	tickClock();
+	return clockTick == alarmTick;
 }
 
+
+// private
+
+void RandomAlarmingCircularClock::setAlarm() {
+	alarmTick = randUnsignedInt16(0, TicksPerPeriod);
+	assert(alarmTick < TicksPerPeriod);
+}
+
+void RandomAlarmingCircularClock::tickClock() {
+	clockTick++;
+	// circular
+	if (clockTick > TicksPerPeriod) reset();
+}
