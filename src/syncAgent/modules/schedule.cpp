@@ -104,6 +104,7 @@ DeltaTime Schedule::thisSyncPeriodDuration() {
  * All these involve a conversion to OSTime i.e. take lower 32 bits of result.
  *
  * If zero, a sleep...(0) executes immediately without delay.
+ * Thus these can safely return 0.
  */
 //DeltaTime  Schedule::deltaNowToStartNextSync() {
 
@@ -143,6 +144,10 @@ DeltaTime Schedule::deltaToThisMergeStart(DeltaTime offset){
  * These return future times, as long as called at appropriate instant
  * and task processing times is smaller than slotDurations.
  * When these return past times, calculation of DeltaTime clamps to zero.
+ *
+ * These may be called many times during a slot (to schedule a new Timer),
+ * not just at the start of a slot.
+ * Thus you cannot assert than they are greater than nowTime().
  */
 
 
@@ -204,13 +209,8 @@ LongTime Schedule::timeOfThisFishSlotEnd() {
 	if (result > nextSyncPoint)
 			result = nextSyncPoint;
 
-
-	// Soft assertions.  Both susceptible to breakpoints in received message IRQ handler.
-	// Already near end?  Soft assertion that calculations and interrupts did not delay us.
-	// Experience shows result could be only 8 ticks past now.
-	// But why?
-	LongTime now = longClock.nowTime();
-	assert(result > (now + 3*MsgDurationInTicks));
+	// result may be < nowTime() i.e. in the past
+	// in which case sleepUntilTimeout(result) will timeout immediately.
 	return result;
 }
 
