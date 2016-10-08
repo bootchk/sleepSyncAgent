@@ -200,12 +200,17 @@ LongTime Schedule::timeOfThisFishSlotEnd() {
 
 	// A Fish slot can be the last slot
 	// Fish slot should not end after next SyncPoint
-	if (result > timeOfNextSyncPoint())
-			result = timeOfNextSyncPoint();
+	LongTime nextSyncPoint = timeOfNextSyncPoint();
+	if (result > nextSyncPoint)
+			result = nextSyncPoint;
+
 
 	// Soft assertions.  Both susceptible to breakpoints in received message IRQ handler.
 	// Already near end?  Soft assertion that calculations and interrupts did not delay us.
-	assert(result > (longClock.nowTime() + 3*MsgDurationInTicks));
+	// Experience shows result could be only 8 ticks past now.
+	// But why?
+	LongTime now = longClock.nowTime();
+	assert(result > (now + 3*MsgDurationInTicks));
 	return result;
 }
 

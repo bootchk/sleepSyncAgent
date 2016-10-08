@@ -29,7 +29,7 @@ bool RandomAlarmingCircularClock::tick(){
 
 void RandomAlarmingCircularClock::setAlarm() {
 	alarmTick = randUnsignedInt16(0, TicksPerPeriod);
-	assert(alarmTick < TicksPerPeriod);
+	assert(alarmTick <= TicksPerPeriod);
 }
 
 void RandomAlarmingCircularClock::tickClock() {

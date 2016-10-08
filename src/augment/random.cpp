@@ -24,7 +24,9 @@ uint16_t randUnsignedInt16(uint16_t min, uint16_t max) {
 	// Conventional implementation with slight flaws in randomness
 	assert( max > min);
 	assert((max - min) < RAND_MAX);	// else not uniformly distributed
-	return rand() % max + min;
+	uint16_t result = rand() % ( max + 1 - min) + min;
+	assert (result >= min && result <= max);
+	return result;
 }
 
 /*
