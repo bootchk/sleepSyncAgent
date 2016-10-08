@@ -21,6 +21,7 @@ Sleeper SyncAgent::sleeper;
 Radio* SyncAgent::radio;
 void (*SyncAgent::onWorkMsgQueuedCallback)();
 
+LEDLogger SyncAgent::ledLogger;	// DEBUG
 
 
 // This file only implements part of the class, see many other .cpp files.

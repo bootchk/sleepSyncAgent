@@ -1,7 +1,6 @@
 
 #pragma once
 
-#include "../types.h"
 
 /*
  * Dropout: the condition of failing to hear sync for a long time.
@@ -11,8 +10,6 @@
  */
 class DropoutMonitor {
 private:
-	static const ScheduleCount maxMissingSyncsPerDropout = 10;
-
 	static ScheduleCount countSyncSlotsWithoutSyncMsg;
 
 public:

@@ -18,13 +18,10 @@ public:
 	static bool tick();
 
 private:
-	static const ScheduleCount TicksPerPeriod = 3;
-
 	static ScheduleCount alarmTick;
 	static ScheduleCount clockTick;
 
 	static void setAlarm();
-	static void tickClock();
 };
 
 

@@ -7,6 +7,7 @@
 
 #include "syncAgent.h"
 
+
 // to and from Merger Role
 
 void SyncAgent::toMergerRole(SyncMessage* msg){
@@ -19,12 +20,14 @@ void SyncAgent::toMergerRole(SyncMessage* msg){
 
 	// assert my schedule might have been adjusted
 	assert(role.isMerger());
+	ledLogger.toggleLED(3);
 }
 
 void SyncAgent::endMergerRole(){
 	role.setFisher();
 	// role does not know about cliqueMerger
 	cliqueMerger.deactivate();
+	ledLogger.toggleLED(3);
 }
 
 

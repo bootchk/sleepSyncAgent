@@ -4,6 +4,8 @@
 #include "../platform/radio.h"
 #include "../platform/sleeper.h"
 
+#include "../platform/ledLogger.h"	// DEBUG
+
 #include "modules/message.h"
 #include "modules/clique.h"
 #include "modules/dropoutMonitor.h"
@@ -60,6 +62,8 @@ private:
 	static Serializer serializer;
 	static PowerManager powerMgr;
 	static Sleeper sleeper;
+
+	static LEDLogger ledLogger;
 
 	// Owned by app
 	static Radio* radio;

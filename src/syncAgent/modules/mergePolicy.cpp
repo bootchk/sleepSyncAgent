@@ -1,5 +1,8 @@
 
 #include "../../augment/random.h"
+#include "policyParameters.h"
+
+
 #include "mergePolicy.h"
 
 
@@ -47,7 +50,7 @@ bool MergePolicy::checkCompletionOfMergerRole() {
 	countSendMergeSyncs++;
 
 	bool result = false;
-	if ( countSendMergeSyncs > 6 ){
+	if ( countSendMergeSyncs > Policy::CountSyncsPerMerger ){
 		result = true;
 		// active = false;
 	}

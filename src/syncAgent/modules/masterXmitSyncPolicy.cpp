@@ -2,6 +2,7 @@
 #include <cassert>
 
 #include "../../augment/random.h"
+#include "policyParameters.h"
 
 #include "masterXmitSyncPolicy.h"
 
@@ -18,22 +19,22 @@ void RandomAlarmingCircularClock::reset() {
 	setAlarm();
 }
 
-
+// TODO rename tickWithAlarm
+// Returns true if alarm goes off
 bool RandomAlarmingCircularClock::tick(){
-	tickClock();
-	return clockTick == alarmTick;
+	clockTick++;
+	bool result = (clockTick == alarmTick);
+	// Make clock circular
+	if (clockTick > Policy::CountSyncPeriodsToChooseMasterSyncXmits) reset();
+	return result;
+	// assert alarm goes off when old clockTick was [0, CountSyncPeriodsToChooseMasterSyncXmits -1]
 }
 
 
 // private
 
 void RandomAlarmingCircularClock::setAlarm() {
-	alarmTick = randUnsignedInt16(0, TicksPerPeriod);
-	assert(alarmTick <= TicksPerPeriod);
+	alarmTick = randUnsignedInt16(0, Policy::CountSyncPeriodsToChooseMasterSyncXmits);
 }
 
-void RandomAlarmingCircularClock::tickClock() {
-	clockTick++;
-	// circular
-	if (clockTick > TicksPerPeriod) reset();
-}
+
