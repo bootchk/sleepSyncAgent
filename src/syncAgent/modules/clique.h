@@ -2,7 +2,7 @@
 
 #include "../../platform/types.h"
 #include "schedule.h"
-#include "masterXmitSyncPolicy.h"
+#include "policy/masterXmitSyncPolicy.h"
 
 /*
  * Clique in larger sense: a set of units on the same schedule having same master.
@@ -34,6 +34,4 @@ public:
 	static void changeBySyncMessage(SyncMessage* msg);
 
 	// static void initFromSyncMsg(SyncMessage* msg);
-
-
 };

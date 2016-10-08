@@ -19,6 +19,11 @@
  * should signal the WorkThread.
  *
  * This wraps the public API of a larger object.
+ *
+ * Parameters of algorithm:
+ * - scheduleParameters.h
+ * - modules/policyParameters.h
+ * - in nRFrawProtocol (wireless stack)
  */
 
 // FUTURE pass the queue.  For now, there is no queue, just the signal.

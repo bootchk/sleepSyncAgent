@@ -8,9 +8,9 @@
 
 #include "modules/message.h"
 #include "modules/clique.h"
-#include "modules/dropoutMonitor.h"
+#include "modules/policy/dropoutMonitor.h"
+#include "modules/policy/mergePolicy.h"
 #include "modules/cliqueMerger.h"
-#include "modules/mergePolicy.h"
 #include "modules/role.h"
 #include "modules/serializer.h"
 

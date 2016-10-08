@@ -1,7 +1,7 @@
 
 #include <cassert>
 
-#include "../../augment/random.h"
+#include "../../../augment/random.h"
 #include "policyParameters.h"
 
 #include "masterXmitSyncPolicy.h"
