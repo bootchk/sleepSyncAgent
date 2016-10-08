@@ -40,12 +40,18 @@
 class CliqueMerger {
 
 public:
-	static bool isActive;	// flag, no getter/setter
+
 
 
 	// attributes of other clique
 	static DeltaTime offsetToMergee;	// in current schedule
 private:
+	/*
+	 * Private state, redundant to outside logic about role.
+	 * Invariant: true => role is Merger
+	 * outside logic calls deactivate
+	 */
+	static bool isActive;
 	static SystemID masterID;
 
 	static Clique* owningClique;	// 2-way relation: Clique owns CliqueMerger, CliqueMerger uses owning Clique
@@ -53,6 +59,7 @@ private:
 
 public:
 	static void initFromMsg(SyncMessage* msg);
+	static void deactivate();
 
 	static void adjustBySyncMsg(SyncMessage* msg);
 	static bool shouldScheduleMerge();
@@ -61,6 +68,6 @@ public:
 	static SyncMessage& makeMergeSync(SyncMessage& msg);
 
 private:
-	static void mergeMyClique(SyncMessage* msg);
-	static void mergeOtherClique();
+	static void initMergeMyClique(SyncMessage* msg);
+	static void initMergeOtherClique();
 };

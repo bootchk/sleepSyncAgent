@@ -23,15 +23,19 @@ void CliqueMerger::initFromMsg(SyncMessage* msg){
 	 */
 
 	if (owningClique->isOtherCliqueBetter(msg->masterID))
-		mergeMyClique(msg);
+		initMergeMyClique(msg);
 	else
-		mergeOtherClique();
+		initMergeOtherClique();
+
+	isActive = true;
+	assert(isActive);
 	// assert my schedule might have been adjusted
 }
 
+void CliqueMerger::deactivate(){ isActive = false; }
 
 
-void CliqueMerger::mergeMyClique(SyncMessage* msg){
+void CliqueMerger::initMergeMyClique(SyncMessage* msg){
 	/*
 	 * Arrange state to start sending sync to my clique telling members to merge to other.
 	 *
@@ -56,7 +60,7 @@ void CliqueMerger::mergeMyClique(SyncMessage* msg){
 }
 
 
-void CliqueMerger::mergeOtherClique(){
+void CliqueMerger::initMergeOtherClique(){
 	/*
 	 * Start sending sync to other clique members telling them to merge to self's clique,
 	 * and pass them offset from now to next SyncPoint
@@ -85,6 +89,7 @@ void CliqueMerger::adjustBySyncMsg(SyncMessage* msg) {
 	 *
 	 * My sync slot is moving later, merge time must move earlier in schedule to stay at same wall time.
 	 */
+	assert(isActive);
 	// TODO FUTURE fix
 	// For now, do nothing, and xmit MergeSyncs at wrong time
 
@@ -133,6 +138,7 @@ bool CliqueMerger::checkCompletionOfMergerRole() {
 
 
 SyncMessage& CliqueMerger::makeMergeSync(SyncMessage& msg){
+	assert(isActive);
 	msg.makeMergeSync(offsetToMergee, masterID);
 	return msg;	// Returns msg passed.
 }

@@ -11,19 +11,19 @@
 
 void SyncAgent::toMergerRole(SyncMessage* msg){
 	// assert msg is master sync msg received in fishSlot
-	assert( !cliqueMerger.isActive);
+	assert( role.isFisher());
 	assert(role.isFisher());
 	role.setMerger();
 	cliqueMerger.initFromMsg(msg);
+
 	// assert my schedule might have been adjusted
-	assert(cliqueMerger.isActive);
 	assert(role.isMerger());
 }
 
 void SyncAgent::endMergerRole(){
 	role.setFisher();
 	// role does not know about cliqueMerger
-	cliqueMerger.isActive = false;
+	cliqueMerger.deactivate();
 }
 
 
@@ -38,7 +38,7 @@ void SyncAgent::endMergerRole(){
 
 void SyncAgent::doMergeSlot() {
 	assert(!radio->isPowerOn());
-	assert(cliqueMerger.isActive);
+	assert(role.isMerger());
 	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisMergeStart(cliqueMerger.offsetToMergee));
 	// assert time aligned with middle of a mergee sync slots (same wall time as fished sync from mergee.)
 	sendMerge();
@@ -58,7 +58,7 @@ void SyncAgent::doMergeSlot() {
 	// For now, only send one MergeSync per session of merger role
 	// FUTURE, send many
 	endMergerRole();
-	assert(!cliqueMerger.isActive);
+	assert(!role.isMerger());
 	assert(role.isFisher());
 	assert(!radio->isPowerOn());
 }

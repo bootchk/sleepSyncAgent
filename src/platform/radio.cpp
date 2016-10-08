@@ -13,7 +13,7 @@
 // stubs
 
 void Radio::init(void (*onRcvMsgCallback)()) {}
-bool Radio::isDisabled() {return false; }
+bool Radio::isDisabledState() {return false; }
 
 void Radio::powerOnAndConfigure() {}
 void Radio::powerOff() {}

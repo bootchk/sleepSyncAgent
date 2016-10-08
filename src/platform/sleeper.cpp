@@ -8,8 +8,8 @@ void Sleeper::init() {}
 bool Sleeper::isOSClockRunning() { return true; }
 void Sleeper::sleepUntilEventWithTimeout(OSTime) {}
 
-ReasonForWake Sleeper::reasonForWake();
-void Sleeper::clearReasonForWake() { return MsgReceived; }
+ReasonForWake Sleeper::getReasonForWake() { return TimerExpired; }
+void Sleeper::clearReasonForWake() {}
 
 
 void Sleeper::msgReceivedCallback() {}

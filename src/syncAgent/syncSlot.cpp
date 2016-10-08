@@ -206,7 +206,8 @@ void SyncAgent::makeCommonMasterSyncMessage() {
 	DeltaTime forwardOffset = clique.schedule.deltaNowToNextSyncPoint();
 	// FUTURE include correction for latency (on receiver's end)
 
-	// Since sync slot is near front of sync period, and we are in sync slot
+	// Since we are in sync slot near front of sync period, offset should (0, NormalSyncPeriodDuration)
+	// !!! Soft.  Susceptible to breakpoints.
 	assert( forwardOffset > 0);
 	assert( forwardOffset < clique.schedule.NormalSyncPeriodDuration);
 
@@ -298,7 +299,7 @@ void SyncAgent::changeMaster(SyncMessage* msg) {
 
 	clique.changeBySyncMessage(msg);
 
-	if (cliqueMerger.isActive) {
+	if (role.isMerger()) {
 		// Already merging an other clique, now merge other clique to updated sync slot time
 		cliqueMerger.adjustBySyncMsg(msg);
 	}
