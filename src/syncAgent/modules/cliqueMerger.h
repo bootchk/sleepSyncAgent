@@ -10,7 +10,7 @@
  * Singleton.
  *
  * Responsibilities
- * 1. schedule time for merge slot
+ * 1. know time of merge slot
  * 2. know the 'design' (state) of merger (attributes of the mergee clique.)
  *
  * CliqueMerger knows when to schedule a mergerSlot (with collision avoidance).
@@ -62,9 +62,7 @@ public:
 	static void deactivate();
 
 	static void adjustBySyncMsg(SyncMessage* msg);
-	static bool shouldScheduleMerge();
-	// FUTURE bool checkCompletionOfMergerRole();
-	//OBSOLETE static LongTime timeOfNextMergeWake();
+
 	static SyncMessage& makeMergeSync(SyncMessage& msg);
 
 private:

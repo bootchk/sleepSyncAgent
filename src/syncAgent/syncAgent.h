@@ -8,6 +8,7 @@
 #include "modules/clique.h"
 #include "modules/dropoutMonitor.h"
 #include "modules/cliqueMerger.h"
+#include "modules/mergePolicy.h"
 #include "modules/role.h"
 #include "modules/serializer.h"
 
@@ -54,6 +55,7 @@ private:
 	static Clique clique;
 	static DropoutMonitor dropoutMonitor;
 	static CliqueMerger cliqueMerger;
+	static MergePolicy mergePolicy;
 	static Role role;
 	static Serializer serializer;
 	static PowerManager powerMgr;

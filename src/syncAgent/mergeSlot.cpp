@@ -15,6 +15,7 @@ void SyncAgent::toMergerRole(SyncMessage* msg){
 	assert(role.isFisher());
 	role.setMerger();
 	cliqueMerger.initFromMsg(msg);
+	mergePolicy.restart();
 
 	// assert my schedule might have been adjusted
 	assert(role.isMerger());
@@ -43,23 +44,14 @@ void SyncAgent::doMergeSlot() {
 	// assert time aligned with middle of a mergee sync slots (same wall time as fished sync from mergee.)
 	sendMerge();
 
-	/*
-		FUTURE if multiple MergeSync xmits per merge
-		if (cliqueMerger.checkCompletionOfMergerRole()){
-			assert(!cliqueMerger.isActive());
-			role.setFisher();	// switch from merger to fisher
-			// assert next syncSlot will schedule fishSlot
-		}
-		else {
-			cliqueMerger.scheduleMergeWake();
-		}
-	 */
+	if (mergePolicy.checkCompletionOfMergerRole()){
+		endMergerRole();
+		// assert next syncSlot will schedule fishSlot
+		assert(!role.isMerger());
+		assert(role.isFisher());
+	}
+	// else continue in role Merger
 
-	// For now, only send one MergeSync per session of merger role
-	// FUTURE, send many
-	endMergerRole();
-	assert(!role.isMerger());
-	assert(role.isFisher());
 	assert(!radio->isPowerOn());
 }
 

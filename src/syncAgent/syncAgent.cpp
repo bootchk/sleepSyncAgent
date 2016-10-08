@@ -11,6 +11,7 @@ bool SyncAgent::isSyncingState = false;
 Clique SyncAgent::clique;
 DropoutMonitor SyncAgent::dropoutMonitor;
 CliqueMerger SyncAgent::cliqueMerger;
+MergePolicy SyncAgent::mergePolicy;
 Role SyncAgent::role;
 
 Serializer SyncAgent::serializer;

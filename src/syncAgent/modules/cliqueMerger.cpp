@@ -1,6 +1,5 @@
 
 #include <cassert>
-#include "../../augment/random.h"
 #include "cliqueMerger.h"
 
 
@@ -9,9 +8,6 @@ bool CliqueMerger::isActive = false;
 DeltaTime CliqueMerger::offsetToMergee;
 SystemID CliqueMerger::masterID;
 Clique* CliqueMerger::owningClique;
-
-// FUTURE: multiple notifies
-//int CliqueMerger::notifyCountdown;
 
 
 
@@ -99,42 +95,6 @@ void CliqueMerger::adjustBySyncMsg(SyncMessage* msg) {
 }
 
 
-
-bool CliqueMerger::shouldScheduleMerge() {
-	/*
-	 * Collision avoidance: choose randomly whether to schedule mergeSlot.
-	 *
-	 * Contention:
-	 * - other fishers who caught the same merged clique
-	 * - the master of the merged clique
-	 *
-	 * This implementation may remain in role isMerger a long time (a long random sequence of coin flips yielding heads.)
-	 * The intent is to minimize scheduled tasks: we don't schedule mergeSlot until the start of period it occurs in.
-	 *
-	 * Alternative: choose once, a random time in the future, and schedule a mergeSlot in some distant sync period.
-	 * But then the task is scheduled for a long time and many sync periods may happen meanwhile.
-	 */
-	assert(isActive);	// require
-	return randBool();	// Fair coin flip
-}
-
-
-
-/* FUTURE send many mergeSyncs
- *
- * // called after sending a merging syncLength
-// xmit finite count of MergeSync
-bool CliqueMerger::checkCompletionOfMergerRole() {
-	assert(isActive());	// require
-	notifyCountdown--;
-	bool result = false;
-	if ( notifyCountdown <= 0 ){
-		result = true;
-		active = false;
-	}
-	return result;
-}
-*/
 
 
 SyncMessage& CliqueMerger::makeMergeSync(SyncMessage& msg){
