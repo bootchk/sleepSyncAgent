@@ -23,7 +23,7 @@
  */
 enum MessageType {
 	// Subclass SyncMessage
-	MasterSync,
+	MasterSync = 1,	// Don't start at 0
 	MergeSync,
 	AbandonMastership,
 	// Subclass WorkMessage

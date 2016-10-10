@@ -29,11 +29,11 @@ public:
 	static WorkMessage outwardCommonWorkMsg;
 
 	// Sync messages are constant length.
-	static const uint8_t OnAirSyncMsgPayloadLength = 10;
+	//static const uint8_t OnAirSyncMsgPayloadLength = 10;
 
 
 	// Methods
-	static void init(uint8_t * radioBuffer);
+	static void init(uint8_t * radioBuffer, uint8_t aBufferSize);
 
 	static Message* unserialize();
 	// overloaded
