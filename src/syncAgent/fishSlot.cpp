@@ -13,7 +13,7 @@
 #include "../platform/mailbox.h"
 
 
-// TODO each type of slot should be its own class
+// FUTURE each type of slot should be its own class
 
 bool SyncAgent::dispatchMsgReceivedInFishSlot(Message* msg){
 	bool foundDesiredMessage;

@@ -54,16 +54,15 @@ LongTime LongClock::nowTime() {
  */
 DeltaTime LongClock::clampedTimeDifference(LongTime laterTime, LongTime earlierTime) {
 	//
-	DeltaTime result;
+	LongTime longTimeResult;
 	if (earlierTime > laterTime)
-		result = 0;
-	else
-		result = laterTime - earlierTime;	// !!! Coerce to 32-bit, with possible loss
-	assert(result >= 0);
-	// TODO move this assertion to caller
-	// assert(result < 3 * PeriodDuration);	// Sanity, app does not schedule far in the future.
-	assert(result < MaxDeltaTime);
-	return result;
+		longTimeResult = 0;
+	else {
+		longTimeResult = laterTime - earlierTime;
+	}
+
+	return convertLongTimeToOSTime(longTimeResult);
+	// Any stronger assertions, i.e. sanity re schedule must be done by caller
 }
 
 /*
@@ -83,13 +82,26 @@ DeltaTime LongClock::clampedTimeDifferenceFromNow(LongTime futureTime) {
  */
 DeltaTime LongClock::timeDifferenceFromNow(LongTime givenTime) {
 	LongTime now = nowTime();
-	DeltaTime result;
+	LongTime result;
 
 	// Subtract past time from larger future time, else modulo math gives a large result
 	if (now < givenTime)
 		result = givenTime - now;	// Unsigned, modulo math, with coercion and possible loss
 	else
 		result = now - givenTime;
+
+	return convertLongTimeToOSTime(result);
+}
+
+
+/*
+ * Convert LongTime to OSTime, asserting no loss of data
+ */
+DeltaTime LongClock::convertLongTimeToOSTime(LongTime aTime) {
+	// !!! Coerce to 32-bit, with possible loss
+	assert(aTime < UINT32_MAX);
+	DeltaTime result = (DeltaTime) aTime;
+	// Even stronger assertion that result is less than OSTime, which may be 24-bit
 	assert(result < MaxDeltaTime);
 	return result;
 }

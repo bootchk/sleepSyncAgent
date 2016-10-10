@@ -51,8 +51,8 @@ bool SyncAgent::dispatchMsgUntil(
 			// FUTURE while any received messages queued
 			//FUTURE Message* msg = serializer.unserialize(unqueueReceivedMsg());
 			Message* msg = serializer.unserialize();
-			// TODO assert msg->type valid
 			if (msg != nullptr) {
+				// assert msg->type valid
 				// call dispatcher
 				didReceiveDesiredMsg = dispatchQueuedMsg(msg);
 				if (didReceiveDesiredMsg) {
@@ -88,7 +88,7 @@ bool SyncAgent::dispatchMsgUntil(
 			// Brownout and bus faults (DMA?) could come while mcu is sleeping.
 			// Invalid op code faults can not come while mcu is sleeping.
 			// FUTURE recover from unexpected events by continuing?
-			// TODO temporarily commented out
+			// TODO workaround, temporarily commented out
 			// assert(false);
 			// Continue in loop and sleep again?
 		}

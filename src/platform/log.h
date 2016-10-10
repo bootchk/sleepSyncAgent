@@ -11,5 +11,5 @@
 	static constexpr const char* STRING = "some useful string constant";
 
 //public:
-	 void log(const char* aString) {};
+	 void log(const char* aString) { (void) aString; };
 //};

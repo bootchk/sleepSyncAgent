@@ -48,4 +48,5 @@ public:
 	static DeltaTime clampedTimeDifference(LongTime laterTime, LongTime earlierTime);
 	static DeltaTime clampedTimeDifferenceFromNow(LongTime laterTime);
 	static DeltaTime timeDifferenceFromNow(LongTime givenTime);
+	static DeltaTime convertLongTimeToOSTime(LongTime givenTime);
 };

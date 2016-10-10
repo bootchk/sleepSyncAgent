@@ -39,9 +39,9 @@ uint8_t* unqueueReceivedMsg() {
 }
 #endif
 
-void freeReceivedMsg(void* msg) {};	// Not a real queue, buffer is static
+void freeReceivedMsg(void* msg) { (void) msg; }	// Not a real queue, buffer is static
 
-void queueWorkMsgToApp(void * msg, int length) {}
+void queueWorkMsgToApp(void * msg, int length) {(void) msg; (void) length; }
 
 
 #endif

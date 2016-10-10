@@ -79,7 +79,8 @@ void SyncAgent::doDyingBreath() {
 	// Ask another unit in my clique to assume mastership.
 	// Might not be heard.
 	serializer.outwardCommonSyncMsg.makeAbandonMastership(myID());
-	xmitSync(serializer.outwardCommonSyncMsg);
+	// assert common SyncMessage serialized into radio buffer
+	radio->transmitStaticSynchronously();	// blocks until transmit complete
 }
 
 #ifdef OLDDESIGN
@@ -194,14 +195,17 @@ bool SyncAgent::shouldTransmitSync() {
 
 void SyncAgent::transmitMasterSync() {
 	makeCommonMasterSyncMessage();
-	xmitSync(serializer.outwardCommonSyncMsg);
+	// assert common MasterSync message serialized into radio buffer
+	radio->transmitStaticSynchronously();	// blocks until transmit complete
 	// assert xmit is completed over-the-air
 }
 
 
 void SyncAgent::makeCommonMasterSyncMessage() {
 	/*
-	 * forwardOffset is unsigned delta now to next SyncPoint
+	 * Make the common SyncMessage:
+	 * - of type MasterSync
+	 * - having forwardOffset unsigned delta now to next SyncPoint
 	 */
 	DeltaTime forwardOffset = clique.schedule.deltaNowToNextSyncPoint();
 	// FUTURE include correction for latency (on receiver's end)
@@ -349,6 +353,8 @@ void SyncAgent::tryAssumeMastership(SyncMessage* msg){
 	 * Naive design: all units that hear master abandon assume mastership.
 	 * FUTURE: keep historyOfMasters, and better slaves assume mastership.
 	 */
+	(void) msg;  // FUTURE use msg to record history
+
 	clique.masterID = myID();
 	assert(clique.isSelfMaster());
 }

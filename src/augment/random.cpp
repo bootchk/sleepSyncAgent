@@ -1,5 +1,7 @@
 #include <cassert>
 
+#include <inttypes.h>
+
 #include "random.h"	// This is our random.h, not from libstdc++
 
 
@@ -21,11 +23,19 @@
  */
 
 uint16_t randUnsignedInt16(uint16_t min, uint16_t max) {
-	// Conventional implementation with slight flaws in randomness
+	/*
+	 * Typical implementation with slight flaws in uniform distribution:
+	 * Unless max-min divides int without a remainder, binning means some bins receive more
+	 * values, i.e. non-uniform distribution.
+	 */
 	assert( max > min);
 	assert((max - min) < RAND_MAX);	// else not uniformly distributed
-	uint16_t result = rand() % ( max + 1 - min) + min;
-	assert (result >= min && result <= max);
+	int intResult = rand() % ( max + 1 - min) + min;
+
+	// Convert, i.e. take lower two LSB
+	assert(intResult < UINT16_MAX);	// No loss of data
+	uint16_t result = (uint16_t) intResult;
+	assert (result >= min && result <= max);	// ensure result as specified
 	return result;
 }
 

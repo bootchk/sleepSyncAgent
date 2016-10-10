@@ -59,17 +59,6 @@ void SyncAgent::init(
 }
 
 
-void SyncAgent::xmitSync(SyncMessage& msg) {
-	radio->transmitStaticSynchronously();	// blocks until transmit complete
-	// FUTURE DYNAMIC serializer.serialize(msg), Serializer::OnAirSyncMsgPayloadLength);
-	// assert transmit complete
-}
-
-
-void SyncAgent::xmitWork(WorkMessage& msg) {
-	// FUTURE DYNAMIC (serializer.serialize(msg), Serializer::OnAirSyncMsgPayloadLength);
-	radio->transmitStaticSynchronously();
-}
 
 
 #ifdef OBS

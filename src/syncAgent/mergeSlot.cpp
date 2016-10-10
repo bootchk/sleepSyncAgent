@@ -61,7 +61,9 @@ void SyncAgent::doMergeSlot() {
 
 void SyncAgent::sendMerge() {
 	radio->powerOnAndConfigure();
-	xmitSync(cliqueMerger.makeMergeSync(serializer.outwardCommonSyncMsg));
+	cliqueMerger.makeMergeSync(serializer.outwardCommonSyncMsg);
+	// assert common radio buffer filled
+	radio->transmitStaticSynchronously();	// blocks until transmit complete
 	radio->powerOff();
 }
 

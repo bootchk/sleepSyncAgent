@@ -142,9 +142,6 @@ private:
 
 	// abandon
 	static void tryAssumeMastership(SyncMessage* msg);
-
-	static void xmitSync(SyncMessage&);
-	static void xmitWork(WorkMessage&);
 };
 
 /*

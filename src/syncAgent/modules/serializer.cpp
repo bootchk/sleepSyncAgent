@@ -74,6 +74,7 @@ void Serializer::unserializeIntoCommonSyncMessage() {
 
 uint8_t* Serializer::serialize(WorkMessage& msg) {
 	//FUTURE
+	(void) msg;
 	return (uint8_t*) 0;
 }
 
@@ -87,22 +88,24 @@ void Serializer::serialize(SyncMessage& msg) {
 // TODO Constants for field lengths and addresses
 // Matched pairs
 void Serializer::unserializeMasterIDIntoCommon() {
+	inwardCommonSyncMsg.masterID = 0; // ensure MSB two bytes are zero.
 	for (int i =1; i<7; i++)
 		// Fill LSB 6 bytes of a 64-bit
-		// TODO ensure MSB two bytes are zero.
 		((uint8_t *) &inwardCommonSyncMsg.masterID)[i] = radioBuffer[i];
 }
 void Serializer::serializeMasterIDCommonIntoStream(SyncMessage& msg) {
 	for (int i =1; i<7; i++)
+		// Send LSB 6 bytes of 64-bit
 		radioBuffer[i] = ((uint8_t *) &msg.masterID)[i] ;
 }
 
 
 void Serializer::unserializeOffsetIntoCommon() {
+	assert(sizeof(inwardCommonSyncMsg.deltaToNextSyncPoint)>4);
+	inwardCommonSyncMsg.deltaToNextSyncPoint = 0;	// ensure MSB byte is zero
 	for (int i =7; i<11; i++)
 		// TODO, if 24-bit offset:
 		// Little-endian Into LSB three bytes of a 32-bit OSTime
-		// TODO ensure MSB byte is zero
 		((uint8_t *) &inwardCommonSyncMsg.deltaToNextSyncPoint)[i] = radioBuffer[i];
 }
 void Serializer::serializeOffsetCommonIntoStream(SyncMessage& msg) {

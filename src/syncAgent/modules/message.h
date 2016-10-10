@@ -44,6 +44,7 @@ public:
 // Messages used by SyncAgent, never received by app
 class SyncMessage : public Message {
 public:
+	// Additional fields of message payload
 	DeltaSync deltaToNextSyncPoint;	// forward in time
 	SystemID masterID;
 

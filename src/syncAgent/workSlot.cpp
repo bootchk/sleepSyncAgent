@@ -84,7 +84,8 @@ void SyncAgent::xmitAproposWork() {
 		(void) workPayload;
 		serializer.outwardCommonWorkMsg.make();
 		freeWorkMsg(workPayload);
-		xmitWork(serializer.outwardCommonWorkMsg);
+		// assert common WorkMessage serialized into radio buffer
+		radio->transmitStaticSynchronously();	// blocks until transmit complete
 	}
 }
 
@@ -108,5 +109,6 @@ void SyncAgent::relayWorkToApp(WorkMessage* msg) {
 	 * - onWorkMsgCallback(msg);  (callback)
 	 */
 	//TODO FUTURE relayWork
+	(void) msg;
 }
 
