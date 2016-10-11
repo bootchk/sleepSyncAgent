@@ -26,5 +26,6 @@ void Radio::stopReceive() {}
 
 uint8_t* Radio::getBufferAddress() {return nullptr; }
 
+bool Radio::isPacketCRCValid() {return true; }
 #endif
 

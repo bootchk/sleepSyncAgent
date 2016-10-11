@@ -62,6 +62,8 @@ Message* Serializer::unserialize() {
 		 * This should be rare, since CRC was valid.
 		 * It would take multiple bit errors to corrupt message type and still have valid CRC.
 		 */
+		// Unserialize it so we can debug it
+		unserializeIntoCommonSyncMessage();
 		assert(false);	// TESTING
 		result = nullptr;	// PRODUCTION
 	}

@@ -77,6 +77,7 @@ private:
 	static bool dispatchMsgUntil(
 			DispatchFuncPtr,
 			OSTime (*func)());
+	static bool dispatchMsg(DispatchFuncPtr);
 
 	// start of slots
 	static void startSyncSlot();

@@ -99,6 +99,8 @@ public:
 	 * static void stopReceive();
 	 */
 	// FUTURE we could use isReadyToReceive() to assert (instead of !isDisabled() )
+
+	static bool isPacketCRCValid();
 };
 
 
