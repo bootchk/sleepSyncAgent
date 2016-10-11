@@ -31,6 +31,8 @@ enum MessageType {
 };
 
 // Superclass
+#ifdef FUTURE
+The only thing Work and Sync messages have in common is MessageType field.
 class Message {
 public:
 	// provided by wireless stack??
@@ -39,12 +41,12 @@ public:
 	// Our content of msg (not necessarily from wireless stack)
 	MessageType type;
 };
-
+#endif
 
 // Messages used by SyncAgent, never received by app
-class SyncMessage : public Message {
+class SyncMessage{
 public:
-	// Additional fields of message payload
+	MessageType type;
 	DeltaSync deltaToNextSyncPoint;	// forward in time
 	SystemID masterID;
 
@@ -91,12 +93,16 @@ public:
 
 };
 
+
 // Messages used by app, relayed by SyncAgent
-class WorkMessage : Message {
+class WorkMessage{
 public:
+	MessageType type;
+
 	// FUTURE: more content.  For testing, no content
 	void make() {
 		type = Work;
 	};
 };
+
 

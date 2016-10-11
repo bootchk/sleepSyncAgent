@@ -15,7 +15,7 @@
 
 // FUTURE each type of slot should be its own class
 
-bool SyncAgent::dispatchMsgReceivedInFishSlot(Message* msg){
+bool SyncAgent::dispatchMsgReceivedInFishSlot(SyncMessage* msg){
 	bool foundDesiredMessage;
 
 	switch(msg->type) {

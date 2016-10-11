@@ -27,7 +27,7 @@ class Serializer {
 public:
 	static SyncMessage inwardCommonSyncMsg;
 	static SyncMessage outwardCommonSyncMsg;
-	static WorkMessage outwardCommonWorkMsg;
+	// FUTURE static WorkMessage outwardCommonWorkMsg;
 
 	// Sync messages are constant length.
 	//static const uint8_t OnAirSyncMsgPayloadLength = 10;
@@ -36,9 +36,9 @@ public:
 	// Methods
 	static void init(BufferPointer radioBuffer, uint8_t aBufferSize);
 
-	static Message* unserialize();
+	static SyncMessage* unserialize();
 	// overloaded
-	static uint8_t* serialize(WorkMessage& msg);
+	// static uint8_t* serialize(WorkMessage& msg);
 	static void serialize(SyncMessage& msg);
 
 private:

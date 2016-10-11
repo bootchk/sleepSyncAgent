@@ -35,7 +35,7 @@
  */
 
 // typedef (bool (*dispatchQueuedMsg)(Message *)) DispatchFuncPtr;
-typedef bool (*DispatchFuncPtr)(Message *) ;
+typedef bool (*DispatchFuncPtr)(SyncMessage *) ;
 
 class SyncAgent {
 
@@ -89,9 +89,9 @@ private:
 
 
 	// dispatch
-	static bool dispatchMsgReceivedInSyncSlot(Message* msg);
-	static bool dispatchMsgReceivedInWorkSlot(Message* msg);
-	static bool dispatchMsgReceivedInFishSlot(Message* msg);
+	static bool dispatchMsgReceivedInSyncSlot(SyncMessage* msg);
+	static bool dispatchMsgReceivedInWorkSlot(SyncMessage* msg);
+	static bool dispatchMsgReceivedInFishSlot(SyncMessage* msg);
 	// Merge slot only xmits, not receive messages
 
 	// sync
@@ -122,6 +122,7 @@ private:
 	// Depending on OS, might be asynchronous (no waiting)
 	static void xmitRoleAproposSync();
 	static void xmitAproposWork();
+	static void xmitWork();
 
 	// msg handlers: messageType x slotType, with omissions
 	static bool doSyncMsgInSyncSlot(SyncMessage* msg);	//MasterSync OR MergeSync

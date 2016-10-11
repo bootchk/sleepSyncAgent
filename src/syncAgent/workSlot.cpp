@@ -13,7 +13,7 @@
 
 // FUTURE should only be visible to WorkSlot class
 
-bool SyncAgent::dispatchMsgReceivedInWorkSlot(Message* msg){
+bool SyncAgent::dispatchMsgReceivedInWorkSlot(SyncMessage* msg){
 	bool foundDesiredMessage = false;
 
 	switch(msg->type) {
@@ -79,16 +79,20 @@ void SyncAgent::xmitAproposWork() {
 	// FUTURE transmit with flip of coin, or delayed randomly
 
 	if ( isQueuedWorkMsgFromApp() ) {
-		void * workPayload = unqueueWorkMsgFromApp();
-		// FUTURE use payload to make on-air message
-		(void) workPayload;
-		serializer.outwardCommonWorkMsg.make();
-		freeWorkMsg(workPayload);
-		// assert common WorkMessage serialized into radio buffer
-		radio->transmitStaticSynchronously();	// blocks until transmit complete
+		xmitWork();
 	}
 }
 
+
+void SyncAgent::xmitWork(){
+	void * workPayload = unqueueWorkMsgFromApp();
+	// FUTURE use payload to make on-air message
+	(void) workPayload;
+	// FUTURE serializer.outwardCommonWorkMsg.make();
+	freeWorkMsg(workPayload);
+	// assert common WorkMessage serialized into radio buffer
+	radio->transmitStaticSynchronously();	// blocks until transmit complete
+}
 
 
 void SyncAgent::endWorkSlot(){

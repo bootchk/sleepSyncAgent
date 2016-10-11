@@ -29,7 +29,7 @@ uint8_t radioBufferSize;
 SyncMessage Serializer::inwardCommonSyncMsg;
 
 SyncMessage Serializer::outwardCommonSyncMsg;
-WorkMessage Serializer::outwardCommonWorkMsg;
+//FUTURE WorkMessage Serializer::outwardCommonWorkMsg;
 
 
 void Serializer::init(BufferPointer aRadioBuffer, uint8_t aBufferSize)
@@ -39,9 +39,9 @@ void Serializer::init(BufferPointer aRadioBuffer, uint8_t aBufferSize)
 	radioBufferSize = aBufferSize;
 }
 
-Message* Serializer::unserialize() {
+SyncMessage* Serializer::unserialize() {
 	// assert valid data in radioBuffer, of proper length
-	Message * result;
+	SyncMessage * result;
 	if (       (radioBuffer[0] == MasterSync)
 			|| (radioBuffer[0] == MergeSync)
 			|| (radioBuffer[0] == AbandonMastership)
@@ -83,11 +83,13 @@ void Serializer::unserializeIntoCommonSyncMessage() {
 
 // Overloaded
 
+#ifdef FUTURE
 uint8_t* Serializer::serialize(WorkMessage& msg) {
 	//FUTURE
 	(void) msg;
 	return (uint8_t*) 0;
 }
+#endif
 
 void Serializer::serialize(SyncMessage& msg) {
 	radioBuffer[0] = msg.type;

@@ -30,7 +30,7 @@
 #include "syncAgent.h"
 
 
-bool SyncAgent::dispatchMsgReceivedInSyncSlot(Message* msg) {
+bool SyncAgent::dispatchMsgReceivedInSyncSlot(SyncMessage* msg) {
 
 	bool isFoundSyncKeepingMsg = false;
 

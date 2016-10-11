@@ -88,7 +88,7 @@ bool SyncAgent::dispatchMsg(DispatchFuncPtr dispatchFuncOnType) {
 
 	// Nested checks: physical layer CRC, then transport layer MessageType
 	if (radio->isPacketCRCValid()) {
-		Message* msg = serializer.unserialize();
+		SyncMessage* msg = serializer.unserialize();
 		if (msg != nullptr) {
 			// assert msg->type valid
 
