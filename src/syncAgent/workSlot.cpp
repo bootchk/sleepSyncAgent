@@ -62,7 +62,7 @@ void SyncAgent::startWorkSlot() {
 	if (!radio->isPowerOn()) radio->powerOnAndConfigure();
 
 	// Arbitrary design decision, xmit queued work at beginning of work slot
-	// TODO work should be transmitted in middle, guarded
+	// FUTURE work should be transmitted in middle, guarded
 	xmitAproposWork();
 
 	// Rcv work from others

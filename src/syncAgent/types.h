@@ -29,9 +29,9 @@
  * - 2-bytes, 16-bits, MaxDeltaSync is 64k:  max DutyCyleInverse is 30
  * - 3-bytes, 24-bits, MaxDeltaSync is 16M: max DutyCycleInverse is 10k
  *
- * Note that the code might not be correct in coercing to this type.
+ * We use -Wconversion to catch possible loss of data,
+ * and the code should be asserting no loss of data.
  */
-// TODO correct code to catch loss of data in converting to DeltaSync
 
 // Currently we are transmitting 3 bytes of DeltaSync,
 // i.e. the primitive type uint32_t is the same as for DeltaTime
@@ -41,7 +41,8 @@ typedef uint32_t DeltaSync;
 /*
  * Used in scheduling to count slots and periods.
  */
-// TODO since we aren't enforcing this, we might as well use native int
+// FUTURE since we aren't enforcing this, we might as well use native int
+// FUTURE distinguis PeriodCount from SlotCount
 typedef uint16_t ScheduleCount;
 
 
@@ -54,7 +55,7 @@ typedef uint16_t ScheduleCount;
  * Since we are awake for at least Sync and Work slots,
  * duty cycle is MaximumScheduleCount/2
  */
-// TODO use this in some assertion
+// FUTURE use this in some assertion
 static const uint16_t MaximumScheduleCount = 32767;	// !!! Same as std C RAND_MAX
 
 

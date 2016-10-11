@@ -45,7 +45,7 @@ bool SyncAgent::dispatchMsgUntil(
 	assert(!radio->isDisabledState());	// is receiving
 
 	//assert(sleeper.reasonForWakeIsCleared());	// This also checks we haven't received yet
-	// TODO currently, this is being cleared in sleepUntil but that suffers from races
+	// FUTURE currently, this is being cleared in sleepUntil but that suffers from races
 
 	while (true) {
 		sleeper.sleepUntilEventWithTimeout(timeoutFunc());

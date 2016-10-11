@@ -43,9 +43,8 @@ LongTime LongClock::nowTime() {
  *
  * These return shorter uints as returned by OSClock and used by other OS methods.
  *
- * !!! C++ is mind-numbingly stupid: no warnings about coercions with loss?
+ * use -Wconversion to get warnings about coercions with loss
  */
-// TODO more assertions to prevent coercions with loss
 
 /*
  * Not require laterTime is after earlierTime
@@ -87,7 +86,7 @@ DeltaTime LongClock::timeDifferenceFromNow(LongTime givenTime) {
 
 	// Subtract past time from larger future time, else modulo math gives a large result
 	if (now < givenTime)
-		result = givenTime - now;	// Unsigned, modulo math, with coercion and possible loss
+		result = givenTime - now;	// Unsigned, modulo math
 	else
 		result = now - givenTime;
 

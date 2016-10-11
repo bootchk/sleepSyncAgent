@@ -116,7 +116,7 @@ void Serializer::unserializeOffsetIntoCommon() {
 	assert(sizeof(inwardCommonSyncMsg.deltaToNextSyncPoint)==4);
 	inwardCommonSyncMsg.deltaToNextSyncPoint = 0;	// ensure MSB byte is zero
 	for (int i =7; i<radioBufferSize; i++)
-		// TODO, code for 32-bit OSClock
+		// FUTURE, code for 32-bit OSClock
 		// 24-bit offset:
 		// Little-endian into LSB three bytes of a 32-bit OSTime
 		((uint8_t *) &inwardCommonSyncMsg.deltaToNextSyncPoint)[i] = radioBuffer[i];

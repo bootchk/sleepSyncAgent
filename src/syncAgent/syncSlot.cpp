@@ -221,7 +221,7 @@ void SyncAgent::endSyncSlot() {
 	assert(radio->isPowerOn());
 
 	// Radio can be receiving or not.
-	// TODO only do this if we timedout (with receiver still enabled i.e. not isDisabled())
+	// FUTURE avoid stopReceive unless we timedout (with receiver still enabled i.e. not isDisabled())
 
 	radio->stopReceive();
 	assert(radio->isDisabledState());	// receiveStatic() in next slot requires radio disabled.

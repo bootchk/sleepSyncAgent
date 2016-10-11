@@ -55,6 +55,6 @@ void SyncAgent::init(
 	assert(role.isFisher());
 	assert(clique.isSelfMaster());
 	assert(!radio->isPowerOn());
-	// TODO hard to know who owns clock assert(sleeper.isOSClockRunning());
+	// FUTURE hard to know who owns clock assert(sleeper.isOSClockRunning());
 }
 

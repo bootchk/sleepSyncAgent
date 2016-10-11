@@ -19,7 +19,7 @@ void RandomAlarmingCircularClock::reset() {
 	setAlarm();
 }
 
-// TODO rename tickWithAlarm
+// FUTURE rename tickWithAlarm
 // Returns true if alarm goes off
 bool RandomAlarmingCircularClock::tick(){
 	clockTick++;

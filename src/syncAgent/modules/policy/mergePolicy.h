@@ -27,7 +27,7 @@
  * - count of units
  * - how early in the synch game it is
  *
- * TODO discuss each of these factors
+ * FUTURE discuss each of these factors
  *
  * If master of otherClique fails to hear, they will keep mastering the other clique,
  * and slaves of otherClique that fail to hear will remain in the other clique.
