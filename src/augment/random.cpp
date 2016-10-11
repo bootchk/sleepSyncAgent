@@ -1,8 +1,10 @@
-#include <cassert>
 
+#include <cassert>
 #include <inttypes.h>
 
-#include "random.h"	// This is our random.h, not from libstdc++
+#include "../platform/platform.h"	// rand() etc
+
+#include "random.h"	// Our random.h, not from libstdc++
 
 
 // FUTURE class and namespace to hide

@@ -1,3 +1,22 @@
+#ifdef OLDDESIGN
+
+void SyncAgent::doSyncSlot() {
+	// Here, we xmit sync at beginning of slot
+	startSyncSlot();
+	xmitRoleAproposSync();
+	// even a Master listens for remainder of sync slot
+	radio->receiveStatic(); // DYNAMIC (receiveBuffer, Radio::MaxMsgLength);
+	// race to sleep
+
+	assert(!radio->isDisabled()); // listening for other's sync
+	dispatchMsgUntil(
+			dispatchMsgReceivedInSyncSlot,
+			clique.schedule.deltaToThisSyncSlotEnd);
+	endSyncSlot();
+}
+
+#endif
+
 #ifdef OBS
 void SyncAgent::startSyncing() {
 

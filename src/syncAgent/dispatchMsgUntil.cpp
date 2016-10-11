@@ -1,7 +1,7 @@
 
 #include <cassert>
 
-#include "../platform/mailbox.h"
+#include "../platform/platform.h"
 #include "syncAgent.h"
 
 

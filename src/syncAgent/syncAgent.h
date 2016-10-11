@@ -1,10 +1,7 @@
 
 
 #include "../augment/powerManager.h"
-#include "../platform/radio.h"
-#include "../platform/sleeper.h"
-
-#include "../platform/ledLogger.h"	// DEBUG
+#include "../platform/platform.h"	// Radio, Sleeper, LEDLogger
 
 #include "modules/message.h"
 #include "modules/clique.h"

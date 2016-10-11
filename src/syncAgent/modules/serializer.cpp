@@ -1,7 +1,7 @@
 
 #include <cassert>
 
-#include "../../platform/tickCounter.h"  // MaxDeltaTime
+#include "../../platform/platform.h"  // MaxDeltaTime
 
 #include "serializer.h"
 
@@ -22,7 +22,7 @@
 
 // private data member
 namespace {
-uint8_t* radioBuffer;
+BufferPointer radioBuffer;
 uint8_t radioBufferSize;
 }
 
@@ -32,7 +32,7 @@ SyncMessage Serializer::outwardCommonSyncMsg;
 WorkMessage Serializer::outwardCommonWorkMsg;
 
 
-void Serializer::init(uint8_t * aRadioBuffer, uint8_t aBufferSize)
+void Serializer::init(BufferPointer aRadioBuffer, uint8_t aBufferSize)
 {
 	// Knows address, size of radio's buffer
 	radioBuffer = aRadioBuffer;

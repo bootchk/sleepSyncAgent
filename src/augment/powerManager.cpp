@@ -1,9 +1,9 @@
 
 #include <cassert>
 
-#include "../../config.h"	// SYNC_AGENT_CONSERVE_POWER
+#include "../config.h"	// SYNC_AGENT_CONSERVE_POWER
 #include "powerManager.h"
-#include "../platform/power.h"	// getVcc
+#include "../platform/platform.h"	// getVcc
 
 
 

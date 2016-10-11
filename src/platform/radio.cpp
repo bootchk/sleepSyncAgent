@@ -5,7 +5,7 @@
  */
 
 
-#include "../../config.h"
+#include "../config.h"
 #include "radio.h"
 
 #ifndef SYNC_AGENT_IS_LIBRARY

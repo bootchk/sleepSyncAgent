@@ -1,5 +1,5 @@
 
-#include "../../config.h"
+#include "../config.h"
 #include "ledLogger.h"
 
 #if SYNC_AGENT_IS_LIBRARY==1

@@ -1,5 +1,5 @@
 #include <inttypes.h>
-#include "../platform/tickCounter.h"	// OSClockTicks
+#include "../platform/platform.h"	// OSClock
 
 /*
 56-bit OR 64-bit clock with resolution same as os kernel clock (typically 0.03 or 1 mSec.)
@@ -34,6 +34,8 @@ private:
 	// Components of LongTime
 	static uint32_t mostSignificantBits;
 	static OSTime recentLeastSignificantBits;	// as received from  platform clock (os kernel or otherwise)
+
+	static OSClock osClock;
 
 	// Used to detect OSClock rollover
 	static OSTime previousOSClockTicks;

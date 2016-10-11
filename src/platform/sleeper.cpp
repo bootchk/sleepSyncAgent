@@ -1,4 +1,4 @@
-#include "../../config.h"
+#include "../config.h"
 #include "sleeper.h"
 
 #ifndef SYNC_AGENT_IS_LIBRARY

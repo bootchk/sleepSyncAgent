@@ -1,6 +1,7 @@
 #pragma once
 
 #include <inttypes.h>
+#include <types.h>
 #include "message.h"
 
 
@@ -33,7 +34,7 @@ public:
 
 
 	// Methods
-	static void init(uint8_t * radioBuffer, uint8_t aBufferSize);
+	static void init(BufferPointer radioBuffer, uint8_t aBufferSize);
 
 	static Message* unserialize();
 	// overloaded

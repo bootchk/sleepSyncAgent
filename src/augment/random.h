@@ -1,6 +1,7 @@
 
-#include "../platform/platformAbstractionForSync.h"	// rand()
+#pragma once
 
+#include <inttypes.h>
 
 // Wrapper to platform provided std lib functions
 

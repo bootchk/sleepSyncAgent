@@ -1,6 +1,6 @@
 
 #include <cassert>
-#include "../../platform/uniqueID.h"
+#include "../../platform/platform.h"
 #include "clique.h"
 
 

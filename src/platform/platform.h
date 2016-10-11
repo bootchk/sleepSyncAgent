@@ -1,5 +1,5 @@
-#pragma once
 
+#pragma once
 
 
 /*
@@ -13,8 +13,7 @@
  * !!! Not assume  an RTOS with task scheduling.
  * The platform may provide basic libraries such as mailbox, timer, etc.
  *
- *
- * When using an RTOS with task scheduling:
+ * FUTURE: When using an RTOS with task scheduling:
  *
  * Assumes an idle (lowest priority) task that puts system in low-power sleep
  * until a timer wakes up for the next scheduled task
@@ -28,19 +27,54 @@
  * Be careful passing a long long, LongTime, or other 64-bit type as compiler
  * will (possibly without warning) convert with possible loss of data (typically lower 32-bits)
  * but only defined by the compiler implementation!!! not by the C standard.
+ * Use CFLAG -Wconversion to get warnings
  */
 
 
+
+
+#include "../config.h"	// might define SYNC_AGENT_IS_LIBRARY
+
+
+#ifndef SYNC_AGENT_IS_LIBRARY
+// Use locally defined header files
+
 // platform must provide :  uint32_t rand()
-// std C lib provides suitable implementation
+// std C lib provides
 #include <cstdlib>
 
-#include "tickCounter.h"
 #include "radio.h"
+#include "sleeper.h"
+#include "osClock.h"
+#include "uniqueID.h"
+#include "ledLogger.h"
+
 #include "power.h"
 #include "mailbox.h"
-#include "sleeper.h"
-#include "uniqueID.h"
 
 
 
+
+#else
+// Use header files from libraries in project which wedges this library.
+
+// Include newlib for rand()
+#include <cstdlib>
+
+// Arrange project CFLAGS += -I/home/bootch/git/nRF5rawProtocol/modules
+#include <radio.h>
+
+// -I/home/bootch/git/nRF5rawProtocol/platform
+#include <sleeper.h>
+#include <uniqueID.h>
+#include <osClock.h>
+
+// Using the local include file, it must be equivalent to project which wedges this
+// FUTURE make project which wedges have simpler API not required includes of nrf headers
+#include "ledLogger.h"
+
+// Stubbed out temporarily
+#include "power.h"
+#include "mailbox.h"
+
+#endif

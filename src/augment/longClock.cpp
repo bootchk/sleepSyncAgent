@@ -6,11 +6,12 @@
 // static singleton data members
 uint32_t LongClock::mostSignificantBits = 0;
 OSTime LongClock::previousOSClockTicks;	// least significant
+OSClock LongClock::osClock;
 
 
 void LongClock::reset(){
 	mostSignificantBits = 1;	// aka epoch
-	previousOSClockTicks = OSClockTicks();
+	previousOSClockTicks = osClock.ticks();
 	// assert nowTime() < max 32-bit int, but not zero.
 }
 
@@ -21,7 +22,7 @@ void LongClock::reset(){
 LongTime LongClock::nowTime() {
 
 	// Account for quiet wrapping of OSClock (we are not notified by OS.)
-	OSTime currentOSClockTicks = OSClockTicks();
+	OSTime currentOSClockTicks = osClock.ticks();
 	if (currentOSClockTicks < previousOSClockTicks) {
 		// OSClock wrapped
 		mostSignificantBits++;	// Tick most significant bits
