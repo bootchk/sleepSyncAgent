@@ -10,6 +10,10 @@
  * Two classes:
  * - sync related
  * - work related
+ *
+ * !!! Message is not a static class.
+ * Instances can be static (see Serializer ).
+ * FUTURE: many instances, queued.
  */
 
 
@@ -21,6 +25,8 @@
  * - MasterSync, small adjustment
  * - AbandonMastership, adjustment is unused
  */
+
+
 enum MessageType {
 	// Subclass SyncMessage
 	MasterSync = 1,	// Don't start at 0
@@ -91,6 +97,11 @@ public:
 		init(MergeSync, aDeltaToNextSyncPoint, aMasterID);
 	}
 
+	static bool isByteASyncType(uint8_t byte) {
+		return      (byte == MasterSync)
+				|| (byte == MergeSync)
+				|| (byte == AbandonMastership);
+	}
 };
 
 

@@ -38,10 +38,10 @@ void Serializer::init(BufferPointer aRadioBuffer, uint8_t aBufferSize)
 SyncMessage* Serializer::unserialize() {
 	// assert valid data in radioBuffer, of proper length
 	SyncMessage * result;
-	if (       (radioBufferPtr[0] == MasterSync)
-			|| (radioBufferPtr[0] == MergeSync)
-			|| (radioBufferPtr[0] == AbandonMastership)
-	)
+
+	// Minor optimization: only access radioBufferPtr[0] once.
+	// It is volatile, which prevents compiler from optimizing repeated references.
+	if (SyncMessage::isByteASyncType(radioBufferPtr[0]))
 	{
 		unserializeIntoCommonSyncMessage();
 		result = &inwardCommonSyncMsg;
