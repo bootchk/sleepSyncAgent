@@ -106,7 +106,7 @@ private:
 	static bool doMasterListenHalfSyncSlot(OSTime (*timeoutFunc)());
 	static void doIdleSlotRemainder();
 	static bool shouldTransmitSync();
-	static void transmitMasterSync();
+	static void sendMasterSync();
 	static void makeCommonMasterSyncMessage();
 
 
@@ -141,7 +141,7 @@ private:
 	static void toMergerRole(SyncMessage* msg);
 	static void endMergerRole();
 	static void doMergeSlot();
-	static void sendMerge();
+	static void sendMergeSync();
 
 
 	// abandon

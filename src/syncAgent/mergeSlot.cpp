@@ -45,7 +45,7 @@ void SyncAgent::doMergeSlot() {
 	assert(role.isMerger());
 	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisMergeStart(cliqueMerger.offsetToMergee));
 	// assert time aligned with middle of a mergee sync slots (same wall time as fished sync from mergee.)
-	sendMerge();
+	sendMergeSync();
 
 	if (mergePolicy.checkCompletionOfMergerRole()){
 		endMergerRole();
@@ -59,10 +59,11 @@ void SyncAgent::doMergeSlot() {
 }
 
 
-void SyncAgent::sendMerge() {
+void SyncAgent::sendMergeSync() {
 	radio->powerOnAndConfigure();
 	cliqueMerger.makeMergeSync(serializer.outwardCommonSyncMsg);
-	// assert common radio buffer filled
+	serializer.serializeOutwardCommonSyncMessage();
+	assert(serializer.bufferIsSane());
 	radio->transmitStaticSynchronously();	// blocks until transmit complete
 	radio->powerOff();
 }

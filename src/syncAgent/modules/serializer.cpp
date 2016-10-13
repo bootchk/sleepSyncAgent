@@ -69,6 +69,14 @@ SyncMessage* Serializer::unserialize() {
 	return result;
 }
 
+
+bool Serializer::bufferIsSane(){
+	// FUTURE or work message
+	// FUTURE other validity checks?
+	return SyncMessage::isByteASyncType(radioBufferPtr[0]);
+}
+
+
 void Serializer::unserializeIntoCommonSyncMessage() {
 	// assert(aType == MasterSync || aType == MergeSync || aType == AbandonMastership);
 	inwardCommonSyncMsg.type = (MessageType) radioBufferPtr[0];
@@ -88,10 +96,10 @@ uint8_t* Serializer::serialize(WorkMessage& msg) {
 }
 #endif
 
-void Serializer::serialize(SyncMessage& msg) {
-	radioBufferPtr[0] = msg.type;
-	serializeMasterIDCommonIntoStream(msg);
-	serializeOffsetCommonIntoStream(msg);
+void Serializer::serializeOutwardCommonSyncMessage() {
+	radioBufferPtr[0] = outwardCommonSyncMsg.type;
+	serializeMasterIDCommonIntoStream(outwardCommonSyncMsg);
+	serializeOffsetCommonIntoStream(outwardCommonSyncMsg);
 }
 
 

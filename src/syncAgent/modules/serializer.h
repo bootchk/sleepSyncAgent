@@ -44,7 +44,10 @@ public:
 	static SyncMessage* unserialize();
 	// overloaded
 	// static uint8_t* serialize(WorkMessage& msg);
-	static void serialize(SyncMessage& msg);
+	static void serializeOutwardCommonSyncMessage();
+
+	// Does contents of Serializer's buffer minimally seem like a Message?
+	static bool bufferIsSane();
 
 private:
 	static void unserializeIntoCommonSyncMessage();

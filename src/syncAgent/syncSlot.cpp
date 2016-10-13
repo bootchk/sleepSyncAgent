@@ -118,7 +118,7 @@ void SyncAgent::doMasterSyncSlot() {
 	}
 	else {
 		// Might have heard a sync from a worse clique
-		transmitMasterSync();
+		sendMasterSync();
 		// Keep listening for other better Masters
 		(void) doMasterListenHalfSyncSlot(clique.schedule.deltaToThisSyncSlotEnd);
 	}
@@ -176,7 +176,7 @@ bool SyncAgent::shouldTransmitSync() {
 }
 
 
-void SyncAgent::transmitMasterSync() {
+void SyncAgent::sendMasterSync() {
 	makeCommonMasterSyncMessage();
 	// assert common MasterSync message serialized into radio buffer
 	radio->transmitStaticSynchronously();	// blocks until transmit complete
@@ -194,14 +194,20 @@ void SyncAgent::makeCommonMasterSyncMessage() {
 	// FUTURE include correction for latency (on receiver's end)
 
 	// Since we are in sync slot near front of sync period, offset should (0, NormalSyncPeriodDuration)
-	// !!! Soft.  Susceptible to breakpoints.
-	assert( forwardOffset > 0);
+	/*
+	 * !!! Soft assertion susceptible to breakpoints.
+	 * If breakpointed, nextSyncPoint is in past and forwardOffset is zero.
+	 */
+	// assert( forwardOffset > 0);
+
 	assert( forwardOffset < clique.schedule.NormalSyncPeriodDuration);
 
 	// FUTURE assert we are not xmitting sync past end of syncSlot?
 	// i.e. calculations are rapid and sync slot not too short?
 
 	serializer.outwardCommonSyncMsg.makeMasterSync(forwardOffset, myID());
+	serializer.serializeOutwardCommonSyncMessage();
+	assert(serializer.bufferIsSane());
 }
 
 void SyncAgent::endSyncSlot() {
