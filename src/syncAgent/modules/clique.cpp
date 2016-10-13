@@ -19,6 +19,7 @@ void Clique::reset(){
 
 bool Clique::isSelfMaster() { return masterID == myID(); }
 bool Clique::isOtherCliqueBetter(SystemID otherMasterID){ return masterID < otherMasterID; }
+bool Clique::isMyMaster(SystemID otherMasterID){ return masterID == otherMasterID; }
 
 void Clique::onMasterDropout() {
 	// Brute force: assume mastership.
@@ -39,7 +40,7 @@ void Clique::initFromSyncMsg(SyncMessage* msg){
 
 
 void Clique::changeBySyncMessage(SyncMessage* msg) {
-
+	assert(msg->type == MasterSync || msg->type == MergeSync);
 	assert(msg->masterID != myID());	// we can't hear our own sync
 	masterID = msg->masterID;
 	assert(!isSelfMaster()); // even if I was before

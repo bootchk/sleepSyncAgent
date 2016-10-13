@@ -23,6 +23,7 @@ public:
 
 	static bool isSelfMaster();
 	static bool isOtherCliqueBetter(SystemID otherMasterID);
+	static bool isMyMaster(SystemID otherMasterID);
 
 	// New clique
 	static void reset();

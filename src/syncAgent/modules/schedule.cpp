@@ -62,7 +62,6 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 	/*
 	 * A sync message adds to ***end*** of period (farther into the future)
 	 *
-	 *
 	 * assert startTimeOfSyncPeriod < nowTime()  < endTimeOfSyncPeriod
 	 * i.e. now in the current period, but may be near the end of it,
 	 * or beyond it because of delay in processing fished SyncMessage?

@@ -29,8 +29,13 @@
 
 #include "syncAgent.h"
 
-
+/*
+ * Like other dispatchers, return true if heard message apropos to slot kind.
+ *
+ * If true, side effect is adjusting my sync.
+ */
 bool SyncAgent::dispatchMsgReceivedInSyncSlot(SyncMessage* msg) {
+	// agnostic of role.isMaster or role.isSlave
 
 	bool isFoundSyncKeepingMsg = false;
 
@@ -260,13 +265,20 @@ void SyncAgent::endSyncSlot() {
  */
 bool SyncAgent::doSyncMsgInSyncSlot(SyncMessage* msg){
 	// assert SyncMsg is subtype MasterSync OR MergeSync
-
 	// assert sync not from self (xmitter and receiver are exclusive)
 	// assert self.isMaster || self.isSlave i.e. this code doesn't require any particular role
 
 	bool doesMsgKeepSynch;
 
-	if (isSyncFromBetterMaster(msg)) {
+	// Most likely case first
+	if (clique.isMyMaster(msg->masterID)) {
+		// My Master could have fished another better clique and be MergeSyncing self
+		// Each Sync has an adjustment, could be zero or small (MasterSync) or larger (MergeSync)
+		clique.schedule.adjustBySyncMsg(msg);
+		doesMsgKeepSynch = true;
+	}
+	else if (isSyncFromBetterMaster(msg)) {
+		// Strictly better
 		changeMaster(msg);
 
 		// Regardless current master or new master sent sync: is a valid heartbeat, I am synchronized
@@ -275,7 +287,8 @@ bool SyncAgent::doSyncMsgInSyncSlot(SyncMessage* msg){
 	}
 	else {
 		/*
-		 * Heard Sync in SyncSlot from other Master of other worse clique.
+		 * Heard MasterSync in SyncSlot from other Master of other worse clique.
+		 * OR heard MergeSync from Master or Slave of other worse clique.
 		 * Master of my clique (could be self) should continue as Master.
 		 * Don't tell other clique: since their sync slot overlaps with mine,
 		 * they should eventually hear my clique master's sync and relinquish mastership.
@@ -323,6 +336,7 @@ bool SyncAgent::isSyncFromBetterMaster(SyncMessage* msg){
 
 	return result;
 }
+
 
 
 
