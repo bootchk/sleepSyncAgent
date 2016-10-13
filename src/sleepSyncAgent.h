@@ -1,7 +1,6 @@
 
-
-// In app project, this might be modules/radio.h
-#include "platform/platform.h"
+#include "syncAgent/syncAgent.h"
+#include "platform/platform.h"	// Radio
 
 
 
@@ -22,15 +21,19 @@
  *
  * Parameters of algorithm:
  * - scheduleParameters.h
- * - modules/policyParameters.h
+ * - modules/policy/policyParameters.h
  * - in nRFrawProtocol (wireless stack)
  */
 
 // FUTURE pass the queue.  For now, there is no queue, just the signal.
 
 class SleepSyncAgent {
+private:
+	// instance of wrapped class
+	static SyncAgent syncAgent;
+
 public:
-	void init(
+	static void init(
 			Radio* radio,
 			void (*onWorkMsgQueued)()
 			);

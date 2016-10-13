@@ -1,7 +1,7 @@
 
 #include "sleepSyncAgent.h"
 
-#include "augment/powerManager.h"
+//#include "augment/powerManager.h"
 #include "syncAgent/syncAgent.h"
 
 /*
@@ -18,11 +18,9 @@
  */
 
 
-// Private data members.  Anonymous namespace similar to "static"
-namespace
-{
-SyncAgent syncAgent;
-}
+// Private data members.
+SyncAgent SleepSyncAgent::syncAgent;
+
 
 
 // Methods just pass through to wrapped object.

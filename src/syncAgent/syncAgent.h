@@ -1,4 +1,5 @@
 
+#pragma once
 
 #include "../augment/powerManager.h"
 #include "../platform/platform.h"	// Radio, Sleeper, LEDLogger

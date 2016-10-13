@@ -18,9 +18,6 @@
 class CliqueMerger {
 
 public:
-
-
-
 	// attributes of other clique
 	static DeltaTime offsetToMergee;	// in current schedule
 private:
@@ -33,7 +30,6 @@ private:
 	static SystemID masterID;
 
 	static Clique* owningClique;	// 2-way relation: Clique owns CliqueMerger, CliqueMerger uses owning Clique
-	//static int notifyCountdown;
 
 public:
 	static void initFromMsg(SyncMessage* msg);

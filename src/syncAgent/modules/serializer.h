@@ -24,18 +24,23 @@
  */
 
 class Serializer {
+private:
+	// Knows Radio's buffer
+	static BufferPointer radioBufferPtr;
+	static uint8_t radioBufferSize;
+
 public:
+	// Owns Message instances, and returns address of them
 	static SyncMessage inwardCommonSyncMsg;
 	static SyncMessage outwardCommonSyncMsg;
 	// FUTURE static WorkMessage outwardCommonWorkMsg;
 
-	// Sync messages are constant length.
-	//static const uint8_t OnAirSyncMsgPayloadLength = 10;
-
-
 	// Methods
 	static void init(BufferPointer radioBuffer, uint8_t aBufferSize);
 
+	// unserialize determines what class of Message to unserialize
+	// and returns a pointer to polymorphous instance (SyncMessage union WorkMessage.)
+	// FUTURE ???
 	static SyncMessage* unserialize();
 	// overloaded
 	// static uint8_t* serialize(WorkMessage& msg);

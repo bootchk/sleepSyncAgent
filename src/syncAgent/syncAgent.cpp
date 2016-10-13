@@ -33,12 +33,13 @@ void SyncAgent::init(
 	)
 {
 	sleeper.init();
-	// Assert OSClock is running
+	// FUTURE hard to know who owns clock assert(sleeper.isOSClockRunning());
 
 	radio = aRadio;
-	// Configure radio
+
 	// Connect radio IRQ to sleeper so it knows reason for wake
 	radio->init(&sleeper.msgReceivedCallback);
+	// radio not configured until after powerOn()
 
 	// Serializer reads and writes directly to radio buffer
 	serializer.init(radio->getBufferAddress(), Radio::FixedPayloadCount);
@@ -55,6 +56,5 @@ void SyncAgent::init(
 	assert(role.isFisher());
 	assert(clique.isSelfMaster());
 	assert(!radio->isPowerOn());
-	// FUTURE hard to know who owns clock assert(sleeper.isOSClockRunning());
 }
 
