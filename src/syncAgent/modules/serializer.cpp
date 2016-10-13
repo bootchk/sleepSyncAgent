@@ -1,5 +1,6 @@
 
 #include <cassert>
+#include <cstring>	// memcpy
 
 #include "../../platform/platform.h"  // MaxDeltaTime
 
@@ -96,6 +97,10 @@ uint8_t* Serializer::serialize(WorkMessage& msg) {
 }
 #endif
 
+
+// suppress compiler warning for pointer arith
+#pragma GCC diagnostic ignored "-Wpointer-arith"
+
 void Serializer::serializeOutwardCommonSyncMessage() {
 	radioBufferPtr[0] = outwardCommonSyncMsg.type;
 	serializeMasterIDCommonIntoStream(outwardCommonSyncMsg);
@@ -108,30 +113,40 @@ void Serializer::serializeOutwardCommonSyncMessage() {
 void Serializer::unserializeMasterIDIntoCommon() {
 	assert(sizeof(inwardCommonSyncMsg.masterID)>=6);
 	inwardCommonSyncMsg.masterID = 0; // ensure MSB two bytes are zero.
-	for (int i =1; i<7; i++)
-		// Fill LSB 6 bytes of a 64-bit
-		((uint8_t *) &inwardCommonSyncMsg.masterID)[i] = radioBufferPtr[i];
+	// Fill LSB 6 bytes of a 64-bit
+	memcpy( (void*) &inwardCommonSyncMsg.masterID,	// dest
+			(void*) radioBufferPtr + 1,	// src
+			6);	// count
 }
+
 void Serializer::serializeMasterIDCommonIntoStream(SyncMessage& msg) {
-	for (int i =1; i<7; i++)
-		// Send LSB 6 bytes of 64-bit
-		radioBufferPtr[i] = ((uint8_t *) &msg.masterID)[i] ;
+	// Send LSB 6 bytes of 64-bit
+	memcpy( (void*) radioBufferPtr + 1, 	// dest
+			(void*) &msg.masterID,	// src
+			6);	// count
 }
 
 
 void Serializer::unserializeOffsetIntoCommon() {
 	assert(sizeof(inwardCommonSyncMsg.deltaToNextSyncPoint)==4);
+	// 24-bit offset:
+	// Little-endian into LSB three bytes of a 32-bit OSTime
 	inwardCommonSyncMsg.deltaToNextSyncPoint = 0;	// ensure MSB byte is zero
-	for (int i =7; i<radioBufferSize; i++)
-		// FUTURE, code for 32-bit OSClock
-		// 24-bit offset:
-		// Little-endian into LSB three bytes of a 32-bit OSTime
-		((uint8_t *) &inwardCommonSyncMsg.deltaToNextSyncPoint)[i] = radioBufferPtr[i];
+	memcpy( (void*) &inwardCommonSyncMsg.masterID, 	// dest
+			(void*) radioBufferPtr + 7,	// src
+			3);	// count
 
+	// FUTURE, code for 32-bit OSClock
 	assert(inwardCommonSyncMsg.deltaToNextSyncPoint < MaxDeltaTime);
 }
+
 void Serializer::serializeOffsetCommonIntoStream(SyncMessage& msg) {
-	for (int i =7; i<radioBufferSize; i++)
-		radioBufferPtr[i] = ((uint8_t *) &msg.deltaToNextSyncPoint)[i] ;
+	memcpy( (void*) radioBufferPtr + 7, 	// dest
+			(void*) &msg.masterID,	// src
+			3);	// count
 }
+
+
+// End of pointer arith
+#pragma GCC diagnostic pop
 
