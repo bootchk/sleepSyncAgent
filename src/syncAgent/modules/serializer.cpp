@@ -56,11 +56,12 @@ SyncMessage* Serializer::unserialize() {
 		/*
 		 * Unexpected or garbled message type.
 		 * This should be rare, since CRC was valid.
-		 * It would take multiple bit errors to corrupt message type and still have valid CRC.
+		 * It would take multiple bit errors to corrupt message type and still have valid CRC?
+		 * Or does preamble, address, all zeroes have a correct CRC?
 		 */
 		// Unserialize it so we can debug it
-		unserializeIntoCommonSyncMessage();
-		assert(false);	// TESTING
+		// unserializeIntoCommonSyncMessage();
+		//assert(false);	// TESTING
 		result = nullptr;	// PRODUCTION
 	}
 	// assert validity of SystemID and offset have not been checked

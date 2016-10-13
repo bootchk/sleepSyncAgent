@@ -68,6 +68,10 @@ private:
 	static void (*onWorkMsgQueuedCallback)();
 	// FUTURE static void (*onSyncingPausedCallback)();	// callback to app when syncing is paused
 
+	static uint32_t countValidReceives;
+	static uint32_t countInvalidTypeReceives;
+	static uint32_t countInvalidCRCReceives;
+
 // methods
 
 	static void startSyncing();

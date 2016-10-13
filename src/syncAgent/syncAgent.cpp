@@ -23,6 +23,9 @@ void (*SyncAgent::onWorkMsgQueuedCallback)();
 
 LEDLogger SyncAgent::ledLogger;	// DEBUG
 
+uint32_t SyncAgent::countValidReceives = 0;
+uint32_t SyncAgent::countInvalidTypeReceives = 0;
+uint32_t SyncAgent::countInvalidCRCReceives = 0;
 
 // This file only implements part of the class, see many other .cpp files.
 // See syncAgentLoop.cpp for high level algorithm.

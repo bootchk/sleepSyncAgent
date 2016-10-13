@@ -91,6 +91,7 @@ bool SyncAgent::dispatchMsg(DispatchFuncPtr dispatchFuncOnType) {
 		SyncMessage* msg = serializer.unserialize();
 		if (msg != nullptr) {
 			// assert msg->type valid
+			countValidReceives++;
 
 			//ledLogger2.toggleLED(3);	// debug: LED 3 valid received
 
@@ -113,7 +114,8 @@ bool SyncAgent::dispatchMsg(DispatchFuncPtr dispatchFuncOnType) {
 			// assert msg queue is empty (since we received and didn't restart receiver)
 		}
 		else {
-			// MessageType garbled
+			// Ignore MessageType garbled
+			countInvalidTypeReceives++;
 			//ledLogger2.toggleLED(4);	// debug: LED 4 invalid MessageType received
 			// continuation is sleep
 		}
@@ -123,6 +125,7 @@ bool SyncAgent::dispatchMsg(DispatchFuncPtr dispatchFuncOnType) {
 	}
 	else {
 		// ignore CRC invalid packet
+		countInvalidCRCReceives++;
 
 		//ledLogger2.toggleLED(4);	// debug: LED 4 invalid CRC received
 		// continuation is sleep
