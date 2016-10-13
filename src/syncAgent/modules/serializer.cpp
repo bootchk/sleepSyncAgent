@@ -132,7 +132,7 @@ void Serializer::unserializeOffsetIntoCommon() {
 	// 24-bit offset:
 	// Little-endian into LSB three bytes of a 32-bit OSTime
 	inwardCommonSyncMsg.deltaToNextSyncPoint = 0;	// ensure MSB byte is zero
-	memcpy( (void*) &inwardCommonSyncMsg.masterID, 	// dest
+	memcpy( (void*) &inwardCommonSyncMsg.deltaToNextSyncPoint, 	// dest
 			(void*) radioBufferPtr + 7,	// src
 			3);	// count
 
@@ -142,7 +142,7 @@ void Serializer::unserializeOffsetIntoCommon() {
 
 void Serializer::serializeOffsetCommonIntoStream(SyncMessage& msg) {
 	memcpy( (void*) radioBufferPtr + 7, 	// dest
-			(void*) &msg.masterID,	// src
+			(void*) &msg.deltaToNextSyncPoint,	// src
 			3);	// count
 }
 
