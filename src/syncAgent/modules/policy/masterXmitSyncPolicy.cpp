@@ -12,20 +12,23 @@ ScheduleCount RandomAlarmingCircularClock::alarmTick;
 ScheduleCount RandomAlarmingCircularClock::clockTick;
 
 
-void RandomAlarmingCircularClock::reset() {
-	// wrap clock circularly
+void RandomAlarmingCircularClock::wrap() {
 	clockTick = 0;
-	// set alarm when wrap
 	setAlarm();
 }
 
-// FUTURE rename tickWithAlarm
+
 // Returns true if alarm goes off
-bool RandomAlarmingCircularClock::tick(){
-	clockTick++;
+bool RandomAlarmingCircularClock::tickWithAlarm(){
+	assert(clockTick >= 0 && clockTick <= Policy::CountSyncPeriodsToChooseMasterSyncXmits-1);
+
 	bool result = (clockTick == alarmTick);
+
 	// Make clock circular
-	if (clockTick > Policy::CountSyncPeriodsToChooseMasterSyncXmits) reset();
+	clockTick++;
+	if (clockTick >= Policy::CountSyncPeriodsToChooseMasterSyncXmits)
+		wrap();
+
 	return result;
 	// assert alarm goes off when old clockTick was [0, CountSyncPeriodsToChooseMasterSyncXmits -1]
 }
@@ -34,7 +37,8 @@ bool RandomAlarmingCircularClock::tick(){
 // private
 
 void RandomAlarmingCircularClock::setAlarm() {
-	alarmTick = randUnsignedInt16(0, Policy::CountSyncPeriodsToChooseMasterSyncXmits);
+	alarmTick = randUnsignedInt16(0, Policy::CountSyncPeriodsToChooseMasterSyncXmits-1);
+	// alarmTick in [0, CountSyncPeriodsToChooseMasterSyncXmits-1]
 }
 
 

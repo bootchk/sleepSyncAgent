@@ -1,5 +1,7 @@
 
-#include "../../../augment/random.h"
+#include <cassert>
+
+#include "../../../augment/random.h"	// randBool
 #include "policyParameters.h"
 
 
@@ -47,6 +49,8 @@ int MergePolicy::countSendMergeSyncs;
  */
 bool MergePolicy::checkCompletionOfMergerRole() {
 	//assert(isActive());	// require
+	assert(countSendMergeSyncs <= Policy::CountSyncsPerMerger);	// Was restart() ed
+
 	countSendMergeSyncs++;
 
 	bool result = false;

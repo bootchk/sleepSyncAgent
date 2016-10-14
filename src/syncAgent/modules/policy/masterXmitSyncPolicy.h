@@ -14,8 +14,8 @@
  */
 class RandomAlarmingCircularClock {
 public:
-	static void reset();
-	static bool tick();
+	static void wrap();
+	static bool tickWithAlarm();
 
 private:
 	static ScheduleCount alarmTick;
@@ -32,10 +32,10 @@ private:
 class MasterXmitSyncPolicy {
 	static RandomAlarmingCircularClock clock;
 public:
-	static void reset() { clock.reset(); }
+	static void reset() { clock.wrap(); }
 
 	// Called every sync slot
-	static bool shouldXmitSync() { return clock.tick(); }
+	static bool shouldXmitSync() { return clock.tickWithAlarm(); }
 };
 
 
