@@ -117,15 +117,18 @@ void SyncAgent::doMasterSyncSlot() {
 	if (heardSyncKeepingSync) {
 		// I was Master, but just relinquished it
 		assert(!clique.isSelfMaster());
-		// Leave radio powerOn (work slot requires it) but not receiving
+		assert(!radio->isPowerOn());
 		assert(radio->isDisabledState());	// not receiving
 		doIdleSlotRemainder();
 	}
 	else {
 		// Might have heard a sync from a worse clique
 		sendMasterSync();
-		// Keep listening for other better Masters
+		// Keep listening for other better Masters.
+		// Result doesn't matter, slot is over and we proceed whether we heard sync keeping sync or not.
 		(void) doMasterListenHalfSyncSlot(clique.schedule.deltaToThisSyncSlotEnd);
+
+		// assert radio on or off
 	}
 }
 
@@ -137,11 +140,14 @@ bool SyncAgent::doMasterListenHalfSyncSlot(OSTime (*timeoutFunc)()) {
 					dispatchMsgReceivedInSyncSlot,
 					timeoutFunc
 					);
+
+	// assert radio is on or off
 	return result;
 }
 
-
+// Sleep with radio off for remainder of sync slot
 void SyncAgent::doIdleSlotRemainder() {
+	assert(!radio->isPowerOn());
 	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisSyncSlotEnd());
 }
 
@@ -224,17 +230,20 @@ void SyncAgent::endSyncSlot() {
 	 * Scheduling of subsequent events does not depend on timely this event.
 	 */
 
+	// Radio is on or off.  If on, we timeout'd while receiving
+	if (radio->isPowerOn()) {
+		radio->stopReceive();
+		assert(radio->isDisabledState());	// receiveStatic() in next slot requires radio disabled.
+	}
+	// Radio still on or off
+	// We don't bother to turn it off since work slot follows and needs radio on.
+
 	// FUTURE we could do this elsewhere, e.g. start of sync slot so this doesn't delay the start of work slot
 	if (!clique.isSelfMaster())
 		checkMasterDroppedOut();
 
-	assert(radio->isPowerOn());
-
-	// Radio can be receiving or not.
-	// FUTURE avoid stopReceive unless we timedout (with receiver still enabled i.e. not isDisabled())
-
-	radio->stopReceive();
-	assert(radio->isDisabledState());	// receiveStatic() in next slot requires radio disabled.
+	// assert radio on or off
+	// assert radio on => radio.isDisabledState()
 }
 
 
