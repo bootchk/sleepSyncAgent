@@ -17,6 +17,17 @@ void Clique::reset(){
 	// assert clock is running and first period started but no tasks scheduled
 }
 
+void Clique::setSelfMastership() {
+	log("Self mastership");
+	masterID = myID();
+}
+
+void Clique::setOtherMastership(SystemID otherID) {
+	assert(otherID != myID());	// we can't hear our own sync
+	log("Other mastership");
+	masterID = otherID;
+}
+
 bool Clique::isSelfMaster() { return masterID == myID(); }
 bool Clique::isOtherCliqueBetter(SystemID otherMasterID){ return masterID < otherMasterID; }
 bool Clique::isMyMaster(SystemID otherMasterID){ return masterID == otherMasterID; }
@@ -41,8 +52,7 @@ void Clique::initFromSyncMsg(SyncMessage* msg){
 
 void Clique::changeBySyncMessage(SyncMessage* msg) {
 	assert(msg->type == MasterSync || msg->type == MergeSync);
-	assert(msg->masterID != myID());	// we can't hear our own sync
-	masterID = msg->masterID;
+	setOtherMastership(msg->masterID);
 	assert(!isSelfMaster()); // even if I was before
 
 	// FUTURE clique.historyOfMasters.update(msg);

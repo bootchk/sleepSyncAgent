@@ -49,10 +49,11 @@ void CliqueMerger::initMergeMyClique(SyncMessage* msg){
 	// calculate delta from current schedule
 	offsetToMergee = owningClique->schedule.deltaNowToNextSyncPoint();
 
-	// after using current schedule above, can adjust to new schedule
-	owningClique->schedule.adjustBySyncMsg(msg);
+	// After using current clique above, change my clique (new master and new schedule)
+	owningClique->changeBySyncMessage(msg);
 
 	masterID = msg->masterID;
+	assert(!owningClique->isSelfMaster());	// Even if true previously
 }
 
 
@@ -74,7 +75,7 @@ void CliqueMerger::initMergeOtherClique(){
 	offsetToMergee = owningClique->schedule.deltaNowToNextSyncPoint();
 	// Self fished and caught other clique, and I will send MergeSync (contending with current other master)
 	// but saying the new master is clique.masterID, not myID
-	masterID = owningClique->masterID;
+	masterID = owningClique->getMasterID();
 }
 
 

@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include "syncAgent.h"
+#include "../platform/platform.h"
 
 
 /*
@@ -20,6 +21,7 @@ void SyncAgent::loop(){
 	assert(clique.isSelfMaster());
 
 	ledLogger.init();	// DEBUG
+	initLogging();
 
 	assert(! isSyncingState);
 	assert(!radio->isPowerOn());

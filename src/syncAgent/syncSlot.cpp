@@ -26,6 +26,7 @@
 #include "../platform/log.h"
 #include "../platform/uniqueID.h"
 #include "../platform/mailbox.h"
+#include "../platform/logger.h"
 
 #include "syncAgent.h"
 
@@ -182,6 +183,7 @@ bool SyncAgent::shouldTransmitSync() {
 
 
 void SyncAgent::sendMasterSync() {
+	log("Send sync\n");
 	makeCommonMasterSyncMessage();
 	// assert common MasterSync message serialized into radio buffer
 	radio->transmitStaticSynchronously();	// blocks until transmit complete
@@ -226,7 +228,8 @@ void SyncAgent::endSyncSlot() {
 	// FUTURE we could do this elsewhere, e.g. start of sync slot
 	// so this doesn't delay the start of work slot
 	if (dropoutMonitor.check()) {
-		dropoutMonitor.heardSync();	// reset
+		log("Drop out\n");
+		dropoutMonitor.reset();
 		clique.onMasterDropout();
 	}
 	assert(radio->isPowerOn());
@@ -274,14 +277,15 @@ bool SyncAgent::doSyncMsgInSyncSlot(SyncMessage* msg){
 	if (clique.isMyMaster(msg->masterID)) {
 		// My Master could have fished another better clique and be MergeSyncing self
 		// Each Sync has an adjustment, could be zero or small (MasterSync) or larger (MergeSync)
+		log("Sync from master\n");
 		clique.schedule.adjustBySyncMsg(msg);
+		dropoutMonitor.heardSync();
 		doesMsgKeepSynch = true;
 	}
 	else if (isSyncFromBetterMaster(msg)) {
 		// Strictly better
+		log("Better master\n");
 		changeMaster(msg);
-
-		// Regardless current master or new master sent sync: is a valid heartbeat, I am synchronized
 		dropoutMonitor.heardSync();
 		doesMsgKeepSynch = true;
 	}
@@ -293,6 +297,7 @@ bool SyncAgent::doSyncMsgInSyncSlot(SyncMessage* msg){
 		 * Don't tell other clique: since their sync slot overlaps with mine,
 		 * they should eventually hear my clique master's sync and relinquish mastership.
 		 */
+		logWorseSync();
 		// !!! SyncMessage does not keep me in sync: not dropoutMonitor.heardSync();
 		doesMsgKeepSynch = false;
 	}
@@ -301,7 +306,7 @@ bool SyncAgent::doSyncMsgInSyncSlot(SyncMessage* msg){
 
 
 void SyncAgent::changeMaster(SyncMessage* msg) {
-	assert(msg->masterID != clique.masterID);
+	assert(msg->masterID != clique.getMasterID());
 
 	clique.changeBySyncMessage(msg);
 
@@ -314,42 +319,38 @@ void SyncAgent::changeMaster(SyncMessage* msg) {
 
 bool SyncAgent::isSyncFromBetterMaster(SyncMessage* msg){
 	bool result = clique.isOtherCliqueBetter(msg->masterID);
-
-	// This method should have no side effects, this is only debug transient conditions.
-	if (!result){
-		if (clique.isSelfMaster()) {
-			// Sender has not heard my sync
-			// Since I am still alive, they should not be assuming mastership.
-			// Could be assymetric communication (I can hear they, they cannot hear me.)
-			log("Worse sync while self is master.");
-		}
-		else { // self is slave
-			// Sender has not heard my master's sync
-			// My master may dropout, and they are assuming mastership.
-			// Wait until I discover my master dropout
-			// FUTURE: if msg.masterID < myID(), I should assume mastership instead of sender
-			// FUTURE: if msg.masterID > myID() record msg.masterID in my historyOfMasters
-			// so when I discover dropout, I will defer to msg.masterID
-			log("Worse sync while self is slave.");
-		}
-	}
-
 	return result;
 }
 
 
-
+void SyncAgent::logWorseSync() {
+	// FUTURE: for now this is just logging, in future will record history
+	if (clique.isSelfMaster()) {
+		/*
+		 * Sender has not heard my sync.
+		 * Since I am still alive, they should not be assuming mastership.
+		 * Could be assymetric communication (I can hear they, they cannot hear me.)
+		 */
+		log("Worse sync while self is master.");
+	}
+	else { // self is slave
+		/*
+		 * Sender has not heard my master's sync.
+		 * My master may have dropped out (and I just don't know yet), and they are assuming mastership.
+		 * Wait until I discover my master dropout.
+		 */
+		// FUTURE: if msg.masterID < myID(), I should assume mastership instead of sender
+		// FUTURE: if msg.masterID > myID() record msg.masterID in my historyOfMasters
+		// so when I discover dropout, I will defer to msg.masterID
+		log("Worse sync while self is slave.");
+	}
+}
 
 
 // Abandon mastership
 
 
 void SyncAgent::doAbandonMastershipMsgInSyncSlot(SyncMessage* msg){
-	// Master of my clique is abandoning
-	tryAssumeMastership(msg);
-}
-
-void SyncAgent::tryAssumeMastership(SyncMessage* msg){
 	/*
 	 * My clique is still in sync, but master is dropout.
 	 *
@@ -358,7 +359,7 @@ void SyncAgent::tryAssumeMastership(SyncMessage* msg){
 	 */
 	(void) msg;  // FUTURE use msg to record history
 
-	clique.masterID = myID();
+	clique.setSelfMastership();
 	assert(clique.isSelfMaster());
 }
 

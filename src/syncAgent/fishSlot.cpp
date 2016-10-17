@@ -11,6 +11,7 @@
 #include "syncAgent.h"
 
 #include "../platform/mailbox.h"
+#include "../platform/logger.h"
 
 
 // FUTURE each type of slot should be its own class
@@ -24,7 +25,7 @@ bool SyncAgent::dispatchMsgReceivedInFishSlot(SyncMessage* msg){
 		 * Intended catch: another clique's sync slot.
 		 */
 		doMasterSyncMsgInFishSlot((SyncMessage*) msg);
-		// Self can't handle more than one, or slot is busy with another merge
+		// Stop listening: self can't handle more than one, or slot is busy with another merge
 		foundDesiredMessage = true;
 		break;
 	case MergeSync:
@@ -33,6 +34,7 @@ bool SyncAgent::dispatchMsgReceivedInFishSlot(SyncMessage* msg){
 		 * is already xmitting into this time thinking it is SyncSlot of some third clique.
 		 * Ignore except to stop fishing this slot.
 		 */
+		log("MergeSync in fish slot\n");
 		foundDesiredMessage = true;
 		break;
 	case AbandonMastership:

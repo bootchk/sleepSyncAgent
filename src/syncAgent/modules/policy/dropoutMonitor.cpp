@@ -9,7 +9,7 @@ ScheduleCount DropoutMonitor::countSyncSlotsWithoutSyncMsg;
 void DropoutMonitor::heardSync() { reset(); }
 
 bool DropoutMonitor::check(){
-	assert(countSyncSlotsWithoutSyncMsg <= Policy::maxMissingSyncsPerDropout);	// was reset()
+	assert(countSyncSlotsWithoutSyncMsg <= Policy::maxMissingSyncsPerDropout);
 
 	countSyncSlotsWithoutSyncMsg++;
 	bool result = countSyncSlotsWithoutSyncMsg > Policy::maxMissingSyncsPerDropout;

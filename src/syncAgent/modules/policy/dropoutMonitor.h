@@ -16,8 +16,6 @@ public:
 	DropoutMonitor() { reset(); }
 	static void heardSync();
 	static bool check();
-
-private:
 	static void reset() { countSyncSlotsWithoutSyncMsg = 0; }
 };
 

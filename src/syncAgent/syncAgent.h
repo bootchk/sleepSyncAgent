@@ -108,6 +108,7 @@ private:
 	static bool shouldTransmitSync();
 	static void sendMasterSync();
 	static void makeCommonMasterSyncMessage();
+	static void logWorseSync();
 
 
 	// work
@@ -142,10 +143,6 @@ private:
 	static void endMergerRole();
 	static void doMergeSlot();
 	static void sendMergeSync();
-
-
-	// abandon
-	static void tryAssumeMastership(SyncMessage* msg);
 };
 
 /*

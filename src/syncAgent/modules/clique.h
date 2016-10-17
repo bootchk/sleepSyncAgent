@@ -15,12 +15,15 @@
  * - complete history tree of masters of clique (only the masters on self's branch)
  */
 class Clique {
-
+private:
+	static SystemID masterID;	// self or other unit
 public:
 	static MasterXmitSyncPolicy masterXmitSyncPolicy;
 	static Schedule schedule;
-	static SystemID masterID;	// self or other unit
 
+	static SystemID getMasterID() { return masterID; }
+	static void setSelfMastership();
+	static void setOtherMastership(SystemID otherMasterID);
 	static bool isSelfMaster();
 	static bool isOtherCliqueBetter(SystemID otherMasterID);
 	static bool isMyMaster(SystemID otherMasterID);

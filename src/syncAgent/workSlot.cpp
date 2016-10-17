@@ -24,6 +24,7 @@ bool SyncAgent::dispatchMsgReceivedInWorkSlot(SyncMessage* msg){
 		 * Alternative: merge other clique from within former work slot?
 		 * doSyncMsgInWorkSlot(msg);
 		 */
+		log("Heard MasterSync or MergeSync in work slot\n");
 		break;
 	case AbandonMastership:
 		/*

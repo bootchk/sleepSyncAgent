@@ -68,6 +68,7 @@
 #include <sleeper.h>
 #include <uniqueID.h>
 #include <osClock.h>
+#include <logger.h>
 
 // Using the local include file, it must be equivalent to project which wedges this
 // FUTURE make project which wedges have simpler API not required includes of nrf headers
