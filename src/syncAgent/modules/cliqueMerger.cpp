@@ -18,6 +18,8 @@ void CliqueMerger::initFromMsg(SyncMessage* msg){
 	 * Save design so later, at endSyncSlot, we can schedule any mergeSlot.
 	 */
 
+	(void) SEGGER_RTT_printf(0, "Other Master ID: %llu\n", msg->masterID);
+
 	if (owningClique->isOtherCliqueBetter(msg->masterID))
 		initMergeMyClique(msg);
 	else
@@ -47,7 +49,7 @@ void CliqueMerger::initMergeMyClique(SyncMessage* msg){
 	 * and mergeSlot is not aligned with slots in adjusted schedule.
 	 */
 	// calculate delta from current schedule
-	offsetToMergee = owningClique->schedule.deltaNowToNextSyncPoint();
+	setOffsetToMergee(owningClique->schedule.deltaNowToNextSyncPoint());
 
 	// After using current clique above, change my clique (new master and new schedule)
 	owningClique->changeBySyncMessage(msg);
@@ -72,7 +74,7 @@ void CliqueMerger::initMergeOtherClique(){
 	 * We don't care which SyncMessage we fished or which MasterID owned the other clique.
 	 */
 
-	offsetToMergee = owningClique->schedule.deltaNowToNextSyncPoint();
+	setOffsetToMergee(owningClique->schedule.deltaNowToNextSyncPoint());
 	// Self fished and caught other clique, and I will send MergeSync (contending with current other master)
 	// but saying the new master is clique.masterID, not myID
 	masterID = owningClique->getMasterID();
@@ -102,7 +104,16 @@ void CliqueMerger::adjustBySyncMsg(SyncMessage* msg) {
 
 SyncMessage& CliqueMerger::makeMergeSync(SyncMessage& msg){
 	assert(isActive);
-	msg.makeMergeSync(offsetToMergee, masterID);
+	msg.makeMergeSync(getOffsetToMergee(), masterID);
 	return msg;	// Returns msg passed.
 }
 
+
+void CliqueMerger::setOffsetToMergee(DeltaTime offset) {
+	(void) SEGGER_RTT_printf(0, "Set merger offset: %lu\n", offset);
+	offsetToMergee = offset;
+}
+
+DeltaTime CliqueMerger::getOffsetToMergee() {
+	return offsetToMergee;
+}

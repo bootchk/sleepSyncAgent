@@ -43,7 +43,7 @@ void SyncAgent::endMergerRole(){
 void SyncAgent::doMergeSlot() {
 	assert(!radio->isPowerOn());
 	assert(role.isMerger());
-	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisMergeStart(cliqueMerger.offsetToMergee));
+	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisMergeStart(cliqueMerger.getOffsetToMergee()));
 	// assert time aligned with middle of a mergee sync slots (same wall time as fished sync from mergee.)
 	sendMergeSync();
 
