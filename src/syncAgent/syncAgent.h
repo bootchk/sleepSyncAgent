@@ -109,6 +109,7 @@ private:
 	static void sendMasterSync();
 	static void makeCommonMasterSyncMessage();
 	static void logWorseSync();
+	static void checkMasterDroppedOut();
 
 
 	// work

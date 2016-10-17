@@ -64,7 +64,7 @@ void SyncAgent::sendMergeSync() {
 	cliqueMerger.makeMergeSync(serializer.outwardCommonSyncMsg);
 	serializer.serializeOutwardCommonSyncMessage();
 	assert(serializer.bufferIsSane());
-	log("Send MergeSync");
+	log("Send MergeSync\n");
 	radio->transmitStaticSynchronously();	// blocks until transmit complete
 	radio->powerOff();
 }

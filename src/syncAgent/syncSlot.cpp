@@ -23,7 +23,6 @@
  */
 
 #include <cassert>
-#include "../platform/log.h"
 #include "../platform/uniqueID.h"
 #include "../platform/mailbox.h"
 #include "../platform/logger.h"
@@ -225,13 +224,10 @@ void SyncAgent::endSyncSlot() {
 	 * Scheduling of subsequent events does not depend on timely this event.
 	 */
 
-	// FUTURE we could do this elsewhere, e.g. start of sync slot
-	// so this doesn't delay the start of work slot
-	if (dropoutMonitor.check()) {
-		log("Drop out\n");
-		dropoutMonitor.reset();
-		clique.onMasterDropout();
-	}
+	// FUTURE we could do this elsewhere, e.g. start of sync slot so this doesn't delay the start of work slot
+	if (!clique.isSelfMaster())
+		checkMasterDroppedOut();
+
 	assert(radio->isPowerOn());
 
 	// Radio can be receiving or not.
@@ -242,7 +238,13 @@ void SyncAgent::endSyncSlot() {
 }
 
 
-
+void SyncAgent::checkMasterDroppedOut() {
+	if (dropoutMonitor.check()) {
+		log("Master dropped out\n");
+		dropoutMonitor.reset();
+		clique.onMasterDropout();
+	}
+}
 
 
 // Handlers for messages received in sync slot: Sync, AbandonMastership, Work
