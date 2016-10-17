@@ -25,6 +25,7 @@ LongTime Schedule::memoStartTimeOfFishSlot;
 
 
 void Schedule::startFreshAfterHWReset(){
+	log("Schedule reset\n");
 	longClock.reset();
 	startTimeOfSyncPeriod = longClock.nowTime();
 	endTimeOfSyncPeriod = startTimeOfSyncPeriod + NormalSyncPeriodDuration;
@@ -68,6 +69,7 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 	 *
 	 * assert some task (endFishSlot) might be scheduled, but this doesn't affect that.
 	 */
+	log("Adjust schedule\n");
 
 	assert(msg->deltaToNextSyncPoint < NormalSyncPeriodDuration);
 	/*

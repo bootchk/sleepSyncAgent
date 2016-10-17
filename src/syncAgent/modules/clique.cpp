@@ -11,6 +11,7 @@ SystemID Clique::masterID;
 
 
 void Clique::reset(){
+	log("Clique reset\n");
 	masterID = myID();
 	masterXmitSyncPolicy.reset();
 	schedule.startFreshAfterHWReset();
@@ -18,19 +19,22 @@ void Clique::reset(){
 }
 
 void Clique::setSelfMastership() {
-	log("Self mastership");
+	log("Self mastership\n");
 	masterID = myID();
 }
 
 void Clique::setOtherMastership(SystemID otherID) {
 	assert(otherID != myID());	// we can't hear our own sync
-	log("Other mastership");
+	log("Other mastership\n");
 	masterID = otherID;
 }
 
 bool Clique::isSelfMaster() { return masterID == myID(); }
-bool Clique::isOtherCliqueBetter(SystemID otherMasterID){ return masterID < otherMasterID; }
 bool Clique::isMyMaster(SystemID otherMasterID){ return masterID == otherMasterID; }
+
+// All units use same comparison.  The direction is arbitrary.  For testing, it may help to swap it.
+// No need for equality, no unit can hear itself.
+bool Clique::isOtherCliqueBetter(SystemID otherMasterID){ return masterID > otherMasterID; }
 
 void Clique::onMasterDropout() {
 	// Brute force: assume mastership.

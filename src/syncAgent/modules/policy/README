@@ -1,0 +1,7 @@
+Files here concern policy: behaviour of algorithm
+
+- dropping out: assuming mastership of clique when master not heard for a long time
+
+- master sync xmitting: how and how often a master xmits to avoid contention and yet prevent dropouts
+
+- merge sync xmitting: how and how often a unit xmits MergeSync to merge fished cliques

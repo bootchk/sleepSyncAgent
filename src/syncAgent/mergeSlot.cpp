@@ -11,7 +11,8 @@
 // to and from Merger Role
 
 void SyncAgent::toMergerRole(SyncMessage* msg){
-	// assert msg is master sync msg received in fishSlot
+	// msg received in fishSlot
+	assert(msg->type == MasterSync);
 	assert( role.isFisher());
 	assert(role.isFisher());
 	role.setMerger();
@@ -19,6 +20,7 @@ void SyncAgent::toMergerRole(SyncMessage* msg){
 	mergePolicy.restart();
 
 	// assert my schedule might have been adjusted
+	// assert I might have relinquished mastership
 	assert(role.isMerger());
 	ledLogger.toggleLED(3);
 }

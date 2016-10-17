@@ -24,7 +24,7 @@ bool SyncAgent::dispatchMsgReceivedInFishSlot(SyncMessage* msg){
 		/*
 		 * Intended catch: another clique's sync slot.
 		 */
-		doMasterSyncMsgInFishSlot((SyncMessage*) msg);
+		doMasterSyncMsgInFishSlot(msg);
 		// Stop listening: self can't handle more than one, or slot is busy with another merge
 		foundDesiredMessage = true;
 		break;

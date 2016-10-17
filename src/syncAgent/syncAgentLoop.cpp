@@ -22,8 +22,9 @@ void SyncAgent::loop(){
 
 	ledLogger.init();	// DEBUG
 	initLogging();
-	//logf("%llu\n", clique.getMasterID());libsleepSyncAgentM4.alibsleepSyncAgentM4.a
-	(void) SEGGER_RTT_printf(0, "Master ID: %llu\n", clique.getMasterID());
+
+	log("Master ID: \n");
+	logLongLong(clique.getMasterID());
 
 	assert(! isSyncingState);
 	assert(!radio->isPowerOn());

@@ -20,7 +20,8 @@ void RandomAlarmingCircularClock::wrap() {
 
 // Returns true if alarm goes off
 bool RandomAlarmingCircularClock::tickWithAlarm(){
-	assert(clockTick >= 0 && clockTick <= Policy::CountSyncPeriodsToChooseMasterSyncXmits-1);
+	// clockTick is unsigned => positive or zero
+	assert(clockTick <= Policy::CountSyncPeriodsToChooseMasterSyncXmits-1);
 
 	bool result = (clockTick == alarmTick);
 

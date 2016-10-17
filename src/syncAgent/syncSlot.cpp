@@ -182,7 +182,7 @@ bool SyncAgent::shouldTransmitSync() {
 
 
 void SyncAgent::sendMasterSync() {
-	log("Send sync\n");
+	log("Send MasterSync\n");
 	makeCommonMasterSyncMessage();
 	// assert common MasterSync message serialized into radio buffer
 	radio->transmitStaticSynchronously();	// blocks until transmit complete
@@ -333,7 +333,7 @@ void SyncAgent::logWorseSync() {
 		 * Since I am still alive, they should not be assuming mastership.
 		 * Could be assymetric communication (I can hear they, they cannot hear me.)
 		 */
-		log("Worse sync while self is master.");
+		log("Worse sync while self is master.\n");
 	}
 	else { // self is slave
 		/*
@@ -344,7 +344,7 @@ void SyncAgent::logWorseSync() {
 		// FUTURE: if msg.masterID < myID(), I should assume mastership instead of sender
 		// FUTURE: if msg.masterID > myID() record msg.masterID in my historyOfMasters
 		// so when I discover dropout, I will defer to msg.masterID
-		log("Worse sync while self is slave.");
+		log("Worse sync while self is slave.\n");
 	}
 }
 
