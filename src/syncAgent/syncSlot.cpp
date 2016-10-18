@@ -289,7 +289,7 @@ bool SyncAgent::doSyncMsgInSyncSlot(SyncMessage* msg){
 		// My Master could have fished another better clique and be MergeSyncing self
 		// Each Sync has an adjustment, could be zero or small (MasterSync) or larger (MergeSync)
 		log("Sync from master\n");
-		clique.schedule.adjustBySyncMsg(msg);
+		clique.changeBySyncMessage(msg);
 		dropoutMonitor.heardSync();
 		doesMsgKeepSynch = true;
 	}

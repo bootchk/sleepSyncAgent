@@ -5,21 +5,23 @@
 #include "policy/masterXmitSyncPolicy.h"
 
 /*
- * Clique in larger sense: a set of units on the same schedule having same master.
- * Knows:
+ *
+ * Clique in smaller sense, knows:
  * - master
  * - schedule
+ * - FUTURE: local, incomplete history of masters
  *
- * Clique in smaller sense: only my limited knowledge about the larger sense, not know:
+ * Clique in larger sense: a set of units on the same schedule having same master, knows:
  * - all members.
  * - complete history tree of masters of clique (only the masters on self's branch)
  */
 class Clique {
 private:
 	static SystemID masterID;	// self or other unit
+
 public:
-	static MasterXmitSyncPolicy masterXmitSyncPolicy;
 	static Schedule schedule;
+	static MasterXmitSyncPolicy masterXmitSyncPolicy;
 
 	static SystemID getMasterID() { return masterID; }
 	static void setSelfMastership();

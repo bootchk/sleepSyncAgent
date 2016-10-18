@@ -55,6 +55,7 @@ void Clique::initFromSyncMsg(SyncMessage* msg){
 
 
 void Clique::changeBySyncMessage(SyncMessage* msg) {
+	// assert in Sync or Fish slot
 	assert(msg->type == MasterSync || msg->type == MergeSync);
 	setOtherMastership(msg->masterID);
 	assert(!isSelfMaster()); // even if I was before

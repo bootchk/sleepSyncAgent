@@ -97,6 +97,7 @@ public:
 
 	static void rollPeriodForwardToNow();
 	static void adjustBySyncMsg(SyncMessage* msg);
+	static LongTime adjustedEndTime(DeltaTime senderDeltaToSyncPoint);
 	static DeltaTime thisSyncPeriodDuration();
 
 

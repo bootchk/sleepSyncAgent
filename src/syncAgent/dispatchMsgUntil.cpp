@@ -53,6 +53,7 @@ bool SyncAgent::dispatchMsgUntil(
 
 		switch (sleeper.getReasonForWake()) {
 		case MsgReceived:
+			sleeper.cancelTimeout();
 			didReceiveDesiredMsg = dispatchMsg(dispatchQueuedMsg);
 			break;	// switch
 

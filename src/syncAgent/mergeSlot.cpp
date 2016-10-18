@@ -13,7 +13,6 @@
 void SyncAgent::toMergerRole(SyncMessage* msg){
 	// msg received in fishSlot
 	assert(msg->type == MasterSync);
-	assert( role.isFisher());
 	assert(role.isFisher());
 	role.setMerger();
 	cliqueMerger.initFromMsg(msg);
