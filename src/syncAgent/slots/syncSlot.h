@@ -19,12 +19,14 @@ private:
 	static void doWorkMsg(WorkMessage* msg);
 	static bool doSyncMsg(SyncMessage* msg);	//MasterSync OR MergeSync
 
-	static bool isSyncFromBetterMaster(SyncMessage* msg);
-	static void changeMaster(SyncMessage* msg);
+
 	static void doMasterSyncSlot();
 	static void doSlaveSyncSlot();
 	static bool doMasterListenHalfSyncSlot(OSTime (*timeoutFunc)());
 	static void doIdleSlotRemainder();
+
+	static bool isSyncFromBetterMaster(SyncMessage* msg);
+	static void changeMaster(SyncMessage* msg);
 	static bool shouldTransmitSync();
 	static void sendMasterSync();
 	static void makeCommonMasterSyncMessage();

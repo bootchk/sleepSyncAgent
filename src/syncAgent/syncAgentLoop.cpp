@@ -80,7 +80,7 @@ void SyncAgent::doSyncPeriod() {
 	}
 	else {
 		// Fish every period
-		doFishSlot();
+		fishSlot.perform();
 		// continue and sleep until end of sync period
 	}
 	assert(!radio->isPowerOn());	// Low power for remainder of this sync period

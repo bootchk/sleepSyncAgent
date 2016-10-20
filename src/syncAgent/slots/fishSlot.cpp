@@ -1,6 +1,5 @@
 /*
- * SyncAgent methods used during THE fishSlot of my schedule.
- * See general notes at syncSlot.
+ * THE fishSlot of my schedule.
  *
  * Every unit can fish (if not busy merging.)
  * Fish for other cliques by listening.
@@ -8,14 +7,13 @@
 
 #include <cassert>
 
-#include "../syncAgent.h"
-
+#include "../globals.h"
+//#include "../syncAgent.h"
+#include "fishSlot.h"
 // #include "../../platform/mailbox.h"
 
 
-// FUTURE each type of slot should be its own class
-
-bool SyncAgent::dispatchMsgReceivedInFishSlot(SyncMessage* msg){
+bool FishSlot::dispatchMsgReceived(SyncMessage* msg){
 	bool foundDesiredMessage;
 
 	switch(msg->type) {
@@ -23,7 +21,7 @@ bool SyncAgent::dispatchMsgReceivedInFishSlot(SyncMessage* msg){
 		/*
 		 * Intended catch: another clique's sync slot.
 		 */
-		doMasterSyncMsgInFishSlot(msg);
+		doMasterSyncMsg(msg);
 		// Stop listening: self can't handle more than one, or slot is busy with another merge
 		foundDesiredMessage = true;
 		break;
@@ -56,7 +54,7 @@ bool SyncAgent::dispatchMsgReceivedInFishSlot(SyncMessage* msg){
 }
 
 
-void SyncAgent::doFishSlot() {
+void FishSlot::perform() {
 	// FUTURE: A fish slot need not be aligned with other slots, and different duration???
 
 	// Sleep ultra low-power across normally sleeping slots to start of fish slot
@@ -64,16 +62,16 @@ void SyncAgent::doFishSlot() {
 	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisFishSlotStart());
 
 
-	startFishSlot();
-	dispatchMsgUntil(
-			dispatchMsgReceivedInFishSlot,
+	start();
+	syncAgent.dispatchMsgUntil(
+			dispatchMsgReceived,
 			clique.schedule.deltaToThisFishSlotEnd);
 	assert(radio->isDisabledState());
-	endFishSlot();
+	end();
 }
 
 
-void SyncAgent::startFishSlot() {
+void FishSlot::start() {
 	radio->powerOnAndConfigure();
 	radio->configureXmitPower(8);
 	sleeper.clearReasonForWake();
@@ -82,7 +80,7 @@ void SyncAgent::startFishSlot() {
 }
 
 
-void SyncAgent::endFishSlot(){
+void FishSlot::end(){
 	/*
 	 * Conditions:
 	 * (no sync msg was heard and receiver still on)
@@ -99,8 +97,8 @@ void SyncAgent::endFishSlot(){
 }
 
 
-void SyncAgent::doMasterSyncMsgInFishSlot(SyncMessage* msg){
-	toMergerRole(msg);
+void FishSlot::doMasterSyncMsg(SyncMessage* msg){
+	syncAgent.toMergerRole(msg);
 	// assert isMergerRole
 	// assert (schedule changed AND self is merging my former clique)
 	// OR (schedule unchanged AND self is merging other clique)
@@ -111,7 +109,7 @@ void SyncAgent::doMasterSyncMsgInFishSlot(SyncMessage* msg){
 
 /*
  * FUTURE act on it even though we are out of sync
-void SyncAgent::doWorkMsgInFishSlot(SyncMessage msg) {
+void FishSlot::doWorkMsg(SyncMessage msg) {
 	// Relay to app
 	onWorkMsgCallback(msg);
 }
