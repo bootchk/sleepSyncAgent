@@ -67,8 +67,16 @@ bool SyncAgent::dispatchMsgUntil(
 		case None:
 		default:
 			// Unexpected reasonForWake or no IRQ handler set the reason
-			assert(false);
-			// Continue in loop and sleep again?
+			// FUTURE put this in some Handler to see?  But I already know what handlers are called.
+			//#include "app_util_platform.h"
+			// uint32_t ipsr = __get_IPSR();
+
+			// Insert this code to know that this DOES happen
+			// assert(false);
+
+			// For now the solution is: continue in loop and sleep again.
+			// assert the timeoutFunc() will eventually return zero and not sleep with reason==TimerExpired
+			{}
 		}
 		if (didReceiveDesiredMsg || didTimeout) break;	// while(true)
 	}

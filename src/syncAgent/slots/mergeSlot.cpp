@@ -5,7 +5,7 @@
  */
 #include <cassert>
 
-#include "syncAgent.h"
+#include "../syncAgent.h"
 
 
 // to and from Merger Role
@@ -62,6 +62,7 @@ void SyncAgent::doMergeSlot() {
 
 void SyncAgent::sendMergeSync() {
 	radio->powerOnAndConfigure();
+	radio->configureXmitPower(8);
 	cliqueMerger.makeMergeSync(serializer.outwardCommonSyncMsg);
 	serializer.serializeOutwardCommonSyncMessage();
 	assert(serializer.bufferIsSane());

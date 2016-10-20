@@ -94,6 +94,7 @@ void CliqueMerger::adjustBySyncMsg(SyncMessage* msg) {
 	 *
 	 * My sync slot is moving later, merge time must move earlier in schedule to stay at same wall time.
 	 */
+	// assert current slot is Sync
 	(void) msg;	// temporarily suppress warnings
 	assert(false);	// FUTURE, when more than two units.
 	assert(isActive);

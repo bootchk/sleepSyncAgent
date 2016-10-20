@@ -8,10 +8,9 @@
 
 #include <cassert>
 
-#include "syncAgent.h"
+#include "../syncAgent.h"
 
-#include "../platform/mailbox.h"
-#include "../platform/logger.h"
+// #include "../../platform/mailbox.h"
 
 
 // FUTURE each type of slot should be its own class
@@ -76,6 +75,7 @@ void SyncAgent::doFishSlot() {
 
 void SyncAgent::startFishSlot() {
 	radio->powerOnAndConfigure();
+	radio->configureXmitPower(8);
 	sleeper.clearReasonForWake();
 	radio->receiveStatic();		// DYNAMIC receiveBuffer, Radio::MaxMsgLength);
 	// assert can receive an event that wakes imminently: race to sleep

@@ -7,9 +7,9 @@
 
 #include <cassert>
 
-#include "../platform/mailbox.h"
+#include "../../platform/mailbox.h"
 
-#include "syncAgent.h"
+#include "../syncAgent.h"
 
 // FUTURE should only be visible to WorkSlot class
 
@@ -60,7 +60,10 @@ void SyncAgent::doWorkSlot() {
 
 void SyncAgent::startWorkSlot() {
 	// Prior SyncSlot may have offed radio
-	if (!radio->isPowerOn()) radio->powerOnAndConfigure();
+	if (!radio->isPowerOn()) {
+		radio->powerOnAndConfigure();
+		radio->configureXmitPower(8);
+	}
 
 	// Arbitrary design decision, xmit queued work at beginning of work slot
 	// FUTURE work should be transmitted in middle, guarded

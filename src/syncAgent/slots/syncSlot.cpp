@@ -23,11 +23,8 @@
  */
 
 #include <cassert>
-#include "../platform/uniqueID.h"
-#include "../platform/mailbox.h"
-#include "../platform/logger.h"
-
-#include "syncAgent.h"
+#include "../../platform/uniqueID.h"
+#include "../syncAgent.h"
 
 /*
  * Like other dispatchers, return true if heard message apropos to slot kind.
@@ -167,6 +164,7 @@ void SyncAgent::doSlaveSyncSlot() {
 void SyncAgent::startSyncSlot() {
 	// common to Master and Slave SyncSlot
 	radio->powerOnAndConfigure();
+	radio->configureXmitPower(8);
 	assert(radio->isPowerOn());
 }
 
@@ -317,9 +315,11 @@ bool SyncAgent::doSyncMsgInSyncSlot(SyncMessage* msg){
 
 
 void SyncAgent::changeMaster(SyncMessage* msg) {
+	// assert current slot is Sync
 	assert(msg->masterID != clique.getMasterID());
 
 	clique.changeBySyncMessage(msg);
+	// assert endOfSyncPeriod was changed
 
 	if (role.isMerger()) {
 		// Already merging an other clique, now merge other clique to updated sync slot time

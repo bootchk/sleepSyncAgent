@@ -15,6 +15,7 @@ Todo:
     - testing with many units
     - fleshing out corners of algorithm: dropping out, adjusting mergers in progress, etc. 
     - other platforms
+    - broadcast mesh:  relay sync to cliques that can't hear my master.  No addressing or routes, just hop count
 
 
 Characteristics of the algorithm:
@@ -38,11 +39,20 @@ Isolated: no unit is a gateway to a larger network, and the system does not have
 
 Platform independent:  platform layer isolates the algorithm from the RTOS and wireless stack.
 
+
+
+Discussion: it is not IoT, since there is no gateway and no Network time.  It is not a mesh network (keeping topology.)
+
+
+Performance:
+=
+
 Keeps in sync to about 0.2 mSec.
 
 Duty cycle (ratio of on to off) is about 1/100 or more, waking every few seconds or more.
 
-Discussion: it is not IoT, since there is no gateway and no Network time.  It is not a mesh network (keeping topology.)
+At 0dBm, communicates at distance no more than ???
+At -40dBm, communicates at distance no more than about one foot
 
 
 Architecture:
