@@ -29,46 +29,6 @@
 
 DropoutMonitor SyncSlot::dropoutMonitor;
 
-
-
-/*
- * Like other dispatchers, return true if heard message apropos to slot kind.
- *
- * If true, side effect is adjusting my sync.
- */
-bool SyncSlot::dispatchMsgReceived(SyncMessage* msg) {
-	// agnostic of role.isMaster or role.isSlave
-
-	bool isFoundSyncKeepingMsg = false;
-
-	switch(msg->type) {
-	case MasterSync:
-	case MergeSync:
-		isFoundSyncKeepingMsg = doSyncMsg((SyncMessage*) msg);
-		// Multiple syncs or sync
-
-		// FUTURE discard other queued messages
-		break;
-
-	case AbandonMastership:
-		doAbandonMastershipMsg((SyncMessage*) msg);
-		break;
-
-	case Work:
-		doWorkMsg((WorkMessage*) msg);
-		// FUTURE !!! msg is moved to work queue, not freed?
-		break;
-	}
-
-	// FUTURE use handle and assert(msgHandle==nullptr);	// callee freed memory and nulled handle, or just nulled handle
-	return isFoundSyncKeepingMsg;
-}
-
-
-
-
-
-
 /*
  * Transmit any sync in middle of slot.
  * Some literature refers to "guards" around the sync.
@@ -106,6 +66,14 @@ void SyncSlot::doMasterSyncSlot() {
 		// Keep listening for other better Masters.
 		// Result doesn't matter, slot is over and we proceed whether we heard sync keeping sync or not.
 		(void) doMasterListenHalfSyncSlot(clique.schedule.deltaToThisSyncSlotEnd);
+		/*
+		 * Transmit any sync in middle of slot.
+		 * Some literature refers to "guards" around the sync.
+		 * Syncing in middle has higher probability of being heard by drifted/skewed others.
+		 *
+		 * !!! The offset must be half the slot length, back to start of SyncPeriod
+		 */
+
 
 		// assert radio on or off
 	}
@@ -151,15 +119,65 @@ void SyncSlot::startSyncSlot() {
 	assert(radio->isPowerOn());
 }
 
+void SyncSlot::endSyncSlot() {
+	/*
+	 * This may be late, when message receive thread delays this.
+	 * Also, there could be a race to deliver message with this event.
+	 * FUTURE check for those cases.
+	 * Scheduling of subsequent events does not depend on timely this event.
+	 */
 
-#ifdef Obsolete
-void SyncSlot::xmitRoleAproposSync() {
-	// Assert self is in sync slot.
-	if (shouldTransmitSync()) {
-		transmitMasterSync();
+	// Radio is on or off.  If on, we timeout'd while receiving
+	if (radio->isPowerOn()) {
+		radio->stopReceive();
+		assert(radio->isDisabledState());	// receiveStatic() in next slot requires radio disabled.
 	}
+	// Radio still on or off
+	// We don't bother to turn it off since work slot follows and needs radio on.
+
+	// FUTURE we could do this elsewhere, e.g. start of sync slot so this doesn't delay the start of work slot
+	if (!clique.isSelfMaster())
+		checkMasterDroppedOut();
+
+	// assert radio on or off
+	// assert radio on => radio.isDisabledState()
 }
-#endif
+
+
+/*
+ * Like other dispatchers, return true if heard message apropos to slot kind.
+ *
+ * If true, side effect is adjusting my sync.
+ */
+bool SyncSlot::dispatchMsgReceived(SyncMessage* msg) {
+	// agnostic of role.isMaster or role.isSlave
+
+	bool isFoundSyncKeepingMsg = false;
+
+	switch(msg->type) {
+	case MasterSync:
+	case MergeSync:
+		isFoundSyncKeepingMsg = doSyncMsg((SyncMessage*) msg);
+		// Multiple syncs or sync
+
+		// FUTURE discard other queued messages
+		break;
+
+	case AbandonMastership:
+		doAbandonMastershipMsg((SyncMessage*) msg);
+		break;
+
+	case Work:
+		doWorkMsg((WorkMessage*) msg);
+		// FUTURE !!! msg is moved to work queue, not freed?
+		break;
+	}
+
+	// FUTURE use handle and assert(msgHandle==nullptr);	// callee freed memory and nulled handle, or just nulled handle
+	return isFoundSyncKeepingMsg;
+}
+
+
 
 bool SyncSlot::shouldTransmitSync() {
 	// Only master xmits FROM its sync slot
@@ -203,29 +221,6 @@ void SyncSlot::makeCommonMasterSyncMessage() {
 	assert(serializer.bufferIsSane());
 }
 
-void SyncSlot::endSyncSlot() {
-	/*
-	 * This may be late, when message receive thread delays this.
-	 * Also, there could be a race to deliver message with this event.
-	 * FUTURE check for those cases.
-	 * Scheduling of subsequent events does not depend on timely this event.
-	 */
-
-	// Radio is on or off.  If on, we timeout'd while receiving
-	if (radio->isPowerOn()) {
-		radio->stopReceive();
-		assert(radio->isDisabledState());	// receiveStatic() in next slot requires radio disabled.
-	}
-	// Radio still on or off
-	// We don't bother to turn it off since work slot follows and needs radio on.
-
-	// FUTURE we could do this elsewhere, e.g. start of sync slot so this doesn't delay the start of work slot
-	if (!clique.isSelfMaster())
-		checkMasterDroppedOut();
-
-	// assert radio on or off
-	// assert radio on => radio.isDisabledState()
-}
 
 
 void SyncSlot::checkMasterDroppedOut() {
@@ -234,13 +229,19 @@ void SyncSlot::checkMasterDroppedOut() {
 		dropoutMonitor.reset();
 		clique.onMasterDropout();
 	}
+}void SyncAgent::relayWorkToApp(WorkMessage* msg) {
+	/*
+	 * FUTURE
+	 * Alternatives are:
+	 * - queue to worktask (unblock it)
+	 * - onWorkMsgCallback(msg);  (callback)
+	 */
+	//TODO FUTURE relayWork
+	(void) msg;
 }
 
 
 // Handlers for messages received in sync slot: Sync, AbandonMastership, Work
-
-
-
 
 /*
  * Cases for sync messages:
@@ -384,13 +385,4 @@ void SyncSlot::doWorkMsg(WorkMessage* msg){
 }
 
 
-void SyncAgent::relayWorkToApp(WorkMessage* msg) {
-	/*
-	 * FUTURE
-	 * Alternatives are:
-	 * - queue to worktask (unblock it)
-	 * - onWorkMsgCallback(msg);  (callback)
-	 */
-	//TODO FUTURE relayWork
-	(void) msg;
-}
+

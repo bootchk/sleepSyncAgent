@@ -105,3 +105,14 @@ void SyncAgent::toFisherRole(){
 	ledLogger.toggleLED(3);
 }
 
+
+void SyncAgent::relayWorkToApp(WorkMessage* msg) {
+	/*
+	 * FUTURE
+	 * Alternatives are:
+	 * - queue to worktask (unblock it)
+	 * - onWorkMsgCallback(msg);  (callback)
+	 */
+	//TODO FUTURE relayWork
+	(void) msg;
+}
