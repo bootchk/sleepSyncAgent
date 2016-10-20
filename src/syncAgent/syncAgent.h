@@ -45,27 +45,16 @@ typedef bool (*DispatchFuncPtr)(SyncMessage *) ;
 
 class SyncAgent {
 
-public:
-	static void init( Radio* radio, void (*onWorkMsgQueued)() );
-	static void loop();
-
-private:
-
 // data members
+private:
 	static bool isSyncingState;
 	// DYNAMIC static uint8_t receiveBuffer[Radio::MaxMsgLength];
 	// FIXED: Radio owns fixed length buffer
-
-	// has-a, all singletons
-	static Clique clique;
-	static Sleeper sleeper;
 
 public:	// to SyncSlot mainly
 	static CliqueMerger cliqueMerger;
 	static Role role;
 private:
-
-	static Serializer serializer;
 	static PowerManager powerMgr;
 
 	static SyncSlot syncSlot;
@@ -75,8 +64,7 @@ private:
 
 	static LEDLogger ledLogger;
 
-	// Owned by app
-	static Radio* radio;
+	// TODO to MergeSlot
 	static void (*onWorkMsgQueuedCallback)();
 	// FUTURE static void (*onSyncingPausedCallback)();	// callback to app when syncing is paused
 
@@ -84,35 +72,31 @@ private:
 	static uint32_t countInvalidTypeReceives;
 	static uint32_t countInvalidCRCReceives;
 
+
+
 // methods
+public:
+	static void init( Radio* radio, void (*onWorkMsgQueued)() );
+	static void loop();
 
 	static void startSyncing();
 	static void doSyncPeriod();
-public:
-	// TODO belong here?
+
+	// TODO belong here? class SleepingDispatcher?
 	static bool dispatchMsgUntil(
 			DispatchFuncPtr,
 			OSTime (*func)());
+private:
+	static bool dispatchMsg(DispatchFuncPtr);
+
+public:
 	static void relayWorkToApp(WorkMessage* msg);
 
 	static void toMergerRole(SyncMessage* msg);
 	static void toFisherRole();
-private:
-	static bool dispatchMsg(DispatchFuncPtr);
-
-
-
-	// Merge over without event, as soon as xmit
-	// Merge slot only xmits, not receive messages
-
 
 	static void pauseSyncing();
 	static void doDyingBreath();
-
-	// transmissions
-	// Depending on OS, might be asynchronous (no waiting)
-	// TODO to SyncSlot
-	static void xmitRoleAproposSync();
 };
 
 /*

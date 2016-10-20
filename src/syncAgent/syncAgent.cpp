@@ -1,23 +1,19 @@
 
 #include <cassert>
 #include "syncAgent.h"
-
+#include "globals.h"
 
 
 // Static data members
 bool SyncAgent::isSyncingState = false;
 // DYNAMIC uint8_t SyncAgent::receiveBuffer[255];
 
-Clique SyncAgent::clique;
-CliqueMerger SyncAgent::cliqueMerger;
 
+CliqueMerger SyncAgent::cliqueMerger;
 Role SyncAgent::role;
 
-Serializer SyncAgent::serializer;
 PowerManager SyncAgent::powerMgr;
-Sleeper SyncAgent::sleeper;
 
-Radio* SyncAgent::radio;
 void (*SyncAgent::onWorkMsgQueuedCallback)();
 
 LEDLogger SyncAgent::ledLogger;	// DEBUG

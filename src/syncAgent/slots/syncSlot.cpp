@@ -25,6 +25,12 @@
 #include "../globals.h"
 #include "syncSlot.h"
 
+
+
+DropoutMonitor SyncSlot::dropoutMonitor;
+
+
+
 /*
  * Like other dispatchers, return true if heard message apropos to slot kind.
  *

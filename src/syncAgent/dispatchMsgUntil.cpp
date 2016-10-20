@@ -3,7 +3,7 @@
 
 #include "../platform/platform.h"
 #include "syncAgent.h"
-
+#include "globals.h"
 
 /*
  * Sleep until duration with radio on.

@@ -1,27 +1,14 @@
-/* MergeSlot of my schedule.
- *
- * Every unit can merge (after fishing catches another clique.)
- */
+
 #include <cassert>
 
-//#include "../syncAgent.h"
 #include "../globals.h"
 #include "mergeSlot.h"
 
-// to and from Merger Role
 
 
-
-/*
- * Merge slot
- *
- * Unique subclass of slot:
- * - xmit only, slot is not full length of other slots.
- * - not aligned with normally sleeping slots
- */
-
-
+// static data member
 MergePolicy MergeSlot::mergePolicy;
+
 
 void MergeSlot::perform() {
 	assert(!radio->isPowerOn());

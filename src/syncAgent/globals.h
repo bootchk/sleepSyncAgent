@@ -1,19 +1,26 @@
 
 #pragma once
 
-#include "../platform/platform.h"	// Radio, Sleeper, LEDLogger
 
-Radio* radio;
-Sleeper sleeper;
+
+/*
+ * Singletons.
+ * Global:
+ * - some are built on concurrent, peripheral devices
+ * - some are used by many slots.
+ * Formerly owned by SyncAgent.
+ */
+
+
+#include "../platform/platform.h"	// Radio, Sleeper, LEDLogger
+extern Radio* radio;
+extern Sleeper sleeper;
 
 #include "modules/clique.h"
-
-Clique clique;
+extern Clique clique;
 
 #include "syncAgent.h"
-
-SyncAgent syncAgent;
+extern SyncAgent syncAgent;
 
 #include "modules/serializer.h"
-
-Serializer serializer;
+extern Serializer serializer;

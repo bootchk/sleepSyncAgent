@@ -1,8 +1,10 @@
 
 
 #include <cassert>
-#include "syncAgent.h"
 #include "../platform/platform.h"
+#include "syncAgent.h"
+#include "globals.h"
+
 
 
 /*
