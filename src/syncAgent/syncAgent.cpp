@@ -9,7 +9,6 @@ bool SyncAgent::isSyncingState = false;
 // DYNAMIC uint8_t SyncAgent::receiveBuffer[255];
 
 Clique SyncAgent::clique;
-DropoutMonitor SyncAgent::dropoutMonitor;
 CliqueMerger SyncAgent::cliqueMerger;
 MergePolicy SyncAgent::mergePolicy;
 Role SyncAgent::role;
@@ -60,4 +59,30 @@ void SyncAgent::init(
 	assert(clique.isSelfMaster());
 	assert(!radio->isPowerOn());
 }
+
+
+void SyncAgent::pauseSyncing() {
+	/*
+	 * Not enough power for self to continue syncing.
+	 * Other units might still have power and assume mastership of my clique
+	 */
+
+	assert(!radio->isPowerOn());
+
+	// FUTURE if clique is probably not empty
+	if (clique.isSelfMaster()) doDyingBreath();
+	// else I am a slave, just drop out of clique, others may have enough power
+
+	// FUTURE onSyncingPausedCallback();	// Tell app
+}
+
+
+void SyncAgent::doDyingBreath() {
+	// Ask another unit in my clique to assume mastership.
+	// Might not be heard.
+	serializer.outwardCommonSyncMsg.makeAbandonMastership(myID());
+	// assert common SyncMessage serialized into radio buffer
+	radio->transmitStaticSynchronously();	// blocks until transmit complete
+}
+
 

@@ -1,19 +1,58 @@
 /*
- * SyncAgent methods used during THE workSlot of my schedule.
+ * THE workSlot of my schedule.
  * See general notes at syncSlot
- *
- * There is no onWorkWake: workSlot follows immediately after syncSlot
  */
 
 #include <cassert>
 
+// platform
+#include <logger.h>
+// FUTURE platform
 #include "../../platform/mailbox.h"
 
-#include "../syncAgent.h"
+#include "../globals.h"
+#include "workSlot.h"
 
-// FUTURE should only be visible to WorkSlot class
 
-bool SyncAgent::dispatchMsgReceivedInWorkSlot(SyncMessage* msg){
+
+void WorkSlot::perform() {
+	// assert work slot follows sync slot with no delay
+	assert(radio->isDisabledState());	// not xmit or rcv
+	start();	// might include a xmit
+	assert(!radio->isDisabledState());   // receiving other's work
+	syncAgent.dispatchMsgUntil(
+			dispatchMsgReceived,
+			clique.schedule.deltaToThisWorkSlotEnd);
+	assert(radio->isDisabledState());
+	end();
+	assert(!radio->isPowerOn());
+}
+
+
+void WorkSlot::start() {
+	// Prior SyncSlot may have offed radio
+	if (!radio->isPowerOn()) {
+		radio->powerOnAndConfigure();
+		radio->configureXmitPower(8);
+	}
+
+	// Arbitrary design decision, xmit queued work at beginning of work slot
+	// FUTURE work should be transmitted in middle, guarded
+	xmitAproposWork();
+
+	// Rcv work from others
+	assert(radio->isDisabledState());
+	sleeper.clearReasonForWake();
+	radio->receiveStatic();	//DYNAMIC receiveBuffer, Radio::MaxMsgLength);
+}
+
+void WorkSlot::end(){
+	radio->powerOff();
+}
+
+
+
+bool WorkSlot::dispatchMsgReceived(SyncMessage* msg){
 	bool foundDesiredMessage = false;
 
 	switch(msg->type) {
@@ -34,7 +73,7 @@ bool SyncAgent::dispatchMsgReceivedInWorkSlot(SyncMessage* msg){
 		break;
 	case Work:
 		// Usual: work message in sync with my clique.
-		doWorkMsgInWorkSlot((WorkMessage*) msg);
+		doWorkMsg((WorkMessage*) msg);
 		// FUTURE msg requeued, not freed
 		foundDesiredMessage = true;
 		break;
@@ -43,40 +82,7 @@ bool SyncAgent::dispatchMsgReceivedInWorkSlot(SyncMessage* msg){
 }
 
 
-
-void SyncAgent::doWorkSlot() {
-	// assert work slot follows sync slot with no delay
-	assert(radio->isDisabledState());	// not xmit or rcv
-	startWorkSlot();	// might include a xmit
-	assert(!radio->isDisabledState());   // receiving other's work
-	dispatchMsgUntil(
-			dispatchMsgReceivedInWorkSlot,
-			clique.schedule.deltaToThisWorkSlotEnd);
-	assert(radio->isDisabledState());
-	endWorkSlot();
-	assert(!radio->isPowerOn());
-}
-
-
-void SyncAgent::startWorkSlot() {
-	// Prior SyncSlot may have offed radio
-	if (!radio->isPowerOn()) {
-		radio->powerOnAndConfigure();
-		radio->configureXmitPower(8);
-	}
-
-	// Arbitrary design decision, xmit queued work at beginning of work slot
-	// FUTURE work should be transmitted in middle, guarded
-	xmitAproposWork();
-
-	// Rcv work from others
-	assert(radio->isDisabledState());
-	sleeper.clearReasonForWake();
-	radio->receiveStatic();	//DYNAMIC receiveBuffer, Radio::MaxMsgLength);
-}
-
-
-void SyncAgent::xmitAproposWork() {
+void WorkSlot::xmitAproposWork() {
 	// Assert self is in work slot.
 
 	// Other units might be contending
@@ -88,7 +94,7 @@ void SyncAgent::xmitAproposWork() {
 }
 
 
-void SyncAgent::xmitWork(){
+void WorkSlot::xmitWork(){
 	void * workPayload = unqueueWorkMsgFromApp();
 	// FUTURE use payload to make on-air message
 	(void) workPayload;
@@ -99,24 +105,8 @@ void SyncAgent::xmitWork(){
 }
 
 
-void SyncAgent::endWorkSlot(){
-	radio->powerOff();
-}
 
-
-void SyncAgent::doWorkMsgInWorkSlot(WorkMessage* msg) {
-	relayWorkToApp(msg);
-}
-
-
-void SyncAgent::relayWorkToApp(WorkMessage* msg) {
-	/*
-	 * FUTURE
-	 * Alternatives are:
-	 * - queue to worktask (unblock it)
-	 * - onWorkMsgCallback(msg);  (callback)
-	 */
-	//TODO FUTURE relayWork
-	(void) msg;
+void WorkSlot::doWorkMsg(WorkMessage* msg) {
+	syncAgent.relayWorkToApp(msg);
 }
 

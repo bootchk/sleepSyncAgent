@@ -65,8 +65,8 @@ void SyncAgent::loop(){
  */
 void SyncAgent::doSyncPeriod() {
 
-	doSyncSlot();
-	doWorkSlot();
+	syncSlot.perform();
+	workSlot.perform();
 	assert(!radio->isPowerOn());	// Low power until next slot
 
 	// Variation: next event (if any) occurs within a large sleeping time (lots of 'slots')

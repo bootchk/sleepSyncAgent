@@ -1,10 +1,6 @@
 
 /*
- * SyncAgent methods used during THE sync slot of my schedule.
- *
- * General notes about slot implementations.
- * Slot is not a class.
- * All methods belong to SyncAgent, private.
+ * THE sync slot of my schedule.
  *
  * Each Clique is on a Schedule that includes a sync slot.
  * See general notes in Schedule.
@@ -26,12 +22,15 @@
 #include "../../platform/uniqueID.h"
 #include "../syncAgent.h"
 
+#include "../globals.h"
+#include "syncSlot.h"
+
 /*
  * Like other dispatchers, return true if heard message apropos to slot kind.
  *
  * If true, side effect is adjusting my sync.
  */
-bool SyncAgent::dispatchMsgReceivedInSyncSlot(SyncMessage* msg) {
+bool SyncSlot::dispatchMsgReceived(SyncMessage* msg) {
 	// agnostic of role.isMaster or role.isSlave
 
 	bool isFoundSyncKeepingMsg = false;
@@ -39,18 +38,18 @@ bool SyncAgent::dispatchMsgReceivedInSyncSlot(SyncMessage* msg) {
 	switch(msg->type) {
 	case MasterSync:
 	case MergeSync:
-		isFoundSyncKeepingMsg = doSyncMsgInSyncSlot((SyncMessage*) msg);
+		isFoundSyncKeepingMsg = doSyncMsg((SyncMessage*) msg);
 		// Multiple syncs or sync
 
 		// FUTURE discard other queued messages
 		break;
 
 	case AbandonMastership:
-		doAbandonMastershipMsgInSyncSlot((SyncMessage*) msg);
+		doAbandonMastershipMsg((SyncMessage*) msg);
 		break;
 
 	case Work:
-		doWorkMsgInSyncSlot((WorkMessage*) msg);
+		doWorkMsg((WorkMessage*) msg);
 		// FUTURE !!! msg is moved to work queue, not freed?
 		break;
 	}
@@ -61,29 +60,6 @@ bool SyncAgent::dispatchMsgReceivedInSyncSlot(SyncMessage* msg) {
 
 
 
-void SyncAgent::pauseSyncing() {
-	/*
-	 * Not enough power for self to continue syncing.
-	 * Other units might still have power and assume mastership of my clique
-	 */
-
-	assert(!radio->isPowerOn());
-
-	// FUTURE if clique is probably not empty
-	if (clique.isSelfMaster()) doDyingBreath();
-	// else I am a slave, just drop out of clique, others may have enough power
-
-	// FUTURE onSyncingPausedCallback();	// Tell app
-}
-
-
-void SyncAgent::doDyingBreath() {
-	// Ask another unit in my clique to assume mastership.
-	// Might not be heard.
-	serializer.outwardCommonSyncMsg.makeAbandonMastership(myID());
-	// assert common SyncMessage serialized into radio buffer
-	radio->transmitStaticSynchronously();	// blocks until transmit complete
-}
 
 
 
@@ -95,7 +71,7 @@ void SyncAgent::doDyingBreath() {
  * !!! The offset must be half the slot length, back to start of SyncPeriod
  */
 
-void SyncAgent::doSyncSlot() {
+void SyncSlot::perform() {
 	startSyncSlot();	// radio on
 	if (shouldTransmitSync())
 		doMasterSyncSlot();
@@ -105,7 +81,7 @@ void SyncAgent::doSyncSlot() {
 	endSyncSlot();
 }
 
-void SyncAgent::doMasterSyncSlot() {
+void SyncSlot::doMasterSyncSlot() {
 	// Transmit sync in middle
 
 	bool heardSyncKeepingSync = doMasterListenHalfSyncSlot(clique.schedule.deltaToThisSyncSlotMiddle);
@@ -130,11 +106,11 @@ void SyncAgent::doMasterSyncSlot() {
 }
 
 
-bool SyncAgent::doMasterListenHalfSyncSlot(OSTime (*timeoutFunc)()) {
+bool SyncSlot::doMasterListenHalfSyncSlot(OSTime (*timeoutFunc)()) {
 	sleeper.clearReasonForWake();
 	radio->receiveStatic();
-	bool result = dispatchMsgUntil(
-					dispatchMsgReceivedInSyncSlot,
+	bool result = syncAgent.dispatchMsgUntil(
+					dispatchMsgReceived,
 					timeoutFunc
 					);
 
@@ -143,25 +119,26 @@ bool SyncAgent::doMasterListenHalfSyncSlot(OSTime (*timeoutFunc)()) {
 }
 
 // Sleep with radio off for remainder of sync slot
-void SyncAgent::doIdleSlotRemainder() {
+void SyncSlot::doIdleSlotRemainder() {
 	assert(!radio->isPowerOn());
 	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisSyncSlotEnd());
 }
 
 
-void SyncAgent::doSlaveSyncSlot() {
+void SyncSlot::doSlaveSyncSlot() {
 	// listen for sync the whole period
 	sleeper.clearReasonForWake();
 	radio->receiveStatic(); // DYNAMIC (receiveBuffer, Radio::MaxMsgLength);
 	// This assertion is time sensitive, can't stay in production code
 	assert(!radio->isDisabledState()); // listening for other's sync
-	dispatchMsgUntil(
-				dispatchMsgReceivedInSyncSlot,
+	// TODO not using result?
+	syncAgent.dispatchMsgUntil(
+				dispatchMsgReceived,
 				clique.schedule.deltaToThisSyncSlotEnd);
 }
 
 
-void SyncAgent::startSyncSlot() {
+void SyncSlot::startSyncSlot() {
 	// common to Master and Slave SyncSlot
 	radio->powerOnAndConfigure();
 	radio->configureXmitPower(8);
@@ -170,7 +147,7 @@ void SyncAgent::startSyncSlot() {
 
 
 #ifdef Obsolete
-void SyncAgent::xmitRoleAproposSync() {
+void SyncSlot::xmitRoleAproposSync() {
 	// Assert self is in sync slot.
 	if (shouldTransmitSync()) {
 		transmitMasterSync();
@@ -178,14 +155,14 @@ void SyncAgent::xmitRoleAproposSync() {
 }
 #endif
 
-bool SyncAgent::shouldTransmitSync() {
+bool SyncSlot::shouldTransmitSync() {
 	// Only master xmits FROM its sync slot
 	// and then with a coin-flip, for collision avoidance.
 	return clique.isSelfMaster() && clique.masterXmitSyncPolicy.shouldXmitSync();
 }
 
 
-void SyncAgent::sendMasterSync() {
+void SyncSlot::sendMasterSync() {
 	log("Send MasterSync\n");
 	makeCommonMasterSyncMessage();
 	// assert common MasterSync message serialized into radio buffer
@@ -194,7 +171,7 @@ void SyncAgent::sendMasterSync() {
 }
 
 
-void SyncAgent::makeCommonMasterSyncMessage() {
+void SyncSlot::makeCommonMasterSyncMessage() {
 	/*
 	 * Make the common SyncMessage:
 	 * - of type MasterSync
@@ -220,7 +197,7 @@ void SyncAgent::makeCommonMasterSyncMessage() {
 	assert(serializer.bufferIsSane());
 }
 
-void SyncAgent::endSyncSlot() {
+void SyncSlot::endSyncSlot() {
 	/*
 	 * This may be late, when message receive thread delays this.
 	 * Also, there could be a race to deliver message with this event.
@@ -245,7 +222,7 @@ void SyncAgent::endSyncSlot() {
 }
 
 
-void SyncAgent::checkMasterDroppedOut() {
+void SyncSlot::checkMasterDroppedOut() {
 	if (dropoutMonitor.check()) {
 		log("Master dropped out\n");
 		dropoutMonitor.reset();
@@ -275,7 +252,7 @@ void SyncAgent::checkMasterDroppedOut() {
 /*
  * Returns true if sync message keeps my sync (from current or new master of my clique.)
  */
-bool SyncAgent::doSyncMsgInSyncSlot(SyncMessage* msg){
+bool SyncSlot::doSyncMsg(SyncMessage* msg){
 	// assert SyncMsg is subtype MasterSync OR MergeSync
 	// assert sync not from self (xmitter and receiver are exclusive)
 	// assert self.isMaster || self.isSlave i.e. this code doesn't require any particular role
@@ -314,27 +291,27 @@ bool SyncAgent::doSyncMsgInSyncSlot(SyncMessage* msg){
 }
 
 
-void SyncAgent::changeMaster(SyncMessage* msg) {
+void SyncSlot::changeMaster(SyncMessage* msg) {
 	// assert current slot is Sync
 	assert(msg->masterID != clique.getMasterID());
 
 	clique.changeBySyncMessage(msg);
 	// assert endOfSyncPeriod was changed
 
-	if (role.isMerger()) {
+	if (syncAgent.role.isMerger()) {
 		// Already merging an other clique, now merge other clique to updated sync slot time
-		cliqueMerger.adjustBySyncMsg(msg);
+		syncAgent.cliqueMerger.adjustBySyncMsg(msg);
 	}
 }
 
 
-bool SyncAgent::isSyncFromBetterMaster(SyncMessage* msg){
+bool SyncSlot::isSyncFromBetterMaster(SyncMessage* msg){
 	bool result = clique.isOtherCliqueBetter(msg->masterID);
 	return result;
 }
 
 
-void SyncAgent::logWorseSync() {
+void SyncSlot::logWorseSync() {
 	// FUTURE: for now this is just logging, in future will record history
 	if (clique.isSelfMaster()) {
 		/*
@@ -361,7 +338,7 @@ void SyncAgent::logWorseSync() {
 // Abandon mastership
 
 
-void SyncAgent::doAbandonMastershipMsgInSyncSlot(SyncMessage* msg){
+void SyncSlot::doAbandonMastershipMsg(SyncMessage* msg){
 	/*
 	 * My clique is still in sync, but master is dropout.
 	 *
@@ -378,13 +355,13 @@ void SyncAgent::doAbandonMastershipMsgInSyncSlot(SyncMessage* msg){
 
 // Work in SyncSlot
 
-void SyncAgent::doWorkMsgInSyncSlot(WorkMessage* msg){
+void SyncSlot::doWorkMsg(WorkMessage* msg){
 	// Received in wrong slot, from out-of-sync clique
 
 	/*
 	 * Design decision: if work should only be done in sync with others, change this to ignore the msg.
 	 */
-	relayWorkToApp(msg);
+	syncAgent.relayWorkToApp(msg);
 
 	/*
 	 * FUTURE: treat this like fishing, we caught an out-of-sync clique.
@@ -401,3 +378,13 @@ void SyncAgent::doWorkMsgInSyncSlot(WorkMessage* msg){
 }
 
 
+void SyncAgent::relayWorkToApp(WorkMessage* msg) {
+	/*
+	 * FUTURE
+	 * Alternatives are:
+	 * - queue to worktask (unblock it)
+	 * - onWorkMsgCallback(msg);  (callback)
+	 */
+	//TODO FUTURE relayWork
+	(void) msg;
+}

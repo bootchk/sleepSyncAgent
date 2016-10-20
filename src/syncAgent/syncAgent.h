@@ -12,6 +12,9 @@
 #include "modules/role.h"
 #include "modules/serializer.h"
 
+#include "slots/syncSlot.h"
+#include "slots/workSlot.h"
+
 /*
  * SyncAgent manages sleep synchronization for wireless network.
  * System is low-power, sleeping much of the time.
@@ -53,13 +56,20 @@ private:
 
 	// has-a, all singletons
 	static Clique clique;
-	static DropoutMonitor dropoutMonitor;
+	static Sleeper sleeper;
+
+public:	// to SyncSlot mainly
 	static CliqueMerger cliqueMerger;
-	static MergePolicy mergePolicy;
 	static Role role;
+private:
+	static MergePolicy mergePolicy;
+
 	static Serializer serializer;
 	static PowerManager powerMgr;
-	static Sleeper sleeper;
+
+	static SyncSlot syncSlot;
+	static WorkSlot workSlot;
+
 
 	static LEDLogger ledLogger;
 
@@ -76,68 +86,54 @@ private:
 
 	static void startSyncing();
 	static void doSyncPeriod();
+public:
+	// TODO belong here?
 	static bool dispatchMsgUntil(
 			DispatchFuncPtr,
 			OSTime (*func)());
+	static void relayWorkToApp(WorkMessage* msg);
+private:
 	static bool dispatchMsg(DispatchFuncPtr);
 
-	// start of slots
-	static void startSyncSlot();
+
+
 	// work slot starts without an event
 	static void startFishSlot();
 
 	// end of slots
-	static void endSyncSlot();
-	static void endWorkSlot();
+
 	static void endFishSlot();
 	// Merge over without event, as soon as xmit
 
 
 	// dispatch
-	static bool dispatchMsgReceivedInSyncSlot(SyncMessage* msg);
-	static bool dispatchMsgReceivedInWorkSlot(SyncMessage* msg);
+
 	static bool dispatchMsgReceivedInFishSlot(SyncMessage* msg);
 	// Merge slot only xmits, not receive messages
 
 	// sync
-	static void doSyncSlot();
-	static void doMasterSyncSlot();
-	static void doSlaveSyncSlot();
-	static bool doMasterListenHalfSyncSlot(OSTime (*timeoutFunc)());
-	static void doIdleSlotRemainder();
-	static bool shouldTransmitSync();
-	static void sendMasterSync();
-	static void makeCommonMasterSyncMessage();
-	static void logWorseSync();
-	static void checkMasterDroppedOut();
 
-
-	// work
-	static void doWorkSlot();
-	static void startWorkSlot();
-	static void relayWorkToApp(WorkMessage* msg);
 
 	// fish
 	static void doFishSlot();
 
-	static bool isSyncFromBetterMaster(SyncMessage* msg);
-	static void changeMaster(SyncMessage* msg);
+
 	static void pauseSyncing();
 	static void doDyingBreath();
 
 	// transmissions
 	// Depending on OS, might be asynchronous (no waiting)
 	static void xmitRoleAproposSync();
-	static void xmitAproposWork();
-	static void xmitWork();
+
 
 	// msg handlers: messageType x slotType, with omissions
-	static bool doSyncMsgInSyncSlot(SyncMessage* msg);	//MasterSync OR MergeSync
+
 
 	static void doMasterSyncMsgInFishSlot(SyncMessage* msg);
-	static void doAbandonMastershipMsgInSyncSlot(SyncMessage* msg);
-	static void doWorkMsgInSyncSlot(WorkMessage* msg);
-	static void doWorkMsgInWorkSlot(WorkMessage* msg);
+
+
+
+
 
 	// merge
 	static void toMergerRole(SyncMessage* msg);
