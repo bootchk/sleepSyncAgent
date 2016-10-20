@@ -72,8 +72,8 @@ void SyncAgent::doSyncPeriod() {
 	// Variation: next event (if any) occurs within a large sleeping time (lots of 'slots')
 	if (role.isMerger()) {
 		// avoid collision
-		if (mergePolicy.shouldScheduleMerge())  {
-			doMergeSlot();
+		if (mergeSlot.mergePolicy.shouldScheduleMerge())  {
+			mergeSlot.perform();
 			// We might have quit role Merger
 		}
 		// else continue and sleep until end of sync period

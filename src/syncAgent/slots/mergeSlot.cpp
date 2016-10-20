@@ -1,35 +1,15 @@
-/* SyncAgent methods used during a mergeSlot of my schedule.
- * See general notes at syncSlot.
+/* MergeSlot of my schedule.
  *
  * Every unit can merge (after fishing catches another clique.)
  */
 #include <cassert>
 
-#include "../syncAgent.h"
-
+//#include "../syncAgent.h"
+#include "../globals.h"
+#include "mergeSlot.h"
 
 // to and from Merger Role
 
-void SyncAgent::toMergerRole(SyncMessage* msg){
-	// msg received in fishSlot
-	assert(msg->type == MasterSync);
-	assert(role.isFisher());
-	role.setMerger();
-	cliqueMerger.initFromMsg(msg);
-	mergePolicy.restart();
-
-	// assert my schedule might have been adjusted
-	// assert I might have relinquished mastership
-	assert(role.isMerger());
-	ledLogger.toggleLED(3);
-}
-
-void SyncAgent::endMergerRole(){
-	role.setFisher();
-	// role does not know about cliqueMerger
-	cliqueMerger.deactivate();
-	ledLogger.toggleLED(3);
-}
 
 
 /*
@@ -41,18 +21,22 @@ void SyncAgent::endMergerRole(){
  */
 
 
-void SyncAgent::doMergeSlot() {
+MergePolicy MergeSlot::mergePolicy;
+
+void MergeSlot::perform() {
 	assert(!radio->isPowerOn());
-	assert(role.isMerger());
-	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisMergeStart(cliqueMerger.getOffsetToMergee()));
+	assert(syncAgent.role.isMerger());
+	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisMergeStart(
+			syncAgent.cliqueMerger.getOffsetToMergee()));
 	// assert time aligned with middle of a mergee sync slots (same wall time as fished sync from mergee.)
 	sendMergeSync();
 
 	if (mergePolicy.checkCompletionOfMergerRole()){
-		endMergerRole();
+		mergePolicy.restart();
+		syncAgent.toFisherRole();
 		// assert next syncSlot will schedule fishSlot
-		assert(!role.isMerger());
-		assert(role.isFisher());
+		assert(!syncAgent.role.isMerger());
+		assert(syncAgent.role.isFisher());
 	}
 	// else continue in role Merger
 
@@ -60,10 +44,10 @@ void SyncAgent::doMergeSlot() {
 }
 
 
-void SyncAgent::sendMergeSync() {
+void MergeSlot::sendMergeSync() {
 	radio->powerOnAndConfigure();
 	radio->configureXmitPower(8);
-	cliqueMerger.makeMergeSync(serializer.outwardCommonSyncMsg);
+	syncAgent.cliqueMerger.makeMergeSync(serializer.outwardCommonSyncMsg);
 	serializer.serializeOutwardCommonSyncMessage();
 	assert(serializer.bufferIsSane());
 	log("Send MergeSync\n");

@@ -15,6 +15,7 @@
 #include "slots/syncSlot.h"
 #include "slots/workSlot.h"
 #include "slots/fishSlot.h"
+#include "slots/mergeSlot.h"
 
 /*
  * SyncAgent manages sleep synchronization for wireless network.
@@ -63,7 +64,6 @@ public:	// to SyncSlot mainly
 	static CliqueMerger cliqueMerger;
 	static Role role;
 private:
-	static MergePolicy mergePolicy;
 
 	static Serializer serializer;
 	static PowerManager powerMgr;
@@ -71,7 +71,7 @@ private:
 	static SyncSlot syncSlot;
 	static WorkSlot workSlot;
 	static FishSlot fishSlot;
-
+	static MergeSlot mergeSlot;
 
 	static LEDLogger ledLogger;
 
@@ -94,7 +94,9 @@ public:
 			DispatchFuncPtr,
 			OSTime (*func)());
 	static void relayWorkToApp(WorkMessage* msg);
+
 	static void toMergerRole(SyncMessage* msg);
+	static void toFisherRole();
 private:
 	static bool dispatchMsg(DispatchFuncPtr);
 
@@ -109,17 +111,8 @@ private:
 
 	// transmissions
 	// Depending on OS, might be asynchronous (no waiting)
+	// TODO to SyncSlot
 	static void xmitRoleAproposSync();
-
-
-	// msg handlers: messageType x slotType, with omissions
-
-
-	// merge
-
-	static void endMergerRole();
-	static void doMergeSlot();
-	static void sendMergeSync();
 };
 
 /*

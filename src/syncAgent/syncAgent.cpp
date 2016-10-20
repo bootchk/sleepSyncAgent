@@ -10,7 +10,7 @@ bool SyncAgent::isSyncingState = false;
 
 Clique SyncAgent::clique;
 CliqueMerger SyncAgent::cliqueMerger;
-MergePolicy SyncAgent::mergePolicy;
+
 Role SyncAgent::role;
 
 Serializer SyncAgent::serializer;
@@ -85,4 +85,25 @@ void SyncAgent::doDyingBreath() {
 	radio->transmitStaticSynchronously();	// blocks until transmit complete
 }
 
+
+
+void SyncAgent::toMergerRole(SyncMessage* msg){
+	// msg received in fishSlot
+	assert(msg->type == MasterSync);
+	assert(role.isFisher());
+	role.setMerger();
+	cliqueMerger.initFromMsg(msg);
+
+	// assert my schedule might have been adjusted
+	// assert I might have relinquished mastership
+	assert(role.isMerger());
+	ledLogger.toggleLED(3);
+}
+
+void SyncAgent::toFisherRole(){
+	role.setFisher();
+	// role does not know about cliqueMerger
+	cliqueMerger.deactivate();
+	ledLogger.toggleLED(3);
+}
 
