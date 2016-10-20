@@ -1,0 +1,15 @@
+There is no Slot superclass.
+
+The public API is just perform().
+
+Most slots use the globals.
+
+Most slots do start(), dispatchUntil(), stop() where start() and stop() setup the Radio.
+
+Most slots listen and/or send.
+
+Ordering of slots is known by SyncAgent.loop()
+
+Timing of the slots is known by Schedule.
+
+Some slots change the Schedule and Role owned by SyncAgent.

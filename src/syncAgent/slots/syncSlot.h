@@ -2,7 +2,7 @@
 #pragma once
 
 #include "../modules/message.h"
-
+#include "../modules/policy/dropoutMonitor.h"
 
 class SyncSlot {
 	// owns

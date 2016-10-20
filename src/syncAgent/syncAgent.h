@@ -2,15 +2,10 @@
 #pragma once
 
 #include "../augment/powerManager.h"
-#include "../platform/platform.h"	// Radio, Sleeper, LEDLogger
 
 #include "modules/message.h"
-#include "modules/clique.h"
-#include "modules/policy/dropoutMonitor.h"
-#include "modules/policy/mergePolicy.h"
 #include "modules/cliqueMerger.h"
 #include "modules/role.h"
-#include "modules/serializer.h"
 
 #include "slots/syncSlot.h"
 #include "slots/workSlot.h"
@@ -64,14 +59,13 @@ private:
 
 	static LEDLogger ledLogger;
 
-	// TODO to MergeSlot
+	// TODO to WorkSlot
 	static void (*onWorkMsgQueuedCallback)();
 	// FUTURE static void (*onSyncingPausedCallback)();	// callback to app when syncing is paused
 
 	static uint32_t countValidReceives;
 	static uint32_t countInvalidTypeReceives;
 	static uint32_t countInvalidCRCReceives;
-
 
 
 // methods
@@ -82,7 +76,7 @@ public:
 	static void startSyncing();
 	static void doSyncPeriod();
 
-	// TODO belong here? class SleepingDispatcher?
+	// FUTURE belong here? class SleepingDispatcher?
 	static bool dispatchMsgUntil(
 			DispatchFuncPtr,
 			OSTime (*func)());
@@ -95,6 +89,7 @@ public:
 	static void toMergerRole(SyncMessage* msg);
 	static void toFisherRole();
 
+private:
 	static void pauseSyncing();
 	static void doDyingBreath();
 };

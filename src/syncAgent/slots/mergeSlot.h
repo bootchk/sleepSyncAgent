@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include "../modules/policy/mergePolicy.h"
+
 /* MergeSlot of my schedule.
  *
  * Every unit can merge (after fishing catches another clique.)
