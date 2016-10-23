@@ -229,16 +229,8 @@ void SyncSlot::checkMasterDroppedOut() {
 		dropoutMonitor.reset();
 		clique.onMasterDropout();
 	}
-}void SyncAgent::relayWorkToApp(WorkMessage* msg) {
-	/*
-	 * FUTURE
-	 * Alternatives are:
-	 * - queue to worktask (unblock it)
-	 * - onWorkMsgCallback(msg);  (callback)
-	 */
-	//TODO FUTURE relayWork
-	(void) msg;
 }
+
 
 
 // Handlers for messages received in sync slot: Sync, AbandonMastership, Work
@@ -307,7 +299,7 @@ void SyncSlot::changeMaster(SyncMessage* msg) {
 
 	if (syncAgent.role.isMerger()) {
 		// Already merging an other clique, now merge other clique to updated sync slot time
-		syncAgent.cliqueMerger.adjustBySyncMsg(msg);
+		syncAgent.cliqueMerger.adjustMergerBySyncMsg(msg);
 	}
 }
 

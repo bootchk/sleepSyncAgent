@@ -21,7 +21,7 @@ void MergeSlot::perform() {
 	if (mergePolicy.checkCompletionOfMergerRole()){
 		mergePolicy.restart();
 		syncAgent.toFisherRole();
-		// assert next syncSlot will schedule fishSlot
+		// assert next SyncPeriod will schedule FishSlot
 		assert(!syncAgent.role.isMerger());
 		assert(syncAgent.role.isFisher());
 	}

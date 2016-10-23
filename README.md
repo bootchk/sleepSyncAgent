@@ -44,6 +44,23 @@ Platform independent:  platform layer isolates the algorithm from the RTOS and w
 Discussion: it is not IoT, since there is no gateway and no Network time.  It is not a mesh network (keeping topology.)
 
 
+Goals and Applications
+=
+
+One goal is to eliminate batteries and instead use energy harvesting (usually solar, since it has much more energy than any other harvested source.)  Eliminate batteries since they are:
+
+    short-lived (two years)
+    toxic (lithium, cadmium, etc.)
+    expensive
+    
+Silicon and software will continue to get cheaper, smaller, and less toxic, while batteries won't.
+    
+Applications:
+
+    art
+    solar yard lights that strobe like runway strobelights
+    smart bomblets
+
 Performance:
 =
 

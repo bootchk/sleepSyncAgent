@@ -67,8 +67,21 @@ void SyncAgent::loop(){
  */
 void SyncAgent::doSyncPeriod() {
 
+	// syncSlot first, always
 	syncSlot.perform();
-	workSlot.perform();
+
+	#ifdef FUTURE
+	// Variation: work slot may be merging
+	if (role.isWorkMerger()) {
+		workSlot.performWorkMerger();
+	}
+	else {
+		workSlot.performWork();
+	}
+#endif
+
+	workSlot.performWork();
+
 	assert(!radio->isPowerOn());	// Low power until next slot
 
 	// Variation: next event (if any) occurs within a large sleeping time (lots of 'slots')

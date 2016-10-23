@@ -35,7 +35,7 @@ public:
 	static void initFromMsg(SyncMessage* msg);
 	static void deactivate();
 
-	static void adjustBySyncMsg(SyncMessage* msg);
+	static void adjustMergerBySyncMsg(SyncMessage* msg);
 
 	static SyncMessage& makeMergeSync(SyncMessage& msg);
 

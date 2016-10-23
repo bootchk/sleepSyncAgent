@@ -1,7 +1,4 @@
-/*
- * THE workSlot of my schedule.
- * See general notes at syncSlot
- */
+
 
 #include <cassert>
 
@@ -15,11 +12,108 @@
 
 
 
-void WorkSlot::perform() {
-	// assert work slot follows sync slot with no delay
-	assert(radio->isDisabledState());	// not xmit or rcv
-	start();	// might include a xmit
-	assert(!radio->isDisabledState());   // receiving other's work
+// static methods
+namespace {
+
+#ifdef FUTURE
+void toWorkMerger(SyncMessage* msg) {
+	syncAgent.role.setWorkMerger();
+	syncAgent.cliqueMerger.initFromMsg(msg);
+}
+
+void sleepUntilWorkMerger(){
+
+	// Calculate timeout same as for any other merge
+	sleeper.sleepUntilEventWithTimeout(
+			clique.schedule.deltaToThisMergeStart(
+						syncAgent.cliqueMerger.getOffsetToMergee()));
+}
+
+void xmitWorkMerger(){
+
+}
+
+#endif
+
+void sleepUntilWorkSendingTime(){
+	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisWorkSlotMiddle());
+}
+
+void sleepUntilEndWorkSlot(){
+	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisWorkSlotEnd());
+}
+
+
+
+void startReceive() {
+	// Prior SyncSlot may have offed radio
+	if (!radio->isPowerOn()) {
+		radio->powerOnAndConfigure();
+		radio->configureXmitPower(8);
+	}
+
+	// Rcv work from others
+	assert(radio->isDisabledState());
+	sleeper.clearReasonForWake();
+	radio->receiveStatic();	//DYNAMIC receiveBuffer, Radio::MaxMsgLength);
+}
+
+// Message handling
+
+
+
+
+void doMasterSyncMsg(SyncMessage* msg){
+	if (clique.isOtherCliqueBetter(msg->masterID)) {
+		// join other clique, all my cohorts will also
+		// TODO
+	}
+	else {
+		// Other clique worse
+
+		if (syncAgent.role.isMerger()) {
+			// Already merging another clique into my clique.
+
+		}
+		else {
+			// TODO assertrole is Fisher
+			//toWorkMerger(msg);
+		}
+	}
+
+	log("Heard MasterSync in work slot\n");
+
+}
+void doMergeSyncMsg(){
+	/*
+	 */
+	log("Heard MergeSync in work slot\n");
+}
+
+void doAbandonMastershipMsg(){
+	/*
+	 * Unusual: Another clique's sync slot at same time as my work slot.
+	 * The unit we heard is abandoning.
+	 * There could be other units in its clique we want to merge.
+	 * For now do nothing, and assume we will hear any the other units later.
+	 */
+}
+
+void doWorkMsg(WorkMessage* msg) {
+	syncAgent.relayWorkToApp(msg);
+	// FUTURE msg requeued, not freed
+	// TODO led log
+}
+
+
+
+} // namespace
+
+
+void WorkSlot::performReceivingWork(){
+	// Listen entire period
+	startReceive();
+	assert(!radio->isDisabledState());
 	syncAgent.dispatchMsgUntil(
 			dispatchMsgReceived,
 			clique.schedule.deltaToThisWorkSlotEnd);
@@ -28,60 +122,93 @@ void WorkSlot::perform() {
 	assert(!radio->isPowerOn());
 }
 
+/*
+ * Xmit may not succeed (contention), is not acked.
+ */
+void WorkSlot::performSendingWork(){
+	// assert is work queued
+	assert(!radio->isPowerOn());
+	sleepUntilWorkSendingTime();
+	radio->powerOnAndConfigure();
+	sendWork();
+	radio->powerOff();
+	sleepUntilEndWorkSlot();
+	assert(!radio->isPowerOn());
+}
 
-void WorkSlot::start() {
-	// Prior SyncSlot may have offed radio
-	if (!radio->isPowerOn()) {
-		radio->powerOnAndConfigure();
-		radio->configureXmitPower(8);
+
+// assert work slot follows sync slot with no delay
+
+
+void WorkSlot::performWork() {
+	assert(radio->isDisabledState());	// not xmit or rcv
+
+	// Choose kind of WorkSlot
+	if ( isQueuedWorkMsgFromApp() ) {
+		performSendingWork();
+	}
+	else {
+		performReceivingWork();
 	}
 
-	// Arbitrary design decision, xmit queued work at beginning of work slot
-	// FUTURE work should be transmitted in middle, guarded
-	xmitAproposWork();
-
-	// Rcv work from others
-	assert(radio->isDisabledState());
-	sleeper.clearReasonForWake();
-	radio->receiveStatic();	//DYNAMIC receiveBuffer, Radio::MaxMsgLength);
+	assert(!radio->isPowerOn());
 }
+
+
+#ifdef FUTURE
+void WorkSlot::performWorkMerger() {
+	// Act as Merger because self caught another clique in prior WorkSlot
+	// Sleep most of slot, only waking to merge.
+
+	assert(radio->isDisabledState());	// not xmit or rcv
+
+	sleepUntilWorkMerger();
+	xmitWorkMerger();
+	sleepUntilEndWorkSlot();
+
+	start();
+	assert(!radio->isDisabledState());   // receiving other's work
+	syncAgent.dispatchMsgUntil(
+			dispatchMsgReceived,
+			clique.schedule.deltaToThisWorkSlotEnd);
+	assert(radio->isDisabledState());
+	end();
+	assert(!radio->isPowerOn());
+}
+#endif
+
+
+
 
 void WorkSlot::end(){
 	radio->powerOff();
 }
 
 
-
+// TODO WorkMessage
 bool WorkSlot::dispatchMsgReceived(SyncMessage* msg){
-	bool foundDesiredMessage = false;
-
 	switch(msg->type) {
 	case MasterSync:
+		doMasterSyncMsg(msg);
+		break;
 	case MergeSync:
-		/* Unusual: Another clique's sync slot at same time as my work slot.
-		 * For now, ignore.  Assume fishing will find this other clique, or clocks drift.
-		 * Alternative: merge other clique from within former work slot?
-		 * doSyncMsgInWorkSlot(msg);
-		 */
-		log("Heard MasterSync or MergeSync in work slot\n");
+		doMergeSyncMsg();
 		break;
 	case AbandonMastership:
-		/*
-		 * Unusual: Another clique's sync slot at same time as my work slot.
-		 * For now ignore.  ??? doAbandonMastershipMsgInWorkSlot(msg);
-		 */
+		doAbandonMastershipMsg();
 		break;
 	case Work:
 		// Usual: work message in sync with my clique.
+		// TODO casting?
 		doWorkMsg((WorkMessage*) msg);
-		// FUTURE msg requeued, not freed
-		foundDesiredMessage = true;
 		break;
 	}
-	return foundDesiredMessage;
+
+	// Since a WorkSlot is like a FishingSlot, it continues listening for entire slot
+	return false;	// meaning: don't stop listening
 }
 
-
+#ifdef OBS
 void WorkSlot::xmitAproposWork() {
 	// Assert self is in work slot.
 
@@ -92,9 +219,9 @@ void WorkSlot::xmitAproposWork() {
 		xmitWork();
 	}
 }
+#endif
 
-
-void WorkSlot::xmitWork(){
+void WorkSlot::sendWork(){
 	void * workPayload = unqueueWorkMsgFromApp();
 	// FUTURE use payload to make on-air message
 	(void) workPayload;
@@ -106,7 +233,6 @@ void WorkSlot::xmitWork(){
 
 
 
-void WorkSlot::doWorkMsg(WorkMessage* msg) {
-	syncAgent.relayWorkToApp(msg);
-}
+
+
 

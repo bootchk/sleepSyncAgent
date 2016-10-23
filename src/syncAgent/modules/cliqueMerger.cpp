@@ -87,18 +87,24 @@ void CliqueMerger::initMergeOtherClique(){
 }
 
 
-void CliqueMerger::adjustBySyncMsg(SyncMessage* msg) {
+void CliqueMerger::adjustMergerBySyncMsg(SyncMessage* msg) {
 	/*
-	 * This unit role isMerger but heard a sync message in syncSlot that adjusts this units schedule.
+	 * This unit's role isMerger (cliqueMerger.isActive)
+	 * Heard a sync message in syncSlot that adjusts this units schedule.
 	 * Make similar adjustment to this CliqueMerger, so that any MergeSync sent is at the correct time.
 	 *
-	 * My sync slot is moving later, merge time must move earlier in schedule to stay at same wall time.
+	 * My sync slot is moving, merge time must move to stay at same wall time (to hit the sync slot of mergee.)
 	 */
 	// assert current slot is Sync
+	// assert msg is MasterSync (small offset) or MergeSync (large offset)
+	// assert endOfSyncPeriod was changed, it now is my new end of sync period
+
 	(void) msg;	// temporarily suppress warnings
 	assert(false);	// FUTURE, when more than two units.
 	assert(isActive);
-	// TODO FUTURE fix
+
+	// The new next sync point is not at the old one before this msg adjusted endSyncPoint.
+	DeltaTime deltaStartSyncPeriodToNewNextSyncPoint = owningClique->schedule.halfSlotDuration() + msg->deltaToNextSyncPoint;
 	// For now, do nothing, and xmit MergeSyncs at wrong time
 
 	// offsetToMergee -= msg->deltaToNextSyncPoint;

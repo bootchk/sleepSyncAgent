@@ -132,21 +132,28 @@ LongTime Schedule::adjustedEndTime(DeltaTime senderDeltaToSyncPoint) {
 DeltaTime  Schedule::deltaNowToNextSyncPoint() {
 	return longClock.clampedTimeDifferenceFromNow(timeOfNextSyncPoint());
 }
+
+DeltaTime Schedule::deltaToThisSyncSlotMiddle(){
+	return longClock.clampedTimeDifferenceFromNow(timeOfThisSyncSlotMiddle());
+}
 DeltaTime Schedule::deltaToThisSyncSlotEnd(){
 	return longClock.clampedTimeDifferenceFromNow(timeOfThisSyncSlotEnd());
 }
-DeltaTime Schedule::deltaToThisSyncSlotMiddle(){
-	return longClock.clampedTimeDifferenceFromNow(timeOfThisSyncSlotMiddle());
+
+DeltaTime Schedule::deltaToThisWorkSlotMiddle(){
+	return longClock.clampedTimeDifferenceFromNow(timeOfThisWorkSlotMiddle());
 }
 DeltaTime Schedule::deltaToThisWorkSlotEnd(){
 	return longClock.clampedTimeDifferenceFromNow(timeOfThisWorkSlotEnd());
 }
+
 DeltaTime Schedule::deltaToThisFishSlotStart(){
 	return longClock.clampedTimeDifferenceFromNow(timeOfThisFishSlotStart());
 }
 DeltaTime Schedule::deltaToThisFishSlotEnd(){
 	return longClock.clampedTimeDifferenceFromNow(timeOfThisFishSlotEnd());
 }
+
 DeltaTime Schedule::deltaToThisMergeStart(DeltaTime offset){
 	return longClock.clampedTimeDifferenceFromNow(timeOfThisMergeStart(offset));
 }
@@ -171,9 +178,10 @@ LongTime Schedule::timeOfNextSyncPoint() {
 
 // Start of period and start of syncSlot coincide.
 // FUTURE: Choice of sync slot at start of period is arbitrary, allow it to be anywhere in period?
-LongTime Schedule::timeOfThisSyncSlotMiddle() { return startTimeOfSyncPeriod + (SlotDuration/2); }
+LongTime Schedule::timeOfThisSyncSlotMiddle() { return startTimeOfSyncPeriod + halfSlotDuration(); }
 LongTime Schedule::timeOfThisSyncSlotEnd() { return startTimeOfSyncPeriod + SlotDuration; }
 
+LongTime Schedule::timeOfThisWorkSlotMiddle() { return startTimeOfSyncPeriod + SlotDuration + halfSlotDuration(); }
 LongTime Schedule::timeOfThisWorkSlotEnd() { return startTimeOfSyncPeriod + 2 * SlotDuration; }
 
 

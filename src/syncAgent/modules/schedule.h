@@ -100,6 +100,7 @@ public:
 	static LongTime adjustedEndTime(DeltaTime senderDeltaToSyncPoint);
 	static DeltaTime thisSyncPeriodDuration();
 
+	static DeltaTime halfSlotDuration() { return SlotDuration / 2 ; }
 
 	/*
 	 * Deltas from past time to now.
@@ -117,8 +118,10 @@ public:
 	static DeltaTime deltaNowToNextSyncPoint();
 	// deltas to slots
 	// OBSOLETE static DeltaTime deltaToThisSyncSlotStart();
-	static DeltaTime deltaToThisSyncSlotEnd();
 	static DeltaTime deltaToThisSyncSlotMiddle();
+	static DeltaTime deltaToThisSyncSlotEnd();
+
+	static DeltaTime deltaToThisWorkSlotMiddle();
 	static DeltaTime deltaToThisWorkSlotEnd();
 
 	static DeltaTime deltaToThisFishSlotStart();
@@ -132,10 +135,14 @@ public:
 	static LongTime timeOfNextSyncPoint();
 	// slot times
 	// static LongTime timeOfNextSyncSlotStart();	// Of next period
-	static LongTime timeOfThisSyncSlotEnd();	// Of this period
 	static LongTime timeOfThisSyncSlotMiddle();
+	static LongTime timeOfThisSyncSlotEnd();	// Of this period
+
+	static LongTime timeOfThisWorkSlotMiddle();
 	static LongTime timeOfThisWorkSlotEnd();
+
 	static LongTime timeOfThisFishSlotStart();
 	static LongTime timeOfThisFishSlotEnd();
+
 	static LongTime timeOfThisMergeStart(DeltaTime offset);
 };
