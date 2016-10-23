@@ -84,7 +84,7 @@ private:
 	static bool dispatchMsg(DispatchFuncPtr);
 
 public:
-	static void relayWorkToApp(WorkMessage* msg);
+	static void relayWorkToApp(SyncMessage* msg);
 
 	static void toMergerRole(SyncMessage* msg);
 	static void toFisherRole();

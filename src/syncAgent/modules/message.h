@@ -21,9 +21,12 @@
  * application level type of message, carried as payload in radio messages
  *
  * Subtypes of type Sync, but not separate classes
- * - MergeSync, large adjustment
- * - MasterSync, small adjustment
- * - AbandonMastership, adjustment is unused
+ * - MergeSync, large offset
+ * - MasterSync, small offset
+ * - AbandonMastership, offset is unused
+ * - Work, offset is work type
+ *
+ * For now, the Work subtype also carries MasterID, and also helps achieve sync
  */
 
 
@@ -62,13 +65,7 @@ public:
 		masterID = aMasterID;
 	}
 
-#ifdef OBSOLETE
-	bool isOffsetSync() {
-		// i.e. used for merge sync
-		bool result = deltaToNextSyncPoint > 0;
-		return result;
-	}
-#endif
+
 
 	// Dying breath message from master which is power failing.  deltaToNextSyncPoint is moot.
 	void makeAbandonMastership(SystemID aMasterID) { init(AbandonMastership, 0, aMasterID); }
@@ -104,6 +101,16 @@ public:
 	}
 };
 
+#ifdef OBSOLETE
+	bool isOffsetSync() {
+		// i.e. used for merge sync
+		bool result = deltaToNextSyncPoint > 0;
+		return result;
+	}
+#endif
+
+#ifdef FUTURE
+Distinct class for Work????
 
 // Messages used by app, relayed by SyncAgent
 class WorkMessage{
@@ -115,5 +122,6 @@ public:
 		type = Work;
 	};
 };
+#endif
 
 

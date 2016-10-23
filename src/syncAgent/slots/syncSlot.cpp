@@ -168,7 +168,7 @@ bool SyncSlot::dispatchMsgReceived(SyncMessage* msg) {
 		break;
 
 	case Work:
-		doWorkMsg((WorkMessage*) msg);
+		doWorkMsg(msg);
 		// FUTURE !!! msg is moved to work queue, not freed?
 		break;
 	}
@@ -261,7 +261,7 @@ bool SyncSlot::doSyncMsg(SyncMessage* msg){
 	// Most likely case first
 	if (clique.isMyMaster(msg->masterID)) {
 		// My Master could have fished another better clique and be MergeSyncing self
-		// Each Sync has an adjustment, could be zero or small (MasterSync) or larger (MergeSync)
+		// Each Sync has an offset, could be zero or small (MasterSync) or larger (MergeSync)
 		log("Sync from master\n");
 		clique.changeBySyncMessage(msg);
 		dropoutMonitor.heardSync();
@@ -354,7 +354,7 @@ void SyncSlot::doAbandonMastershipMsg(SyncMessage* msg){
 
 // Work in SyncSlot
 
-void SyncSlot::doWorkMsg(WorkMessage* msg){
+void SyncSlot::doWorkMsg(SyncMessage* msg){
 	// Received in wrong slot, from out-of-sync clique
 
 	/*
@@ -374,6 +374,7 @@ void SyncSlot::doWorkMsg(WorkMessage* msg){
 	 * (if Work messages don't contain MasterID and Offset?)
 	 * I might need to schedule a fish for it in my last Sleeping slot.
 	 */
+	// TODO work
 }
 
 

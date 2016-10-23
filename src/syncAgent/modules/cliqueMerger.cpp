@@ -55,6 +55,7 @@ void CliqueMerger::initMergeMyClique(SyncMessage* msg){
 	// calculate delta from current schedule
 	setOffsetToMergee(owningClique->schedule.deltaNowToNextSyncPoint());
 
+	// FUTURE migrate this outside and return result to indicate it should be done
 	// After using current clique above, change my clique (new master and new schedule)
 	owningClique->changeBySyncMessage(msg);
 

@@ -99,9 +99,11 @@ void FishSlot::end(){
 
 void FishSlot::doMasterSyncMsg(SyncMessage* msg){
 	syncAgent.toMergerRole(msg);
-	// assert isMergerRole
-	// assert (schedule changed AND self is merging my former clique)
-	// OR (schedule unchanged AND self is merging other clique)
+	assert(syncAgent.role.isMerger());
+	/*
+	 * assert (schedule changed AND self is merging my former clique)
+	 * OR (schedule unchanged AND self is merging other clique)
+	 */
 	// assert my schedule might have changed
 }
 

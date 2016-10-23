@@ -16,7 +16,7 @@ private:
 	static bool dispatchMsgReceived(SyncMessage* msg);
 
 	static void doAbandonMastershipMsg(SyncMessage* msg);
-	static void doWorkMsg(WorkMessage* msg);
+	static void doWorkMsg(SyncMessage* msg);
 	static bool doSyncMsg(SyncMessage* msg);	//MasterSync OR MergeSync
 
 

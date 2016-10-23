@@ -85,6 +85,8 @@ void SyncAgent::doDyingBreath() {
 
 
 
+// Merger and Fisher are duals
+
 void SyncAgent::toMergerRole(SyncMessage* msg){
 	// msg received in fishSlot
 	assert(msg->type == MasterSync);
@@ -94,6 +96,7 @@ void SyncAgent::toMergerRole(SyncMessage* msg){
 
 	// assert my schedule might have been adjusted
 	// assert I might have relinquished mastership
+	// assert I might have joined another clique
 	assert(role.isMerger());
 	ledLogger.toggleLED(3);
 }
@@ -106,7 +109,9 @@ void SyncAgent::toFisherRole(){
 }
 
 
-void SyncAgent::relayWorkToApp(WorkMessage* msg) {
+
+
+void SyncAgent::relayWorkToApp(SyncMessage* msg) {
 	/*
 	 * FUTURE
 	 * Alternatives are:
@@ -115,4 +120,5 @@ void SyncAgent::relayWorkToApp(WorkMessage* msg) {
 	 */
 	//TODO FUTURE relayWork
 	(void) msg;
+	ledLogger.toggleLED(1);
 }

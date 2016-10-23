@@ -15,25 +15,7 @@
 // static methods
 namespace {
 
-#ifdef FUTURE
-void toWorkMerger(SyncMessage* msg) {
-	syncAgent.role.setWorkMerger();
-	syncAgent.cliqueMerger.initFromMsg(msg);
-}
 
-void sleepUntilWorkMerger(){
-
-	// Calculate timeout same as for any other merge
-	sleeper.sleepUntilEventWithTimeout(
-			clique.schedule.deltaToThisMergeStart(
-						syncAgent.cliqueMerger.getOffsetToMergee()));
-}
-
-void xmitWorkMerger(){
-
-}
-
-#endif
 
 void sleepUntilWorkSendingTime(){
 	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisWorkSlotMiddle());
@@ -58,19 +40,33 @@ void startReceive() {
 	radio->receiveStatic();	//DYNAMIC receiveBuffer, Radio::MaxMsgLength);
 }
 
+
+
+
 // Message handling
-
-
 
 
 void doMasterSyncMsg(SyncMessage* msg){
 	if (clique.isOtherCliqueBetter(msg->masterID)) {
-		// join other clique, all my cohorts will also
-		// TODO
+		// join other clique, all my cohorts will hear same msg and likewise join other clique.
+		clique.changeBySyncMessage(msg);
 	}
 	else {
-		// Other clique worse
-
+		/*
+		 * Other clique worse.
+		 *
+		 * By duality, other clique will hear my work in their SyncSlot (if I send work often enough).
+		 *
+		 * This design gives responsibility for syncing to the other clique
+		 * (when it hears my work in it's SyncSlot.)
+		 *
+		 * An alternative design is for this clique to xmit a MergeSync,
+		 * either from WorkSlot or the normally sleeping slot just after
+		 * (which would be into the WorkSlot of other clique.)
+		 */
+	}
+#ifdef FUTURE
+Alternative design: this cliques merges inferior clique.
 		if (syncAgent.role.isMerger()) {
 			// Already merging another clique into my clique.
 
@@ -80,13 +76,17 @@ void doMasterSyncMsg(SyncMessage* msg){
 			//toWorkMerger(msg);
 		}
 	}
+#endif
 
 	log("Heard MasterSync in work slot\n");
 
 }
 void doMergeSyncMsg(){
 	/*
+	 * Another clique thinks this is SyncSlot of some clique.
+	 * For now, ignore it.
 	 */
+	// TODO some clique may be not in range of my clique, i.e. need SyncRelay here
 	log("Heard MergeSync in work slot\n");
 }
 
@@ -99,7 +99,8 @@ void doAbandonMastershipMsg(){
 	 */
 }
 
-void doWorkMsg(WorkMessage* msg) {
+void doWorkMsg(SyncMessage* msg) {
+	assert(msg->type == Work);
 	syncAgent.relayWorkToApp(msg);
 	// FUTURE msg requeued, not freed
 	// TODO led log
@@ -112,6 +113,7 @@ void doWorkMsg(WorkMessage* msg) {
 
 void WorkSlot::performReceivingWork(){
 	// Listen entire period
+	// Receive work OR sync (similar to fishing.)
 	startReceive();
 	assert(!radio->isDisabledState());
 	syncAgent.dispatchMsgUntil(
@@ -126,6 +128,9 @@ void WorkSlot::performReceivingWork(){
  * Xmit may not succeed (contention), is not acked.
  */
 void WorkSlot::performSendingWork(){
+	// Sleep radio off for all but middle, when we send
+	// Since not listening, not fishing
+
 	// assert is work queued
 	assert(!radio->isPowerOn());
 	sleepUntilWorkSendingTime();
@@ -138,10 +143,14 @@ void WorkSlot::performSendingWork(){
 
 
 // assert work slot follows sync slot with no delay
-
+/*
+ * Sending and receiving work are mutually exclusive.
+ *
+ * Contention to send means may fail.
+ */
 
 void WorkSlot::performWork() {
-	assert(radio->isDisabledState());	// not xmit or rcv
+	assert(radio->isDisabledState());
 
 	// Choose kind of WorkSlot
 	if ( isQueuedWorkMsgFromApp() ) {
@@ -155,6 +164,75 @@ void WorkSlot::performWork() {
 }
 
 
+
+
+
+
+void WorkSlot::end(){
+	radio->powerOff();
+}
+
+
+bool WorkSlot::dispatchMsgReceived(SyncMessage* msg){
+	switch(msg->type) {
+	case MasterSync:
+		doMasterSyncMsg(msg);
+		break;
+	case MergeSync:
+		doMergeSyncMsg();
+		break;
+	case AbandonMastership:
+		doAbandonMastershipMsg();
+		break;
+	case Work:
+		// Usual: work message in sync with my clique.
+		// For now, WorkMessage is subclass of SyncMessage
+		doWorkMsg(msg);
+		break;
+	}
+
+	// Since a WorkSlot is like a FishingSlot, it continues listening
+	return false;	// meaning: don't stop listening
+}
+
+
+
+void WorkSlot::sendWork(){
+	void * workPayload = unqueueWorkMsgFromApp();
+	// FUTURE use payload to make on-air message
+	(void) workPayload;
+	// TODO work
+	// FUTURE serializer.outwardCommonWorkMsg.make();
+	freeWorkMsg(workPayload);
+	// assert common WorkMessage serialized into radio buffer
+	radio->transmitStaticSynchronously();	// blocks until transmit complete
+}
+
+
+
+#ifdef FUTURE
+
+Possible code to perform merges from a WorkSlot
+
+
+void toWorkMerger(SyncMessage* msg) {
+	syncAgent.role.setWorkMerger();
+	syncAgent.cliqueMerger.initFromMsg(msg);
+}
+
+void sleepUntilWorkMerger(){
+
+	// Calculate timeout same as for any other merge
+	sleeper.sleepUntilEventWithTimeout(
+			clique.schedule.deltaToThisMergeStart(
+						syncAgent.cliqueMerger.getOffsetToMergee()));
+}
+
+void xmitWorkMerger(){
+
+}
+
+#endif
 #ifdef FUTURE
 void WorkSlot::performWorkMerger() {
 	// Act as Merger because self caught another clique in prior WorkSlot
@@ -177,37 +255,6 @@ void WorkSlot::performWorkMerger() {
 }
 #endif
 
-
-
-
-void WorkSlot::end(){
-	radio->powerOff();
-}
-
-
-// TODO WorkMessage
-bool WorkSlot::dispatchMsgReceived(SyncMessage* msg){
-	switch(msg->type) {
-	case MasterSync:
-		doMasterSyncMsg(msg);
-		break;
-	case MergeSync:
-		doMergeSyncMsg();
-		break;
-	case AbandonMastership:
-		doAbandonMastershipMsg();
-		break;
-	case Work:
-		// Usual: work message in sync with my clique.
-		// TODO casting?
-		doWorkMsg((WorkMessage*) msg);
-		break;
-	}
-
-	// Since a WorkSlot is like a FishingSlot, it continues listening for entire slot
-	return false;	// meaning: don't stop listening
-}
-
 #ifdef OBS
 void WorkSlot::xmitAproposWork() {
 	// Assert self is in work slot.
@@ -220,19 +267,5 @@ void WorkSlot::xmitAproposWork() {
 	}
 }
 #endif
-
-void WorkSlot::sendWork(){
-	void * workPayload = unqueueWorkMsgFromApp();
-	// FUTURE use payload to make on-air message
-	(void) workPayload;
-	// FUTURE serializer.outwardCommonWorkMsg.make();
-	freeWorkMsg(workPayload);
-	// assert common WorkMessage serialized into radio buffer
-	radio->transmitStaticSynchronously();	// blocks until transmit complete
-}
-
-
-
-
 
 
