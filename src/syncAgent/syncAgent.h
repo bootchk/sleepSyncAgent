@@ -48,7 +48,7 @@ private:
 
 public:	// to SyncSlot mainly
 	static CliqueMerger cliqueMerger;
-	static Role role;
+	static MergerFisherRole role;
 private:
 	static PowerManager powerMgr;
 
@@ -87,6 +87,7 @@ public:
 	static void relayWorkToApp(SyncMessage* msg);
 
 	static void toMergerRole(SyncMessage* msg);
+	static void mangleWorkMsg(SyncMessage* msg);
 	static void toFisherRole();
 
 private:

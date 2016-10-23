@@ -129,6 +129,7 @@ public:
 
 	static DeltaTime deltaToThisMergeStart(DeltaTime offset);
 
+	static DeltaTime deltaFromWorkMiddleToEndSyncPeriod();
 	/*
 	 *  Times
 	 */

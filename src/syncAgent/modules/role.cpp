@@ -1,5 +1,6 @@
 #include "role.h"
 
-// Methods defined in role.h
+// Method members are defined in role.h
 
-RoleType Role::role;
+// static data member
+RoleType MergerFisherRole::role;

@@ -303,7 +303,7 @@ void SyncSlot::changeMaster(SyncMessage* msg) {
 	}
 }
 
-
+// FUTURE eliminate
 bool SyncSlot::isSyncFromBetterMaster(SyncMessage* msg){
 	bool result = clique.isOtherCliqueBetter(msg->masterID);
 	return result;
@@ -358,23 +358,43 @@ void SyncSlot::doWorkMsg(SyncMessage* msg){
 	// Received in wrong slot, from out-of-sync clique
 
 	/*
-	 * Design decision: if work should only be done in sync with others, change this to ignore the msg.
+	 * Design decision:
+	 * Work is done even out of sync with others.
+	 * Alternatively, don't do work that is out of sync.  Change this to ignore the msg if from inferior clique.
 	 */
 	syncAgent.relayWorkToApp(msg);
 
 	/*
-	 * FUTURE: treat this like fishing, we caught an out-of-sync clique.
-	 *
-	 * Design discussion:
+	 * Design: (see "duality" in WorkSlot)
 	 * My SyncSlot aligns with other's WorkSlot => other's SyncSlot aligns with my last SleepingSlot.
 	 * So eventually I would fish in my lastSleepingSlot and find other clique.
-	 * But the merger comes sooner if we don't waste the info we just found.
-	 * But it has complications:
-	 * since I only heard a Work msg, I don't necessarily know whether other clique is better,
-	 * (if Work messages don't contain MasterID and Offset?)
+	 * But merger comes sooner if we don't waste info we just found.
+	 *
 	 * I might need to schedule a fish for it in my last Sleeping slot.
 	 */
-	// TODO work
+	if (clique.isOtherCliqueBetter(msg->masterID)) {
+		/*
+		 * Self is inferior.
+		 * Join other clique.
+		 * Other members of my clique should (and with high probably, will) do the same.
+		 *
+		 * Don't become a Merger and merge my old clique into superior clique,
+		 * because that requires sending MergeSync at a displaced time in my new Schedule's SyncSlot.
+		 * Any such merging would also contend with superior other's work slot.
+		 */
+		syncAgent.mangleWorkMsg(msg);
+		clique.changeBySyncMessage(msg);
+	}
+	else {
+		/*
+		 * Self is superior.
+		 * Other clique will continue to send work in my SyncSlot.
+		 * But other should hear my master's MasterSync in its work slot, and join my clique.
+		 */
+		// FUTURE schedule to fish in my last sleeping slot, so I can become a merger.
+		// But many of my cohort may also do this.
+		// Only the master should do this.
+	}
 }
 
 

@@ -14,6 +14,8 @@
  * Clique in larger sense: a set of units on the same schedule having same master, knows:
  * - all members.
  * - complete history tree of masters of clique (only the masters on self's branch)
+ *
+ * This only implements the smaller sense.
  */
 class Clique {
 private:
@@ -36,7 +38,11 @@ public:
 	// Clique is losing member that was Master
 	static void onMasterDropout();
 
-	// Clique is changing from heard SyncMessage
+	/*
+	 * Change clique from heard SyncMessage:
+	 * - master <= SyncMessage
+	 * - schedule <= offset of SyncMessage
+	 */
 	static void changeBySyncMessage(SyncMessage* msg);
 
 	// static void initFromSyncMsg(SyncMessage* msg);

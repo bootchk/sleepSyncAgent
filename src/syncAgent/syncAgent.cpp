@@ -10,7 +10,7 @@ bool SyncAgent::isSyncingState = false;
 
 
 CliqueMerger SyncAgent::cliqueMerger;
-Role SyncAgent::role;
+MergerFisherRole SyncAgent::role;
 
 PowerManager SyncAgent::powerMgr;
 
@@ -88,8 +88,9 @@ void SyncAgent::doDyingBreath() {
 // Merger and Fisher are duals
 
 void SyncAgent::toMergerRole(SyncMessage* msg){
-	// msg received in fishSlot
-	assert(msg->type == MasterSync);
+	// msg received in fishSlot is MasterSync
+	// msg received in syncSlot is Work (mangled)
+	assert(msg->type == MasterSync || msg->type == Work);
 	assert(role.isFisher());
 	role.setMerger();
 	cliqueMerger.initFromMsg(msg);
@@ -101,6 +102,7 @@ void SyncAgent::toMergerRole(SyncMessage* msg){
 	ledLogger.toggleLED(3);
 }
 
+
 void SyncAgent::toFisherRole(){
 	role.setFisher();
 	// role does not know about cliqueMerger
@@ -108,7 +110,26 @@ void SyncAgent::toFisherRole(){
 	ledLogger.toggleLED(3);
 }
 
-
+/*
+ * Hack
+ *
+ * Fabricate an offset for a Work message, destroying previous offset.
+ * Makes the Work message act as a MasterSync from its sender.
+ *
+ * !!! Work message offset field usually contains "WorkType".
+ * Work message does contain a MasterID.
+ * Since WorkSlot is in known time relationship with SyncSlot,
+ * we can fabricate an offset to SyncSlot of sender of Work.
+ */
+void SyncAgent::mangleWorkMsg(SyncMessage* msg){
+	// assert current slot is SyncSlot
+	assert(msg->type = Work);
+	/*
+	 * assert msg was heard anywhere in SyncSlot (not just in the middle)
+	 * but was sent from middle of sender's WorkSlot
+	 */
+	msg->deltaToNextSyncPoint = clique.schedule.deltaFromWorkMiddleToEndSyncPeriod() ;
+}
 
 
 void SyncAgent::relayWorkToApp(SyncMessage* msg) {

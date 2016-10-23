@@ -38,6 +38,7 @@ enum MessageType {
 	// Subclass WorkMessage
 	Work
 };
+// !!!! See hack for mangled Work
 
 // Superclass
 #ifdef FUTURE

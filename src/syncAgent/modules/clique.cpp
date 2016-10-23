@@ -55,8 +55,9 @@ void Clique::initFromSyncMsg(SyncMessage* msg){
 
 
 void Clique::changeBySyncMessage(SyncMessage* msg) {
-	// assert in Sync or Fish slot
-	assert(msg->type == MasterSync || msg->type == MergeSync);
+	// assert (in Sync or Fish slot) and (MasterSync or MergeSync)
+	// OR in Sync slot and Work (but mangled)
+	assert(msg->type == MasterSync || msg->type == MergeSync || msg->type == Work);
 
 	// Change master
 	setOtherMastership(msg->masterID);
@@ -68,3 +69,4 @@ void Clique::changeBySyncMessage(SyncMessage* msg) {
 	// Regardless: from my master (small offset) or from another clique (large offset)
 	schedule.adjustBySyncMsg(msg);
 }
+
