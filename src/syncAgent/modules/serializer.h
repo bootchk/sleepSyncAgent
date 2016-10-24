@@ -2,7 +2,7 @@
 
 #include <inttypes.h>
 
-#include "../../platform/types.h"
+#include "../../platform/platform.h"	// BufferPointer
 #include "message.h"
 
 

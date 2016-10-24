@@ -7,6 +7,7 @@
 void Sleeper::init() {}
 bool Sleeper::isOSClockRunning() { return true; }
 void Sleeper::sleepUntilEventWithTimeout(OSTime) {}
+void Sleeper::cancelTimeout() {}
 
 ReasonForWake Sleeper::getReasonForWake() { return TimerExpired; }
 void Sleeper::clearReasonForWake() {}

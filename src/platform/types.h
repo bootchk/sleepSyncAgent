@@ -38,5 +38,9 @@ typedef uint64_t SystemID;	// lower 6 btyes
 typedef uint32_t WorkPayload;
 
 
-
+/*
+ * Pointer to unsigned bytes writeable concurrently by device and mcu.
+ * The pointed-to uint8_t is volatile.
+ */
+typedef volatile uint8_t * BufferPointer;
 

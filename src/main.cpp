@@ -50,7 +50,7 @@ void onWorkMsg(WorkPayload work) {
 }
 
 
-Radio radio;
+Radio myRadio;
 SleepSyncAgent sleepSyncAgent;
 
 
@@ -58,7 +58,7 @@ SleepSyncAgent sleepSyncAgent;
 int main() {
 	// assert embedded system startup is done and calls main.
 	// assert caller initialized radio
-	sleepSyncAgent.init(&radio, onWorkMsg);
+	sleepSyncAgent.init(&myRadio, onWorkMsg);
 	sleepSyncAgent.loopOnEvents();	// never returns
 	return 0;
 }

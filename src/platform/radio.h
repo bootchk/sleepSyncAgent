@@ -18,6 +18,7 @@ public:
 
 	static void init(void (*onRcvMsgCallback)());
 	static void powerOnAndConfigure();
+	static void configureXmitPower(unsigned int dBm);
 	static void powerOff();
 	static bool isPowerOn();
 

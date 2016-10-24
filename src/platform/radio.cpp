@@ -16,6 +16,7 @@ void Radio::init(void (*onRcvMsgCallback)()) {}
 bool Radio::isDisabledState() {return false; }
 
 void Radio::powerOnAndConfigure() {}
+void Radio::configureXmitPower(unsigned int dBm) {}
 void Radio::powerOff() {}
 bool Radio::isPowerOn() {return true; }
 

@@ -51,6 +51,8 @@
 
 #include "power.h"
 #include "mailbox.h"
+#include "logger.h"
+#include "types.h"
 
 
 

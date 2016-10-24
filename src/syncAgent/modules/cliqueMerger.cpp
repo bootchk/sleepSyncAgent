@@ -105,7 +105,9 @@ void CliqueMerger::adjustMergerBySyncMsg(SyncMessage* msg) {
 	assert(isActive);
 
 	// The new next sync point is not at the old one before this msg adjusted endSyncPoint.
+
 	DeltaTime deltaStartSyncPeriodToNewNextSyncPoint = owningClique->schedule.halfSlotDuration() + msg->deltaToNextSyncPoint;
+	(void) deltaStartSyncPeriodToNewNextSyncPoint;
 	// For now, do nothing, and xmit MergeSyncs at wrong time
 
 	// offsetToMergee -= msg->deltaToNextSyncPoint;

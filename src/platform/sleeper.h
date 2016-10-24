@@ -41,6 +41,7 @@ public:
 	static void init();
 	static bool isOSClockRunning();
 	static void sleepUntilEventWithTimeout(OSTime);
+	static void cancelTimeout();
 
 	static ReasonForWake getReasonForWake();
 	static void clearReasonForWake();

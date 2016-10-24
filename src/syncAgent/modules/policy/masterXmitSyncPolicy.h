@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../types.h"
-
+// TODO is this from platform??? #include "../../../platform/platform.h"	// types.h
+#include "../../types.h" // ScheduleCount
 
 /*
  * Specialized RNG Random Number Generator

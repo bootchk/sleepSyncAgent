@@ -2,9 +2,7 @@
 
 #include <cassert>
 
-// platform
-#include <logger.h>
-#include <mailbox.h>
+#include "../../platform/platform.h"
 
 #include "../globals.h"
 #include "workSlot.h"
