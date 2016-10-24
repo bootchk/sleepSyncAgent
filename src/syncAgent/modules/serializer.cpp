@@ -42,12 +42,12 @@ SyncMessage* Serializer::unserialize() {
 
 	// Minor optimization: only access radioBufferPtr[0] once.
 	// It is volatile, which prevents compiler from optimizing repeated references.
-	if (SyncMessage::isByteASyncType(radioBufferPtr[0]))
+	if (SyncMessage::isReceivedTypeASyncType(radioBufferPtr[0]))
 	{
 		unserializeIntoCommonSyncMessage();
 		result = &inwardCommonSyncMsg;
 	}
-	/* FUTURE
+	/* FUTURE when WorkMsg distinct from SyncMsg
 	else if (radioBufferPtr[0] == Work) {
 		unserializeWorkIntoCommon();
 		result = &inwardCommonWorkMsg;
@@ -72,9 +72,8 @@ SyncMessage* Serializer::unserialize() {
 
 
 bool Serializer::bufferIsSane(){
-	// FUTURE or work message
 	// FUTURE other validity checks?
-	return SyncMessage::isByteASyncType(radioBufferPtr[0]);
+	return SyncMessage::isReceivedTypeASyncType(radioBufferPtr[0]);
 }
 
 

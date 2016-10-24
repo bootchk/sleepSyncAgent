@@ -59,8 +59,7 @@ private:
 
 	static LEDLogger ledLogger;
 
-	// TODO to WorkSlot
-	static void (*onWorkMsgQueuedCallback)();
+	static void (*onWorkMsgCallback)(WorkPayload);
 	// FUTURE static void (*onSyncingPausedCallback)();	// callback to app when syncing is paused
 
 	static uint32_t countValidReceives;
@@ -70,7 +69,7 @@ private:
 
 // methods
 public:
-	static void init( Radio* radio, void (*onWorkMsgQueued)() );
+	static void init( Radio* radio, void (*onWorkMsg)(WorkPayload) );
 	static void loop();
 
 	static void startSyncing();
@@ -84,7 +83,7 @@ private:
 	static bool dispatchMsg(DispatchFuncPtr);
 
 public:
-	static void relayWorkToApp(SyncMessage* msg);
+	static void relayWorkToApp(WorkPayload work);
 
 	static void toMergerRole(SyncMessage* msg);
 	static void mangleWorkMsg(SyncMessage* msg);

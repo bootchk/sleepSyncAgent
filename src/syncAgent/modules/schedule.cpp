@@ -161,7 +161,7 @@ DeltaTime Schedule::deltaToThisMergeStart(DeltaTime offset){
 /*
  * The offset a Work message would hold (if offset were not used otherwise)
  * Used to mangle a Work message to be equivalent to a Sync.
- * A Work message is sent 1-1/2 slots from start of SyncPeriod.
+ * A Work message is sent 1-1/2 slots from SyncPoint.
  */
 DeltaTime Schedule::deltaFromWorkMiddleToEndSyncPeriod(){
 	return NormalSyncPeriodDuration - SlotDuration - halfSlotDuration();

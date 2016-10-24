@@ -35,7 +35,7 @@ private:
 public:
 	static void init(
 			Radio* radio,
-			void (*onWorkMsgQueued)()
+			void (*onWorkMsg)(WorkPayload)
 			);
 	static void loopOnEvents();	// never returns
 };

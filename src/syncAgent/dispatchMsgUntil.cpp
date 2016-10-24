@@ -129,8 +129,7 @@ bool SyncAgent::dispatchMsg(DispatchFuncPtr dispatchFuncOnType) {
 			// continuation is sleep
 		}
 
-		// All msg types freed
-		freeReceivedMsg((void*) msg);
+		// No memory managment for messages
 	}
 	else {
 		// ignore CRC invalid packet

@@ -42,10 +42,11 @@
 
 
 
-void onWorkMsgQueued() {
+void onWorkMsg(WorkPayload work) {
 	// SleepSyncAgent received and queued a work msg.
 	// FUTURE schedule low priority work thread/task to do work
 	// realtime constrained
+	(void) work;
 }
 
 
@@ -57,7 +58,7 @@ SleepSyncAgent sleepSyncAgent;
 int main() {
 	// assert embedded system startup is done and calls main.
 	// assert caller initialized radio
-	sleepSyncAgent.init(&radio, onWorkMsgQueued);
+	sleepSyncAgent.init(&radio, onWorkMsg);
 	sleepSyncAgent.loopOnEvents();	// never returns
 	return 0;
 }

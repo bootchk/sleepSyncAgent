@@ -27,6 +27,15 @@ typedef uint32_t OSTime;
 typedef uint64_t SystemID;	// lower 6 btyes
 
 
+/*
+ * Work delivered by SyncAgent to and from app.
+ *
+ * Currently an instance of primitive type.
+ *
+ * !!! Must be same size as DeltaSync.
+ * Constrained by current implementation of SyncAgent.
+ */
+typedef uint32_t WorkPayload;
 
 
 

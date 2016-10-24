@@ -5,28 +5,26 @@
 #include "../types.h"
 
 /*
- * SyncAgent specialized message
- *
- * Two classes:
- * - sync related
- * - work related
- *
- * !!! Message is not a static class.
- * Instances can be static (see Serializer ).
- * FUTURE: many instances, queued.
- */
+ * !!! Message is not a singleton class.
+ * Serializer owns static instances.
+ * FUTURE: many heap instances, queued.
 
-
-/*
- * application level type of message, carried as payload in radio messages
+ * SyncAgent level message, carried as payload in radio messages
+ *
+ * Current design: WorkMsg is not a separate class,
+ * just a SyncMsg having distinct type and variant delta carrying WorkPayload
+ *
+ * I use 'acceleration' to mean delta of delta: how much a SyncPeriod is changing.
+ * Acceleration from a MasterSync is small: deltaToNextSyncPoint is not much different from local time to next SyncPoint
+ * Acceleration from a MergeSync is large: deltaToNextSyncPoint is much different from SyncPeriodDuration
  *
  * Subtypes of type Sync, but not separate classes
- * - MergeSync, large offset
- * - MasterSync, small offset
+ * - MergeSync, offset has large acceleration
+ * - MasterSync, offset has small acceleration
  * - AbandonMastership, offset is unused
- * - Work, offset is work type
+ * - Work, offset is work payload
  *
- * For now, the Work subtype also carries MasterID, and also helps achieve sync
+ * For now, the Work subtype also carries MasterID, and helps achieve sync.
  */
 
 
@@ -40,18 +38,8 @@ enum MessageType {
 };
 // !!!! See hack for mangled Work
 
-// Superclass
-#ifdef FUTURE
-The only thing Work and Sync messages have in common is MessageType field.
-class Message {
-public:
-	// provided by wireless stack??
-	// SystemID senderID;
 
-	// Our content of msg (not necessarily from wireless stack)
-	MessageType type;
-};
-#endif
+
 
 // Messages used by SyncAgent, never received by app
 class SyncMessage{
@@ -66,22 +54,26 @@ public:
 		masterID = aMasterID;
 	}
 
-
-
-	// Dying breath message from master which is power failing.  deltaToNextSyncPoint is moot.
-	void makeAbandonMastership(SystemID aMasterID) { init(AbandonMastership, 0, aMasterID); }
+	static bool isReceivedTypeASyncType(uint8_t receivedType) {
+		return      (receivedType == MasterSync)
+				|| (receivedType == MergeSync)
+				|| (receivedType == AbandonMastership)
+				|| (receivedType == Work)	// FUTURE Work msg a distinct class of message
+				;
+	}
 
 	/*
-	 * Message type is not distinguished MasterSync vs. MergeSync,
-	 * so have same implementation.
+	 * Dying breath message from master which is power failing.  deltaToNextSyncPoint is moot.
 	 */
+	void makeAbandonMastership(SystemID aMasterID) {
+		init(AbandonMastership, 0, aMasterID);
+	}
+
 	/*
 	 * Usual sync from a unit in Master role.
 	 * DeltaToNextSyncPoint is typically small.
 	 */
-	void makeMasterSync(DeltaSync aDeltaToNextSyncPoint,
-			SystemID aMasterID)
-	{
+	void makeMasterSync(DeltaSync aDeltaToNextSyncPoint, SystemID aMasterID){
 		init(MasterSync, aDeltaToNextSyncPoint, aMasterID);
 	}
 
@@ -89,18 +81,38 @@ public:
 	 * Sync from unit in Merger role (master or slave) requesting other clique change its sync time.
 	 * DeltaToNextSyncPoint is typically but not always large, more than one slot duration.
 	 */
-	void makeMergeSync(DeltaSync aDeltaToNextSyncPoint,
-			SystemID aMasterID)
-	{
+	void makeMergeSync(DeltaSync aDeltaToNextSyncPoint, SystemID aMasterID){
 		init(MergeSync, aDeltaToNextSyncPoint, aMasterID);
 	}
 
-	static bool isByteASyncType(uint8_t byte) {
-		return      (byte == MasterSync)
-				|| (byte == MergeSync)
-				|| (byte == AbandonMastership);
+	/*
+	 * Work message, also helps to maintain sync.
+	 */
+	void makeWork(WorkPayload workPayload, SystemID aMasterID){
+		// Hack: cast
+		init(Work, (DeltaSync) workPayload, aMasterID);
+	}
+
+	// See dual: makeWork()
+	WorkPayload workPayload() {
+		// Hack: cast
+		return (WorkPayload) deltaToNextSyncPoint;
 	}
 };
+
+
+#ifdef FUTURE
+// Superclass
+The only thing Work and Sync messages have in common is MessageType field.
+class Message {
+public:
+	// provided by wireless stack??
+	// SystemID senderID;
+
+	// Our content of msg (not necessarily from wireless stack)
+	MessageType type;
+};
+#endif
 
 #ifdef OBSOLETE
 	bool isOffsetSync() {

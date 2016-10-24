@@ -21,17 +21,14 @@
 class WorkSlot {
 public:
 	static void performWork();
-	//static void performWorkMerger();
+
 private:
 	static void performSendingWork();
 	static void performReceivingWork();
 
 	static bool dispatchMsgReceived(SyncMessage* msg);
-	//static void startReceive();
 	static void end();
 
-	//static void xmitAproposWork();
-	static void sendWork();
-
+	//static void performWorkMerger();
 	//static void toWorkMerger();
 };

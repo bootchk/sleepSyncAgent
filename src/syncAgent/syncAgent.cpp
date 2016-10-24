@@ -14,7 +14,7 @@ MergerFisherRole SyncAgent::role;
 
 PowerManager SyncAgent::powerMgr;
 
-void (*SyncAgent::onWorkMsgQueuedCallback)();
+void (*SyncAgent::onWorkMsgCallback)(WorkPayload);
 
 LEDLogger SyncAgent::ledLogger;	// DEBUG
 
@@ -29,7 +29,7 @@ uint32_t SyncAgent::countInvalidCRCReceives = 0;
 
 void SyncAgent::init(
 		Radio * aRadio,
-		void (*aOnWorkMsgQueuedCallback)()
+		void (*aOnWorkMsgCallback)(WorkPayload)
 	)
 {
 	sleeper.init();
@@ -44,7 +44,7 @@ void SyncAgent::init(
 	// Serializer reads and writes directly to radio buffer
 	serializer.init(radio->getBufferAddress(), Radio::FixedPayloadCount);
 
-	onWorkMsgQueuedCallback = aOnWorkMsgQueuedCallback;
+	onWorkMsgCallback = aOnWorkMsgCallback;
 
 	clique.reset();
 	// Assert LongClock is reset and running
@@ -132,14 +132,12 @@ void SyncAgent::mangleWorkMsg(SyncMessage* msg){
 }
 
 
-void SyncAgent::relayWorkToApp(SyncMessage* msg) {
+void SyncAgent::relayWorkToApp(WorkPayload work) {
 	/*
-	 * FUTURE
 	 * Alternatives are:
 	 * - queue to worktask (unblock it)
 	 * - onWorkMsgCallback(msg);  (callback)
 	 */
-	//TODO FUTURE relayWork
-	(void) msg;
-	ledLogger.toggleLED(1);
+	onWorkMsgCallback(work);	// call callback
+	// ledLogger.toggleLED(1);
 }

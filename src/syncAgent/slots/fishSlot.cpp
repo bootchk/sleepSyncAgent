@@ -8,9 +8,7 @@
 #include <cassert>
 
 #include "../globals.h"
-//#include "../syncAgent.h"
 #include "fishSlot.h"
-// #include "../../platform/mailbox.h"
 
 
 bool FishSlot::dispatchMsgReceived(SyncMessage* msg){

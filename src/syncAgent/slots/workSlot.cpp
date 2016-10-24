@@ -4,8 +4,7 @@
 
 // platform
 #include <logger.h>
-// FUTURE platform
-#include "../../platform/mailbox.h"
+#include <mailbox.h>
 
 #include "../globals.h"
 #include "workSlot.h"
@@ -72,7 +71,7 @@ Alternative design: this cliques merges inferior clique.
 
 		}
 		else {
-			// TODO assertrole is Fisher
+			// assertrole is Fisher
 			//toWorkMerger(msg);
 		}
 	}
@@ -99,16 +98,34 @@ void doAbandonMastershipMsg(){
 	 */
 }
 
+
+/*
+ * Dual methods: to and from app
+ */
+
+// Pass work from other units to app
 void doWorkMsg(SyncMessage* msg) {
 	assert(msg->type == Work);
-	syncAgent.relayWorkToApp(msg);
-	// FUTURE msg requeued, not freed
-	// TODO led log
+	syncAgent.relayWorkToApp(msg->workPayload());
 }
 
+// Pass work from app to other units
+void sendWork(){
 
+	assert(workMailbox->isMail());
+	WorkPayload workPayload = workMailbox->fetch();
+
+	serializer.outwardCommonSyncMsg.makeWork(workPayload, clique.getMasterID());
+
+	// assert common SyncMessage serialized into radio buffer
+	radio->transmitStaticSynchronously();	// blocks until transmit complete
+}
 
 } // namespace
+
+
+
+
 
 
 void WorkSlot::performReceivingWork(){
@@ -135,6 +152,7 @@ void WorkSlot::performSendingWork(){
 	assert(!radio->isPowerOn());
 	sleepUntilWorkSendingTime();
 	radio->powerOnAndConfigure();
+	// TODO send work probabalistically in subslot of work slot, contention
 	sendWork();
 	radio->powerOff();
 	sleepUntilEndWorkSlot();
@@ -153,7 +171,7 @@ void WorkSlot::performWork() {
 	assert(radio->isDisabledState());
 
 	// Choose kind of WorkSlot
-	if ( isQueuedWorkMsgFromApp() ) {
+	if ( workMailbox->isMail() ) {
 		performSendingWork();
 	}
 	else {
@@ -197,16 +215,7 @@ bool WorkSlot::dispatchMsgReceived(SyncMessage* msg){
 
 
 
-void WorkSlot::sendWork(){
-	void * workPayload = unqueueWorkMsgFromApp();
-	// FUTURE use payload to make on-air message
-	(void) workPayload;
-	// TODO work
-	// FUTURE serializer.outwardCommonWorkMsg.make();
-	freeWorkMsg(workPayload);
-	// assert common WorkMessage serialized into radio buffer
-	radio->transmitStaticSynchronously();	// blocks until transmit complete
-}
+
 
 
 

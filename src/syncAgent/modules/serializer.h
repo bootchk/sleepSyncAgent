@@ -1,7 +1,8 @@
 #pragma once
 
 #include <inttypes.h>
-#include <types.h>
+
+#include "../../platform/types.h"
 #include "message.h"
 
 
