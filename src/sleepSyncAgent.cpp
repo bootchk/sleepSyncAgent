@@ -19,7 +19,9 @@
 
 
 // Private data members.
-SyncAgent SleepSyncAgent::syncAgent;
+namespace {
+SyncAgent syncAgent;
+}
 
 
 
@@ -27,9 +29,11 @@ SyncAgent SleepSyncAgent::syncAgent;
 
 void SleepSyncAgent::init(
 		Radio* radio,
-		void (*onWorkMsgCallback)(WorkPayload))
+		Mailbox* mailbox,
+		void (*onWorkMsgCallback)(WorkPayload),
+		void (*onSyncPoint)())
 {
-	syncAgent.init(radio, onWorkMsgCallback);
+	syncAgent.init(radio, mailbox, onWorkMsgCallback, onSyncPoint);
 }
 
 

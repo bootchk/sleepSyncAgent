@@ -10,14 +10,20 @@
  * SleepSyncAgent implements an event loop.
  * A call to loopOnEvents() never returns.
  *
- * SleepSyncAgent calls onWorkMsgQueued() when a work message is queued.
+ * SleepSyncAgent calls back onSyncPoint() at every SyncPoint.
+ * Sync among all units is not guaranteed by the callback.
+ * Caller has no way of knowing when sync is achieved.
+ *
+ * Caller puts mail in Mailbox to broadcast it to all synced units.
+ *
+ * SleepSyncAgent calls back onWorkMsgQueued() when a work message is queued.
  * That function runs at the same priority as SleepSyncAgent.
  * It should be short to prevent loss of sync.
  * Work messages should be handled in a lower priority thread (say WorkThread.)
  * If the queue does not unblock readers, onWorkMsgQueued()
  * should signal the WorkThread.
  *
- * This wraps the public API of a larger object.
+ * This wraps (simplifies) the public API of SyncAgent.
  *
  * Parameters of algorithm:
  * - scheduleParameters.h
@@ -25,17 +31,13 @@
  * - in nRFrawProtocol (wireless stack)
  */
 
-// FUTURE pass the queue.  For now, there is no queue, just the signal.
-
 class SleepSyncAgent {
-private:
-	// instance of wrapped class
-	static SyncAgent syncAgent;
-
 public:
 	static void init(
-			Radio* radio,
-			void (*onWorkMsg)(WorkPayload)
+			Radio*,
+			Mailbox*,
+			void (*onWorkMsg)(WorkPayload),
+			void (*onSyncPoint)()
 			);
 	static void loopOnEvents();	// never returns
 };

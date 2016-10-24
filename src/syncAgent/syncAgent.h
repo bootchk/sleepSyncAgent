@@ -38,6 +38,9 @@
 // typedef (bool (*dispatchQueuedMsg)(Message *)) DispatchFuncPtr;
 typedef bool (*DispatchFuncPtr)(SyncMessage *) ;
 
+
+
+
 class SyncAgent {
 
 // data members
@@ -59,7 +62,9 @@ private:
 
 	static LEDLogger ledLogger;
 
+	// Interface towards app
 	static void (*onWorkMsgCallback)(WorkPayload);
+	static void (*onSyncPointCallback)();
 	// FUTURE static void (*onSyncingPausedCallback)();	// callback to app when syncing is paused
 
 	static uint32_t countValidReceives;
@@ -69,7 +74,11 @@ private:
 
 // methods
 public:
-	static void init( Radio* radio, void (*onWorkMsg)(WorkPayload) );
+	static void init( Radio* radio,
+			Mailbox* mailbox,
+			void (*onWorkMsg)(WorkPayload),
+			void (*onSyncPoint)()
+			);
 	static void loop();
 
 	static void startSyncing();

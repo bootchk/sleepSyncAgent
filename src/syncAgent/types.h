@@ -3,7 +3,8 @@
 #include <inttypes.h>
 
 /*
- * Fundamental types used by SyncAgent
+ * Fundamental types defined and used by SyncAgent.
+ * Private to SyncAgent; other types shared with platform should not be here.
  */
 
 /*
@@ -42,7 +43,7 @@ typedef uint32_t DeltaSync;
  * Used in scheduling to count slots and periods.
  */
 // FUTURE since we aren't enforcing this, we might as well use native int
-// FUTURE distinguis PeriodCount from SlotCount
+// FUTURE distinguish PeriodCount from SlotCount
 typedef uint16_t ScheduleCount;
 
 

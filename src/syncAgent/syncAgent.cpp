@@ -15,6 +15,7 @@ MergerFisherRole SyncAgent::role;
 PowerManager SyncAgent::powerMgr;
 
 void (*SyncAgent::onWorkMsgCallback)(WorkPayload);
+void (*SyncAgent::onSyncPointCallback)();
 
 LEDLogger SyncAgent::ledLogger;	// DEBUG
 
@@ -29,13 +30,21 @@ uint32_t SyncAgent::countInvalidCRCReceives = 0;
 
 void SyncAgent::init(
 		Radio * aRadio,
-		void (*aOnWorkMsgCallback)(WorkPayload)
+		Mailbox* aMailbox,
+		void (*aOnWorkMsgCallback)(WorkPayload),
+		void (*aOnSyncPointCallback)()
 	)
 {
 	sleeper.init();
 	// FUTURE hard to know who owns clock assert(sleeper.isOSClockRunning());
 
+	// Copy parameters to globals
 	radio = aRadio;
+	workMailbox = aMailbox;
+
+	// Copy parameters to static data members
+	onWorkMsgCallback = aOnWorkMsgCallback;
+	onSyncPointCallback = aOnSyncPointCallback;
 
 	// Connect radio IRQ to sleeper so it knows reason for wake
 	radio->init(&sleeper.msgReceivedCallback);
@@ -43,8 +52,6 @@ void SyncAgent::init(
 
 	// Serializer reads and writes directly to radio buffer
 	serializer.init(radio->getBufferAddress(), Radio::FixedPayloadCount);
-
-	onWorkMsgCallback = aOnWorkMsgCallback;
 
 	clique.reset();
 	// Assert LongClock is reset and running

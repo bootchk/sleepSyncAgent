@@ -41,6 +41,7 @@
 #include "sleepSyncAgent.h"
 
 
+// callbacks
 
 void onWorkMsg(WorkPayload work) {
 	// SleepSyncAgent received and queued a work msg.
@@ -49,8 +50,14 @@ void onWorkMsg(WorkPayload work) {
 	(void) work;
 }
 
+void onSyncPoint() {
+	// Called at every SyncPoint.
+	// FUTURE do something in sync with other units.
+}
+
 
 Radio myRadio;
+Mailbox myMailbox;
 SleepSyncAgent sleepSyncAgent;
 
 
@@ -58,7 +65,7 @@ SleepSyncAgent sleepSyncAgent;
 int main() {
 	// assert embedded system startup is done and calls main.
 	// assert caller initialized radio
-	sleepSyncAgent.init(&myRadio, onWorkMsg);
+	sleepSyncAgent.init(&myRadio, &myMailbox, onWorkMsg, onSyncPoint);
 	sleepSyncAgent.loopOnEvents();	// never returns
 	return 0;
 }
