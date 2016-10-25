@@ -103,6 +103,7 @@ void doAbandonMastershipMsg(){
 
 // Pass work from other units to app
 void doWorkMsg(SyncMessage* msg) {
+	log("Heard work in work slot\n");
 	assert(msg->type == Work);
 	syncAgent.relayWorkToApp(msg->workPayload());
 }
@@ -110,6 +111,7 @@ void doWorkMsg(SyncMessage* msg) {
 // Pass work from app to other units
 void sendWork(){
 
+	log("Send work from app\n");
 	assert(workMailbox->isMail());
 	WorkPayload workPayload = workMailbox->fetch();
 
@@ -208,7 +210,7 @@ bool WorkSlot::dispatchMsgReceived(SyncMessage* msg){
 	}
 
 	// Since a WorkSlot is like a FishingSlot, it continues listening
-	return false;	// meaning: don't stop listening
+	return false;	// meaning: don't stop listening until end of slot
 }
 
 

@@ -39,7 +39,10 @@ void SyncAgent::loop(){
 	 */
 
 	while (true){
-		ledLogger.toggleLED(1);	// DEBUG, use the only LED on some targets
+		// call back app
+		onSyncPointCallback();
+		// Alternative to app blinking LED at SyncPoint
+		// ledLogger.toggleLED(1);	// DEBUG, blink LED at SyncPoint
 
 		assert(!radio->isPowerOn());	// Radio is off after every sync period
 

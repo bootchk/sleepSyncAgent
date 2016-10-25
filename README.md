@@ -13,6 +13,7 @@ Status:
 Todo:
 
     - testing with many units
+    - RTOS work thread with work queues in and out
     - fleshing out corners of algorithm: dropping out, adjusting mergers in progress, etc. 
     - other platforms
     - broadcast mesh:  relay sync to cliques that can't hear my master.  No addressing or routes, just hop count
@@ -58,8 +59,8 @@ Silicon and software will continue to get cheaper, smaller, and less toxic, whil
 Applications:
 
     art
-    solar yard lights that strobe like runway strobelights
-    smart bomblets
+    solar night lights that strobe like runway strobelights
+    sensor networks
 
 Performance:
 =
