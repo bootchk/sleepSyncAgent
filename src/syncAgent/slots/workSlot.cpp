@@ -108,15 +108,14 @@ void doWorkMsg(SyncMessage* msg) {
 	syncAgent.relayWorkToApp(msg->workPayload());
 }
 
-// Pass work from app to other units
+// Send work from app to other units
 void sendWork(){
 
 	log("Send work from app\n");
-	assert(workMailbox->isMail());
-	WorkPayload workPayload = workMailbox->fetch();
-
+	assert(radio->isPowerOn());
+	assert(workOutMailbox->isMail());
+	WorkPayload workPayload = workOutMailbox->fetch();
 	serializer.outwardCommonSyncMsg.makeWork(workPayload, clique.getMasterID());
-
 	// assert common SyncMessage serialized into radio buffer
 	radio->transmitStaticSynchronously();	// blocks until transmit complete
 }
@@ -127,10 +126,12 @@ void sendWork(){
 
 
 
-
+/*
+ *  Listen entire period.
+ *  Receive work OR sync (similar to fishing.)
+ */
 void WorkSlot::performReceivingWork(){
-	// Listen entire period
-	// Receive work OR sync (similar to fishing.)
+	radio->powerOnAndConfigure();
 	startReceive();
 	assert(!radio->isDisabledState());
 	syncAgent.dispatchMsgUntil(
@@ -145,14 +146,14 @@ void WorkSlot::performReceivingWork(){
  * Xmit may not succeed (contention), is not acked.
  */
 void WorkSlot::performSendingWork(){
-	// Sleep radio off for all but middle, when we send
-	// Since not listening, not fishing
+	// Sleep radio off for all but middle, when we send.
+	// Since not listening, not fishing.
 
-	// assert is work queued
+	assert(workOutMailbox->isMail());	// require work to send
 	assert(!radio->isPowerOn());
 	sleepUntilWorkSendingTime();
 	radio->powerOnAndConfigure();
-	// TODO send work probabalistically in subslot of work slot, contention
+	// TODO send work randomly in subslot of work slot, contention
 	sendWork();
 	radio->powerOff();
 	sleepUntilEndWorkSlot();
@@ -168,10 +169,10 @@ void WorkSlot::performSendingWork(){
  */
 
 void WorkSlot::performWork() {
-	assert(radio->isDisabledState());
+	assert(!radio->isPowerOn());
 
 	// Choose kind of WorkSlot
-	if ( workMailbox->isMail() ) {
+	if ( workOutMailbox->isMail() ) {
 		performSendingWork();
 	}
 	else {

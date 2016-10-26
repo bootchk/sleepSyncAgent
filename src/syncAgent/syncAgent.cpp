@@ -40,7 +40,7 @@ void SyncAgent::init(
 
 	// Copy parameters to globals
 	radio = aRadio;
-	workMailbox = aMailbox;
+	workOutMailbox = aMailbox;
 
 	// Copy parameters to static data members
 	onWorkMsgCallback = aOnWorkMsgCallback;

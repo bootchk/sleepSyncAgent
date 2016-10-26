@@ -29,11 +29,11 @@ SyncAgent syncAgent;
 
 void SleepSyncAgent::init(
 		Radio* radio,
-		Mailbox* mailbox,
+		Mailbox* outMailbox,
 		void (*onWorkMsgCallback)(WorkPayload),
 		void (*onSyncPoint)())
 {
-	syncAgent.init(radio, mailbox, onWorkMsgCallback, onSyncPoint);
+	syncAgent.init(radio, outMailbox, onWorkMsgCallback, onSyncPoint);
 }
 
 

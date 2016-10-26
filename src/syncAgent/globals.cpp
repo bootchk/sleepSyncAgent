@@ -1,7 +1,7 @@
 #include "globals.h"
 
 Radio* radio;
-Mailbox* workMailbox;
+Mailbox* workOutMailbox;
 Sleeper sleeper;
 
 Clique clique;

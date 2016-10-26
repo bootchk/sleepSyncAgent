@@ -15,7 +15,7 @@
 #include "../platform/platform.h"	// Radio, Sleeper, LEDLogger
 extern Radio* radio;
 extern Sleeper sleeper;
-extern Mailbox* workMailbox;
+extern Mailbox* workOutMailbox;
 
 #include "modules/clique.h"
 extern Clique clique;

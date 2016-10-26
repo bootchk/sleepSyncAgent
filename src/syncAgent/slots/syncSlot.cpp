@@ -132,15 +132,15 @@ void SyncSlot::endSyncSlot() {
 		radio->stopReceive();
 		assert(radio->isDisabledState());	// receiveStatic() in next slot requires radio disabled.
 	}
-	// Radio still on or off
-	// We don't bother to turn it off since work slot follows and needs radio on.
+	// Radio on or off
+	// Turn radio off, workSlot may not need it on
+	radio->powerOff();
 
 	// FUTURE we could do this elsewhere, e.g. start of sync slot so this doesn't delay the start of work slot
 	if (!clique.isSelfMaster())
 		checkMasterDroppedOut();
 
-	// assert radio on or off
-	// assert radio on => radio.isDisabledState()
+	assert(!radio->isPowerOn());	// ensure
 }
 
 
