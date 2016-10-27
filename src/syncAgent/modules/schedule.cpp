@@ -60,7 +60,7 @@ void Schedule::rollPeriodForwardToNow() {
 /*
  * Crux
  *
- * Called from a sync or fish slot:
+ * Called from a sync, work, or fish slot:
  * - most often, usually, a MasterSync in a Sync slot
  * - rarely, a MergeSync in Sync slot
  * - very rarely, a MasterSync in a Fish slot
@@ -83,7 +83,6 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 	 * assert endSyncSlot or endFishSlot has not yet occurred, but this doesn't affect that.
 	 */
 
-	log("Adjust schedule\n");
 	(void) SEGGER_RTT_printf(0, "Adjust schedule: %lu \n", msg->deltaToNextSyncPoint);
 	(void) SEGGER_RTT_printf(0, "Current next sync: %lu \n", deltaNowToNextSyncPoint());
 
@@ -140,6 +139,7 @@ DeltaTime Schedule::deltaToThisSyncSlotEnd(){
 	return longClock.clampedTimeDifferenceFromNow(timeOfThisSyncSlotEnd());
 }
 
+// We don't need WorkSlot start
 DeltaTime Schedule::deltaToThisWorkSlotMiddle(){
 	return longClock.clampedTimeDifferenceFromNow(timeOfThisWorkSlotMiddle());
 }
@@ -186,11 +186,12 @@ LongTime Schedule::timeOfNextSyncPoint() {
 	return endTimeOfSyncPeriod;
 }
 
-// Start of period and start of syncSlot coincide.
+// Start of period and start of SyncSlot coincide.
 // FUTURE: Choice of sync slot at start of period is arbitrary, allow it to be anywhere in period?
 LongTime Schedule::timeOfThisSyncSlotMiddle() { return startTimeOfSyncPeriod + halfSlotDuration(); }
 LongTime Schedule::timeOfThisSyncSlotEnd() { return startTimeOfSyncPeriod + SlotDuration; }
 
+// WorkSlot immediately after SyncSlot
 LongTime Schedule::timeOfThisWorkSlotMiddle() { return startTimeOfSyncPeriod + SlotDuration + halfSlotDuration(); }
 LongTime Schedule::timeOfThisWorkSlotEnd() { return startTimeOfSyncPeriod + 2 * SlotDuration; }
 

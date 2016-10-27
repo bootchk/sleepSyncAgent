@@ -10,6 +10,8 @@
 #include "../globals.h"
 #include "fishSlot.h"
 
+#include "../logMessage.h"
+
 
 bool FishSlot::dispatchMsgReceived(SyncMessage* msg){
 	bool foundDesiredMessage;
@@ -19,6 +21,7 @@ bool FishSlot::dispatchMsgReceived(SyncMessage* msg){
 		/*
 		 * Intended catch: another clique's sync slot.
 		 */
+		log(LogMessage::MasterSync);
 		doMasterSyncMsg(msg);
 		// Stop listening: self can't handle more than one, or slot is busy with another merge
 		foundDesiredMessage = true;
@@ -29,7 +32,7 @@ bool FishSlot::dispatchMsgReceived(SyncMessage* msg){
 		 * is already xmitting into this time thinking it is SyncSlot of some third clique.
 		 * Ignore except to stop fishing this slot.
 		 */
-		log("MergeSync in fish slot\n");
+		log(LogMessage::MergeSync);
 		foundDesiredMessage = true;
 		break;
 	case AbandonMastership:
@@ -37,6 +40,7 @@ bool FishSlot::dispatchMsgReceived(SyncMessage* msg){
 		 * Unintended catch: Another clique's master is abandoning (exhausted power)
 		 * For now ignore. Should catch clique again later, after another member assumes mastership.
 		 */
+		log(LogMessage::AbandonMastership);
 		break;
 	case Work:
 		/*
@@ -45,6 +49,7 @@ bool FishSlot::dispatchMsgReceived(SyncMessage* msg){
 		 * Alternative: since work slot follows syncSlot, could calculate syncSlot of catch, and merge it.
 		 * Alternative: if work can be done when out of sync, do work.
 		 */
+		log(LogMessage::Work);
 		break;
 	}
 
@@ -96,6 +101,10 @@ void FishSlot::end(){
 
 
 void FishSlot::doMasterSyncMsg(SyncMessage* msg){
+	/*
+	 * MasterSync may be better or worse.  toMergerRole() handles both cases,
+	 * but always toMerger(), either merging my clique or other clique.
+	 */
 	syncAgent.toMergerRole(msg);
 	assert(syncAgent.role.isMerger());
 	/*

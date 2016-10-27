@@ -45,7 +45,7 @@
  * The callback should be a lower priority process than the SyncAgent (or kept short.)
  */
 #define SYNC_AGENT_CONVEY_WORK 1
-// TODO callback to app during SyncPoint
+
 
 /*
  * Define this if SyncAgent is built as a library.

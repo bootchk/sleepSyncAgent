@@ -27,7 +27,6 @@ private:
 	static void performReceivingWork();
 
 	static bool dispatchMsgReceived(SyncMessage* msg);
-	static void end();
 
 	//static void performWorkMerger();
 	//static void toWorkMerger();

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cassert>
+
 #include "../../platform/platform.h"  // logging
 
 typedef enum { Merger, Fisher } RoleType;
@@ -18,10 +20,12 @@ public:
 
 	static void setFisher() {
 		log("To role Fisher\n");
+		assert(isMerger());
 		role = Fisher;
 	}
 	static void setMerger() {
 		log("To role Merger\n");
+		assert(isFisher());
 		role = Merger;
 	}
 

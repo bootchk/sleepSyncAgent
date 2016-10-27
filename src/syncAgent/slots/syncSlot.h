@@ -2,17 +2,13 @@
 #pragma once
 
 #include "../modules/message.h"
-#include "../modules/policy/dropoutMonitor.h"
+
 
 class SyncSlot {
-	// owns
-	static DropoutMonitor dropoutMonitor;
 
 public:
 	static void perform();
 private:
-	static void startSyncSlot();
-	static void endSyncSlot();
 	static bool dispatchMsgReceived(SyncMessage* msg);
 
 	static void doAbandonMastershipMsg(SyncMessage* msg);
@@ -31,5 +27,4 @@ private:
 	static void sendMasterSync();
 	static void makeCommonMasterSyncMessage();
 	static void logWorseSync();
-	static void checkMasterDroppedOut();
 };

@@ -25,9 +25,49 @@
 #include "../globals.h"
 #include "syncSlot.h"
 
+#include "../logMessage.h"
 
 
-DropoutMonitor SyncSlot::dropoutMonitor;
+
+
+namespace {
+
+void start() {
+	// common to Master and Slave SyncSlot
+	log(LogMessage::SyncSlot);
+	radio->powerOnAndConfigure();
+	radio->configureXmitPower(8);
+	assert(radio->isPowerOn());
+}
+
+void end() {
+	/*
+	 * This may be late, when message receive thread delays this.
+	 * Also, there could be a race to deliver message with this event.
+	 * FUTURE check for those cases.
+	 * Scheduling of subsequent events does not depend on timely this event.
+	 */
+
+	// Radio is on or off.  If on, we timeout'd while receiving
+	if (radio->isPowerOn()) {
+		radio->stopReceive();
+		assert(radio->isDisabledState());	// receiveStatic() in next slot requires radio disabled.
+	}
+	// Radio on or off
+	// Turn radio off, workSlot may not need it on
+	radio->powerOff();
+
+	// FUTURE we could do this elsewhere, e.g. start of sync slot so this doesn't delay the start of work slot
+	if (!clique.isSelfMaster())
+		clique.checkMasterDroppedOut();
+
+	assert(!radio->isPowerOn());	// ensure
+}
+
+
+}	// namespace
+
+
 
 /*
  * Transmit any sync in middle of slot.
@@ -38,13 +78,13 @@ DropoutMonitor SyncSlot::dropoutMonitor;
  */
 
 void SyncSlot::perform() {
-	startSyncSlot();	// radio on
+	start();	// radio on
 	if (shouldTransmitSync())
 		doMasterSyncSlot();
 	else
 		// isSlave or (isMaster and not xmitting (coin flip))
 		doSlaveSyncSlot();
-	endSyncSlot();
+	end();
 }
 
 void SyncSlot::doMasterSyncSlot() {
@@ -112,36 +152,8 @@ void SyncSlot::doSlaveSyncSlot() {
 }
 
 
-void SyncSlot::startSyncSlot() {
-	// common to Master and Slave SyncSlot
-	radio->powerOnAndConfigure();
-	radio->configureXmitPower(8);
-	assert(radio->isPowerOn());
-}
 
-void SyncSlot::endSyncSlot() {
-	/*
-	 * This may be late, when message receive thread delays this.
-	 * Also, there could be a race to deliver message with this event.
-	 * FUTURE check for those cases.
-	 * Scheduling of subsequent events does not depend on timely this event.
-	 */
 
-	// Radio is on or off.  If on, we timeout'd while receiving
-	if (radio->isPowerOn()) {
-		radio->stopReceive();
-		assert(radio->isDisabledState());	// receiveStatic() in next slot requires radio disabled.
-	}
-	// Radio on or off
-	// Turn radio off, workSlot may not need it on
-	radio->powerOff();
-
-	// FUTURE we could do this elsewhere, e.g. start of sync slot so this doesn't delay the start of work slot
-	if (!clique.isSelfMaster())
-		checkMasterDroppedOut();
-
-	assert(!radio->isPowerOn());	// ensure
-}
 
 
 /*
@@ -223,16 +235,6 @@ void SyncSlot::makeCommonMasterSyncMessage() {
 
 
 
-void SyncSlot::checkMasterDroppedOut() {
-	if (dropoutMonitor.check()) {
-		log("Master dropped out\n");
-		dropoutMonitor.reset();
-		clique.onMasterDropout();
-	}
-}
-
-
-
 // Handlers for messages received in sync slot: Sync, AbandonMastership, Work
 
 /*
@@ -264,14 +266,14 @@ bool SyncSlot::doSyncMsg(SyncMessage* msg){
 		// Each Sync has an offset, could be zero or small (MasterSync) or larger (MergeSync)
 		log("Sync from master\n");
 		clique.changeBySyncMessage(msg);
-		dropoutMonitor.heardSync();
+		clique.dropoutMonitor.heardSync();
 		doesMsgKeepSynch = true;
 	}
 	else if (isSyncFromBetterMaster(msg)) {
 		// Strictly better
 		log("Better master\n");
 		changeMaster(msg);
-		dropoutMonitor.heardSync();
+		clique.dropoutMonitor.heardSync();
 		doesMsgKeepSynch = true;
 	}
 	else {

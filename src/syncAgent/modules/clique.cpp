@@ -7,6 +7,7 @@
 // static singleton
 Schedule Clique::schedule;
 MasterXmitSyncPolicy Clique::masterXmitSyncPolicy;
+DropoutMonitor Clique::dropoutMonitor;
 SystemID Clique::masterID;
 
 
@@ -35,6 +36,15 @@ bool Clique::isMyMaster(SystemID otherMasterID){ return masterID == otherMasterI
 // All units use same comparison.  The direction is arbitrary.  For testing, it may help to swap it.
 // No need for equality, no unit can hear itself.
 bool Clique::isOtherCliqueBetter(SystemID otherMasterID){ return masterID > otherMasterID; }
+
+
+void Clique::checkMasterDroppedOut() {
+	if (dropoutMonitor.check()) {
+		log("Master dropped out\n");
+		dropoutMonitor.reset();
+		onMasterDropout();
+	}
+}
 
 void Clique::onMasterDropout() {
 	// Brute force: assume mastership.

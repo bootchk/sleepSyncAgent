@@ -7,12 +7,20 @@
 #include "../globals.h"
 #include "workSlot.h"
 
+#include "../logMessage.h"
+
 
 
 // static methods
 namespace {
 
+void start() {
+	log(LogMessage::WorkSlot);
+}
 
+void end(){
+	radio->powerOff();
+}
 
 void sleepUntilWorkSendingTime(){
 	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisWorkSlotMiddle());
@@ -44,11 +52,20 @@ void startReceive() {
 
 
 void doMasterSyncMsg(SyncMessage* msg){
+
 	if (clique.isOtherCliqueBetter(msg->masterID)) {
-		// join other clique, all my cohorts will hear same msg and likewise join other clique.
+		/*
+		 * join other clique, all my cohorts will hear same msg and likewise join other clique.
+		 * Not to role Merger, since my cohorts will merge without my telling them to.
+		 */
 		clique.changeBySyncMessage(msg);
+		// assert schedule changed
+		// assert role unchanged
+		// assert if role.isMerger(), cliqueMerger was adjusted and will send MergeSync at proper time.
+		// TODO: abandon this work slot or be sure to calculate end based on original schedule
 	}
 	else {
+		log(LogMessage::WorseMasterSync);
 		/*
 		 * Other clique worse.
 		 *
@@ -74,9 +91,6 @@ Alternative design: this cliques merges inferior clique.
 		}
 	}
 #endif
-
-	log("Heard MasterSync in work slot\n");
-
 }
 void doMergeSyncMsg(){
 	/*
@@ -84,7 +98,6 @@ void doMergeSyncMsg(){
 	 * For now, ignore it.
 	 */
 	// TODO some clique may be not in range of my clique, i.e. need SyncRelay here
-	log("Heard MergeSync in work slot\n");
 }
 
 void doAbandonMastershipMsg(){
@@ -103,7 +116,6 @@ void doAbandonMastershipMsg(){
 
 // Pass work from other units to app
 void doWorkMsg(SyncMessage* msg) {
-	log("Heard work in work slot\n");
 	assert(msg->type == Work);
 	syncAgent.relayWorkToApp(msg->workPayload());
 }
@@ -111,7 +123,7 @@ void doWorkMsg(SyncMessage* msg) {
 // Send work from app to other units
 void sendWork(){
 
-	log("Send work from app\n");
+	log(LogMessage::SendWork);
 	assert(radio->isPowerOn());
 	assert(workOutMailbox->isMail());
 	WorkPayload workPayload = workOutMailbox->fetch();
@@ -161,17 +173,22 @@ void WorkSlot::performSendingWork(){
 }
 
 
-// assert work slot follows sync slot with no delay
-/*
- * Sending and receiving work are mutually exclusive.
- *
- * Contention to send means may fail.
- */
 
 void WorkSlot::performWork() {
 	assert(!radio->isPowerOn());
 
-	// Choose kind of WorkSlot
+	/*
+	 * Work slot follows sync slot with no delay.
+	 * I.E. no sleeping until start of WorkSlot.
+	 * I.E. nowTime() is already start of WorkSlot.
+	 */
+
+	start();
+
+	/*
+	 * Choose kind of WorkSlot.
+	 * Sending and receiving work are mutually exclusive.
+	 */
 	if ( workOutMailbox->isMail() ) {
 		performSendingWork();
 	}
@@ -179,6 +196,7 @@ void WorkSlot::performWork() {
 		performReceivingWork();
 	}
 
+	// assert nowTime() is at end of WorkSlot
 	assert(!radio->isPowerOn());
 }
 
@@ -187,25 +205,25 @@ void WorkSlot::performWork() {
 
 
 
-void WorkSlot::end(){
-	radio->powerOff();
-}
-
 
 bool WorkSlot::dispatchMsgReceived(SyncMessage* msg){
 	switch(msg->type) {
 	case MasterSync:
+		log(LogMessage::MasterSync);
 		doMasterSyncMsg(msg);
 		break;
 	case MergeSync:
+		log(LogMessage::MergeSync);
 		doMergeSyncMsg();
 		break;
 	case AbandonMastership:
+		log(LogMessage::AbandonMastership);
 		doAbandonMastershipMsg();
 		break;
 	case Work:
 		// Usual: work message in sync with my clique.
 		// For now, WorkMessage is subclass of SyncMessage
+		log(LogMessage::Work);
 		doWorkMsg(msg);
 		break;
 	}

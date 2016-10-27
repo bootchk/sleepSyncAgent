@@ -3,6 +3,7 @@
 #include "../../platform/types.h"
 #include "schedule.h"
 #include "policy/masterXmitSyncPolicy.h"
+#include "../modules/policy/dropoutMonitor.h"
 
 /*
  *
@@ -24,6 +25,7 @@ private:
 public:
 	static Schedule schedule;
 	static MasterXmitSyncPolicy masterXmitSyncPolicy;
+	static DropoutMonitor dropoutMonitor;
 
 	static SystemID getMasterID() { return masterID; }
 	static void setSelfMastership();
@@ -35,6 +37,7 @@ public:
 	// New clique
 	static void reset();
 
+	static void checkMasterDroppedOut();
 	// Clique is losing member that was Master
 	static void onMasterDropout();
 
