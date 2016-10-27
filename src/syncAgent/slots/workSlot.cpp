@@ -23,11 +23,11 @@ void end(){
 }
 
 void sleepUntilWorkSendingTime(){
-	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisWorkSlotMiddle());
+	syncSleeper.sleepUntilTimeout(clique.schedule.deltaToThisWorkSlotMiddle);
 }
 
 void sleepUntilEndWorkSlot(){
-	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisWorkSlotEnd());
+	syncSleeper.sleepUntilTimeout(clique.schedule.deltaToThisWorkSlotEnd);
 }
 
 
@@ -41,8 +41,8 @@ void startReceive() {
 
 	// Rcv work from others
 	assert(radio->isDisabledState());
-	sleeper.clearReasonForWake();
-	radio->receiveStatic();	//DYNAMIC receiveBuffer, Radio::MaxMsgLength);
+	syncSleeper.clearReasonForWake();
+	radio->receiveStatic();
 }
 
 
@@ -147,7 +147,7 @@ void WorkSlot::performReceivingWork(){
 	radio->powerOnAndConfigure();
 	startReceive();
 	assert(!radio->isDisabledState());
-	syncAgent.dispatchMsgUntil(
+	syncSleeper.sleepUntilMsgAcceptedOrTimeout(
 			dispatchMsgReceived,
 			clique.schedule.deltaToThisWorkSlotEnd);
 	assert(radio->isDisabledState());

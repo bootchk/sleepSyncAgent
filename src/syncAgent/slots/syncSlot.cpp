@@ -121,9 +121,9 @@ void SyncSlot::doMasterSyncSlot() {
 
 
 bool SyncSlot::doMasterListenHalfSyncSlot(OSTime (*timeoutFunc)()) {
-	sleeper.clearReasonForWake();
+	syncSleeper.clearReasonForWake();
 	radio->receiveStatic();
-	bool result = syncAgent.dispatchMsgUntil(
+	bool result = syncSleeper.sleepUntilMsgAcceptedOrTimeout(
 					dispatchMsgReceived,
 					timeoutFunc
 					);
@@ -135,18 +135,18 @@ bool SyncSlot::doMasterListenHalfSyncSlot(OSTime (*timeoutFunc)()) {
 // Sleep with radio off for remainder of sync slot
 void SyncSlot::doIdleSlotRemainder() {
 	assert(!radio->isPowerOn());
-	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisSyncSlotEnd());
+	syncSleeper.sleepUntilTimeout(clique.schedule.deltaToThisSyncSlotEnd);
 }
 
 
 void SyncSlot::doSlaveSyncSlot() {
 	// listen for sync the whole period
-	sleeper.clearReasonForWake();
+	syncSleeper.clearReasonForWake();
 	radio->receiveStatic(); // DYNAMIC (receiveBuffer, Radio::MaxMsgLength);
 	// This assertion is time sensitive, can't stay in production code
 	assert(!radio->isDisabledState()); // listening for other's sync
 	// TODO not using result?
-	syncAgent.dispatchMsgUntil(
+	(void) syncSleeper.sleepUntilMsgAcceptedOrTimeout(
 				dispatchMsgReceived,
 				clique.schedule.deltaToThisSyncSlotEnd);
 }

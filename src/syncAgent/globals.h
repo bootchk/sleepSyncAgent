@@ -14,7 +14,6 @@
 
 #include "../platform/platform.h"	// Radio, Sleeper, LEDLogger
 extern Radio* radio;
-extern Sleeper sleeper;
 extern Mailbox* workOutMailbox;
 
 #include "modules/clique.h"
@@ -25,3 +24,6 @@ extern SyncAgent syncAgent;
 
 #include "modules/serializer.h"
 extern Serializer serializer;
+
+#include "modules/syncSleeper.h"
+extern SyncSleeper syncSleeper;

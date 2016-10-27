@@ -2,7 +2,7 @@
 
 Radio* radio;
 Mailbox* workOutMailbox;
-Sleeper sleeper;
+SyncSleeper syncSleeper;
 
 Clique clique;
 SyncAgent syncAgent;

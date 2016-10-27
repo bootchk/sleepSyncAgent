@@ -54,6 +54,7 @@ public:
 		masterID = aMasterID;
 	}
 
+	// !!! Work carries enough information to help syncing
 	static bool isReceivedTypeASyncType(uint8_t receivedType) {
 		return      (receivedType == MasterSync)
 				|| (receivedType == MergeSync)

@@ -20,7 +20,7 @@ void start() {
 	log(LogMessage::FishSlot);
 	radio->powerOnAndConfigure();
 	radio->configureXmitPower(8);
-	sleeper.clearReasonForWake();
+	syncSleeper.clearReasonForWake();
 	radio->receiveStatic();		// DYNAMIC receiveBuffer, Radio::MaxMsgLength);
 	// assert can receive an event that wakes imminently: race to sleep
 }
@@ -42,12 +42,23 @@ void end(){
 	radio->powerOff();
 }
 
-} // namespace
+
+void doMasterSyncMsg(SyncMessage* msg){
+	/*
+	 * MasterSync may be better or worse.  toMergerRole() handles both cases,
+	 * but always toMerger(), either merging my clique or other clique.
+	 */
+	syncAgent.toMergerRole(msg);
+	assert(syncAgent.role.isMerger());
+	/*
+	 * assert (schedule changed AND self is merging my former clique)
+	 * OR (schedule unchanged AND self is merging other clique)
+	 */
+	// assert my schedule might have changed
+}
 
 
-
-
-bool FishSlot::dispatchMsgReceived(SyncMessage* msg){
+bool dispatchMsgReceived(SyncMessage* msg){
 	bool foundDesiredMessage;
 
 	switch(msg->type) {
@@ -90,19 +101,23 @@ bool FishSlot::dispatchMsgReceived(SyncMessage* msg){
 	return foundDesiredMessage;
 }
 
+} // namespace
+
+
+
 
 void FishSlot::perform() {
 	// FUTURE: A fish slot need not be aligned with other slots, and different duration???
 
 	// Sleep ultra low-power across normally sleeping slots to start of fish slot
 	assert(!radio->isPowerOn());
-	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisFishSlotStart());
+	syncSleeper.sleepUntilTimeout(clique.schedule.deltaToThisFishSlotStart);
 
 
 	start();
 	assert(radio->isPowerOn());
 	assert(!radio->isDisabledState());
-	syncAgent.dispatchMsgUntil(
+	syncSleeper.sleepUntilMsgAcceptedOrTimeout(
 			dispatchMsgReceived,
 			clique.schedule.deltaToThisFishSlotEnd);
 	assert(radio->isDisabledState());
@@ -112,19 +127,6 @@ void FishSlot::perform() {
 
 
 
-void FishSlot::doMasterSyncMsg(SyncMessage* msg){
-	/*
-	 * MasterSync may be better or worse.  toMergerRole() handles both cases,
-	 * but always toMerger(), either merging my clique or other clique.
-	 */
-	syncAgent.toMergerRole(msg);
-	assert(syncAgent.role.isMerger());
-	/*
-	 * assert (schedule changed AND self is merging my former clique)
-	 * OR (schedule unchanged AND self is merging other clique)
-	 */
-	// assert my schedule might have changed
-}
 
 
 

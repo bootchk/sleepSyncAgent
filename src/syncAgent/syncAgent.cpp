@@ -19,9 +19,9 @@ void (*SyncAgent::onSyncPointCallback)();
 
 LEDLogger SyncAgent::ledLogger;	// DEBUG
 
-uint32_t SyncAgent::countValidReceives = 0;
-uint32_t SyncAgent::countInvalidTypeReceives = 0;
-uint32_t SyncAgent::countInvalidCRCReceives = 0;
+uint32_t countValidReceives = 0;
+uint32_t countInvalidTypeReceives = 0;
+uint32_t countInvalidCRCReceives = 0;
 
 // This file only implements part of the class, see other .cpp files.
 // See syncAgentLoop.cpp for high level algorithm.
@@ -35,7 +35,7 @@ void SyncAgent::init(
 		void (*aOnSyncPointCallback)()
 	)
 {
-	sleeper.init();
+	syncSleeper.init();
 	// FUTURE hard to know who owns clock assert(sleeper.isOSClockRunning());
 
 	// Copy parameters to globals
@@ -46,8 +46,8 @@ void SyncAgent::init(
 	onWorkMsgCallback = aOnWorkMsgCallback;
 	onSyncPointCallback = aOnSyncPointCallback;
 
-	// Connect radio IRQ to sleeper so it knows reason for wake
-	radio->init(&sleeper.msgReceivedCallback);
+	// Connect radio IRQ to syncSleeper so it knows reason for wake
+	radio->init(syncSleeper.getMsgReceivedCallback());
 	// radio not configured until after powerOn()
 
 	// Serializer reads and writes directly to radio buffer

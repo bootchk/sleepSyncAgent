@@ -35,8 +35,7 @@
  * Does not use heap.
  */
 
-// typedef (bool (*dispatchQueuedMsg)(Message *)) DispatchFuncPtr;
-typedef bool (*DispatchFuncPtr)(SyncMessage *) ;
+
 
 
 
@@ -67,9 +66,7 @@ private:
 	static void (*onSyncPointCallback)();
 	// FUTURE static void (*onSyncingPausedCallback)();	// callback to app when syncing is paused
 
-	static uint32_t countValidReceives;
-	static uint32_t countInvalidTypeReceives;
-	static uint32_t countInvalidCRCReceives;
+
 
 
 // methods
@@ -83,13 +80,6 @@ public:
 
 	static void startSyncing();
 	static void doSyncPeriod();
-
-	// FUTURE belong here? class SleepingDispatcher?
-	static bool dispatchMsgUntil(
-			DispatchFuncPtr,
-			OSTime (*func)());
-private:
-	static bool dispatchMsg(DispatchFuncPtr);
 
 public:
 	static void relayWorkToApp(WorkPayload work);

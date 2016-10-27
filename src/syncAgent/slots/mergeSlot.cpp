@@ -20,6 +20,18 @@ void sendMergeSync() {
 	radio->powerOff();
 }
 
+
+/*
+ * Partial application:
+ * Convert function of one arg into function of no args.
+ *
+ * A method that whenever called, returns time remaining until time to perform merge.
+ */
+DeltaTime timeoutUntilMerge() {
+	return clique.schedule.deltaToThisMergeStart(
+			syncAgent.cliqueMerger.getOffsetToMergee());
+}
+
 } // namespace
 
 
@@ -31,8 +43,7 @@ MergePolicy MergeSlot::mergePolicy;
 void MergeSlot::perform() {
 	assert(!radio->isPowerOn());
 	assert(syncAgent.role.isMerger());
-	sleeper.sleepUntilEventWithTimeout(clique.schedule.deltaToThisMergeStart(
-			syncAgent.cliqueMerger.getOffsetToMergee()));
+	syncSleeper.sleepUntilTimeout(timeoutUntilMerge);
 	// assert time aligned with middle of a mergee sync slots (same wall time as fished sync from mergee.)
 	sendMergeSync();
 
