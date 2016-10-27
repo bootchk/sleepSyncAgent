@@ -92,12 +92,13 @@ Alternative design: this cliques merges inferior clique.
 	}
 #endif
 }
+
 void doMergeSyncMsg(){
 	/*
 	 * Another clique thinks this is SyncSlot of some clique.
 	 * For now, ignore it.
 	 */
-	// TODO some clique may be not in range of my clique, i.e. need SyncRelay here
+	// FUTURE some clique may be not in range of my clique, i.e. need SyncRelay here
 }
 
 void doAbandonMastershipMsg(){

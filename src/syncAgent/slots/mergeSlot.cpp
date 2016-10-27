@@ -4,6 +4,24 @@
 #include "../globals.h"
 #include "mergeSlot.h"
 
+#include "../logMessage.h"
+
+
+namespace {
+
+void sendMergeSync() {
+	radio->powerOnAndConfigure();
+	radio->configureXmitPower(8);
+	syncAgent.cliqueMerger.makeMergeSync(serializer.outwardCommonSyncMsg);
+	serializer.serializeOutwardCommonSyncMessage();
+	assert(serializer.bufferIsSane());
+	log(LogMessage::SendMergeSync);
+	radio->transmitStaticSynchronously();	// blocks until transmit complete
+	radio->powerOff();
+}
+
+} // namespace
+
 
 
 // static data member
@@ -31,15 +49,6 @@ void MergeSlot::perform() {
 }
 
 
-void MergeSlot::sendMergeSync() {
-	radio->powerOnAndConfigure();
-	radio->configureXmitPower(8);
-	syncAgent.cliqueMerger.makeMergeSync(serializer.outwardCommonSyncMsg);
-	serializer.serializeOutwardCommonSyncMessage();
-	assert(serializer.bufferIsSane());
-	log("Send MergeSync\n");
-	radio->transmitStaticSynchronously();	// blocks until transmit complete
-	radio->powerOff();
-}
+
 
 

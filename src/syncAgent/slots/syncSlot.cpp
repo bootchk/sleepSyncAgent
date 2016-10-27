@@ -168,18 +168,22 @@ bool SyncSlot::dispatchMsgReceived(SyncMessage* msg) {
 
 	switch(msg->type) {
 	case MasterSync:
+		log(LogMessage::MasterSync);
+		isFoundSyncKeepingMsg = doSyncMsg((SyncMessage*) msg);
+		break;
 	case MergeSync:
+		log(LogMessage::MergeSync);
 		isFoundSyncKeepingMsg = doSyncMsg((SyncMessage*) msg);
 		// Multiple syncs or sync
 
 		// FUTURE discard other queued messages
 		break;
-
 	case AbandonMastership:
+		log(LogMessage::AbandonMastership);
 		doAbandonMastershipMsg((SyncMessage*) msg);
 		break;
-
 	case Work:
+		log(LogMessage::Work);
 		doWorkMsg(msg);
 		// FUTURE !!! msg is moved to work queue, not freed?
 		break;
@@ -199,7 +203,7 @@ bool SyncSlot::shouldTransmitSync() {
 
 
 void SyncSlot::sendMasterSync() {
-	log("Send MasterSync\n");
+	log(LogMessage::SendMasterSync);
 	makeCommonMasterSyncMessage();
 	// assert common MasterSync message serialized into radio buffer
 	radio->transmitStaticSynchronously();	// blocks until transmit complete
@@ -269,7 +273,7 @@ bool SyncSlot::doSyncMsg(SyncMessage* msg){
 		clique.dropoutMonitor.heardSync();
 		doesMsgKeepSynch = true;
 	}
-	else if (isSyncFromBetterMaster(msg)) {
+	else if (clique.isOtherCliqueBetter(msg->masterID)) {
 		// Strictly better
 		log("Better master\n");
 		changeMaster(msg);
@@ -305,11 +309,6 @@ void SyncSlot::changeMaster(SyncMessage* msg) {
 	}
 }
 
-// FUTURE eliminate
-bool SyncSlot::isSyncFromBetterMaster(SyncMessage* msg){
-	bool result = clique.isOtherCliqueBetter(msg->masterID);
-	return result;
-}
 
 
 void SyncSlot::logWorseSync() {

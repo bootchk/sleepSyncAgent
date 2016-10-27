@@ -21,7 +21,6 @@ private:
 	static bool doMasterListenHalfSyncSlot(OSTime (*timeoutFunc)());
 	static void doIdleSlotRemainder();
 
-	static bool isSyncFromBetterMaster(SyncMessage* msg);
 	static void changeMaster(SyncMessage* msg);
 	static bool shouldTransmitSync();
 	static void sendMasterSync();
