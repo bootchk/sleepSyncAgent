@@ -162,7 +162,8 @@ void WorkSlot::performWork() {
 	 * I.E. nowTime() is already start of WorkSlot.
 	 */
 	log(LogMessage::WorkSlot);
-	logLongLong(clique.schedule.deltaNowToNextSyncPoint());
+	// When period is 18000, slot 300, this should print 17700.
+	// logLongLong(clique.schedule.deltaNowToNextSyncPoint());
 
 	/*
 	 * Choose kind of WorkSlot.

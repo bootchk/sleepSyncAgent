@@ -32,6 +32,169 @@
 
 namespace {
 
+void changeMaster(SyncMessage* msg) {
+	// assert current slot is Sync
+	assert(msg->masterID != clique.getMasterID());
+
+	clique.changeBySyncMessage(msg);
+	// assert endOfSyncPeriod was changed
+
+	if (syncAgent.role.isMerger()) {
+		// Already merging an other clique, now merge other clique to updated sync slot time
+		syncAgent.cliqueMerger.adjustMergerBySyncMsg(msg);
+	}
+}
+
+
+void logWorseSync() {
+	// FUTURE: for now this is just logging, in future will record history
+	if (clique.isSelfMaster()) {
+		/*
+		 * Sender has not heard my sync.
+		 * Since I am still alive, they should not be assuming mastership.
+		 * Could be assymetric communication (I can hear they, they cannot hear me.)
+		 */
+		log("Worse sync while self is master.\n");
+	}
+	else { // self is slave
+		/*
+		 * Sender has not heard my master's sync.
+		 * My master may have dropped out (and I just don't know yet), and they are assuming mastership.
+		 * Wait until I discover my master dropout.
+		 */
+		// FUTURE: if msg.masterID < myID(), I should assume mastership instead of sender
+		// FUTURE: if msg.masterID > myID() record msg.masterID in my historyOfMasters
+		// so when I discover dropout, I will defer to msg.masterID
+		log("Worse sync while self is slave.\n");
+	}
+}
+
+
+// Handlers for messages received in sync slot: Sync, AbandonMastership, Work
+
+/*
+ * Cases for sync messages:
+ * 1. my cliques current master (usual)
+ * 2. other clique master happened to start schedule coincident with my schedule
+ * 3. other clique master clock drifts so schedules coincide
+ * 4. member (master or slave) of other, better clique fished, caught my clique and is merging my clique
+ * 5. a member of my clique failed to hear sync and is assuming mastership
+ *
+ * Cannot assert sender is a master (msg.masterID could be different from senderID)
+ * Cannot assert self is slave
+ * Cannot assert msg.masterID equals clique.masterID
+ */
+
+/*
+ * Returns true if sync message keeps my sync (from current or new master of my clique.)
+ */
+bool doSyncMsg(SyncMessage* msg){
+	// assert SyncMsg is subtype MasterSync OR MergeSync
+	// assert sync not from self (xmitter and receiver are exclusive)
+	// assert self.isMaster || self.isSlave i.e. this code doesn't require any particular role
+
+	bool doesMsgKeepSynch;
+
+	// Most likely case first
+	if (clique.isMyMaster(msg->masterID)) {
+		// My Master could have fished another better clique and be MergeSyncing self
+		// Each Sync has an offset, could be zero or small (MasterSync) or larger (MergeSync)
+		log("Sync from master\n");
+		clique.changeBySyncMessage(msg);
+		clique.dropoutMonitor.heardSync();
+		doesMsgKeepSynch = true;
+	}
+	else if (clique.isOtherCliqueBetter(msg->masterID)) {
+		// Strictly better
+		log("Better master\n");
+		changeMaster(msg);
+		clique.dropoutMonitor.heardSync();
+		doesMsgKeepSynch = true;
+	}
+	else {
+		/*
+		 * Heard MasterSync in SyncSlot from other Master of other worse clique.
+		 * OR heard MergeSync from Master or Slave of other worse clique.
+		 * Master of my clique (could be self) should continue as Master.
+		 * Don't tell other clique: since their sync slot overlaps with mine,
+		 * they should eventually hear my clique master's sync and relinquish mastership.
+		 */
+		logWorseSync();
+		// !!! SyncMessage does not keep me in sync: not dropoutMonitor.heardSync();
+		doesMsgKeepSynch = false;
+	}
+	return doesMsgKeepSynch;
+}
+
+
+
+
+
+
+
+// Abandon mastership
+
+
+void doAbandonMastershipMsg(SyncMessage* msg){
+	/*
+	 * My clique is still in sync, but master is dropout.
+	 *
+	 * Naive design: all units that hear master abandon assume mastership.
+	 * FUTURE: keep historyOfMasters, and better slaves assume mastership.
+	 */
+	(void) msg;  // FUTURE use msg to record history
+
+	clique.setSelfMastership();
+	assert(clique.isSelfMaster());
+}
+
+
+
+// Work in SyncSlot
+
+void doWorkMsg(SyncMessage* msg){
+	// Received in wrong slot, from out-of-sync clique
+
+	/*
+	 * Design decision:
+	 * Work is done even out of sync with others.
+	 * Alternatively, don't do work that is out of sync.  Change this to ignore the msg if from inferior clique.
+	 */
+	syncAgent.relayWorkToApp(msg->workPayload());
+
+	/*
+	 * Design: (see "duality" in WorkSlot)
+	 * My SyncSlot aligns with other's WorkSlot => other's SyncSlot aligns with my last SleepingSlot.
+	 * So eventually I would fish in my lastSleepingSlot and find other clique.
+	 * But merger comes sooner if we don't waste info we just found.
+	 *
+	 * I might need to schedule a fish for it in my last Sleeping slot.
+	 */
+	if (clique.isOtherCliqueBetter(msg->masterID)) {
+		/*
+		 * Self is inferior.
+		 * Join other clique.
+		 * Other members of my clique should (and with high probably, will) do the same.
+		 *
+		 * Don't become a Merger and merge my old clique into superior clique,
+		 * because that requires sending MergeSync at a displaced time in my new Schedule's SyncSlot.
+		 * Any such merging would also contend with superior other's work slot.
+		 */
+		syncAgent.mangleWorkMsg(msg);
+		clique.changeBySyncMessage(msg);
+	}
+	else {
+		/*
+		 * Self is superior.
+		 * Other clique will continue to send work in my SyncSlot.
+		 * But other should hear my master's MasterSync in its work slot, and join my clique.
+		 */
+		// FUTURE schedule to fish in my last sleeping slot, so I can become a merger.
+		// But many of my cohort may also do this.
+		// Only the master should do this.
+	}
+}
+
 }	// namespace
 
 
@@ -222,166 +385,6 @@ void SyncSlot::makeCommonMasterSyncMessage() {
 	assert(serializer.bufferIsSane());
 }
 
-
-
-// Handlers for messages received in sync slot: Sync, AbandonMastership, Work
-
-/*
- * Cases for sync messages:
- * 1. my cliques current master (usual)
- * 2. other clique master happened to start schedule coincident with my schedule
- * 3. other clique master clock drifts so schedules coincide
- * 4. member (master or slave) of other, better clique fished, caught my clique and is merging my clique
- * 5. a member of my clique failed to hear sync and is assuming mastership
- *
- * Cannot assert sender is a master (msg.masterID could be different from senderID)
- * Cannot assert self is slave
- * Cannot assert msg.masterID equals clique.masterID
- */
-
-/*
- * Returns true if sync message keeps my sync (from current or new master of my clique.)
- */
-bool SyncSlot::doSyncMsg(SyncMessage* msg){
-	// assert SyncMsg is subtype MasterSync OR MergeSync
-	// assert sync not from self (xmitter and receiver are exclusive)
-	// assert self.isMaster || self.isSlave i.e. this code doesn't require any particular role
-
-	bool doesMsgKeepSynch;
-
-	// Most likely case first
-	if (clique.isMyMaster(msg->masterID)) {
-		// My Master could have fished another better clique and be MergeSyncing self
-		// Each Sync has an offset, could be zero or small (MasterSync) or larger (MergeSync)
-		log("Sync from master\n");
-		clique.changeBySyncMessage(msg);
-		clique.dropoutMonitor.heardSync();
-		doesMsgKeepSynch = true;
-	}
-	else if (clique.isOtherCliqueBetter(msg->masterID)) {
-		// Strictly better
-		log("Better master\n");
-		changeMaster(msg);
-		clique.dropoutMonitor.heardSync();
-		doesMsgKeepSynch = true;
-	}
-	else {
-		/*
-		 * Heard MasterSync in SyncSlot from other Master of other worse clique.
-		 * OR heard MergeSync from Master or Slave of other worse clique.
-		 * Master of my clique (could be self) should continue as Master.
-		 * Don't tell other clique: since their sync slot overlaps with mine,
-		 * they should eventually hear my clique master's sync and relinquish mastership.
-		 */
-		logWorseSync();
-		// !!! SyncMessage does not keep me in sync: not dropoutMonitor.heardSync();
-		doesMsgKeepSynch = false;
-	}
-	return doesMsgKeepSynch;
-}
-
-
-void SyncSlot::changeMaster(SyncMessage* msg) {
-	// assert current slot is Sync
-	assert(msg->masterID != clique.getMasterID());
-
-	clique.changeBySyncMessage(msg);
-	// assert endOfSyncPeriod was changed
-
-	if (syncAgent.role.isMerger()) {
-		// Already merging an other clique, now merge other clique to updated sync slot time
-		syncAgent.cliqueMerger.adjustMergerBySyncMsg(msg);
-	}
-}
-
-
-
-void SyncSlot::logWorseSync() {
-	// FUTURE: for now this is just logging, in future will record history
-	if (clique.isSelfMaster()) {
-		/*
-		 * Sender has not heard my sync.
-		 * Since I am still alive, they should not be assuming mastership.
-		 * Could be assymetric communication (I can hear they, they cannot hear me.)
-		 */
-		log("Worse sync while self is master.\n");
-	}
-	else { // self is slave
-		/*
-		 * Sender has not heard my master's sync.
-		 * My master may have dropped out (and I just don't know yet), and they are assuming mastership.
-		 * Wait until I discover my master dropout.
-		 */
-		// FUTURE: if msg.masterID < myID(), I should assume mastership instead of sender
-		// FUTURE: if msg.masterID > myID() record msg.masterID in my historyOfMasters
-		// so when I discover dropout, I will defer to msg.masterID
-		log("Worse sync while self is slave.\n");
-	}
-}
-
-
-// Abandon mastership
-
-
-void SyncSlot::doAbandonMastershipMsg(SyncMessage* msg){
-	/*
-	 * My clique is still in sync, but master is dropout.
-	 *
-	 * Naive design: all units that hear master abandon assume mastership.
-	 * FUTURE: keep historyOfMasters, and better slaves assume mastership.
-	 */
-	(void) msg;  // FUTURE use msg to record history
-
-	clique.setSelfMastership();
-	assert(clique.isSelfMaster());
-}
-
-
-
-// Work in SyncSlot
-
-void SyncSlot::doWorkMsg(SyncMessage* msg){
-	// Received in wrong slot, from out-of-sync clique
-
-	/*
-	 * Design decision:
-	 * Work is done even out of sync with others.
-	 * Alternatively, don't do work that is out of sync.  Change this to ignore the msg if from inferior clique.
-	 */
-	syncAgent.relayWorkToApp(msg->workPayload());
-
-	/*
-	 * Design: (see "duality" in WorkSlot)
-	 * My SyncSlot aligns with other's WorkSlot => other's SyncSlot aligns with my last SleepingSlot.
-	 * So eventually I would fish in my lastSleepingSlot and find other clique.
-	 * But merger comes sooner if we don't waste info we just found.
-	 *
-	 * I might need to schedule a fish for it in my last Sleeping slot.
-	 */
-	if (clique.isOtherCliqueBetter(msg->masterID)) {
-		/*
-		 * Self is inferior.
-		 * Join other clique.
-		 * Other members of my clique should (and with high probably, will) do the same.
-		 *
-		 * Don't become a Merger and merge my old clique into superior clique,
-		 * because that requires sending MergeSync at a displaced time in my new Schedule's SyncSlot.
-		 * Any such merging would also contend with superior other's work slot.
-		 */
-		syncAgent.mangleWorkMsg(msg);
-		clique.changeBySyncMessage(msg);
-	}
-	else {
-		/*
-		 * Self is superior.
-		 * Other clique will continue to send work in my SyncSlot.
-		 * But other should hear my master's MasterSync in its work slot, and join my clique.
-		 */
-		// FUTURE schedule to fish in my last sleeping slot, so I can become a merger.
-		// But many of my cohort may also do this.
-		// Only the master should do this.
-	}
-}
 
 
 

@@ -7,7 +7,8 @@
 void Slot::prepareRadioToTransmitOrReceive() {
 	if (!radio->isPowerOn()) {
 			radio->powerOnAndConfigure();
-			radio->configureXmitPower(8);
+			// TESTING: lower xmit power 8
+			// radio->configureXmitPower(8);
 		}
 	assert(radio->isPowerOn());
 	assert(radio->isDisabledState());	// not is receiving

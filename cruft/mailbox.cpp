@@ -20,9 +20,6 @@ WorkPayload unqueueWorkMsgFromApp() { return 0; }
 //void freeWorkMsg(void*) {}
 
 
-
-
-
 // !!!! Implement received msg queue as get from single, static receive buffer
 
 bool isQueuedReceivedMsg() { return true; }	// Since this is called from the receive IRQ, buffer is filled
@@ -43,4 +40,4 @@ void queueWorkMsgToApp(void * msg, int length) {(void) msg; (void) length; }
 
 
 #endif
-// else platform provides
+

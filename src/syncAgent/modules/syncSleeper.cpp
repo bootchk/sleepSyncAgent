@@ -54,6 +54,7 @@ bool dispatchFilteredMsg(DispatchFuncPtr dispatchFuncOnType) {
 		}
 		else {
 			// Ignore MessageType garbled
+			log(">>>>!Type");
 			countInvalidTypeReceives++;
 			//ledLogger2.toggleLED(4);	// debug: LED 4 invalid MessageType received
 			// continuation is sleep
@@ -64,7 +65,7 @@ bool dispatchFilteredMsg(DispatchFuncPtr dispatchFuncOnType) {
 	else {
 		// ignore CRC invalid packet
 		countInvalidCRCReceives++;
-
+		log(">>>>!CRC");
 		//ledLogger2.toggleLED(4);	// debug: LED 4 invalid CRC received
 		// continuation is sleep
 	}
@@ -178,6 +179,8 @@ bool SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 			// assert the timeoutFunc() will eventually return zero and not sleep with reason==TimerExpired
 			{}
 		}
+		// Timer might be canceled, but sleepUntilEventWithTimeout will restart it
+
 		if (didReceiveDesiredMsg || didTimeout) break;	// while(true)
 	}
 

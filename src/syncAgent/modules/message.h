@@ -30,11 +30,10 @@
 
 enum MessageType {
 	// Subclass SyncMessage
-	MasterSync = 1,	// Don't start at 0
-	MergeSync,
-	AbandonMastership,
-	// Subclass WorkMessage
-	Work
+	MasterSync = 17,	// Don't start at 0
+	MergeSync = 34,
+	AbandonMastership = 68,
+	Work = 136
 };
 // !!!! See hack for mangled Work
 

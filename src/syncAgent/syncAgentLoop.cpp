@@ -68,7 +68,10 @@ void SyncAgent::loop(){
  */
 void SyncAgent::doSyncPeriod() {
 
-	logLongLong(clique.schedule.nowTime());
+	// log("Now time\n");
+	// logLongLong(clique.schedule.nowTime());
+
+
 	// syncSlot first, always
 	syncSlot.perform();
 
@@ -82,7 +85,11 @@ void SyncAgent::doSyncPeriod() {
 	}
 #endif
 
+
+#ifdef SYNC_AGENT_CONVEYS_WORK
+	// TODO also ORDINAL OF FIRST FISHING SLOT
 	workSlot.performWork();
+#endif
 
 	assert(!radio->isPowerOn());	// Low power until next slot
 

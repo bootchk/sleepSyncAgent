@@ -32,11 +32,10 @@
  * Define equal to 1 if this if SyncAgent should convey work messages to app.
  *
  * Yes:
- * SyncAgent unqueues and enqueues to work queues from platform.
+ * SyncAgent unqueues and enqueues to work queues to/from app.
  *
  * No:
- * SyncAgent implements a work slot,
- * but since no units are sending work,  never hears a work message.
+ * SyncAgent does not implement a work slot.
  * SyncAgent work enqueues and dequeues are stubbed to no ops.
  * Platform layer need not implement work queue operations.
  * The app doesn't communicate work with other units.
@@ -44,7 +43,7 @@
  * All the app does is receive a callback at each SyncPoint.
  * The callback should be a lower priority process than the SyncAgent (or kept short.)
  */
-#define SYNC_AGENT_CONVEY_WORK 1
+#define SYNC_AGENT_CONVEYS_WORK 1
 
 
 /*

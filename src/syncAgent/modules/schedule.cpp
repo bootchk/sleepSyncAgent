@@ -107,6 +107,7 @@ LongTime Schedule::adjustedEndTime(DeltaTime senderDeltaToSyncPoint) {
 		// Skip the adjusted SyncPoint near in time, choose the next SyncPoint
 		result = longClock.nowTime() + senderDeltaToSyncPoint + NormalSyncPeriodDuration;
 	}
+	return result;
 }
 
 
