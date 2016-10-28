@@ -32,39 +32,6 @@
 
 namespace {
 
-void start() {
-	// common to Master and Slave SyncSlot
-	log(LogMessage::SyncSlot);
-	radio->powerOnAndConfigure();
-	radio->configureXmitPower(8);
-	assert(radio->isPowerOn());
-}
-
-void end() {
-	/*
-	 * This may be late, when message receive thread delays this.
-	 * Also, there could be a race to deliver message with this event.
-	 * FUTURE check for those cases.
-	 * Scheduling of subsequent events does not depend on timely this event.
-	 */
-
-	// Radio is on or off.  If on, we timeout'd while receiving
-	if (radio->isPowerOn()) {
-		radio->stopReceive();
-		assert(radio->isDisabledState());	// receiveStatic() in next slot requires radio disabled.
-	}
-	// Radio on or off
-	// Turn radio off, workSlot may not need it on
-	radio->powerOff();
-
-	// FUTURE we could do this elsewhere, e.g. start of sync slot so this doesn't delay the start of work slot
-	if (!clique.isSelfMaster())
-		clique.checkMasterDroppedOut();
-
-	assert(!radio->isPowerOn());	// ensure
-}
-
-
 }	// namespace
 
 
@@ -78,14 +45,34 @@ void end() {
  */
 
 void SyncSlot::perform() {
-	start();	// radio on
+	log(LogMessage::SyncSlot);
+	prepareRadioToTransmitOrReceive();
 	if (shouldTransmitSync())
 		doMasterSyncSlot();
 	else
 		// isSlave or (isMaster and not xmitting (coin flip))
 		doSlaveSyncSlot();
-	end();
+
+	/*
+	 * This may be late, when message receive thread delays this.
+	 * Also, there could be a race to deliver message with this event.
+	 * FUTURE check for those cases.
+	 * Scheduling of subsequent events does not depend on timely this event.
+	 */
+
+	// Radio is on or off.  If on, we timeout'd while receiving
+	stopReceiving();
+	// Radio on or off
+	// Turn radio off, workSlot may not need it on
+	shutdownRadio();
+
+	// FUTURE we could do this elsewhere, e.g. start of sync slot so this doesn't delay the start of work slot
+	if (!clique.isSelfMaster())
+		clique.checkMasterDroppedOut();
+
+	assert(!radio->isPowerOn());	// ensure
 }
+
 
 void SyncSlot::doMasterSyncSlot() {
 	// Transmit sync in middle
@@ -121,8 +108,7 @@ void SyncSlot::doMasterSyncSlot() {
 
 
 bool SyncSlot::doMasterListenHalfSyncSlot(OSTime (*timeoutFunc)()) {
-	syncSleeper.clearReasonForWake();
-	radio->receiveStatic();
+	startReceiving();
 	bool result = syncSleeper.sleepUntilMsgAcceptedOrTimeout(
 					dispatchMsgReceived,
 					timeoutFunc
@@ -141,8 +127,7 @@ void SyncSlot::doIdleSlotRemainder() {
 
 void SyncSlot::doSlaveSyncSlot() {
 	// listen for sync the whole period
-	syncSleeper.clearReasonForWake();
-	radio->receiveStatic(); // DYNAMIC (receiveBuffer, Radio::MaxMsgLength);
+	startReceiving();
 	// This assertion is time sensitive, can't stay in production code
 	assert(!radio->isDisabledState()); // listening for other's sync
 	// TODO not using result?

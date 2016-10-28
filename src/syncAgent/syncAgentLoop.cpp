@@ -68,6 +68,7 @@ void SyncAgent::loop(){
  */
 void SyncAgent::doSyncPeriod() {
 
+	logLongLong(clique.schedule.nowTime());
 	// syncSlot first, always
 	syncSlot.perform();
 
@@ -100,6 +101,7 @@ void SyncAgent::doSyncPeriod() {
 		// continue and sleep until end of sync period
 	}
 	assert(!radio->isPowerOn());	// Low power for remainder of this sync period
+
 	syncSleeper.sleepUntilTimeout(clique.schedule.deltaNowToNextSyncPoint);
 	// Sync period completed
 }

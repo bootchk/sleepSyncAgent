@@ -108,7 +108,7 @@ public:
 	// nowTime is not aligned with slot starts.  Result need not be multiple of slotDuration.
 	// Used by CliqueMerger()
 
-	static DeltaTime deltaNowToStartNextSync();
+	//static DeltaTime deltaNowToStartNextSync();
 	//static DeltaTime deltaStartThisSyncPeriodToNow();
 
 	/*
@@ -116,8 +116,8 @@ public:
 	 * Positive or zero and < SyncPeriodDuration
 	 */
 	static DeltaTime deltaNowToNextSyncPoint();
+
 	// deltas to slots
-	// OBSOLETE static DeltaTime deltaToThisSyncSlotStart();
 	static DeltaTime deltaToThisSyncSlotMiddle();
 	static DeltaTime deltaToThisSyncSlotEnd();
 
@@ -133,9 +133,11 @@ public:
 	/*
 	 *  Times
 	 */
+	static LongTime nowTime() { return longClock.nowTime(); }
+
 	static LongTime timeOfNextSyncPoint();
+
 	// slot times
-	// static LongTime timeOfNextSyncSlotStart();	// Of next period
 	static LongTime timeOfThisSyncSlotMiddle();
 	static LongTime timeOfThisSyncSlotEnd();	// Of this period
 

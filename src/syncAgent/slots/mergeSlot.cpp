@@ -10,14 +10,11 @@
 namespace {
 
 void sendMergeSync() {
-	radio->powerOnAndConfigure();
-	radio->configureXmitPower(8);
 	syncAgent.cliqueMerger.makeMergeSync(serializer.outwardCommonSyncMsg);
 	serializer.serializeOutwardCommonSyncMessage();
 	assert(serializer.bufferIsSane());
 	log(LogMessage::SendMergeSync);
 	radio->transmitStaticSynchronously();	// blocks until transmit complete
-	radio->powerOff();
 }
 
 
@@ -45,7 +42,9 @@ void MergeSlot::perform() {
 	assert(syncAgent.role.isMerger());
 	syncSleeper.sleepUntilTimeout(timeoutUntilMerge);
 	// assert time aligned with middle of a mergee sync slots (same wall time as fished sync from mergee.)
+	prepareRadioToTransmitOrReceive();
 	sendMergeSync();
+	shutdownRadio();
 
 	if (mergePolicy.checkCompletionOfMergerRole()){
 		mergePolicy.restart();
@@ -58,8 +57,4 @@ void MergeSlot::perform() {
 
 	assert(!radio->isPowerOn());
 }
-
-
-
-
 

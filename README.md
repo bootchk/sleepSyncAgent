@@ -76,7 +76,7 @@ At -40dBm, communicates at distance no more than about one foot
 Architecture:
 =
 
-Implements a SleepSyncAgent.  SleepSyncAgent handles radio for app.  The app manages power, sync, and work.  Most work is done on receiving a work message from the SyncAgent.
+Implements a SleepSyncAgent.  SleepSyncAgent handles radio for app.  The app manages power, sync, and work.  Most 'useful' work is done on receiving a work message from the SyncAgent (many messages are exchanged to achieve sync, but it is not 'useful' work unless sync is all you want.)
 
 SleepSyncAgent is a wedge into the app. Built as a library cross-compiled to the target.  Linked into the app.  The app project provides platform libs that SleepSyncAgent requires.
 
@@ -86,9 +86,9 @@ SleepSyncAgent is a wedge into the app. Built as a library cross-compiled to the
     main()                 --> loopOnEvents() 
                                never returns
     
-                                          reasonForWake <- RTC
+                                          reasonForWake <- Crystal 32kHz RTC
                                           reasonForWake <- Radio
-                                                           Exceptions
+                                                        <- Exceptions
     platform libs (or RTOS) <-- SyncAgent 
       radio
       clock
@@ -126,7 +126,7 @@ A unit can have any combination of roles from the role pairs e.g. slave AND fish
 
 A fisher periodically listens for syncs in normally sleeping slots of its schedule.  If a fisher hears a sync from another clique, it becomes a merger.
 
-A merger decides which clique is better (the other, or its own, based on ordering of ID's)  A merger broadcasts syncs (with a large offset) to other cliques or its own clique, telling said clique to merge.
+A merger decides which clique is better (the other, or its own, based on ordering of ID's)  A merger broadcasts syncs (with a large offset) to other cliques or its old clique, telling said other or old clique to merge.
 
 
 References

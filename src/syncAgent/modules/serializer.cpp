@@ -63,6 +63,8 @@ SyncMessage* Serializer::unserialize() {
 		// Unserialize it so we can debug it
 		// unserializeIntoCommonSyncMessage();
 		//assert(false);	// TESTING
+		log("Invalid message type\n");
+		logLongLong(radioBufferPtr[0]);
 		result = nullptr;	// PRODUCTION
 	}
 	// assert validity of SystemID and offset have not been checked

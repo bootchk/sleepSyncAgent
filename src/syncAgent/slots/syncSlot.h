@@ -2,9 +2,9 @@
 #pragma once
 
 #include "../modules/message.h"
+#include "slot.h"
 
-
-class SyncSlot {
+class SyncSlot: Slot {
 
 public:
 	static void perform();

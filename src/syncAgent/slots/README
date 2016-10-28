@@ -1,10 +1,9 @@
-There is no Slot superclass.
 
 The public API is just perform().
 
 Most slots use the globals.
 
-Most slots do start(), dispatchUntil(), stop() where start() and stop() setup the Radio.
+Most slots prepareRadio, dispatchUntil(), shutdownRadio().
 
 Most slots listen and/or send.
 

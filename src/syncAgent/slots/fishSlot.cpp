@@ -16,33 +16,6 @@
 
 namespace {
 
-void start() {
-	log(LogMessage::FishSlot);
-	radio->powerOnAndConfigure();
-	radio->configureXmitPower(8);
-	syncSleeper.clearReasonForWake();
-	radio->receiveStatic();		// DYNAMIC receiveBuffer, Radio::MaxMsgLength);
-	// assert can receive an event that wakes imminently: race to sleep
-}
-
-
-void end(){
-	/*
-	 * Conditions:
-	 * (no sync msg was heard and receiver still on)
-	 * OR (heard a sync msg and (adjusted my schedule OR changed role to Merger))
-	 *
-	 * In case we adjusted my schedule, now is near its beginning.
-	 * The next scheduled sync slot will be almost one full period from now.
-	 *
-	 * In case we adjusted changed role to Merger,
-	 * first mergeSlot will be after next syncSlot.
-	 */
-	// radio might be off already
-	radio->powerOff();
-}
-
-
 void doMasterSyncMsg(SyncMessage* msg){
 	/*
 	 * MasterSync may be better or worse.  toMergerRole() handles both cases,
@@ -113,19 +86,30 @@ void FishSlot::perform() {
 	assert(!radio->isPowerOn());
 	syncSleeper.sleepUntilTimeout(clique.schedule.deltaToThisFishSlotStart);
 
-
-	start();
+	log(LogMessage::FishSlot);
+	prepareRadioToTransmitOrReceive();
+	startReceiving();
+	// assert can receive an event that wakes imminently: race to sleep
 	assert(radio->isPowerOn());
 	assert(!radio->isDisabledState());
 	syncSleeper.sleepUntilMsgAcceptedOrTimeout(
 			dispatchMsgReceived,
 			clique.schedule.deltaToThisFishSlotEnd);
 	assert(radio->isDisabledState());
-	end();
+	/*
+	 * Conditions:
+	 * (no sync msg was heard and receiver still on)
+	 * OR (heard a sync msg and (adjusted my schedule OR changed role to Merger))
+	 *
+	 * In case we adjusted my schedule, now is near its beginning.
+	 * The next scheduled sync slot will be almost one full period from now.
+	 *
+	 * In case we adjusted changed role to Merger,
+	 * first mergeSlot will be after next syncSlot.
+	 */
+	// radio might be off already
+	shutdownRadio();
 }
-
-
-
 
 
 
@@ -137,4 +121,3 @@ void FishSlot::doWorkMsg(SyncMessage msg) {
 	onWorkMsgCallback(msg);
 }
 */
-

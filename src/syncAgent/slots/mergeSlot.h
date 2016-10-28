@@ -2,6 +2,8 @@
 #pragma once
 
 #include "../modules/policy/mergePolicy.h"
+#include "slot.h"
+
 
 /* MergeSlot of my schedule.
  *
@@ -13,7 +15,7 @@
  * - not aligned with normally sleeping slots
  */
 
-class MergeSlot {
+class MergeSlot: Slot {
 
 public:
 	static MergePolicy mergePolicy;	// visible to SyncAgent

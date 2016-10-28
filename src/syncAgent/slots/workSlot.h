@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include "slot.h"
 #include "../modules/message.h"
 
 /*
@@ -18,7 +19,7 @@
  * Another alternative is to wait for the other clique to drift, but that would take a long time.
  */
 
-class WorkSlot {
+class WorkSlot: Slot {
 public:
 	static void performWork();
 

@@ -14,14 +14,6 @@
 // static methods
 namespace {
 
-void start() {
-	log(LogMessage::WorkSlot);
-}
-
-void end(){
-	radio->powerOff();
-}
-
 void sleepUntilWorkSendingTime(){
 	syncSleeper.sleepUntilTimeout(clique.schedule.deltaToThisWorkSlotMiddle);
 }
@@ -30,20 +22,6 @@ void sleepUntilEndWorkSlot(){
 	syncSleeper.sleepUntilTimeout(clique.schedule.deltaToThisWorkSlotEnd);
 }
 
-
-
-void startReceive() {
-	// Prior SyncSlot may have offed radio
-	if (!radio->isPowerOn()) {
-		radio->powerOnAndConfigure();
-		radio->configureXmitPower(8);
-	}
-
-	// Rcv work from others
-	assert(radio->isDisabledState());
-	syncSleeper.clearReasonForWake();
-	radio->receiveStatic();
-}
 
 
 
@@ -67,7 +45,7 @@ void doMasterSyncMsg(SyncMessage* msg){
 	else {
 		log(LogMessage::WorseMasterSync);
 		/*
-		 * Other clique worse.
+		 * Other clique myMaster or worse.
 		 *
 		 * By duality, other clique will hear my work in their SyncSlot (if I send work often enough).
 		 *
@@ -125,7 +103,7 @@ void doWorkMsg(SyncMessage* msg) {
 void sendWork(){
 
 	log(LogMessage::SendWork);
-	assert(radio->isPowerOn());
+	assert(radio->isDisabledState());
 	assert(workOutMailbox->isMail());
 	WorkPayload workPayload = workOutMailbox->fetch();
 	serializer.outwardCommonSyncMsg.makeWork(workPayload, clique.getMasterID());
@@ -144,15 +122,13 @@ void sendWork(){
  *  Receive work OR sync (similar to fishing.)
  */
 void WorkSlot::performReceivingWork(){
-	radio->powerOnAndConfigure();
-	startReceive();
-	assert(!radio->isDisabledState());
+	prepareRadioToTransmitOrReceive();
+	startReceiving();
 	syncSleeper.sleepUntilMsgAcceptedOrTimeout(
 			dispatchMsgReceived,
 			clique.schedule.deltaToThisWorkSlotEnd);
 	assert(radio->isDisabledState());
-	end();
-	assert(!radio->isPowerOn());
+	shutdownRadio();
 }
 
 /*
@@ -164,13 +140,15 @@ void WorkSlot::performSendingWork(){
 
 	assert(workOutMailbox->isMail());	// require work to send
 	assert(!radio->isPowerOn());
-	sleepUntilWorkSendingTime();
-	radio->powerOnAndConfigure();
+
 	// TODO send work randomly in subslot of work slot, contention
+	sleepUntilWorkSendingTime();
+
+	prepareRadioToTransmitOrReceive();
 	sendWork();
-	radio->powerOff();
+	shutdownRadio();
+
 	sleepUntilEndWorkSlot();
-	assert(!radio->isPowerOn());
 }
 
 
@@ -183,8 +161,8 @@ void WorkSlot::performWork() {
 	 * I.E. no sleeping until start of WorkSlot.
 	 * I.E. nowTime() is already start of WorkSlot.
 	 */
-
-	start();
+	log(LogMessage::WorkSlot);
+	logLongLong(clique.schedule.deltaNowToNextSyncPoint());
 
 	/*
 	 * Choose kind of WorkSlot.

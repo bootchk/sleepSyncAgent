@@ -18,7 +18,7 @@ public:	// for assertions
  * e.g. if Bluetooth, one message is ~ 1msec
  * e.g. if RawWireless, one message is ~0.1msec
  */
-static const DeltaTime     SlotDuration = 300;	// ~ 10msec
+static const DeltaTime     SlotDuration = 300;	// ~ 10msec @64Mhz SysClock
 
 /*
  * Ratio of sync period duration to wake duration.
@@ -58,12 +58,10 @@ static const ScheduleCount FirstSleepingSlotOrdinal = 3;
  */
 static const ScheduleCount CountSlots = 3*DutyCycleInverse;
 
-// Duration of SyncPeriod not adjusted (extended)
+// Duration of SyncPeriod not adjusted (extended) in ticks
 static const DeltaTime NormalSyncPeriodDuration = CountSlots * SlotDuration;
 
 
-//
-//
 /*
  * Duration of message on air.
  * Units ticks.
