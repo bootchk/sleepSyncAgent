@@ -10,10 +10,10 @@
 namespace {
 
 void sendMergeSync() {
+	log(LogMessage::SendMergeSync);
 	syncAgent.cliqueMerger.makeMergeSync(serializer.outwardCommonSyncMsg);
 	serializer.serializeOutwardCommonSyncMessage();
 	assert(serializer.bufferIsSane());
-	log(LogMessage::SendMergeSync);
 	radio->transmitStaticSynchronously();	// blocks until transmit complete
 }
 

@@ -5,14 +5,16 @@ Work in progress.
 
 Status:
 
-	- algorithm seems to work (for two units)
+	- algorithm seems to achieve sync (for three units)
+	- algorithm conveys data (work) piggybacked in sync message format
 	- built as a static library
 	- target platform Nordic nrf52, without OS, using raw protocol (see my other GitHub repository)
 
 
 Todo:
 
-    - testing with many units
+	- harvested power operation (daily solar power down and resync)
+    - testing with many tens, hundreds,... of units
     - RTOS work thread with work queues in and out
     - fleshing out corners of algorithm: dropping out, adjusting mergers in progress, etc. 
     - other platforms
@@ -137,6 +139,14 @@ Digi Corporation's Digimesh has sleep synchronization
 "Reachback firefly algorithm".  But in firefly algorithms, all units xmit sync. Here, we decide a master.  Here, more than one unit (even slaves) may xmit sync, but in the ideal state, only one master does.
 
 "time triggered communication".  Units are synced and communicate on a schedule of slots.
+
+
+Mesh
+=
+
+Currently the algorithm assumes all units are in range of all other units.  
+
+FUTURE: In a mesh, that assumption is relaxed.  Sync is relayed.  The algorithm does not keep an elaborate topology with routing tables.  The algorithm would still have one master.  The master might not be in a central geographic position (which would minimize relaying.)
 
 
 Building

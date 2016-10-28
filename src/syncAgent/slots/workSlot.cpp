@@ -99,15 +99,15 @@ void doWorkMsg(SyncMessage* msg) {
 	syncAgent.relayWorkToApp(msg->workPayload());
 }
 
-// Send work from app to other units
-void sendWork(){
+void sendWorkFromAppToOtherUnits(){
 
 	log(LogMessage::SendWork);
 	assert(radio->isDisabledState());
 	assert(workOutMailbox->isMail());
 	WorkPayload workPayload = workOutMailbox->fetch();
 	serializer.outwardCommonSyncMsg.makeWork(workPayload, clique.getMasterID());
-	// assert common SyncMessage serialized into radio buffer
+	serializer.serializeOutwardCommonSyncMessage();
+	assert(serializer.bufferIsSane());
 	radio->transmitStaticSynchronously();	// blocks until transmit complete
 }
 
@@ -145,7 +145,7 @@ void WorkSlot::performSendingWork(){
 	sleepUntilWorkSendingTime();
 
 	prepareRadioToTransmitOrReceive();
-	sendWork();
+	sendWorkFromAppToOtherUnits();
 	shutdownRadio();
 
 	sleepUntilEndWorkSlot();
