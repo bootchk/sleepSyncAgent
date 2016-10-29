@@ -2,8 +2,8 @@
 
 #include "../../platform/types.h"
 #include "schedule.h"
-#include "policy/masterXmitSyncPolicy.h"
-#include "../modules/policy/dropoutMonitor.h"
+#include "../policy/masterXmitSyncPolicy.h"
+#include "../policy/dropoutMonitor.h"
 
 /*
  *

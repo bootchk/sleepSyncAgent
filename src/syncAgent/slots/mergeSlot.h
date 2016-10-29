@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../modules/policy/mergePolicy.h"
+#include "../policy/mergePolicy.h"
 #include "slot.h"
 
 

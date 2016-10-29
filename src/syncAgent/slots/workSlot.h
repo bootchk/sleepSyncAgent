@@ -2,7 +2,7 @@
 #pragma once
 
 #include "slot.h"
-#include "../modules/message.h"
+
 
 /*
  * THE workSlot of my schedule.
@@ -26,9 +26,4 @@ public:
 private:
 	static void performSendingWork();
 	static void performReceivingWork();
-
-	static bool dispatchMsgReceived(SyncMessage* msg);
-
-	//static void performWorkMerger();
-	//static void toWorkMerger();
 };

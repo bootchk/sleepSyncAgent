@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../../types.h"
+#include "../types.h"
 
 /*
  * Constants that define policy

@@ -195,6 +195,43 @@ void doWorkMsg(SyncMessage* msg){
 	}
 }
 
+/*
+ * Like other dispatchers, return true if heard message apropos to slot kind.
+ *
+ * If true, side effect is adjusting my sync.
+ */
+bool dispatchMsgReceived(SyncMessage* msg) {
+	// agnostic of role.isMaster or role.isSlave
+
+	bool isFoundSyncKeepingMsg = false;
+
+	switch(msg->type) {
+	case MasterSync:
+		log(LogMessage::MasterSync);
+		isFoundSyncKeepingMsg = doSyncMsg((SyncMessage*) msg);
+		break;
+	case MergeSync:
+		log(LogMessage::MergeSync);
+		isFoundSyncKeepingMsg = doSyncMsg((SyncMessage*) msg);
+		// Multiple syncs or sync
+
+		// FUTURE discard other queued messages
+		break;
+	case AbandonMastership:
+		log(LogMessage::AbandonMastership);
+		doAbandonMastershipMsg((SyncMessage*) msg);
+		break;
+	case Work:
+		log(LogMessage::Work);
+		doWorkMsg(msg);
+		// FUTURE !!! msg is moved to work queue, not freed?
+		break;
+	}
+
+	// FUTURE use handle and assert(msgHandle==nullptr);	// callee freed memory and nulled handle, or just nulled handle
+	return isFoundSyncKeepingMsg;
+}
+
 }	// namespace
 
 
@@ -304,42 +341,6 @@ void SyncSlot::doSlaveSyncSlot() {
 
 
 
-/*
- * Like other dispatchers, return true if heard message apropos to slot kind.
- *
- * If true, side effect is adjusting my sync.
- */
-bool SyncSlot::dispatchMsgReceived(SyncMessage* msg) {
-	// agnostic of role.isMaster or role.isSlave
-
-	bool isFoundSyncKeepingMsg = false;
-
-	switch(msg->type) {
-	case MasterSync:
-		log(LogMessage::MasterSync);
-		isFoundSyncKeepingMsg = doSyncMsg((SyncMessage*) msg);
-		break;
-	case MergeSync:
-		log(LogMessage::MergeSync);
-		isFoundSyncKeepingMsg = doSyncMsg((SyncMessage*) msg);
-		// Multiple syncs or sync
-
-		// FUTURE discard other queued messages
-		break;
-	case AbandonMastership:
-		log(LogMessage::AbandonMastership);
-		doAbandonMastershipMsg((SyncMessage*) msg);
-		break;
-	case Work:
-		log(LogMessage::Work);
-		doWorkMsg(msg);
-		// FUTURE !!! msg is moved to work queue, not freed?
-		break;
-	}
-
-	// FUTURE use handle and assert(msgHandle==nullptr);	// callee freed memory and nulled handle, or just nulled handle
-	return isFoundSyncKeepingMsg;
-}
 
 
 

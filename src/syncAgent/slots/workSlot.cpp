@@ -111,6 +111,35 @@ void sendWorkFromAppToOtherUnits(){
 	radio->transmitStaticSynchronously();	// blocks until transmit complete
 }
 
+
+
+bool dispatchMsgReceived(SyncMessage* msg){
+	switch(msg->type) {
+	case MasterSync:
+		log(LogMessage::MasterSync);
+		doMasterSyncMsg(msg);
+		break;
+	case MergeSync:
+		log(LogMessage::MergeSync);
+		doMergeSyncMsg();
+		break;
+	case AbandonMastership:
+		log(LogMessage::AbandonMastership);
+		doAbandonMastershipMsg();
+		break;
+	case Work:
+		// Usual: work message in sync with my clique.
+		// For now, WorkMessage is subclass of SyncMessage
+		log(LogMessage::Work);
+		doWorkMsg(msg);
+		break;
+	}
+
+	// Since a WorkSlot is like a FishingSlot, it continues listening
+	return false;	// meaning: don't stop listening until end of slot
+}
+
+
 } // namespace
 
 
@@ -180,37 +209,6 @@ void WorkSlot::performWork() {
 	assert(!radio->isPowerOn());
 }
 
-
-
-
-
-
-
-bool WorkSlot::dispatchMsgReceived(SyncMessage* msg){
-	switch(msg->type) {
-	case MasterSync:
-		log(LogMessage::MasterSync);
-		doMasterSyncMsg(msg);
-		break;
-	case MergeSync:
-		log(LogMessage::MergeSync);
-		doMergeSyncMsg();
-		break;
-	case AbandonMastership:
-		log(LogMessage::AbandonMastership);
-		doAbandonMastershipMsg();
-		break;
-	case Work:
-		// Usual: work message in sync with my clique.
-		// For now, WorkMessage is subclass of SyncMessage
-		log(LogMessage::Work);
-		doWorkMsg(msg);
-		break;
-	}
-
-	// Since a WorkSlot is like a FishingSlot, it continues listening
-	return false;	// meaning: don't stop listening until end of slot
-}
 
 
 
