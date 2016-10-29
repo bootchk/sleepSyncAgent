@@ -27,3 +27,6 @@ extern Serializer serializer;
 
 #include "modules/syncSleeper.h"
 extern SyncSleeper syncSleeper;
+
+#include "modules/syncSender.h"
+extern SyncSender syncSender;

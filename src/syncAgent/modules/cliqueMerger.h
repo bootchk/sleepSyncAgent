@@ -37,7 +37,7 @@ public:
 
 	static void adjustMergerBySyncMsg(SyncMessage* msg);
 
-	static SyncMessage& makeMergeSync(SyncMessage& msg);
+	static void makeMergeSync(SyncMessage& msg);
 
 	static void setOffsetToMergee(DeltaTime offset);
 	static DeltaTime getOffsetToMergee();

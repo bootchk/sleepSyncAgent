@@ -65,6 +65,7 @@ public:
 				;
 	}
 
+
 	/*
 	 * Dying breath message from master which is power failing.  deltaToNextSyncPoint is moot.
 	 */

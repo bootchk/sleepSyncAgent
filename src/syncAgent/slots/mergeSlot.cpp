@@ -11,10 +11,10 @@ namespace {
 
 void sendMergeSync() {
 	log(LogMessage::SendMergeSync);
+
+	// cliqueMerger knows how to make global outwardCommonSyncMsg into a MergeSync
 	syncAgent.cliqueMerger.makeMergeSync(serializer.outwardCommonSyncMsg);
-	serializer.serializeOutwardCommonSyncMessage();
-	assert(serializer.bufferIsSane());
-	radio->transmitStaticSynchronously();	// blocks until transmit complete
+	syncSender.sendPrefabricatedMessage();
 }
 
 

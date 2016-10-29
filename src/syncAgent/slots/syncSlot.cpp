@@ -353,18 +353,12 @@ bool SyncSlot::shouldTransmitSync() {
 
 void SyncSlot::sendMasterSync() {
 	log(LogMessage::SendMasterSync);
-	makeCommonMasterSyncMessage();
-	// assert common MasterSync message serialized into radio buffer
-	radio->transmitStaticSynchronously();	// blocks until transmit complete
-	// assert xmit is completed over-the-air
-}
 
-
-void SyncSlot::makeCommonMasterSyncMessage() {
 	/*
-	 * Make the common SyncMessage:
-	 * - of type MasterSync
-	 * - having forwardOffset unsigned delta now to next SyncPoint
+	 * Make the common SyncMessage, having:
+	 * - type MasterSync
+	 * - forwardOffset unsigned delta now to next SyncPoint
+	 * - self ID
 	 */
 	DeltaTime forwardOffset = clique.schedule.deltaNowToNextSyncPoint();
 	// FUTURE include correction for latency (on receiver's end)
@@ -382,8 +376,7 @@ void SyncSlot::makeCommonMasterSyncMessage() {
 	// i.e. calculations are rapid and sync slot not too short?
 
 	serializer.outwardCommonSyncMsg.makeMasterSync(forwardOffset, myID());
-	serializer.serializeOutwardCommonSyncMessage();
-	assert(serializer.bufferIsSane());
+	syncSender.sendPrefabricatedMessage();
 }
 
 

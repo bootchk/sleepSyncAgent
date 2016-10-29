@@ -16,5 +16,4 @@ private:
 
 	static bool shouldTransmitSync();
 	static void sendMasterSync();
-	static void makeCommonMasterSyncMessage();
 };

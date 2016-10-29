@@ -118,10 +118,10 @@ void CliqueMerger::adjustMergerBySyncMsg(SyncMessage* msg) {
 
 
 
-SyncMessage& CliqueMerger::makeMergeSync(SyncMessage& msg){
+void CliqueMerger::makeMergeSync(SyncMessage& msg){
+	// side effect on passed msg
 	assert(isActive);
 	msg.makeMergeSync(getOffsetToMergee(), masterID);
-	return msg;	// Returns msg passed.
 }
 
 

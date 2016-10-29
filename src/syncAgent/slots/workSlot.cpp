@@ -105,10 +105,10 @@ void sendWorkFromAppToOtherUnits(){
 	assert(radio->isDisabledState());
 	assert(workOutMailbox->isMail());
 	WorkPayload workPayload = workOutMailbox->fetch();
+
+	// assert WorkPayload can be coerced to DeltaSync
 	serializer.outwardCommonSyncMsg.makeWork(workPayload, clique.getMasterID());
-	serializer.serializeOutwardCommonSyncMessage();
-	assert(serializer.bufferIsSane());
-	radio->transmitStaticSynchronously();	// blocks until transmit complete
+	syncSender.sendPrefabricatedMessage();
 }
 
 

@@ -82,12 +82,13 @@ void SyncAgent::pauseSyncing() {
 }
 
 
+/*
+ * Ask an other unit in my clique to assume mastership.
+ * Might not be heard, in which case other units should detect DropOut.
+ */
 void SyncAgent::doDyingBreath() {
-	// Ask another unit in my clique to assume mastership.
-	// Might not be heard.
 	serializer.outwardCommonSyncMsg.makeAbandonMastership(myID());
-	// assert common SyncMessage serialized into radio buffer
-	radio->transmitStaticSynchronously();	// blocks until transmit complete
+	syncSender.sendPrefabricatedMessage();
 }
 
 
