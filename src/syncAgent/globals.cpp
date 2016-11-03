@@ -7,3 +7,5 @@ SyncSleeper syncSleeper;
 Clique clique;
 SyncAgent syncAgent;
 Serializer serializer;
+
+FishPolicy fishPolicy;

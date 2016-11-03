@@ -30,7 +30,7 @@ uint16_t randUnsignedInt16(uint16_t min, uint16_t max) {
 	 * Unless max-min divides int without a remainder, binning means some bins receive more
 	 * values, i.e. non-uniform distribution.
 	 */
-	assert( max > min);
+	assert( max >= min);
 	assert((max - min) < RAND_MAX);	// else not uniformly distributed
 	int intResult = rand() % ( max + 1 - min) + min;
 
