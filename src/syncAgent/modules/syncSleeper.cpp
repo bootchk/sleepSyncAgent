@@ -159,10 +159,19 @@ bool SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 			break;	// switch
 
 		case TimerExpired:
-			radio->stopReceive();
-			// assert msg queue empty, except for race between timeout and receiver
-			// Slot done.
-			didTimeout = true;
+			// Timeout could be interrupting a receive.
+			// Better to handle message and delay next slot: fewer missed syncs.
+			if (radio->isReceiveInProgress()) {
+				log("Interrupted recv\n");
+				radio->spinUntilReceiveComplete();
+				didReceiveDesiredMsg = dispatchFilteredMsg(dispatchQueuedMsg);
+			}
+			else {
+				radio->stopReceive();
+				// assert msg queue empty, except for race between timeout and receiver
+				// Slot done.
+				didTimeout = true;
+			}
 			break;	// switch
 
 		case None:
