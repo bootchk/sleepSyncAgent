@@ -1,6 +1,7 @@
 
 #include <cassert>
-#include "../../augment/random.h"
+
+#include "../globals.h" // fishPolicy
 
 #include "schedule.h"
 
@@ -199,21 +200,22 @@ LongTime Schedule::timeOfThisWorkSlotEnd() { return startTimeOfSyncPeriod + 2 * 
 
 /*
  * Fish slot:
- * - starts at random slot normally sleeping.
+ * - starts at slot normally sleeping.
  * - Ends after remembered start.
- */
-/*
+ *
  * Start time is calculated at instant:  just after end of work slot.
  * Time til start is in [0, timeTilLastSleepingSlot]
  */
 LongTime Schedule::timeOfThisFishSlotStart() {
-	ScheduleCount randomSleepingSlotOrdinal = randUnsignedInt16(FirstSleepingSlotOrdinal-1, CountSlots-1);
-	LongTime result = startTimeOfSyncPeriod +  randomSleepingSlotOrdinal * SlotDuration;
+	// policy chooses which normally sleeping slots to fish in.
+	ScheduleCount sleepingSlotOrdinal = fishPolicy.next();
+	// minus 1: convert ordinal to zero-based duration multiplier
+	LongTime result = startTimeOfSyncPeriod +  (sleepingSlotOrdinal - 1) * SlotDuration;
 
 	/*
 	 * Since some cpu cycles have elapsed after end of work slot,
 	 * startTimeOfFishSlot can be < longClock.nowTime().
-	 * In other words, the case where randomly chosen fish slot is slot immediately following work slot,
+	 * In other words, the case where chosen slot (to fish in) is slot immediately following work slot,
 	 * and time to start fish slot is already past.
 	 * In this case, the subsequently calculated timeout will be zero,
 	 * and there will be no sleep.
