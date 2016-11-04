@@ -20,7 +20,8 @@ public:	// for assertions
  * @32kHz xtal RTC, tick is 0.03msec
  */
 //static const DeltaTime     SlotDuration = 300;	// ~ 10msec
-static const DeltaTime     SlotDuration = 20;	// ~ 0.6msec
+//static const DeltaTime     SlotDuration = 20;	// ~ 0.6msec
+static const DeltaTime     SlotDuration = 40;	// ~ 1.2msec
 
 /*
  * Ratio of sync period duration to wake duration.
@@ -42,7 +43,8 @@ static const DeltaTime     SlotDuration = 20;	// ~ 0.6msec
 //static const int           DutyCycleInverse = 20;
 
 // 3 * 400 * .6 msec = 720 mSec = 0.7Sec
-static const int           DutyCycleInverse = 400;
+// 3 * 200 * 1.2 msec = 720 mSec = 0.7 Sec
+static const int           DutyCycleInverse = 200;
 
 
 

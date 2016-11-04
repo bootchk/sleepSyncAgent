@@ -162,10 +162,26 @@ bool SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 			// Timeout could be interrupting a receive.
 			// Better to handle message and delay next slot: fewer missed syncs.
 #ifdef FUTURE
+This experiment doesn't work see my post in DevZone
 			if (radio->isReceiveInProgress()) {
-				log("Interrupted recv\n");
+				/*
+				 * !!! Still interrupt enabled for Disabled i.e. receive complete.
+				 * Alternative: disable interrupt and just spin here, but there would be a race.
+				 *
+				 * We can't just continue in the loop, since packet being received may be invalid.
+				 *
+				 * Let the interrupt come, but ignore it.
+				 */
+				log("Recv in progress\n");
+				// continuation is: loop and sleep again
+
 				radio->spinUntilReceiveComplete();
-				didReceiveDesiredMsg = dispatchFilteredMsg(dispatchQueuedMsg);
+				radio->clearReceiveInProgress();
+				didReceiveDesiredMsg = dispatchFilteredMsg(dispatchQueuedMsg);  // Often false??
+
+				// We did timeout, i.e. allotted time for slot, etc. is over.
+				didTimeout = true;
+				// both didTimeout and didReceiveDesiredMsg could be true
 			}
 			else {
 #endif
@@ -173,7 +189,6 @@ bool SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 				// assert msg queue empty, except for race between timeout and receiver
 				// Slot done.
 				didTimeout = true;
-
 			break;	// switch
 
 		case None:
@@ -204,6 +219,7 @@ bool SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 
 
 voidFuncPtr SyncSleeper::getMsgReceivedCallback() {
+	// Return callback of the owned/wrapped sleeper.
 	return sleeper.msgReceivedCallback;
 }
 
