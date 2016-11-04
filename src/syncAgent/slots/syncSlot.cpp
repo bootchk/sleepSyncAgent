@@ -245,7 +245,6 @@ bool dispatchMsgReceived(SyncMessage* msg) {
  */
 
 void SyncSlot::perform() {
-	log(LogMessage::SyncSlot);
 	prepareRadioToTransmitOrReceive();
 	if (shouldTransmitSync())
 		doMasterSyncSlot();

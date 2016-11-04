@@ -86,7 +86,6 @@ void FishSlot::perform() {
 	assert(!radio->isPowerOn());
 	syncSleeper.sleepUntilTimeout(clique.schedule.deltaToThisFishSlotStart);
 
-	log(LogMessage::FishSlot);
 	prepareRadioToTransmitOrReceive();
 	startReceiving();
 	// assert can receive an event that wakes imminently: race to sleep

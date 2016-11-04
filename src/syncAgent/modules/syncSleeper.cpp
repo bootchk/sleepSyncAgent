@@ -161,17 +161,19 @@ bool SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 		case TimerExpired:
 			// Timeout could be interrupting a receive.
 			// Better to handle message and delay next slot: fewer missed syncs.
+#ifdef FUTURE
 			if (radio->isReceiveInProgress()) {
 				log("Interrupted recv\n");
 				radio->spinUntilReceiveComplete();
 				didReceiveDesiredMsg = dispatchFilteredMsg(dispatchQueuedMsg);
 			}
 			else {
+#endif
 				radio->stopReceive();
 				// assert msg queue empty, except for race between timeout and receiver
 				// Slot done.
 				didTimeout = true;
-			}
+
 			break;	// switch
 
 		case None:

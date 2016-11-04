@@ -17,8 +17,10 @@ public:	// for assertions
  * since we want to send a message (Sync, Work) within a slot.
  * e.g. if Bluetooth, one message is ~ 1msec
  * e.g. if RawWireless, one message is ~0.1msec
+ * @32kHz xtal RTC, tick is 0.03msec
  */
-static const DeltaTime     SlotDuration = 300;	// ~ 10msec @64Mhz SysClock
+//static const DeltaTime     SlotDuration = 300;	// ~ 10msec
+static const DeltaTime     SlotDuration = 20;	// ~ 0.6msec
 
 /*
  * Ratio of sync period duration to wake duration.
@@ -37,7 +39,10 @@ static const DeltaTime     SlotDuration = 300;	// ~ 10msec @64Mhz SysClock
 // static const int           DutyCycleInverse = 100;
 
 // Testing: 3 active slots, ~60 sleeping, 0.6 second period
-static const int           DutyCycleInverse = 20;
+//static const int           DutyCycleInverse = 20;
+
+// 3 * 400 * .6 msec = 720 mSec = 0.7Sec
+static const int           DutyCycleInverse = 400;
 
 
 
