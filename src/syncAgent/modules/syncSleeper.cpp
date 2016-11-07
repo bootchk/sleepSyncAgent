@@ -162,7 +162,7 @@ bool SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 			// Timeout could be interrupting a receive.
 			// Better to handle message and delay next slot: fewer missed syncs.
 #ifdef FUTURE
-This experiment doesn't work see my post in DevZone
+//This experiment doesn't work see my post in DevZone
 			if (radio->isReceiveInProgress()) {
 				/*
 				 * !!! Still interrupt enabled for Disabled i.e. receive complete.

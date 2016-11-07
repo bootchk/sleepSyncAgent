@@ -21,7 +21,8 @@ public:	// for assertions
  */
 //static const DeltaTime     SlotDuration = 300;	// ~ 10msec
 //static const DeltaTime     SlotDuration = 20;	// ~ 0.6msec
-static const DeltaTime     SlotDuration = 40;	// ~ 1.2msec
+static const DeltaTime     SlotDuration = 30;	// ~ 0.9msec
+//static const DeltaTime     SlotDuration = 40;	// ~ 1.2msec
 
 /*
  * Ratio of sync period duration to wake duration.
@@ -44,7 +45,8 @@ static const DeltaTime     SlotDuration = 40;	// ~ 1.2msec
 
 // 3 * 400 * .6 msec = 720 mSec = 0.7Sec
 // 3 * 200 * 1.2 msec = 720 mSec = 0.7 Sec
-static const int           DutyCycleInverse = 200;
+//static const int           DutyCycleInverse = 200;
+static const int           DutyCycleInverse = 400;
 
 
 
