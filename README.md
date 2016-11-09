@@ -113,23 +113,7 @@ The system can be in these states (in order of electrical power available):
 	
 If work takes little power, the last two states might be the same.  If work takes much power, then in the third state, work messages might be received but ignored (while sync is still maintained.)
 
-Essence of algorithm
-=
 
-The goal is to be powered on at the same time.  A sub-goal is to spread the cost (electrical power) to achieve sync (to detect and merge other cliques.)
-
-The algorithm is "reachback": each sync message payload carries offset: the time until next SyncPoint.  Sync message payload also carries ID of the master of the clique (but slaves also send syncs, so the sender ID i.e. MAC can differ from the master ID.  The master ID is NOT just the MAC of the sender.)
-
-Two role pairs:
-
-	master/slave
-	fisher/merger
-	
-A unit can have any combination of roles from the role pairs e.g. slave AND fisher, or slave AND merger, etc.
-
-A fisher periodically listens for syncs in normally sleeping slots of its schedule.  If a fisher hears a sync from another clique, it becomes a merger.
-
-A merger decides which clique is better (the other, or its own, based on ordering of ID's)  A merger broadcasts syncs (with a large offset) to other cliques or its old clique, telling said other or old clique to merge.
 
 
 References
