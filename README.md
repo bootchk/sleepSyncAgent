@@ -1,5 +1,6 @@
 A sleep synchronization algorithm for ultra low power radio networks
 
+[See also the project wiki](../../wiki)
 
 Work in progress. 
 
