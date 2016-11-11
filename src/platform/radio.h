@@ -13,7 +13,7 @@ public:
 	 * Length of payload buffer owned by device.
 	 */
 
-	static const uint8_t FixedPayloadCount = 10;
+	static const uint8_t FixedPayloadCount = 11;
 	// FUTURE, when messages are DYNAMIC (variable-length) static const uint8_t MaxMsgLength = 255;
 
 	static void init(void (*onRcvMsgCallback)());

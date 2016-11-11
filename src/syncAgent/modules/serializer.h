@@ -26,36 +26,32 @@
 
 class Serializer {
 private:
-	// Knows Radio's buffer
-	static BufferPointer radioBufferPtr;
-	static uint8_t radioBufferSize;
+
+	//static BufferPointer radioBufferPtr;
+	//static uint8_t radioBufferSize;
 
 public:
 	// Owns Message instances, and returns address of them
 	static SyncMessage inwardCommonSyncMsg;
 	static SyncMessage outwardCommonSyncMsg;
-	// FUTURE static WorkMessage outwardCommonWorkMsg;
+
+	// Also knows Radio's buffer, see anon namespace
 
 	// Methods
 	static void init(BufferPointer radioBuffer, uint8_t aBufferSize);
 
-	// unserialize determines what class of Message to unserialize
-	// and returns a pointer to polymorphous instance (SyncMessage union WorkMessage.)
-	// FUTURE ???
+	/*
+	 * unserialize from radio buffer into Message instance.
+	 * returns pointer to polymorphous instance, or nullptr.
+	 * nullptr when Message.type is not valid.
+	 */
 	static SyncMessage* unserialize();
-	// overloaded
-	// static uint8_t* serialize(WorkMessage& msg);
+
+	/*
+	 * Serialize from Message instance into radio buffer.
+	 */
 	static void serializeOutwardCommonSyncMessage();
 
 	// Does contents of Serializer's buffer minimally seem like a Message?
 	static bool bufferIsSane();
-
-private:
-	static void unserializeIntoCommonSyncMessage();
-
-	static void unserializeMasterIDIntoCommon();
-	static void serializeMasterIDCommonIntoStream(SyncMessage& msg);
-
-	static void unserializeOffsetIntoCommon();
-	static void serializeOffsetCommonIntoStream(SyncMessage& msg);
 };

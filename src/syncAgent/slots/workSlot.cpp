@@ -106,8 +106,10 @@ void sendWorkFromAppToOtherUnits(){
 	assert(workOutMailbox->isMail());
 	WorkPayload workPayload = workOutMailbox->fetch();
 
-	// assert WorkPayload can be coerced to DeltaSync
-	serializer.outwardCommonSyncMsg.makeWork(workPayload, clique.getMasterID());
+	// Work msg includes sync
+	// TODO but only if I am master?
+	DeltaTime forwardOffset = clique.schedule.deltaNowToNextSyncPoint();
+	serializer.outwardCommonSyncMsg.makeWorkSync(forwardOffset, clique.getMasterID(), workPayload);
 	syncSender.sendPrefabricatedMessage();
 }
 

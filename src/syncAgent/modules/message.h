@@ -12,7 +12,7 @@
  * SyncAgent level message, carried as payload in radio messages
  *
  * Current design: WorkMsg is not a separate class,
- * just a SyncMsg having distinct type and variant delta carrying WorkPayload
+ * just a SyncMsg having distinct type and carrying an initialized WorkPayload
  *
  * I use 'acceleration' to mean delta of delta: how much a SyncPeriod is changing.
  * Acceleration from a MasterSync is small: deltaToNextSyncPoint is not much different from local time to next SyncPoint
@@ -22,9 +22,9 @@
  * - MergeSync, offset has large acceleration
  * - MasterSync, offset has small acceleration
  * - AbandonMastership, offset is unused
- * - Work, offset is work payload
+ * - Work, work payload is initialized
  *
- * For now, the Work subtype also carries MasterID, and helps achieve sync.
+ * The Work subtype is a superset (having an extra field), helps achieve sync.
  */
 
 
@@ -46,11 +46,13 @@ public:
 	MessageType type;
 	DeltaSync deltaToNextSyncPoint;	// forward in time
 	SystemID masterID;
+	WorkPayload work;	// work always present, not always defined
 
 	void init(MessageType aType, DeltaSync aDeltaToNextSyncPoint, SystemID aMasterID) {
 		type = aType;
 		deltaToNextSyncPoint = aDeltaToNextSyncPoint;
 		masterID = aMasterID;
+		// !!! omits work
 	}
 
 
@@ -92,15 +94,14 @@ public:
 	/*
 	 * Work message, also helps to maintain sync.
 	 */
-	void makeWork(WorkPayload workPayload, SystemID aMasterID){
-		// Hack: cast
+	void makeWorkSync(DeltaSync aDeltaToNextSyncPoint, SystemID aMasterID, WorkPayload workPayload){
 		init(Work, (DeltaSync) workPayload, aMasterID);
+		work = workPayload;
 	}
 
 	// See dual: makeWork()
 	WorkPayload workPayload() {
-		// Hack: cast
-		return (WorkPayload) deltaToNextSyncPoint;
+		return work;
 	}
 };
 

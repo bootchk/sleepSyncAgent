@@ -5,6 +5,8 @@
 #include "../../platform/platform.h"  // MaxDeltaTime
 
 #include "serializer.h"
+#include "otaPacket.h"
+
 
 /*
  * Implementation notes:
@@ -13,20 +15,106 @@
  * This code does not take a brute force approach (one loop over data into object/struct.)
  * Instead, we loop over msg fields.
  *
- * Use common static Messages (not new on the heap), SyncAgent only uses one at a time.
+ * Use common static Messages (not new'd on the heap), SyncAgent only uses one at a time.
  * Common means: shared and reused, as in Fortran.
  * Thus many methods have side effects on common Messages,
  * and return pointer to common.
  */
 
 
-// static data members
-BufferPointer Serializer::radioBufferPtr;
-uint8_t Serializer::radioBufferSize;
 
+// static data members
+
+
+
+// Serializer owns inward and returns reference to it
 SyncMessage Serializer::inwardCommonSyncMsg;
+// Serializer and its outward are globally visible
 SyncMessage Serializer::outwardCommonSyncMsg;
-//FUTURE WorkMessage Serializer::outwardCommonWorkMsg;
+
+
+// Local to this file
+
+namespace {
+
+BufferPointer radioBufferPtr;
+uint8_t radioBufferSize;
+
+
+
+// suppress compiler warning for pointer arith
+#pragma GCC diagnostic ignored "-Wpointer-arith"
+
+
+void unserializeWorkIntoCommon() {
+	memcpy( (void*) &Serializer::inwardCommonSyncMsg.work,	// dest
+			(void*) radioBufferPtr + OTAPayload::WorkIndex,	// src
+			OTAPayload::WorkLength);
+}
+void serializeWorkCommonIntoStream(SyncMessage& msg){
+	memcpy( (void*) radioBufferPtr + OTAPayload::WorkIndex, 	// dest
+			(void*) &msg.work,	// src
+			OTAPayload::WorkLength);
+}
+
+// Matched pairs
+void unserializeMasterIDIntoCommon() {
+	assert(sizeof(Serializer::inwardCommonSyncMsg.masterID)>=OTAPayload::MasterIDLength);
+	Serializer::inwardCommonSyncMsg.masterID = 0; // ensure MSB two bytes are zero.
+	// Fill LSB 6 bytes of a 64-bit
+	memcpy( (void*) &Serializer::inwardCommonSyncMsg.masterID,	// dest
+			(void*) radioBufferPtr + OTAPayload::MasterIndex,	// src
+			OTAPayload::MasterIDLength);
+}
+
+void serializeMasterIDCommonIntoStream(SyncMessage& msg) {
+	// Send LSB 6 bytes of 64-bit
+	memcpy( (void*) radioBufferPtr + OTAPayload::MasterIndex, 	// dest
+			(void*) &msg.masterID,	// src
+			OTAPayload::MasterIDLength);
+}
+
+
+void unserializeOffsetIntoCommon() {
+	assert(sizeof(Serializer::inwardCommonSyncMsg.deltaToNextSyncPoint)==4);
+	// 24-bit offset:
+	// Little-endian into LSB three bytes of a 32-bit OSTime
+	Serializer::inwardCommonSyncMsg.deltaToNextSyncPoint = 0;	// ensure MSB byte is zero
+	memcpy( (void*) &Serializer::inwardCommonSyncMsg.deltaToNextSyncPoint, 	// dest
+			(void*) radioBufferPtr + OTAPayload::OffsetIndex,	// src
+			OTAPayload::OffsetLength);	// count
+
+	// FUTURE, code for 32-bit OSClock
+	assert(Serializer::inwardCommonSyncMsg.deltaToNextSyncPoint < MaxDeltaTime);
+}
+
+void serializeOffsetCommonIntoStream(SyncMessage& msg) {
+	memcpy( (void*) radioBufferPtr + OTAPayload::OffsetIndex, 	// dest
+			(void*) &msg.deltaToNextSyncPoint,	// src
+			OTAPayload::OffsetLength);
+}
+
+// End of pointer arith
+#pragma GCC diagnostic pop
+
+void unserializeIntoCommonSyncMessage() {
+	// assert(aType == MasterSync || aType == MergeSync || aType == AbandonMastership);
+	Serializer::inwardCommonSyncMsg.type = (MessageType) radioBufferPtr[0];
+	unserializeMasterIDIntoCommon();
+	unserializeOffsetIntoCommon();
+	unserializeWorkIntoCommon();
+}
+
+
+}	// namespace
+
+
+
+
+
+
+
+
 
 
 void Serializer::init(BufferPointer aRadioBuffer, uint8_t aBufferSize)
@@ -79,75 +167,13 @@ bool Serializer::bufferIsSane(){
 }
 
 
-void Serializer::unserializeIntoCommonSyncMessage() {
-	// assert(aType == MasterSync || aType == MergeSync || aType == AbandonMastership);
-	inwardCommonSyncMsg.type = (MessageType) radioBufferPtr[0];
-	unserializeMasterIDIntoCommon();
-	unserializeOffsetIntoCommon();
-}
 
 
-
-// Overloaded
-
-#ifdef FUTURE
-uint8_t* Serializer::serialize(WorkMessage& msg) {
-	//FUTURE
-	(void) msg;
-	return (uint8_t*) 0;
-}
-#endif
-
-
-// suppress compiler warning for pointer arith
-#pragma GCC diagnostic ignored "-Wpointer-arith"
 
 void Serializer::serializeOutwardCommonSyncMessage() {
 	radioBufferPtr[0] = outwardCommonSyncMsg.type;
 	serializeMasterIDCommonIntoStream(outwardCommonSyncMsg);
 	serializeOffsetCommonIntoStream(outwardCommonSyncMsg);
+	serializeWorkCommonIntoStream(outwardCommonSyncMsg);
 }
-
-
-// TODO Constants for field lengths and addresses
-// Matched pairs
-void Serializer::unserializeMasterIDIntoCommon() {
-	assert(sizeof(inwardCommonSyncMsg.masterID)>=6);
-	inwardCommonSyncMsg.masterID = 0; // ensure MSB two bytes are zero.
-	// Fill LSB 6 bytes of a 64-bit
-	memcpy( (void*) &inwardCommonSyncMsg.masterID,	// dest
-			(void*) radioBufferPtr + 1,	// src
-			6);	// count
-}
-
-void Serializer::serializeMasterIDCommonIntoStream(SyncMessage& msg) {
-	// Send LSB 6 bytes of 64-bit
-	memcpy( (void*) radioBufferPtr + 1, 	// dest
-			(void*) &msg.masterID,	// src
-			6);	// count
-}
-
-
-void Serializer::unserializeOffsetIntoCommon() {
-	assert(sizeof(inwardCommonSyncMsg.deltaToNextSyncPoint)==4);
-	// 24-bit offset:
-	// Little-endian into LSB three bytes of a 32-bit OSTime
-	inwardCommonSyncMsg.deltaToNextSyncPoint = 0;	// ensure MSB byte is zero
-	memcpy( (void*) &inwardCommonSyncMsg.deltaToNextSyncPoint, 	// dest
-			(void*) radioBufferPtr + 7,	// src
-			3);	// count
-
-	// FUTURE, code for 32-bit OSClock
-	assert(inwardCommonSyncMsg.deltaToNextSyncPoint < MaxDeltaTime);
-}
-
-void Serializer::serializeOffsetCommonIntoStream(SyncMessage& msg) {
-	memcpy( (void*) radioBufferPtr + 7, 	// dest
-			(void*) &msg.deltaToNextSyncPoint,	// src
-			3);	// count
-}
-
-
-// End of pointer arith
-#pragma GCC diagnostic pop
 
