@@ -22,14 +22,36 @@ void sleepUntilEndWorkSlot(){
 	syncSleeper.sleepUntilTimeout(clique.schedule.deltaToThisWorkSlotEnd);
 }
 
+void sendWorkFromAppToOtherUnits(){
+
+	log(LogMessage::SendWork);
+	assert(radio->isDisabledState());
+	assert(workOutMailbox->isMail());
+	WorkPayload workPayload = workOutMailbox->fetch();
+
+	// Work msg includes sync
+	// TODO but only if I am master?
+	DeltaTime forwardOffset = clique.schedule.deltaNowToNextSyncPoint();
+	serializer.outwardCommonSyncMsg.makeWorkSync(forwardOffset, clique.getMasterID(), workPayload);
+	syncSender.sendPrefabricatedMessage();
+}
+
+
+} // namespace
 
 
 
 
-// Message handling
+/*
+ * Message handling
+ *
+ * Since a WorkSlot is like a FishingSlot, it continues listening
+ * return false;	meaning: don't stop listening until end of slot
+ */
 
 
-void doMasterSyncMsg(SyncMessage* msg){
+
+bool WorkSlot::doMasterSyncMsg(SyncMessage* msg){
 
 	if (clique.isOtherCliqueBetter(msg->masterID)) {
 		/*
@@ -69,80 +91,41 @@ Alternative design: this cliques merges inferior clique.
 		}
 	}
 #endif
+	return false;
 }
 
-void doMergeSyncMsg(){
-	/*
-	 * Another clique thinks this is SyncSlot of some clique.
-	 * For now, ignore it.
-	 */
-	// FUTURE some clique may be not in range of my clique, i.e. need SyncRelay here
-}
 
-void doAbandonMastershipMsg(){
-	/*
-	 * Unusual: Another clique's sync slot at same time as my work slot.
-	 * The unit we heard is abandoning.
-	 * There could be other units in its clique we want to merge.
-	 * For now do nothing, and assume we will hear any the other units later.
-	 */
-}
+/*
+ * MergeSync
+ *
+ * Another clique thinks this is SyncSlot of some clique.
+ * For now, default behaviour: ignore and keep looking.
+ */
+
+/*
+ * AbandonMastership
+ *
+ * Unusual: Another clique's sync slot at same time as my work slot.
+ * The unit we heard is abandoning.
+ * There could be other units in its clique we want to merge.
+ * For now do nothing, and assume we will hear any the other units later.
+ */
 
 
 /*
  * Dual methods: to and from app
  */
 
+// Usual: work message in sync with my clique.
 // Pass work from other units to app
-void doWorkMsg(SyncMessage* msg) {
+bool WorkSlot::doWorkMsg(SyncMessage* msg) {
 	assert(msg->type == Work);
 	syncAgent.relayWorkToApp(msg->workPayload());
-}
-
-void sendWorkFromAppToOtherUnits(){
-
-	log(LogMessage::SendWork);
-	assert(radio->isDisabledState());
-	assert(workOutMailbox->isMail());
-	WorkPayload workPayload = workOutMailbox->fetch();
-
-	// Work msg includes sync
-	// TODO but only if I am master?
-	DeltaTime forwardOffset = clique.schedule.deltaNowToNextSyncPoint();
-	serializer.outwardCommonSyncMsg.makeWorkSync(forwardOffset, clique.getMasterID(), workPayload);
-	syncSender.sendPrefabricatedMessage();
+	return false;	// keep looking
 }
 
 
 
-bool dispatchMsgReceived(SyncMessage* msg){
-	switch(msg->type) {
-	case MasterSync:
-		log(LogMessage::MasterSync);
-		doMasterSyncMsg(msg);
-		break;
-	case MergeSync:
-		log(LogMessage::MergeSync);
-		doMergeSyncMsg();
-		break;
-	case AbandonMastership:
-		log(LogMessage::AbandonMastership);
-		doAbandonMastershipMsg();
-		break;
-	case Work:
-		// Usual: work message in sync with my clique.
-		// For now, WorkMessage is subclass of SyncMessage
-		log(LogMessage::Work);
-		doWorkMsg(msg);
-		break;
-	}
-
-	// Since a WorkSlot is like a FishingSlot, it continues listening
-	return false;	// meaning: don't stop listening until end of slot
-}
-
-
-} // namespace
 
 
 
@@ -156,7 +139,7 @@ void WorkSlot::performReceivingWork(){
 	prepareRadioToTransmitOrReceive();
 	startReceiving();
 	syncSleeper.sleepUntilMsgAcceptedOrTimeout(
-			dispatchMsgReceived,
+			this, // dispatchMsgReceived,
 			clique.schedule.deltaToThisWorkSlotEnd);
 	assert(radio->isDisabledState());
 	shutdownRadio();

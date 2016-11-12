@@ -21,9 +21,13 @@
 
 class WorkSlot: Slot {
 public:
-	static void performWork();
+	void performWork();
+
+	// override
+	bool doMasterSyncMsg(SyncMessage* msg);
+	bool doWorkMsg(SyncMessage* msg);
 
 private:
-	static void performSendingWork();
-	static void performReceivingWork();
+	void performSendingWork();
+	void performReceivingWork();
 };

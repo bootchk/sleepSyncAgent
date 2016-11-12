@@ -4,6 +4,8 @@
 #include "../globals.h"
 #include "slot.h"
 
+
+
 void Slot::prepareRadioToTransmitOrReceive() {
 	if (!radio->isPowerOn()) {
 			radio->powerOnAndConfigure();

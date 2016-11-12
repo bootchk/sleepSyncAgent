@@ -14,8 +14,6 @@
  */
 
 
-typedef bool (*DispatchFuncPtr)(SyncMessage *) ;
-
 typedef void (*voidFuncPtr)();
 
 
@@ -30,7 +28,7 @@ public:
 	static void sleepUntilTimeout(OSTime (*func)());
 
 	static bool sleepUntilMsgAcceptedOrTimeout(
-			DispatchFuncPtr,
+			Slot*,
 			OSTime (*func)());
 
 	static voidFuncPtr getMsgReceivedCallback();

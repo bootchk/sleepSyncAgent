@@ -6,13 +6,20 @@
 class SyncSlot: Slot {
 
 public:
-	static void perform();
+	void perform();
+
+	// override
+	bool doMasterSyncMsg(SyncMessage* msg);
+	bool doMergeSyncMsg(SyncMessage* msg);
+	bool doAbandonMastershipMsg(SyncMessage* msg);
+	bool doWorkMsg(SyncMessage* msg);
+
 private:
 
-	static void doMasterSyncSlot();
-	static void doSlaveSyncSlot();
-	static bool doMasterListenHalfSyncSlot(OSTime (*timeoutFunc)());
-	static void doIdleSlotRemainder();
+	void doMasterSyncSlot();
+	void doSlaveSyncSlot();
+	bool doMasterListenHalfSyncSlot(OSTime (*timeoutFunc)());
+	void doIdleSlotRemainder();
 
 	static bool shouldTransmitSync();
 	static void sendMasterSync();

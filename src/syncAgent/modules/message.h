@@ -91,11 +91,12 @@ public:
 		init(MergeSync, aDeltaToNextSyncPoint, aMasterID);
 	}
 
+	// TODO passing the correct delta?
 	/*
 	 * Work message, also helps to maintain sync.
 	 */
 	void makeWorkSync(DeltaSync aDeltaToNextSyncPoint, SystemID aMasterID, WorkPayload workPayload){
-		init(Work, (DeltaSync) workPayload, aMasterID);
+		init(Work, aDeltaToNextSyncPoint, aMasterID);
 		work = workPayload;
 	}
 

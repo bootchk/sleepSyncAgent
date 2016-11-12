@@ -6,5 +6,8 @@
 
 class FishSlot: Slot {
 public:
-	static void perform();
+	void perform();
+
+	bool doMasterSyncMsg(SyncMessage* msg);
+	bool doMergeSyncMsg(SyncMessage* msg);
 };

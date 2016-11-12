@@ -23,6 +23,16 @@ uint32_t countValidReceives = 0;
 uint32_t countInvalidTypeReceives = 0;
 uint32_t countInvalidCRCReceives = 0;
 
+
+SyncSlot SyncAgent::syncSlot;
+WorkSlot SyncAgent::workSlot;
+FishSlot SyncAgent::fishSlot;
+MergeSlot SyncAgent::mergeSlot;
+
+
+
+
+
 // This file only implements part of the class, see other .cpp files.
 // See syncAgentLoop.cpp for high level algorithm.
 

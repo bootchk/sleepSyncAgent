@@ -5,6 +5,7 @@
 #include "../globals.h"
 #include "syncSleeper.h"
 
+#include "../logMessage.h"
 
 namespace {
 Sleeper sleeper;
@@ -16,11 +17,37 @@ static uint32_t countInvalidTypeReceives;
 static uint32_t countInvalidCRCReceives;
 
 
+bool dispatchMsgReceived(Slot* slot, SyncMessage* msg){
+	bool foundDesiredMessage = false;
+
+	switch(msg->type) {
+	case MasterSync:
+		log(LogMessage::MasterSync);
+		foundDesiredMessage = slot->doMasterSyncMsg(msg);
+		break;
+	case MergeSync:
+		log(LogMessage::MergeSync);
+		foundDesiredMessage = slot->doMergeSyncMsg(msg);
+		break;
+	case AbandonMastership:
+		log(LogMessage::AbandonMastership);
+		foundDesiredMessage = slot->doAbandonMastershipMsg(msg);
+		break;
+	case Work:
+		log(LogMessage::Work);
+		foundDesiredMessage = slot->doWorkMsg(msg);
+		break;
+	}
+
+	return foundDesiredMessage;
+}
+
 /*
  * Filter invalid messages.
  * Return result of dispatching valid messages.
  */
-bool dispatchFilteredMsg(DispatchFuncPtr dispatchFuncOnType) {
+bool dispatchFilteredMsg(
+		Slot * msgHandlingSlot) { //DispatchFuncPtr dispatchFuncOnType) {
 	// FUTURE while any received messages queued
 
 	bool didReceiveDesiredMsg = false;
@@ -34,7 +61,8 @@ bool dispatchFilteredMsg(DispatchFuncPtr dispatchFuncOnType) {
 
 			//ledLogger2.toggleLED(3);	// debug: LED 3 valid received
 
-			didReceiveDesiredMsg = dispatchFuncOnType(msg);
+			//didReceiveDesiredMsg = dispatchFuncOnType(msg);
+			didReceiveDesiredMsg = dispatchMsgReceived(msgHandlingSlot, msg);
 			if (didReceiveDesiredMsg) {
 				// Ultra low power sleep remainder of duration (radio power off)
 				assert(radio->isDisabledState());
@@ -128,7 +156,8 @@ void SyncSleeper::sleepUntilTimeout(OSTime (*timeoutFunc)()) {
  */
 
 bool SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
-		DispatchFuncPtr dispatchQueuedMsg, // function to dispatch a message, knows desired msg type
+		Slot * msgHandlingSlot,
+		//DispatchFuncPtr dispatchQueuedMsg, // function to dispatch a message, knows desired msg type
 		OSTime (*timeoutFunc)())	// function returning remaining duration of slot
 {
 	bool didReceiveDesiredMsg = false;
@@ -155,7 +184,7 @@ bool SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 		switch (sleeper.getReasonForWake()) {
 		case MsgReceived:
 			sleeper.cancelTimeout();
-			didReceiveDesiredMsg = dispatchFilteredMsg(dispatchQueuedMsg);
+			didReceiveDesiredMsg = dispatchFilteredMsg(msgHandlingSlot);
 			break;	// switch
 
 		case TimerExpired:
@@ -222,6 +251,7 @@ voidFuncPtr SyncSleeper::getMsgReceivedCallback() {
 	// Return callback of the owned/wrapped sleeper.
 	return sleeper.msgReceivedCallback;
 }
+
 
 
 

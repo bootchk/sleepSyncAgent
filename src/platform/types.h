@@ -1,11 +1,16 @@
 #pragma once
 
+#include "../config.h"
 #include <inttypes.h>
 
 /*
  * Fundamental types between platform and SyncAgent.
  */
 
+
+#ifndef SYNC_AGENT_IS_LIBRARY
+
+// Stubs for types defined by platform
 
 
 /*
@@ -44,3 +49,10 @@ typedef uint32_t WorkPayload;
  */
 typedef volatile uint8_t * BufferPointer;
 
+
+#else
+
+// platform
+#include <types.h>
+
+#endif

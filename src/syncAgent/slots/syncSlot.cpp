@@ -19,8 +19,6 @@
  */
 
 #include <cassert>
-#include "../../platform/uniqueID.h"
-#include "../syncAgent.h"
 
 #include "../globals.h"
 #include "syncSlot.h"
@@ -127,15 +125,23 @@ bool doSyncMsg(SyncMessage* msg){
 }
 
 
+}	// namespace
 
 
 
+/*
+ * Sync handling is agnostic of role.isMaster or role.isSlave
+ *
+ * MasterSync and MergeSync handled the same.
+ *
+ * FUTURE discard multiple sync messages if they are queued
+ */
 
+bool SyncSlot::doMasterSyncMsg(SyncMessage* msg) { return doSyncMsg(msg); }
 
-// Abandon mastership
+bool SyncSlot::doMergeSyncMsg(SyncMessage* msg) { return doSyncMsg(msg); }
 
-
-void doAbandonMastershipMsg(SyncMessage* msg){
+bool SyncSlot::doAbandonMastershipMsg(SyncMessage* msg){
 	/*
 	 * My clique is still in sync, but master is dropout.
 	 *
@@ -146,13 +152,11 @@ void doAbandonMastershipMsg(SyncMessage* msg){
 
 	clique.setSelfMastership();
 	assert(clique.isSelfMaster());
+	return false;	// keep listening
 }
 
 
-
-// Work in SyncSlot
-
-void doWorkMsg(SyncMessage* msg){
+bool SyncSlot::doWorkMsg(SyncMessage* msg){
 	// Received in wrong slot, from out-of-sync clique
 
 	/*
@@ -193,46 +197,9 @@ void doWorkMsg(SyncMessage* msg){
 		// But many of my cohort may also do this.
 		// Only the master should do this.
 	}
+	return false;	// keep looking
 }
 
-/*
- * Like other dispatchers, return true if heard message apropos to slot kind.
- *
- * If true, side effect is adjusting my sync.
- */
-bool dispatchMsgReceived(SyncMessage* msg) {
-	// agnostic of role.isMaster or role.isSlave
-
-	bool isFoundSyncKeepingMsg = false;
-
-	switch(msg->type) {
-	case MasterSync:
-		log(LogMessage::MasterSync);
-		isFoundSyncKeepingMsg = doSyncMsg((SyncMessage*) msg);
-		break;
-	case MergeSync:
-		log(LogMessage::MergeSync);
-		isFoundSyncKeepingMsg = doSyncMsg((SyncMessage*) msg);
-		// Multiple syncs or sync
-
-		// FUTURE discard other queued messages
-		break;
-	case AbandonMastership:
-		log(LogMessage::AbandonMastership);
-		doAbandonMastershipMsg((SyncMessage*) msg);
-		break;
-	case Work:
-		log(LogMessage::Work);
-		doWorkMsg(msg);
-		// FUTURE !!! msg is moved to work queue, not freed?
-		break;
-	}
-
-	// FUTURE use handle and assert(msgHandle==nullptr);	// callee freed memory and nulled handle, or just nulled handle
-	return isFoundSyncKeepingMsg;
-}
-
-}	// namespace
 
 
 
@@ -309,7 +276,7 @@ void SyncSlot::doMasterSyncSlot() {
 bool SyncSlot::doMasterListenHalfSyncSlot(OSTime (*timeoutFunc)()) {
 	startReceiving();
 	bool result = syncSleeper.sleepUntilMsgAcceptedOrTimeout(
-					dispatchMsgReceived,
+					this, //dispatchMsgReceived,
 					timeoutFunc
 					);
 
@@ -331,7 +298,7 @@ void SyncSlot::doSlaveSyncSlot() {
 	assert(!radio->isDisabledState()); // listening for other's sync
 	// TODO not using result?
 	(void) syncSleeper.sleepUntilMsgAcceptedOrTimeout(
-				dispatchMsgReceived,
+				this, //dispatchMsgReceived,
 				clique.schedule.deltaToThisSyncSlotEnd);
 }
 
