@@ -20,6 +20,4 @@ private:
 	void doSlaveSyncSlot();
 	bool doMasterListenHalfSyncSlot(OSTime (*timeoutFunc)());
 	void doIdleSlotRemainder();
-
-	static bool shouldTransmitSync();
 };

@@ -28,111 +28,71 @@
 
 
 
-namespace {
+// Private
 
-void changeMaster(SyncMessage* msg) {
-	// assert current slot is Sync
-	assert(msg->masterID != clique.getMasterID());
 
-	clique.changeBySyncMessage(msg);
-	// assert endOfSyncPeriod was changed
+bool SyncSlot::doMasterListenHalfSyncSlot(OSTime (*timeoutFunc)()) {
+	startReceiving();
+	bool result = syncSleeper.sleepUntilMsgAcceptedOrTimeout(
+					this, //dispatchMsgReceived,
+					timeoutFunc
+					);
 
-	if (syncAgent.role.isMerger()) {
-		// Already merging an other clique, now merge other clique to updated sync slot time
-		syncAgent.cliqueMerger.adjustMergerBySyncMsg(msg);
-	}
+	// assert radio is on or off
+	return result;
+}
+
+// Sleep with radio off for remainder of sync slot
+void SyncSlot::doIdleSlotRemainder() {
+	assert(!radio->isPowerOn());
+	syncSleeper.sleepUntilTimeout(clique.schedule.deltaToThisSyncSlotEnd);
 }
 
 
-void logWorseSync() {
-	// FUTURE: for now this is just logging, in future will record history
-	if (clique.isSelfMaster()) {
-		/*
-		 * Sender has not heard my sync.
-		 * Since I am still alive, they should not be assuming mastership.
-		 * Could be assymetric communication (I can hear they, they cannot hear me.)
-		 */
-		log("Worse sync while self is master.\n");
-	}
-	else { // self is slave
-		/*
-		 * Sender has not heard my master's sync.
-		 * My master may have dropped out (and I just don't know yet), and they are assuming mastership.
-		 * Wait until I discover my master dropout.
-		 */
-		// FUTURE: if msg.masterID < myID(), I should assume mastership instead of sender
-		// FUTURE: if msg.masterID > myID() record msg.masterID in my historyOfMasters
-		// so when I discover dropout, I will defer to msg.masterID
-		log("Worse sync while self is slave.\n");
-	}
+void SyncSlot::doSlaveSyncSlot() {
+	// listen for sync the whole period
+	startReceiving();
+	// This assertion is time sensitive, can't stay in production code
+	assert(!radio->isDisabledState()); // listening for other's sync
+	// TODO not using result?
+	(void) syncSleeper.sleepUntilMsgAcceptedOrTimeout(
+				this, //dispatchMsgReceived,
+				clique.schedule.deltaToThisSyncSlotEnd);
 }
 
+void SyncSlot::doMasterSyncSlot() {
+	// Transmit sync in middle
 
-// Handlers for messages received in sync slot: Sync, AbandonMastership, Work
+	bool heardSyncKeepingSync = doMasterListenHalfSyncSlot(clique.schedule.deltaToThisSyncSlotMiddle);
+	assert(radio->isDisabledState());
 
-/*
- * Cases for sync messages:
- * 1. my cliques current master (usual)
- * 2. other clique master happened to start schedule coincident with my schedule
- * 3. other clique master clock drifts so schedules coincide
- * 4. member (master or slave) of other, better clique fished, caught my clique and is merging my clique
- * 5. a member of my clique failed to hear sync and is assuming mastership
- * 6. a member of my clique is sending work that includes synching info
- *
- * Cannot assert sender is a master (msg.masterID could be different from senderID)
- * Cannot assert self is slave
- * Cannot assert msg.masterID equals clique.masterID
- * Cannot assert self.isMaster => msg.masterID not equal clique.masterID
- */
-
-/*
- * Returns true if sync message keeps my sync (from current or new master of my clique.)
- *
- * Each Sync has an offset, could be zero or small (MasterSync) or larger (MergeSync)
- */
-bool doSyncMsg(SyncMessage* msg){
-	// assert SyncMsg is subtype MasterSync OR MergeSync
-	// assert sync not from self (xmitter and receiver are exclusive)
-	// assert self.isMaster || self.isSlave i.e. this code doesn't require any particular role
-
-	bool doesMsgKeepSynch;
-
-	// Most likely case first
-	if (clique.isMyMaster(msg->masterID)) {
-		/*
-		 * My Master could have fished another better clique and be MergeSyncing self
-		 *
-		 * A slave member of my clique is sending synch (unusual, since self could be master.)
-		 */
-		log("Sync from master\n");
-		clique.changeBySyncMessage(msg);
-		clique.dropoutMonitor.heardSync();
-		doesMsgKeepSynch = true;
-	}
-	else if (clique.isOtherCliqueBetter(msg->masterID)) {
-		// Strictly better
-		log("Better master\n");
-		changeMaster(msg);
-		clique.dropoutMonitor.heardSync();
-		doesMsgKeepSynch = true;
+	if (heardSyncKeepingSync) {
+		// I was Master, but just relinquished it.
+		// I heard sync so powerOff'd radio.
+		assert(!clique.isSelfMaster());
+		assert(!radio->isPowerOn());
+		assert(radio->isDisabledState());	// not receiving
+		doIdleSlotRemainder();
 	}
 	else {
+		// Might have heard a sync from a worse clique
+		syncSender.sendMasterSync();
+		// Keep listening for other better Masters.
+		// Result doesn't matter, slot is over and we proceed whether we heard sync keeping sync or not.
+		(void) doMasterListenHalfSyncSlot(clique.schedule.deltaToThisSyncSlotEnd);
 		/*
-		 * Heard MasterSync in SyncSlot from other Master of other worse clique.
-		 * OR heard MergeSync from Master or Slave of other worse clique.
-		 * Master of my clique (could be self) should continue as Master.
-		 * Don't tell other clique: since their sync slot overlaps with mine,
-		 * they should eventually hear my clique master's sync and relinquish mastership.
+		 * Transmit any sync in middle of slot.
+		 * Some literature refers to "guards" around the sync.
+		 * Syncing in middle has higher probability of being heard by drifted/skewed others.
+		 *
+		 * !!! The offset must be half the slot length, back to start of SyncPeriod
 		 */
-		logWorseSync();
-		// !!! SyncMessage does not keep me in sync: not dropoutMonitor.heardSync();
-		doesMsgKeepSynch = false;
+
+
+		// assert radio on or off
 	}
-	return doesMsgKeepSynch;
 }
 
-
-}	// namespace
 
 
 
@@ -144,9 +104,9 @@ bool doSyncMsg(SyncMessage* msg){
  * FUTURE discard multiple sync messages if they are queued
  */
 
-bool SyncSlot::doMasterSyncMsg(SyncMessage* msg) { return doSyncMsg(msg); }
+bool SyncSlot::doMasterSyncMsg(SyncMessage* msg) { return syncBehaviour.doSyncMsg(msg); }
 
-bool SyncSlot::doMergeSyncMsg(SyncMessage* msg) { return doSyncMsg(msg); }
+bool SyncSlot::doMergeSyncMsg(SyncMessage* msg) { return syncBehaviour.doSyncMsg(msg); }
 
 bool SyncSlot::doAbandonMastershipMsg(SyncMessage* msg){
 	/*
@@ -220,7 +180,7 @@ bool SyncSlot::doWorkMsg(SyncMessage* msg){
 
 void SyncSlot::perform() {
 	prepareRadioToTransmitOrReceive();
-	if (shouldTransmitSync())
+	if (syncBehaviour.shouldTransmitSync())
 		doMasterSyncSlot();
 	else
 		// isSlave or (isMaster and not xmitting (coin flip))
@@ -245,83 +205,6 @@ void SyncSlot::perform() {
 
 	assert(!radio->isPowerOn());	// ensure
 }
-
-
-void SyncSlot::doMasterSyncSlot() {
-	// Transmit sync in middle
-
-	bool heardSyncKeepingSync = doMasterListenHalfSyncSlot(clique.schedule.deltaToThisSyncSlotMiddle);
-	assert(radio->isDisabledState());
-
-	if (heardSyncKeepingSync) {
-		// I was Master, but just relinquished it.
-		// I heard sync so powerOff'd radio.
-		assert(!clique.isSelfMaster());
-		assert(!radio->isPowerOn());
-		assert(radio->isDisabledState());	// not receiving
-		doIdleSlotRemainder();
-	}
-	else {
-		// Might have heard a sync from a worse clique
-		syncSender.sendMasterSync();
-		// Keep listening for other better Masters.
-		// Result doesn't matter, slot is over and we proceed whether we heard sync keeping sync or not.
-		(void) doMasterListenHalfSyncSlot(clique.schedule.deltaToThisSyncSlotEnd);
-		/*
-		 * Transmit any sync in middle of slot.
-		 * Some literature refers to "guards" around the sync.
-		 * Syncing in middle has higher probability of being heard by drifted/skewed others.
-		 *
-		 * !!! The offset must be half the slot length, back to start of SyncPeriod
-		 */
-
-
-		// assert radio on or off
-	}
-}
-
-
-bool SyncSlot::doMasterListenHalfSyncSlot(OSTime (*timeoutFunc)()) {
-	startReceiving();
-	bool result = syncSleeper.sleepUntilMsgAcceptedOrTimeout(
-					this, //dispatchMsgReceived,
-					timeoutFunc
-					);
-
-	// assert radio is on or off
-	return result;
-}
-
-// Sleep with radio off for remainder of sync slot
-void SyncSlot::doIdleSlotRemainder() {
-	assert(!radio->isPowerOn());
-	syncSleeper.sleepUntilTimeout(clique.schedule.deltaToThisSyncSlotEnd);
-}
-
-
-void SyncSlot::doSlaveSyncSlot() {
-	// listen for sync the whole period
-	startReceiving();
-	// This assertion is time sensitive, can't stay in production code
-	assert(!radio->isDisabledState()); // listening for other's sync
-	// TODO not using result?
-	(void) syncSleeper.sleepUntilMsgAcceptedOrTimeout(
-				this, //dispatchMsgReceived,
-				clique.schedule.deltaToThisSyncSlotEnd);
-}
-
-
-
-
-bool SyncSlot::shouldTransmitSync() {
-	// Only master xmits FROM its sync slot
-	// and then with a coin-flip, for collision avoidance.
-	return clique.isSelfMaster() && clique.masterXmitSyncPolicy.shouldXmitSync();
-}
-
-
-
-
 
 
 

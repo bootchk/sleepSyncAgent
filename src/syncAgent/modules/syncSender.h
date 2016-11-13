@@ -11,7 +11,7 @@
 class SyncSender {
 public:
 
-	void sendMasterSync() {
+	static void sendMasterSync() {
 		log(LogMessage::SendMasterSync);
 
 		/*
@@ -40,7 +40,7 @@ public:
 	}
 
 
-	void sendMergeSync() {
+	static void sendMergeSync() {
 		log(LogMessage::SendMergeSync);
 
 		// cliqueMerger knows how to make global outwardCommonSyncMsg into a MergeSync

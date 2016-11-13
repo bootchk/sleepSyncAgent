@@ -31,5 +31,8 @@ extern SyncSleeper syncSleeper;
 #include "modules/syncSender.h"
 extern SyncSender syncSender;
 
+#include "modules/syncBehaviour.h"
+extern SyncBehaviour syncBehaviour;
+
 #include "policy/fishPolicy.h"
 extern FishPolicy fishPolicy;
