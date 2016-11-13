@@ -77,14 +77,18 @@ void logWorseSync() {
  * 3. other clique master clock drifts so schedules coincide
  * 4. member (master or slave) of other, better clique fished, caught my clique and is merging my clique
  * 5. a member of my clique failed to hear sync and is assuming mastership
+ * 6. a member of my clique is sending work that includes synching info
  *
  * Cannot assert sender is a master (msg.masterID could be different from senderID)
  * Cannot assert self is slave
  * Cannot assert msg.masterID equals clique.masterID
+ * Cannot assert self.isMaster => msg.masterID not equal clique.masterID
  */
 
 /*
  * Returns true if sync message keeps my sync (from current or new master of my clique.)
+ *
+ * Each Sync has an offset, could be zero or small (MasterSync) or larger (MergeSync)
  */
 bool doSyncMsg(SyncMessage* msg){
 	// assert SyncMsg is subtype MasterSync OR MergeSync
@@ -95,8 +99,11 @@ bool doSyncMsg(SyncMessage* msg){
 
 	// Most likely case first
 	if (clique.isMyMaster(msg->masterID)) {
-		// My Master could have fished another better clique and be MergeSyncing self
-		// Each Sync has an offset, could be zero or small (MasterSync) or larger (MergeSync)
+		/*
+		 * My Master could have fished another better clique and be MergeSyncing self
+		 *
+		 * A slave member of my clique is sending synch (unusual, since self could be master.)
+		 */
 		log("Sync from master\n");
 		clique.changeBySyncMessage(msg);
 		clique.dropoutMonitor.heardSync();
@@ -247,7 +254,8 @@ void SyncSlot::doMasterSyncSlot() {
 	assert(radio->isDisabledState());
 
 	if (heardSyncKeepingSync) {
-		// I was Master, but just relinquished it
+		// I was Master, but just relinquished it.
+		// I heard sync so powerOff'd radio.
 		assert(!clique.isSelfMaster());
 		assert(!radio->isPowerOn());
 		assert(radio->isDisabledState());	// not receiving
@@ -255,7 +263,7 @@ void SyncSlot::doMasterSyncSlot() {
 	}
 	else {
 		// Might have heard a sync from a worse clique
-		sendMasterSync();
+		syncSender.sendMasterSync();
 		// Keep listening for other better Masters.
 		// Result doesn't matter, slot is over and we proceed whether we heard sync keeping sync or not.
 		(void) doMasterListenHalfSyncSlot(clique.schedule.deltaToThisSyncSlotEnd);
@@ -305,11 +313,6 @@ void SyncSlot::doSlaveSyncSlot() {
 
 
 
-
-
-
-
-
 bool SyncSlot::shouldTransmitSync() {
 	// Only master xmits FROM its sync slot
 	// and then with a coin-flip, for collision avoidance.
@@ -317,33 +320,7 @@ bool SyncSlot::shouldTransmitSync() {
 }
 
 
-void SyncSlot::sendMasterSync() {
-	log(LogMessage::SendMasterSync);
 
-	/*
-	 * Make the common SyncMessage, having:
-	 * - type MasterSync
-	 * - forwardOffset unsigned delta now to next SyncPoint
-	 * - self ID
-	 */
-	DeltaTime forwardOffset = clique.schedule.deltaNowToNextSyncPoint();
-	// FUTURE include correction for latency (on receiver's end)
-
-	// Since we are in sync slot near front of sync period, offset should (0, NormalSyncPeriodDuration)
-	/*
-	 * !!! Soft assertion susceptible to breakpoints.
-	 * If breakpointed, nextSyncPoint is in past and forwardOffset is zero.
-	 */
-	// assert( forwardOffset > 0);
-
-	assert( forwardOffset < clique.schedule.NormalSyncPeriodDuration);
-
-	// FUTURE assert we are not xmitting sync past end of syncSlot?
-	// i.e. calculations are rapid and sync slot not too short?
-
-	serializer.outwardCommonSyncMsg.makeMasterSync(forwardOffset, myID());
-	syncSender.sendPrefabricatedMessage();
-}
 
 
 

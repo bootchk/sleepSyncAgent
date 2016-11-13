@@ -29,8 +29,12 @@ void sendWorkFromAppToOtherUnits(){
 	assert(workOutMailbox->isMail());
 	WorkPayload workPayload = workOutMailbox->fetch();
 
-	// Work msg includes sync
-	// TODO but only if I am master?
+	/*
+	 * !!! Work msg includes sync !!!
+	 * If self is slave, clique (including master) syncs on self.
+	 * Thus clique is *usually* (when work exists) synched to master,
+	 * but temporarily (when work exists) is synched to work sender.
+	 */
 	DeltaTime forwardOffset = clique.schedule.deltaNowToNextSyncPoint();
 	serializer.outwardCommonSyncMsg.makeWorkSync(forwardOffset, clique.getMasterID(), workPayload);
 	syncSender.sendPrefabricatedMessage();

@@ -19,9 +19,9 @@ public:	// for assertions
  * e.g. if RawWireless, one message is ~0.1msec
  * @32kHz xtal RTC, tick is 0.03msec
  */
-//static const DeltaTime     SlotDuration = 300;	// ~ 10msec
+static const DeltaTime     SlotDuration = 300;	// ~ 10msec
 //static const DeltaTime     SlotDuration = 20;	// ~ 0.6msec
-static const DeltaTime     SlotDuration = 30;	// ~ 0.9msec
+// static const DeltaTime     SlotDuration = 30;	// ~ 0.9msec
 //static const DeltaTime     SlotDuration = 40;	// ~ 1.2msec
 
 /*
@@ -41,12 +41,12 @@ static const DeltaTime     SlotDuration = 30;	// ~ 0.9msec
 // static const int           DutyCycleInverse = 100;
 
 // Testing: 3 active slots, ~60 sleeping, 0.6 second period
-//static const int           DutyCycleInverse = 20;
+static const int           DutyCycleInverse = 20;
 
 // 3 * 400 * .6 msec = 720 mSec = 0.7Sec
 // 3 * 200 * 1.2 msec = 720 mSec = 0.7 Sec
 //static const int           DutyCycleInverse = 200;
-static const int           DutyCycleInverse = 400;
+// static const int           DutyCycleInverse = 400;
 
 
 
@@ -71,11 +71,19 @@ static const ScheduleCount CountSlots = 3*DutyCycleInverse;
 static const DeltaTime NormalSyncPeriodDuration = CountSlots * SlotDuration;
 
 
+
 /*
- * Duration of message on air.
+ * Duration of message over-the-air (OTA).
  * Units ticks.
- * Assuming 1 Mbit baud rate and ~100bit message = .1mSec
+ * Function of bitrate, message length, and RTC frequency:
+ *
+ * OTA ticks = 1/bitrate [second/bits] * messageLength [bits] * RTCFreq [ticks/second]
+ *
  * Used in sanity assertions only?
  */
+// 1 Mbit bitrate, ~100bit message, 32kHz   yields .1mSec
 static const DeltaTime MsgDurationInTicks = 3;
+
+// 2 Mbit, 120 bits, 32kHz yields 1.8 ticks
+// static const DeltaTime MsgDurationInTicks = 2;
 

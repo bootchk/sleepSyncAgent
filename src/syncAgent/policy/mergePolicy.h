@@ -39,7 +39,7 @@
  
  
  class MergePolicy {
-	 static int countSendMergeSyncs;
+	 static int countSentMergeSyncs;
 
  public:
 	 static void restart();

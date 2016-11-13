@@ -22,5 +22,4 @@ private:
 	void doIdleSlotRemainder();
 
 	static bool shouldTransmitSync();
-	static void sendMasterSync();
 };

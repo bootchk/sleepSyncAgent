@@ -10,7 +10,7 @@
 
 
 void MergePolicy::restart() {
-	countSendMergeSyncs = 0;
+	countSentMergeSyncs = 0;
 }
 
 
@@ -36,7 +36,7 @@ bool MergePolicy::shouldScheduleMerge() {
 
 
 
-int MergePolicy::countSendMergeSyncs;
+int MergePolicy::countSentMergeSyncs;
 
 /*
  * Called every send MergeSync.
@@ -49,12 +49,12 @@ int MergePolicy::countSendMergeSyncs;
  */
 bool MergePolicy::checkCompletionOfMergerRole() {
 	//assert(isActive());	// require
-	assert(countSendMergeSyncs <= Policy::CountSyncsPerMerger);	// Was restart() ed
+	assert(countSentMergeSyncs <= Policy::CountSyncsPerMerger);	// Was restart() ed
 
-	countSendMergeSyncs++;
+	countSentMergeSyncs++;
 
 	bool result = false;
-	if ( countSendMergeSyncs > Policy::CountSyncsPerMerger ){
+	if ( countSentMergeSyncs > Policy::CountSyncsPerMerger ){
 		result = true;
 		// active = false;
 	}

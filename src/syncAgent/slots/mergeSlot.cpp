@@ -4,19 +4,9 @@
 #include "../globals.h"
 #include "mergeSlot.h"
 
-#include "../logMessage.h"
 
 
 namespace {
-
-void sendMergeSync() {
-	log(LogMessage::SendMergeSync);
-
-	// cliqueMerger knows how to make global outwardCommonSyncMsg into a MergeSync
-	syncAgent.cliqueMerger.makeMergeSync(serializer.outwardCommonSyncMsg);
-	syncSender.sendPrefabricatedMessage();
-}
-
 
 /*
  * Partial application:
@@ -43,7 +33,7 @@ void MergeSlot::perform() {
 	syncSleeper.sleepUntilTimeout(timeoutUntilMerge);
 	// assert time aligned with middle of a mergee sync slots (same wall time as fished sync from mergee.)
 	prepareRadioToTransmitOrReceive();
-	sendMergeSync();
+	syncSender.sendMergeSync();
 	shutdownRadio();
 
 	if (mergePolicy.checkCompletionOfMergerRole()){
