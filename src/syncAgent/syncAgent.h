@@ -6,11 +6,8 @@
 #include "modules/message.h"
 #include "modules/cliqueMerger.h"
 #include "modules/role.h"
+#include "modules/syncPeriod.h"
 
-#include "slots/syncSlot.h"
-#include "slots/workSlot.h"
-#include "slots/fishSlot.h"
-#include "slots/mergeSlot.h"
 
 /*
  * SyncAgent manages sleep synchronization for wireless network.
@@ -50,14 +47,9 @@ private:
 
 public:	// to SyncSlot mainly
 	static CliqueMerger cliqueMerger;
-	static MergerFisherRole role;
 private:
+	static SimpleSyncPeriod syncPeriod;
 	static PowerManager powerMgr;
-
-	static SyncSlot syncSlot;
-	static WorkSlot workSlot;
-	static FishSlot fishSlot;
-	static MergeSlot mergeSlot;
 
 	static LEDLogger ledLogger;
 

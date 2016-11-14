@@ -102,12 +102,17 @@ public:
 	 */
 	static void handleSyncMsg(SyncMessage* msg) {
 		// assert current slot is Sync
-		assert(msg->masterID != clique.getMasterID());
+		/*
+		 * assert( clique.isMsgFromMyClique(msg->masterID) || !clique.isMsgFromMyClique(msg->masterID) );
+		 * i.e. this does not assume the sync is from my current clique, or not from my current clique.
+		 * If it is from my current clique, my Master does not change, but schedule is adjusted (usually small.)
+		 * If it is from another clique, my Master does change, and schedule is adjusted.
+		 */
 
 		clique.changeBySyncMessage(msg);
 		// assert endOfSyncPeriod was changed
 
-		if (syncAgent.role.isMerger()) {
+		if (role.isMerger()) {
 			// Already merging an other clique, now merge other clique to updated sync slot time
 			syncAgent.cliqueMerger.adjustMergerBySyncMsg(msg);
 		}

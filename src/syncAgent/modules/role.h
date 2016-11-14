@@ -14,7 +14,6 @@ private:
 	static RoleType role;
 
 public:
-	MergerFisherRole() { role = Fisher; }
 	static bool isMerger() {return role == Merger;}
 	static bool isFisher() {return role == Fisher;}
 

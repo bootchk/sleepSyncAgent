@@ -184,7 +184,6 @@ bool SyncWorkSlot::doWorkMsg(SyncMessage* msg){
 	 * I.E. handle the work aspect of message.
 	 */
 	syncAgent.relayWorkToApp(msg->workPayload());
-	// TODO recode relayWorkToApp to get the new workPayload
 
 	/*
 	 *  Handle the sync aspect of message.

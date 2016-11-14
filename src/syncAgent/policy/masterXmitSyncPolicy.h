@@ -1,6 +1,6 @@
 #pragma once
 
-// TODO is this from platform??? #include "../../../platform/platform.h"	// types.h
+// This is not from platform, is local.
 #include "../types.h" // ScheduleCount
 
 /*

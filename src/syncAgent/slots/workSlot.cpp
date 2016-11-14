@@ -159,7 +159,7 @@ void WorkSlot::performSendingWork(){
 	assert(workOutMailbox->isMail());	// require work to send
 	assert(!radio->isPowerOn());
 
-	// TODO send work randomly in subslot of work slot, contention
+	// FUTURE send work randomly in subslot of work slot, contention
 	sleepUntilWorkSendingTime();
 
 	prepareRadioToTransmitOrReceive();

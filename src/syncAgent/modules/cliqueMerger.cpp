@@ -101,9 +101,15 @@ void CliqueMerger::adjustMergerBySyncMsg(SyncMessage* msg) {
 	// assert endOfSyncPeriod was changed, it now is my new end of sync period
 
 	(void) msg;	// temporarily suppress warnings
-	assert(false);	// FUTURE, when more than two units.
+	// TODO implement adjustMerger
+	/*
+	 * FUTURE, when more than two units.
+	 * When only two units, it doesn't matter if MergeSync is off, since there is no third unit to hear it.
+	 * Unless it interferes with other slot?
+	 */
 	assert(isActive);
 
+#ifdef FUTURE
 	// The new next sync point is not at the old one before this msg adjusted endSyncPoint.
 
 	DeltaTime deltaStartSyncPeriodToNewNextSyncPoint = owningClique->schedule.halfSlotDuration() + msg->deltaToNextSyncPoint;
@@ -113,6 +119,8 @@ void CliqueMerger::adjustMergerBySyncMsg(SyncMessage* msg) {
 	// offsetToMergee -= msg->deltaToNextSyncPoint;
 	// FUTURE this is not right, result could be negative.  Need modulo.
 	// Also, if the mergeSlot now overlaps sync or work slot?
+#endif
+	return;
 }
 
 

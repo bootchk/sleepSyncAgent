@@ -21,7 +21,7 @@ bool FishSlot::doMasterSyncMsg(SyncMessage* msg){
 	 * but always toMerger(), either merging my clique or other clique.
 	 */
 	syncAgent.toMergerRole(msg);
-	assert(syncAgent.role.isMerger());
+	assert(role.isMerger());
 	/*
 	 * assert (schedule changed AND self is merging my former clique)
 	 * OR (schedule unchanged AND self is merging other clique)

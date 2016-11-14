@@ -8,9 +8,7 @@
 bool SyncAgent::isSyncingState = false;
 // DYNAMIC uint8_t SyncAgent::receiveBuffer[255];
 
-
 CliqueMerger SyncAgent::cliqueMerger;
-MergerFisherRole SyncAgent::role;
 
 PowerManager SyncAgent::powerMgr;
 
@@ -22,15 +20,6 @@ LEDLogger SyncAgent::ledLogger;	// DEBUG
 uint32_t countValidReceives = 0;
 uint32_t countInvalidTypeReceives = 0;
 uint32_t countInvalidCRCReceives = 0;
-
-
-SyncSlot SyncAgent::syncSlot;
-WorkSlot SyncAgent::workSlot;
-FishSlot SyncAgent::fishSlot;
-MergeSlot SyncAgent::mergeSlot;
-
-
-
 
 
 // This file only implements part of the class, see other .cpp files.

@@ -13,7 +13,9 @@ SystemID Clique::masterID;
 
 void Clique::reset(){
 	log("Clique reset\n");
-	masterID = myID();
+
+	masterID = myID();	// This unit (with ID given by myID() ) is master of clique
+
 	masterXmitSyncPolicy.reset();
 	schedule.startFreshAfterHWReset();
 	// assert clock is running and first period started but no tasks scheduled

@@ -29,7 +29,7 @@ MergePolicy MergeSlot::mergePolicy;
 
 void MergeSlot::perform() {
 	assert(!radio->isPowerOn());
-	assert(syncAgent.role.isMerger());
+	assert(role.isMerger());
 	syncSleeper.sleepUntilTimeout(timeoutUntilMerge);
 	// assert time aligned with middle of a mergee sync slots (same wall time as fished sync from mergee.)
 	prepareRadioToTransmitOrReceive();
@@ -40,8 +40,8 @@ void MergeSlot::perform() {
 		mergePolicy.restart();
 		syncAgent.toFisherRole();
 		// assert next SyncPeriod will schedule FishSlot
-		assert(!syncAgent.role.isMerger());
-		assert(syncAgent.role.isFisher());
+		assert(!role.isMerger());
+		assert(role.isFisher());
 	}
 	// else continue in role Merger
 

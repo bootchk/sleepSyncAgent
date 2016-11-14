@@ -4,11 +4,12 @@
 #include "../platform/platform.h"
 #include "syncAgent.h"
 #include "globals.h"
+#include "modules/syncPeriod.h"
 
 
 
 /*
- * SyncAgent is a task(thread) that infinite sequence of sync periods.
+ * SyncAgent is a task(thread) that is infinite sequence of sync periods.
  *
  * Sync periods are active if enough power.
  * In inactive sync periods, schedule advances.
@@ -16,6 +17,7 @@
  * After inactive sync periods, we attempt to resume drifted schedule.
 */
 
+SimpleSyncPeriod syncPeriod;
 
 
 void SyncAgent::loop(){
@@ -47,7 +49,7 @@ void SyncAgent::loop(){
 		if ( powerMgr.isPowerForRadio() ) {
 			// FUTURE if !isSyncingState resumeSyncing  announce to app
 			isSyncingState = true;
-			doSyncPeriod();
+			syncPeriod.doSlotSequence();
 
 		}
 		else {
@@ -63,52 +65,3 @@ void SyncAgent::loop(){
 	// never returns
 }
 
-/*
- * Active sync period is structured sequence of slots, some varying
- */
-void SyncAgent::doSyncPeriod() {
-
-	// log("Now time\n");
-	// logLongLong(clique.schedule.nowTime());
-
-
-	// syncSlot first, always
-	syncSlot.perform();
-
-	#ifdef FUTURE
-	// Variation: work slot may be merging
-	if (role.isWorkMerger()) {
-		workSlot.performWorkMerger();
-	}
-	else {
-		workSlot.performWork();
-	}
-#endif
-
-
-#ifdef SYNC_AGENT_CONVEYS_WORK
-	// TODO also ORDINAL OF FIRST FISHING SLOT
-	workSlot.performWork();
-#endif
-
-	assert(!radio->isPowerOn());	// Low power until next slot
-
-	// Variation: next event (if any) occurs within a large sleeping time (lots of 'slots')
-	if (role.isMerger()) {
-		// avoid collision
-		if (mergeSlot.mergePolicy.shouldScheduleMerge())  {
-			mergeSlot.perform();
-			// We might have quit role Merger
-		}
-		// else continue and sleep until end of sync period
-	}
-	else {
-		// Fish every period
-		fishSlot.perform();
-		// continue and sleep until end of sync period
-	}
-	assert(!radio->isPowerOn());	// Low power for remainder of this sync period
-
-	syncSleeper.sleepUntilTimeout(clique.schedule.deltaNowToNextSyncPoint);
-	// Sync period completed
-}

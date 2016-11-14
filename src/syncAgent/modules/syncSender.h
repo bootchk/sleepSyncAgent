@@ -50,7 +50,6 @@ public:
 
 
 	static void sendWorkSync() {
-
 		DeltaTime forwardOffset = clique.schedule.deltaNowToNextSyncPoint();
 		// FUTURE mailbox is int32, coercing to int8
 		serializer.outwardCommonSyncMsg.makeWorkSync(forwardOffset, myID(), (WorkPayload) workOutMailbox->fetch());

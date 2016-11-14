@@ -22,6 +22,9 @@ extern Clique clique;
 #include "syncAgent.h"
 extern SyncAgent syncAgent;
 
+#include "modules/role.h"
+extern MergerFisherRole role;
+
 #include "modules/serializer.h"
 extern Serializer serializer;
 
@@ -36,3 +39,7 @@ extern SyncBehaviour syncBehaviour;
 
 #include "policy/fishPolicy.h"
 extern FishPolicy fishPolicy;
+
+
+
+
