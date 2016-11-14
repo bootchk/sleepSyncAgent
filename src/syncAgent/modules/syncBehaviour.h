@@ -15,13 +15,14 @@ class SyncBehaviour {
 public:
 
 	/*
-	 * Cases for sync messages:
-	 * 1. my cliques current master (usual)
-	 * 2. other clique master happened to start schedule coincident with my schedule
-	 * 3. other clique master clock drifts so schedules coincide
-	 * 4. member (master or slave) of other, better clique fished, caught my clique and is merging my clique
-	 * 5. a member of my clique failed to hear sync and is assuming mastership
-	 * 6. a member of my clique is sending work that includes synching info
+	 * Cases for sync messages in sync slot:
+	 * 1. my cliques current master (usual) (MasterSync)
+	 * 2. other clique master happened to start schedule coincident with my schedule (MasterSync or WorkSync)
+	 * 3. other clique clock drifts so schedules coincide (MasterSync, MergeSync, or WorkSync)
+	 * 4. member (master or slave) of other, better clique fished, caught my clique and is merging my clique (MergeSync)
+	 * 5. member (master or slave) of my clique fished and caught a better clique, is merging my clique (MergeSync)
+	 * 6. member of my clique failed to hear sync and is assuming mastership (MasterSync)
+	 * 7. member of my clique is sending work that includes synching info (WorkSync)
 	 *
 	 * Cannot assert sender is a master (msg.masterID could be different from senderID)
 	 * Cannot assert self is slave
@@ -30,7 +31,7 @@ public:
 	 */
 
 	/*
-	 * Returns true if sync message keeps my sync (from current or new master of my clique.)
+	 * Returns true if message keeps my sync (from current or new master of my clique.)
 	 *
 	 * Each Sync has an offset, could be zero or small (MasterSync) or larger (MergeSync)
 	 */
@@ -38,18 +39,19 @@ public:
 		// assert SyncMsg is subtype MasterSync OR MergeSync
 		// assert sync not from self (xmitter and receiver are exclusive)
 		// assert self.isMaster || self.isSlave i.e. this code doesn't require any particular role
-
+		assert (msg->type == MasterSync || msg->type == MergeSync || msg->type == WorkSync);
 		bool doesMsgKeepSynch;
 
 		// Most likely case first
-		if (clique.isMyMaster(msg->masterID)) {
+		if (clique.isMsgFromMyClique(msg->masterID)) {
 			/*
 			 * My Master could have fished another better clique and be MergeSyncing self
 			 *
 			 * A slave member of my clique is sending synch (unusual, since self could be master.)
 			 */
 			log("Sync from my clique (master or slave)\n");
-			clique.changeBySyncMessage(msg);
+			// WAS clique.changeBySyncMessage(msg);
+			handleSyncMsg(msg);
 			clique.dropoutMonitor.heardSync();
 			doesMsgKeepSynch = true;
 		}
@@ -62,12 +64,15 @@ public:
 		}
 		else {
 			/*
-			 * Heard MasterSync in SyncSlot from other Master of other worse clique.
-			 * OR heard MergeSync from Master or Slave of other worse clique.
+			 * In a sync slot and heard:
+			 * - MasterSync from Master of other worse clique.
+			 * - OR (MergeSync or WorkSync) from Master or Slave of other worse clique.
+			 *
 			 * Master of my clique (could be self) should continue as Master.
 			 * Don't tell other clique: since their sync slot overlaps with mine,
 			 * they should eventually hear my clique master's sync and relinquish mastership.
 			 */
+			// If it is WorkSync, we acted on the work but not the sync
 			logWorseSync();
 			// !!! SyncMessage does not keep me in sync: not dropoutMonitor.heardSync();
 			doesMsgKeepSynch = false;
@@ -90,7 +95,7 @@ public:
 	/*
 	 * The essential effect of sync messages received in SyncSlot:
 	 * - possible change clique
-	 * - adjust schedule
+	 * - adjust schedule (might be small change)
 	 * - adjust any merge in progress
 	 *
 	 * Sync messages received in other slots (FishSlot) have different effects.

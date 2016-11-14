@@ -33,7 +33,7 @@ enum MessageType {
 	MasterSync = 17,	// Don't start at 0
 	MergeSync = 34,
 	AbandonMastership = 68,
-	Work = 136
+	WorkSync = 136
 };
 // !!!! See hack for mangled Work
 
@@ -63,7 +63,7 @@ public:
 		return      (receivedType == MasterSync)
 				|| (receivedType == MergeSync)
 				|| (receivedType == AbandonMastership)
-				|| (receivedType == Work)	// FUTURE Work msg a distinct class of message
+				|| (receivedType == WorkSync)	// FUTURE Work msg a distinct class of message
 				;
 	}
 
@@ -91,12 +91,11 @@ public:
 		init(MergeSync, aDeltaToNextSyncPoint, aMasterID);
 	}
 
-	// TODO passing the correct delta?
 	/*
 	 * Work message, also helps to maintain sync.
 	 */
 	void makeWorkSync(DeltaSync aDeltaToNextSyncPoint, SystemID aMasterID, WorkPayload workPayload){
-		init(Work, aDeltaToNextSyncPoint, aMasterID);
+		init(WorkSync, aDeltaToNextSyncPoint, aMasterID);
 		work = workPayload;
 	}
 

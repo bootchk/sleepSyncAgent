@@ -108,7 +108,7 @@ void SyncAgent::doDyingBreath() {
 void SyncAgent::toMergerRole(SyncMessage* msg){
 	// msg received in fishSlot is MasterSync
 	// msg received in syncSlot is Work (mangled)
-	assert(msg->type == MasterSync || msg->type == Work);
+	assert(msg->type == MasterSync || msg->type == WorkSync);
 	assert(role.isFisher());
 	role.setMerger();
 	cliqueMerger.initFromMsg(msg);
@@ -141,7 +141,7 @@ void SyncAgent::toFisherRole(){
  */
 void SyncAgent::mangleWorkMsg(SyncMessage* msg){
 	// assert current slot is SyncSlot
-	assert(msg->type = Work);
+	assert(msg->type = WorkSync);
 	/*
 	 * assert msg was heard anywhere in SyncSlot (not just in the middle)
 	 * but was sent from middle of sender's WorkSlot

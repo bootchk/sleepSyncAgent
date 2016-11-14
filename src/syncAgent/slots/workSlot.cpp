@@ -123,7 +123,7 @@ Alternative design: this cliques merges inferior clique.
 // Usual: work message in sync with my clique.
 // Pass work from other units to app
 bool WorkSlot::doWorkMsg(SyncMessage* msg) {
-	assert(msg->type == Work);
+	assert(msg->type == WorkSync);
 	syncAgent.relayWorkToApp(msg->workPayload());
 	return false;	// keep looking
 }

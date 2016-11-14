@@ -23,8 +23,6 @@
 #include "../globals.h"
 #include "syncSlot.h"
 
-#include "../logMessage.h"
-
 
 
 
@@ -56,12 +54,20 @@ void SyncSlot::doSlaveSyncSlot() {
 	assert(!radio->isDisabledState()); // listening for other's sync
 	// TODO not using result?
 	(void) syncSleeper.sleepUntilMsgAcceptedOrTimeout(
-				this, //dispatchMsgReceived,
+				this,
 				clique.schedule.deltaToThisSyncSlotEnd);
+	// TODO If we heard sync-keeping msg, now is not the end of the slot.  Idle?
+	// Low priority to fix this OBSOLETE design
 }
 
+/*
+ * Transmit any sync in middle of slot.
+ * Some literature refers to "guards" around the sync.
+ * Syncing in middle has higher probability of being heard by drifted/skewed others.
+ *
+ * !!! The offset must be half the slot length, back to start of SyncPeriod
+ */
 void SyncSlot::doMasterSyncSlot() {
-	// Transmit sync in middle
 
 	bool heardSyncKeepingSync = doMasterListenHalfSyncSlot(clique.schedule.deltaToThisSyncSlotMiddle);
 	assert(radio->isDisabledState());
@@ -80,14 +86,6 @@ void SyncSlot::doMasterSyncSlot() {
 		// Keep listening for other better Masters.
 		// Result doesn't matter, slot is over and we proceed whether we heard sync keeping sync or not.
 		(void) doMasterListenHalfSyncSlot(clique.schedule.deltaToThisSyncSlotEnd);
-		/*
-		 * Transmit any sync in middle of slot.
-		 * Some literature refers to "guards" around the sync.
-		 * Syncing in middle has higher probability of being heard by drifted/skewed others.
-		 *
-		 * !!! The offset must be half the slot length, back to start of SyncPeriod
-		 */
-
 
 		// assert radio on or off
 	}

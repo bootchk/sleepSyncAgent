@@ -32,7 +32,7 @@ public:
 	static void setOtherMastership(SystemID otherMasterID);
 	static bool isSelfMaster();
 	static bool isOtherCliqueBetter(SystemID otherMasterID);
-	static bool isMyMaster(SystemID otherMasterID);
+	static bool isMsgFromMyClique(SystemID otherMasterID);
 
 	// New clique
 	static void reset();

@@ -48,6 +48,16 @@ public:
 		sendPrefabricatedMessage();
 	}
 
+
+	static void sendWorkSync() {
+
+		DeltaTime forwardOffset = clique.schedule.deltaNowToNextSyncPoint();
+		// FUTURE mailbox is int32, coercing to int8
+		serializer.outwardCommonSyncMsg.makeWorkSync(forwardOffset, myID(), (WorkPayload) workOutMailbox->fetch());
+		sendPrefabricatedMessage();
+	}
+
+
 	/*
 	 * Just the sending aspect, of a prefabricated SyncMessage in global outwardCommonSyncMsg
 	 */
