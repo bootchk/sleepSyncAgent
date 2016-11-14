@@ -4,7 +4,7 @@
 #include "../platform/platform.h"
 #include "syncAgent.h"
 #include "globals.h"
-#include "modules/syncPeriod.h"
+#include "syncPeriod/syncPeriod.h"
 
 
 
@@ -17,7 +17,11 @@
  * After inactive sync periods, we attempt to resume drifted schedule.
 */
 
+#ifdef SIMPLE_SYNC_PERIOD
 SimpleSyncPeriod syncPeriod;
+#else
+CombinedSyncPeriod syncPeriod;
+#endif
 
 
 void SyncAgent::loop(){

@@ -1,6 +1,9 @@
 
 #pragma once
 
+#include "../slots/slot.h"
+
+
 /*
  * Understands sleeping for sync algorithm.
  *

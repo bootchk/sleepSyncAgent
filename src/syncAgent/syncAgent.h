@@ -6,7 +6,7 @@
 #include "modules/message.h"
 #include "modules/cliqueMerger.h"
 #include "modules/role.h"
-#include "modules/syncPeriod.h"
+#include "syncPeriod/syncPeriod.h"
 
 
 /*

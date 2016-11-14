@@ -4,38 +4,24 @@
 #include "../globals.h"
 #include "syncPeriod.h"
 
+#include "../slots/syncWorkSlot.h"
+#include "../slots/fishSlot.h"
+#include "../slots/mergeSlot.h"
 
 namespace {
-SyncSlot syncSlot;
-WorkSlot workSlot;
+SyncWorkSlot syncWorkSlot;
 FishSlot fishSlot;
 MergeSlot mergeSlot;
 }
 
-void SimpleSyncPeriod::doSlotSequence() {
+void CombinedSyncPeriod::doSlotSequence() {
 
 	// log("Now time\n");
 	// logLongLong(clique.schedule.nowTime());
 
 
-	// syncSlot first, arbitrary
-	syncSlot.perform();
-
-	#ifdef FUTURE
-	// Variation: work slot may be merging
-	if (role.isWorkMerger()) {
-		workSlot.performWorkMerger();
-	}
-	else {
-		workSlot.performWork();
-	}
-#endif
-
-
-#ifdef SYNC_AGENT_CONVEYS_WORK
-	// TODO also ORDINAL OF FIRST FISHING SLOT
-	workSlot.performWork();
-#endif
+	// first, arbitrary
+	syncWorkSlot.perform();
 
 	assert(!radio->isPowerOn());	// Low power until next slot
 
