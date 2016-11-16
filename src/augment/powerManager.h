@@ -22,9 +22,9 @@ class PowerManager {
 public:
 
 	static bool isPowerForRadio();
-	static bool isPowerForWork();
+	// FUTURE static bool isPowerForWork();
 
 private:
-	static uint8_t percentVccMeasure();
-	static uint8_t convertVoltageToPercent(uint32_t voltage);
+	static int percentVccMeasure();
+	// static convertVoltageToPercent(uint32_t voltage);
 };

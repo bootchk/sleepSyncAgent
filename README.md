@@ -116,14 +116,16 @@ If work takes little power, the last two states might be the same.  If work take
 
 
 
-References
+Keywords
 =
 
-Digi Corporation's Digimesh has sleep synchronization
+Not references, just keywords to search for references.
+
+Digi Corporation's Digimesh has "sleep synchronization" in a "mesh network."
 
 "Reachback firefly algorithm".  But in firefly algorithms, all units xmit sync. Here, we decide a master.  Here, more than one unit (even slaves) may xmit sync, but in the ideal state, only one master does.
 
-"time triggered communication".  Units are synced and communicate on a schedule of slots.
+"time triggered communication".  Units are synced and communicate on a schedule of slots.  We do the same thing.
 
 
 Mesh
@@ -160,11 +162,17 @@ Platforms could be:
 Debug configuration
 -
 
-In config.h, comment out the define SYNC_AGENT_IS_LIBRARY.  Then stubs for the platform are compiled and linked in.  In this configuration, ProjectProperties>C/C++Builder>Settings>BuildArtifact>ArtifactType  is *Executable*.
+This "Build configuration" only ensures the code compiles cleanly for other architectures.  Builds an executable for the host (development) computer.  Most hosts do not have a radio (only the target, embedded computer) so it is not useful to attempt execution.
+
+In config.h, comment out the define SYNC_AGENT_IS_LIBRARY.  Then stubs for the platform are compiled and linked in.  In this configuration, ProjectProperties>C/C++Builder>Settings>BuildArtifact>ArtifactType  is *Executable*.  
 
 
 Archive configuration
 -
+
+This "build configuration" builds a library to be linked into a main (app) program for a target, embedded architecture.
+
+There a two such configurations, for ARM M0 and ARM M4.
 
 In config.h, define SYNC_AGENT_IS_LIBRARY   Then platform stubs are excluded from the build by #ifdefs, and the library depends on implementation in the app project of the platform API's.
 
@@ -183,3 +191,16 @@ Linking with app
     Implement a work thread reading to and writing to work queues (FUTURE)
     Build app project with same CFLAGS for ARM ISA.
 
+Variants
+=
+
+During development, there were these variants which I hope are still viable:
+
+    Sync only: no work is conveyed
+    Sync with work conveyed in a separate slot (more reliable work conveyance?)
+    Sync with work conveyed in the same slot as sync messages (fewer active slots, less power required.)
+    With power management for harvested power.
+    
+See config.h
+
+Currently developing the last variant.

@@ -54,7 +54,6 @@ void SyncAgent::loop(){
 			// FUTURE if !isSyncingState resumeSyncing  announce to app
 			isSyncingState = true;
 			syncPeriod.doSlotSequence();
-
 		}
 		else {
 			if (isSyncingState) { pauseSyncing(); }

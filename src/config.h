@@ -9,8 +9,10 @@
  * Define this if SyncAgent should conserve power
  *
  * Yes:
- * SyncAgent checks Vcc and will not maintain sync or convey work if Vcc is low.
- * SyncAgent will attempt to recover last known sync when power is sufficient.
+ * SyncAgent checks Vcc and will not transmit sync or convey work if Vcc is low.
+ * SyncAgent still keeps the sync schedule, but it drifts (without sync messages.
+ * When power recovers to sufficient, SyncAgent will resume xmitting sync on its drifted schedule,
+ * which might lead to more rapid sync with other units.
  *
  * Platform must implement getVcc()
  *
@@ -23,7 +25,24 @@
  *
  * Platform layer need not implement getVcc()
  */
-//#define SYNC_AGENT_CONSERVE_POWER 1
+/*
+ * FUTURE related to SIMPLE_SYNC_PERIOD.
+ * If yes, at some power level SyncAgent stops xmitting work in a separate work slot
+ * (saving 50%, using only 2 active slots instead of 3.)
+ *
+ * FUTURE if power is low, SyncAgent could xmit and listen for sync, but not fish.
+ * In that case, it would stay in sync, but not find new mobile units.
+ * Again saving roughly speaking another 50% power.
+ *
+ * The design now is that the app takes responsibility for not xmitting work
+ * if there is not enough power to do work.
+ *
+ * Some units may have enough power to xmit work,
+ * and an insufficient powered unit may hear the work
+ * (Depending on SIMPLE_SYNC_PERIOD, whether separate work slot is executed to listen for work)
+ * and convey the work to the insufficiently powered app.
+ */
+#define SYNC_AGENT_CONSERVE_POWER 1
 
 
 
@@ -47,7 +66,17 @@
 
 
 /*
- * Define this if SyncAgent is built as a library.
+ * Define is SyncAgent conveys work in separate work slot.
+ * See ramifications in the code.
+ *
+ * Yes: separate work slot
+ * No: work conveyed in combined work/sync slot
+ */
+//#define SIMPLE_SYNC_PERIOD 1
+
+
+/*
+ * Define if SyncAgent is built as a library.
  *
  * Yes:
  * SyncAgent expects platform to implement certain functions (undefined in the library.)
