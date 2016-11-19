@@ -2,8 +2,7 @@
 #include <cassert>
 
 #include "../config.h"	// SYNC_AGENT_CONSERVE_POWER
-#include "powerManager.h"
-#include "../platform/platform.h"	// getVcc
+#include "../platform/platform.h"	// PowerManager
 
 
 

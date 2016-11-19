@@ -3,6 +3,12 @@
  * Knows how to fabricate and transmit/broadcast a Sync msg.
  *
  * Collaborates with Radio and Serializer.
+ *
+ * Note that the caller checked that there is enough power for radio.
+ * The power MIGHT have fallen since then, but it is unlikely
+ * since only a little receiving has been done.
+ * FUTURE: check power more often and abandon in the middle of a slot
+ * or in the middle of a sync period (omit listening in the fishSlot)?
  */
 
 #include "../logMessage.h"
@@ -50,6 +56,14 @@ public:
 
 
 	static void sendWorkSync() {
+		/*
+		 * The app sends work OUT only when there is enough power for self to do work,
+		 * which is more than is required to send the workSync.
+		 * The listener may choose to ignore it if they lack power.
+		 * But we must send this workSync because it carries sync.
+		 */
+
+
 		DeltaTime forwardOffset = clique.schedule.deltaNowToNextSyncPoint();
 		// FUTURE mailbox is int32, coercing to int8
 		serializer.outwardCommonSyncMsg.makeWorkSync(forwardOffset, myID(), (WorkPayload) workOutMailbox->fetch());

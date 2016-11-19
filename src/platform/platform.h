@@ -49,10 +49,11 @@
 #include "uniqueID.h"
 #include "ledLogger.h"
 
-#include "power.h"
+#include "powerManager.h"
 #include "mailbox.h"
 #include "logger.h"
 #include "types.h"
+
 
 
 
@@ -72,12 +73,11 @@
 #include <osClock.h>
 #include <logger.h>
 #include <mailbox.h>
+#include <powerManager.h>
 
 // Using the local include file, it must be equivalent to project which wedges this
 // FUTURE make project which wedges have simpler API not required includes of nrf headers
 #include "ledLogger.h"
 
-// Stubbed out temporarily
-#include "power.h"
 
 #endif

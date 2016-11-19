@@ -50,12 +50,18 @@ void SyncAgent::loop(){
 
 		assert(!radio->isPowerOn());	// Radio is off after every sync period
 
-		if ( powerMgr.isPowerForRadio() ) {
+		if ( powerManager.isPowerForRadio() ) {
+			/*
+			 * Sync keeping: use radio
+			 */
 			// FUTURE if !isSyncingState resumeSyncing  announce to app
 			isSyncingState = true;
 			syncPeriod.doSlotSequence();
 		}
 		else {
+			/*
+			 * Sync maintenance: don't use radio but keep schedule by sleeping one sync period.
+			 */
 			if (isSyncingState) { pauseSyncing(); }
 			isSyncingState = false;
 			syncSleeper.sleepUntilTimeout(clique.schedule.deltaNowToNextSyncPoint);

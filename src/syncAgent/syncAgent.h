@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../augment/powerManager.h"
+#include "../platform/platform.h"	// powerManager
 
 #include "modules/message.h"
 #include "modules/cliqueMerger.h"
@@ -49,7 +49,7 @@ public:	// to SyncSlot mainly
 	static CliqueMerger cliqueMerger;
 private:
 	static SimpleSyncPeriod syncPeriod;
-	static PowerManager powerMgr;
+	static PowerManager powerManager;
 
 	static LEDLogger ledLogger;
 
