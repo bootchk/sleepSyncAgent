@@ -30,15 +30,7 @@
 								<option id="gnu.cpp.compiler.exe.debug.option.optimization.level.468392871" name="Optimization Level" superClass="gnu.cpp.compiler.exe.debug.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.exe.debug.option.debugging.level.855243043" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.other.other.1894344645" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" useByScannerDiscovery="false" value="-c -fmessage-length=0 -std=c++11" valueType="string"/>
-								<option id="gnu.cpp.compiler.option.include.paths.134674900" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="/home/bootch/nrf5_sdk/components/libraries/timer"/>
-									<listOptionValue builtIn="false" value="/home/bootch/git/nRF5rawProtocol"/>
-									<listOptionValue builtIn="false" value="/home/bootch/nrf5_sdk/components/libraries/util"/>
-									<listOptionValue builtIn="false" value="/home/bootch/nrf5_sdk/components/device"/>
-									<listOptionValue builtIn="false" value="/home/bootch/nrf5_sdk/components/toolchain/cmsis/include"/>
-									<listOptionValue builtIn="false" value="/home/bootch/nrf5_sdk/components/toolchain"/>
-									<listOptionValue builtIn="false" value="/home/bootch/nrf5_sdk/components/drivers_nrf/nrf_soc_nosd"/>
-								</option>
+								<option id="gnu.cpp.compiler.option.include.paths.134674900" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.232646714" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.1288965050" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug">
@@ -158,17 +150,8 @@
 								<option id="gnu.cpp.compiler.option.include.paths.432792555" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="/home/bootch/git/nRF5rawProtocol/modules/"/>
 									<listOptionValue builtIn="false" value="/home/bootch/git/nRF5rawProtocol/platform/"/>
-									<listOptionValue builtIn="false" value="/home/bootch/nrf5_sdk/components/libraries/timer"/>
-									<listOptionValue builtIn="false" value="/home/bootch/git/nRF5rawProtocol"/>
-									<listOptionValue builtIn="false" value="/home/bootch/nrf5_sdk/components/libraries/util"/>
-									<listOptionValue builtIn="false" value="/home/bootch/nrf5_sdk/components/device"/>
-									<listOptionValue builtIn="false" value="/home/bootch/nrf5_sdk/components/toolchain/cmsis/include"/>
-									<listOptionValue builtIn="false" value="/home/bootch/nrf5_sdk/components/toolchain"/>
-									<listOptionValue builtIn="false" value="/home/bootch/nrf5_sdk/components/drivers_nrf/nrf_soc_nosd"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.preprocessor.def.251209753" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="NRF52"/>
-								</option>
+								<option id="gnu.cpp.compiler.option.preprocessor.def.251209753" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1627572536" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.800593967" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug">
@@ -231,12 +214,6 @@
 									<listOptionValue builtIn="false" value="/home/bootch/git/nRF5rawProtocol/modules"/>
 									<listOptionValue builtIn="false" value="/home/bootch/git/nRF5rawProtocol/platform"/>
 									<listOptionValue builtIn="false" value="/home/bootch/nrf5_sdk/components/libraries/timer"/>
-									<listOptionValue builtIn="false" value="/home/bootch/git/nRF5rawProtocol"/>
-									<listOptionValue builtIn="false" value="/home/bootch/nrf5_sdk/components/libraries/util"/>
-									<listOptionValue builtIn="false" value="/home/bootch/nrf5_sdk/components/device"/>
-									<listOptionValue builtIn="false" value="/home/bootch/nrf5_sdk/components/toolchain/cmsis/include"/>
-									<listOptionValue builtIn="false" value="/home/bootch/nrf5_sdk/components/toolchain"/>
-									<listOptionValue builtIn="false" value="/home/bootch/nrf5_sdk/components/drivers_nrf/nrf_soc_nosd"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1245938383" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>

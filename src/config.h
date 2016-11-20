@@ -66,7 +66,7 @@
 
 
 /*
- * Define is SyncAgent conveys work in separate work slot.
+ * Does SyncAgent convey work in separate work slot?
  * See ramifications in the code.
  *
  * Yes: separate work slot
@@ -77,6 +77,8 @@
 
 /*
  * Define if SyncAgent is built as a library.
+ * Building as library is 'production.'
+ * Not building for library is only a clean compile, non-functional executable for the host.
  *
  * Yes:
  * SyncAgent expects platform to implement certain functions (undefined in the library.)
