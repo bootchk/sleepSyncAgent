@@ -56,9 +56,9 @@
 
 
 
-
-
 #else
+
+
 // Use header files from libraries in project which wedges this library.
 
 // Include newlib for rand()
@@ -74,10 +74,7 @@
 #include <logger.h>
 #include <mailbox.h>
 #include <powerManager.h>
-
-// Using the local include file, it must be equivalent to project which wedges this
-// FUTURE make project which wedges have simpler API not required includes of nrf headers
-#include "ledLogger.h"
+#include <ledLogger.h>
 
 
 #endif
