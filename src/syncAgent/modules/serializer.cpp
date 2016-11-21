@@ -19,6 +19,8 @@
  * Common means: shared and reused, as in Fortran.
  * Thus many methods have side effects on common Messages,
  * and return pointer to common.
+ *
+ * The count of bytes must match the constant FixedPayloadCount defined in platform/radio.h
  */
 
 
@@ -169,7 +171,7 @@ bool Serializer::bufferIsSane(){
 
 
 
-
+// Payload is 6+3+1==10
 void Serializer::serializeOutwardCommonSyncMessage() {
 	radioBufferPtr[0] = outwardCommonSyncMsg.type;
 	serializeMasterIDCommonIntoStream(outwardCommonSyncMsg);

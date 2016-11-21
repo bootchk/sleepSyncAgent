@@ -46,8 +46,11 @@ bool Clique::isSelfMaster() { return masterID == myID(); }
  */
 bool Clique::isMsgFromMyClique(SystemID otherMasterID){ return masterID == otherMasterID; }
 
-// All units use same comparison.  The direction is arbitrary.  For testing, it may help to swap it.
-// No need for equality, no unit can hear itself.
+/*
+ * All units use same comparison.  The direction is arbitrary.  For testing, it may help to swap it.
+ * No need for equality, no unit can hear itself.
+ * my > other means: clique/unit with least numerical ID is better clique
+ */
 bool Clique::isOtherCliqueBetter(SystemID otherMasterID){ return masterID > otherMasterID; }
 
 

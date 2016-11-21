@@ -19,7 +19,7 @@ public:	// for assertions
  * e.g. if RawWireless, one message is ~0.1msec
  * @32kHz xtal RTC, tick is 0.03msec
  */
-static const DeltaTime     SlotDuration = 300;	// ~ 10msec
+//static const DeltaTime     SlotDuration = 300;	// ~ 10msec
 //static const DeltaTime     SlotDuration = 20;	// ~ 0.6msec
 // static const DeltaTime     SlotDuration = 30;	// ~ 0.9msec
 //static const DeltaTime     SlotDuration = 40;	// ~ 1.2msec
@@ -41,20 +41,35 @@ static const DeltaTime     SlotDuration = 300;	// ~ 10msec
 // static const int           DutyCycleInverse = 100;
 
 // Testing: 3 active slots, ~60 sleeping, 0.6 second period
-static const int           DutyCycleInverse = 20;
+//static const int           DutyCycleInverse = 20;
 
 // 3 * 400 * .6 msec = 720 mSec = 0.7Sec
 // 3 * 200 * 1.2 msec = 720 mSec = 0.7 Sec
 //static const int           DutyCycleInverse = 200;
-// static const int           DutyCycleInverse = 400;
+
+
+// Sync period 0.7 sec, average current 10uA?
+static const DeltaTime     SlotDuration = 30;
+static const int           DutyCycleInverse = 400;
 
 
 
 /*
- * Fixed by algorithm design.
- * Sync, Work, Sleep, ..., Sleep
+ * This is:
+ * - ordinal of first sleeping slot
+ * - count of active (radio on) slots
+ *
+ * Partially determined by algorithm design:
+ * the first few slots are the active slots.
+ *
+ * See SIMPLE_SYNC_PERIOD in config.h:
+ * 1. Sync, 2. Work, 3. Sleep, ..., Sleep
+ *
+ * When combined syncWorkSlot:
+ * 1. SyncWork 2. Sleep, ...., Sleep
  */
-static const ScheduleCount FirstSleepingSlotOrdinal = 3;
+//static const ScheduleCount FirstSleepingSlotOrdinal = 3;
+static const ScheduleCount FirstSleepingSlotOrdinal = 2;
 
 /*
  * Count of slots in sync period.
@@ -65,7 +80,7 @@ static const ScheduleCount FirstSleepingSlotOrdinal = 3;
  * (Average, since Fish slot is alternative to Merge slot,
  * which is a short transmit, probablistically transmitted within a SyncPeriod.)
  */
-static const ScheduleCount CountSlots = 3*DutyCycleInverse;
+static const ScheduleCount CountSlots = FirstSleepingSlotOrdinal*DutyCycleInverse;
 
 // Duration of SyncPeriod not adjusted (extended) in ticks
 static const DeltaTime NormalSyncPeriodDuration = CountSlots * SlotDuration;
