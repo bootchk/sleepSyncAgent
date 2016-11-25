@@ -6,9 +6,11 @@
 
 // static singleton
 Schedule Clique::schedule;
-MasterXmitSyncPolicy Clique::masterXmitSyncPolicy;
 DropoutMonitor Clique::dropoutMonitor;
 SystemID Clique::masterID;
+
+// Choices here:  Adaptive or Master
+AdaptiveXmitSyncPolicy Clique::masterXmitSyncPolicy;
 
 
 void Clique::reset(){
@@ -81,13 +83,25 @@ void Clique::initFromSyncMsg(SyncMessage* msg){
 
 
 void Clique::changeBySyncMessage(SyncMessage* msg) {
-	// assert (in Sync or Fish slot) and (MasterSync or MergeSync)
-	// OR in Sync slot and Work (but mangled)
+	// assert (in Sync or Fish slot)
 	assert(msg->type == MasterSync || msg->type == MergeSync || msg->type == WorkSync);
 
+	// !!! Not assert that msg.MasterID != self.masterID
 	// Change master
 	setOtherMastership(msg->masterID);
+
+	// TODO this assertion is probably wrong for a WorkSync message received by current master
 	assert(!isSelfMaster()); // even if I was before
+
+	/*
+	 * Self has heard another unit, retard policy.
+	 * (The sync message may have the same MasterID as self's clique,
+	 * but msg is definitely from another unit.)
+	 * If self unit not master, won't be xmitting sync now,
+	 * but if self unit ever assumes mastership,
+	 * policy will then be in advanced stage.
+	 */
+	masterXmitSyncPolicy.advanceStage();
 
 	// FUTURE clique.historyOfMasters.update(msg);
 

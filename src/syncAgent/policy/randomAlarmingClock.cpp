@@ -4,8 +4,14 @@
 #include "../../augment/random.h"
 #include "policyParameters.h"
 
-#include "masterXmitSyncPolicy.h"
+#include "randomAlarmingClock.h"
 
+
+/*
+ * !!! Not a general implementation.
+ * Uses constants that should be passed in the constructor.
+ * Uses specific types from the application (SleepSync).
+ */
 
 // unsigned, counts upwards
 ScheduleCount RandomAlarmingCircularClock::alarmTick;

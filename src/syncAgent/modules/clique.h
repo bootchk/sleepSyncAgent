@@ -2,8 +2,10 @@
 
 #include "../../platform/types.h"
 #include "schedule.h"
-#include "../policy/masterXmitSyncPolicy.h"
+
 #include "../policy/dropoutMonitor.h"
+//#include "../policy/masterXmitSyncPolicy.h"
+#include "../policy/adaptiveXmitSyncPolicy.h"
 
 /*
  *
@@ -24,8 +26,12 @@ private:
 
 public:
 	static Schedule schedule;
-	static MasterXmitSyncPolicy masterXmitSyncPolicy;
+
 	static DropoutMonitor dropoutMonitor;
+
+	// Choices:
+	//static MasterXmitSyncPolicy masterXmitSyncPolicy;
+	static AdaptiveXmitSyncPolicy masterXmitSyncPolicy;
 
 	static SystemID getMasterID() { return masterID; }
 	static void setSelfMastership();
