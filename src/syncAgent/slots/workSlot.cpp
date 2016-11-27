@@ -66,7 +66,7 @@ bool WorkSlot::doMasterSyncMsg(SyncMessage* msg){
 		// assert schedule changed
 		// assert role unchanged
 		// assert if role.isMerger(), cliqueMerger was adjusted and will send MergeSync at proper time.
-		// TODO: abandon this work slot or be sure to calculate end based on original schedule
+		// TODO: OLD abandon this work slot or be sure to calculate end based on original schedule
 	}
 	else {
 		log(LogMessage::WorseMasterSync);

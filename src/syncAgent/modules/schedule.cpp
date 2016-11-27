@@ -134,8 +134,8 @@ DeltaTime  Schedule::deltaNowToNextSyncPoint() {
 	return longClock.clampedTimeDifferenceFromNow(timeOfNextSyncPoint());
 }
 
-DeltaTime Schedule::deltaToThisSyncSlotMiddle(){
-	return longClock.clampedTimeDifferenceFromNow(timeOfThisSyncSlotMiddle());
+DeltaTime Schedule::deltaToThisSyncSlotMiddleSubslot(){
+	return longClock.clampedTimeDifferenceFromNow(timeOfThisSyncSlotMiddleSubslot());
 }
 DeltaTime Schedule::deltaToThisSyncSlotEnd(){
 	return longClock.clampedTimeDifferenceFromNow(timeOfThisSyncSlotEnd());
@@ -160,6 +160,16 @@ DeltaTime Schedule::deltaToThisMergeStart(DeltaTime offset){
 	return longClock.clampedTimeDifferenceFromNow(timeOfThisMergeStart(offset));
 }
 
+
+DeltaTime Schedule::rampupDelay() {
+#ifdef NRF52
+	// ramp up in fast mode is 40uSec, i.e. 1.3 ticks
+	return 2;
+#else // NRF51
+	// ramp up is 130 uSec i.e. 4.3 ticks
+	return 4;
+#endif
+}
 /*
  * The offset a Work message would hold (if offset were not used otherwise)
  * Used to mangle a Work message to be equivalent to a Sync.
@@ -188,9 +198,16 @@ LongTime Schedule::timeOfNextSyncPoint() {
 	return endTimeOfSyncPeriod;
 }
 
-// Start of period and start of SyncSlot coincide.
-// FUTURE: Choice of sync slot at start of period is arbitrary, allow it to be anywhere in period?
-LongTime Schedule::timeOfThisSyncSlotMiddle() { return startTimeOfSyncPeriod + halfSlotDuration(); }
+/*
+ * Start of period and start of SyncSlot coincide.
+ * FUTURE: Choice of sync slot at start of period is arbitrary, allow it to be anywhere in period?
+ */
+
+LongTime Schedule::timeOfThisSyncSlotMiddleSubslot() {
+	return startTimeOfSyncPeriod + halfSlotDuration() - rampupDelay() ;
+}
+
+
 LongTime Schedule::timeOfThisSyncSlotEnd() { return startTimeOfSyncPeriod + SlotDuration; }
 
 // WorkSlot immediately after SyncSlot

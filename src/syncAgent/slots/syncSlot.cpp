@@ -56,8 +56,7 @@ void SyncSlot::doSlaveSyncSlot() {
 	(void) syncSleeper.sleepUntilMsgAcceptedOrTimeout(
 				this,
 				clique.schedule.deltaToThisSyncSlotEnd);
-	// TODO If we heard sync-keeping msg, now is not the end of the slot.  Idle?
-	// Low priority to fix this OBSOLETE design
+	// TODO Low priority, obsolete. If we heard sync-keeping msg, now is not the end of the slot.  Idle?
 }
 
 /*
@@ -69,7 +68,7 @@ void SyncSlot::doSlaveSyncSlot() {
  */
 void SyncSlot::doMasterSyncSlot() {
 
-	bool heardSyncKeepingSync = doMasterListenHalfSyncSlot(clique.schedule.deltaToThisSyncSlotMiddle);
+	bool heardSyncKeepingSync = doMasterListenHalfSyncSlot(clique.schedule.deltaToThisSyncSlotMiddleSubslot);
 	assert(radio->isDisabledState());
 
 	if (heardSyncKeepingSync) {

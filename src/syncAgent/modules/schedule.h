@@ -118,7 +118,7 @@ public:
 	static DeltaTime deltaNowToNextSyncPoint();
 
 	// deltas to slots
-	static DeltaTime deltaToThisSyncSlotMiddle();
+	static DeltaTime deltaToThisSyncSlotMiddleSubslot();
 	static DeltaTime deltaToThisSyncSlotEnd();
 
 	static DeltaTime deltaToThisWorkSlotMiddle();
@@ -130,6 +130,12 @@ public:
 	static DeltaTime deltaToThisMergeStart(DeltaTime offset);
 
 	static DeltaTime deltaFromWorkMiddleToEndSyncPeriod();
+
+	/*
+	 * Other deltas
+	 */
+	static DeltaTime rampupDelay();
+
 	/*
 	 *  Times
 	 */
@@ -138,7 +144,14 @@ public:
 	static LongTime timeOfNextSyncPoint();
 
 	// slot times
-	static LongTime timeOfThisSyncSlotMiddle();
+
+	/*
+	 * Start time of the middle subslot of the SyncSlot.
+	 * Transmit occurs in the middle subslot.
+	 * We want the transmit to be in the middle of the subslot.
+	 * Since there is a ramp up delay, start the subslot before the middle of the SyncSlot.
+	 */
+	static LongTime timeOfThisSyncSlotMiddleSubslot();
 	static LongTime timeOfThisSyncSlotEnd();	// Of this period
 
 	static LongTime timeOfThisWorkSlotMiddle();

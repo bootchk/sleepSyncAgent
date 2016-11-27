@@ -41,7 +41,7 @@
 void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 	// not assert self is Master
 
-	(void) doListenHalfSyncWorkSlot(clique.schedule.deltaToThisSyncSlotMiddle);
+	(void) doListenHalfSyncWorkSlot(clique.schedule.deltaToThisSyncSlotMiddleSubslot);
 	assert(radio->isDisabledState());
 	assert(radio->isPowerOn());
 
@@ -121,7 +121,7 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 
 	bool heardSyncKeepingSync;
 
-	heardSyncKeepingSync = doListenHalfSyncWorkSlot(clique.schedule.deltaToThisSyncSlotMiddle);
+	heardSyncKeepingSync = doListenHalfSyncWorkSlot(clique.schedule.deltaToThisSyncSlotMiddleSubslot);
 	assert(radio->isDisabledState());
 
 	/*
