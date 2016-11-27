@@ -53,18 +53,24 @@ bool FishSlot::doMergeSyncMsg(SyncMessage* msg){ (void) msg; return true; }
 /*
  * Work
  *
+ * Alternative designs:
  * Unintended catch: Another clique's work slot.
- * For now ignore. Should catch clique again later, when we fish earlier, at it's syncSlot.
- * Alternative: since work slot follows syncSlot, could calculate syncSlot of catch, and merge it.
- * Alternative: if work can be done when out of sync, do work.
-
- * FUTURE act on it even though we are out of sync
- *	// Relay to app
- *	onWorkMsgCallback(msg);
+ * - Separate work slot: Ignore. Should catch clique again later, when we fish earlier, at it's syncSlot.
+ * - Separate work slot:  Since work slot is in fixed relation to syncSlot, calculate syncSlot of catch, and merge it.
+ * - Combined Work/Sync slot:
  *
- *	Inherited behaviour from superclass.
+ * In all alternatives: if work can be done when out of sync, do work.
+ * onWorkMsgCallback(msg);	// Relay to app
+ *
+ *	Inherited behaviour from superclass is ignore.
  */
 
+/*
+ * Implementation for combined Work/Sync slot
+ */
+bool FishSlot::doWorkMsg(SyncMessage* msg) {
+	doMasterSyncMsg(msg);	// Work carries sync, identifies master of clique and time of slot.
+}
 
 
 

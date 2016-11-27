@@ -40,7 +40,14 @@ enum MessageType {
 
 
 
-// Messages used by SyncAgent, never received by app
+/*
+ *  Messages used by SyncAgent.
+ *
+ *  In this design, work messages are not separate, but work field is piggybacked.
+ *  Only the work field is received by app.
+ *
+ *  !!! Note the order of fields in struct is not necessarily order of data in serialized OTA.
+ */
 class SyncMessage{
 public:
 	MessageType type;
