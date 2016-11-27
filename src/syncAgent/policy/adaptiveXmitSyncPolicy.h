@@ -29,28 +29,15 @@
 
 
 class AdaptiveXmitSyncPolicy {
-	static MasterXmitSyncPolicy wrappedXmitSyncPolicy;
-	static bool advancedStage;
 
 public:
-	static void reset() {
-		wrappedXmitSyncPolicy.reset();
-		advancedStage = false;
-	}
+	static void reset();
 
 	// Called every sync slot
-	static bool shouldXmitSync() {
-		if (advancedStage )
-			return wrappedXmitSyncPolicy.shouldXmitSync();
-		else
-			// xmit sync on every call
-			return true;
-	}
+	static bool shouldXmitSync();
 
 	// Advance to next stage (retard frequency of xmittals.)
-	static void advanceStage() {
-		advancedStage = true;
-	}
+	static void advanceStage();
 };
 
 
