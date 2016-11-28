@@ -57,9 +57,9 @@ bool Clique::isOtherCliqueBetter(SystemID otherMasterID){ return masterID > othe
 
 
 void Clique::checkMasterDroppedOut() {
-	if (dropoutMonitor.check()) {
+	if (dropoutMonitor.isDropout()) {
+		// assert dropoutMonitor is reset
 		log("Master dropped out\n");
-		dropoutMonitor.reset();
 		onMasterDropout();
 	}
 }

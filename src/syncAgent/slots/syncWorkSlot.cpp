@@ -81,7 +81,7 @@ void SyncWorkSlot::doSlaveSyncWorkSlot() {
 	assert(!radio->isDisabledState()); // listening for other's sync
 
 	(void) syncSleeper.sleepUntilMsgAcceptedOrTimeout(
-				this, //dispatchMsgReceived,
+				this,
 				clique.schedule.deltaToThisSyncSlotEnd);
 	/*
 	 * Not using result:  all message handlers return false i.e. keep looking.

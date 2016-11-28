@@ -11,12 +11,17 @@
 class DropoutMonitor {
 private:
 	static ScheduleCount countSyncSlotsWithoutSyncMsg;
+	static void reset() { countSyncSlotsWithoutSyncMsg = 0; }
 
 public:
 	DropoutMonitor() { reset(); }
+
+	/*
+	 * heardSync() and reset() have same effect: reset counter
+	 */
 	static void heardSync();
-	static bool check();
-	static void reset() { countSyncSlotsWithoutSyncMsg = 0; }
+
+	static bool isDropout();
 };
 
 

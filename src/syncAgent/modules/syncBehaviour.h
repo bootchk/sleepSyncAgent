@@ -33,6 +33,8 @@ public:
 	/*
 	 * Returns true if message keeps my sync (from current or new master of my clique.)
 	 *
+	 * Side effect is call dropoutMonitor.heardSync() i.e. status of sync is good
+	 *
 	 * Each Sync has an offset, could be zero or small (MasterSync) or larger (MergeSync)
 	 */
 	static bool doSyncMsg(SyncMessage* msg){
@@ -64,15 +66,16 @@ public:
 		}
 		else {
 			/*
-			 * In a sync slot and heard:
-			 * - MasterSync from Master of other worse clique.
-			 * - OR (MergeSync or WorkSync) from Master or Slave of other worse clique.
+			 * In a sync slot and heard from member of other worse clique:
+			 * - MasterSync from Master
+			 * - OR WorkSync from Master or Slave
+			 * - OR MergeSync from Master or Slave (improper, my clique is better)
 			 *
 			 * Master of my clique (could be self) should continue as Master.
 			 * Don't tell other clique: since their sync slot overlaps with mine,
 			 * they should eventually hear my clique master's sync and relinquish mastership.
 			 */
-			// If it is WorkSync, we acted on the work but not the sync
+			// If it is WorkSync, we acted on the work but not the sync???
 			logWorseSync();
 			// !!! SyncMessage does not keep me in sync: not dropoutMonitor.heardSync();
 			doesMsgKeepSynch = false;
