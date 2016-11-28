@@ -86,7 +86,10 @@ void Clique::changeBySyncMessage(SyncMessage* msg) {
 	// assert (in Sync or Fish slot)
 	assert(msg->type == MasterSync || msg->type == MergeSync || msg->type == WorkSync);
 
-	// !!! Not assert that msg.MasterID != self.masterID
+	/*
+	 * !!! Not assert that msg.MasterID != self.masterID:
+	 * a WorkSync from a Slave carries MasterID of clique which could match my MasterID when self is Master
+	 */
 	// Change master
 	setOtherMastership(msg->masterID);
 
@@ -95,8 +98,7 @@ void Clique::changeBySyncMessage(SyncMessage* msg) {
 
 	/*
 	 * Self has heard another unit, retard policy.
-	 * (The sync message may have the same MasterID as self's clique,
-	 * but msg is definitely from another unit.)
+	 * (The sync message may have same MasterID as self's clique, but msg is definitely from another unit.)
 	 * If self unit not master, won't be xmitting sync now,
 	 * but if self unit ever assumes mastership,
 	 * policy will then be in advanced stage.

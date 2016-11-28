@@ -11,13 +11,13 @@
 #include "fishSlot.h"
 
 
+namespace {
 
-/*
- * Intended catch: another clique's sync slot.
- */
-bool FishSlot::doMasterSyncMsg(SyncMessage* msg){
+
+bool doSyncMsg(SyncMessage* msg){
 	/*
-	 * MasterSync may be better or worse.  toMergerRole() handles both cases,
+	 * MasterSync may be better or worse.
+	 * toMergerRole() handles both cases,
 	 * but always toMerger(), either merging my clique or other clique.
 	 */
 	syncAgent.toMergerRole(msg);
@@ -32,6 +32,16 @@ bool FishSlot::doMasterSyncMsg(SyncMessage* msg){
 	return true;
 }
 
+} //namespace
+
+
+
+/*
+ * Intended catch: MasterSync from another clique's Master in its sync slot.
+ */
+bool FishSlot::doMasterSyncMsg(SyncMessage* msg){ return doSyncMsg(msg); }
+
+
 /*
  * Unintended catch: Other (master or slave)
  * is already xmitting into this time thinking it is SyncSlot of some third clique.
@@ -39,6 +49,16 @@ bool FishSlot::doMasterSyncMsg(SyncMessage* msg){
  */
 bool FishSlot::doMergeSyncMsg(SyncMessage* msg){ (void) msg; return true; }
 
+/*
+ * Intended catch: another clique's Master or Slave sending WorkSync in its sync slot.
+ *
+ * Implementation for combined Work/Sync slot.
+ * Work carries sync, identifies master of clique and time of slot.
+ *
+ * Alternatively, when separate Work slot,
+ * can calculate the other clique's sync slot from the Work msg.
+ */
+bool FishSlot::doWorkMsg(SyncMessage* msg) { return doSyncMsg(msg);	}
 
 
 /*
@@ -65,12 +85,7 @@ bool FishSlot::doMergeSyncMsg(SyncMessage* msg){ (void) msg; return true; }
  *	Inherited behaviour from superclass is ignore.
  */
 
-/*
- * Implementation for combined Work/Sync slot
- */
-bool FishSlot::doWorkMsg(SyncMessage* msg) {
-	doMasterSyncMsg(msg);	// Work carries sync, identifies master of clique and time of slot.
-}
+
 
 
 

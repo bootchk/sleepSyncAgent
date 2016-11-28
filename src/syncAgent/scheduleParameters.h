@@ -71,18 +71,29 @@ static const int           DutyCycleInverse = 400;
 //static const ScheduleCount FirstSleepingSlotOrdinal = 3;
 static const ScheduleCount FirstSleepingSlotOrdinal = 2;
 
+
+/*
+ * Average count of active slots (with radio on) Sync, Fish.
+ * (In an alternative design, also a separate Work slot.)
+ * Average, since Fish slot is alternative to Merge slot,
+ * which is a short transmit, probablistically transmitted within a SyncPeriod.
+ */
+static const ScheduleCount CountActiveSlots = 2;
+
 /*
  * Count of slots in sync period.
  * Must be less than MAX_UINT16 (256k)
  *
- * Only used to calculate SyncPeriodDuration
- * Here 3 is the average count of active slots (with radio on) Sync, Work, Fish.
- * (Average, since Fish slot is alternative to Merge slot,
- * which is a short transmit, probablistically transmitted within a SyncPeriod.)
+ * Used:
+ * - to calculate SyncPeriodDuration
+ * - to schedule Fish slots (this defines the max of the range.)
  */
-static const ScheduleCount CountSlots = FirstSleepingSlotOrdinal*DutyCycleInverse;
+static const ScheduleCount CountSlots = CountActiveSlots*DutyCycleInverse;
 
-// Duration of SyncPeriod not adjusted (extended) in ticks
+/*
+ * Duration of 'normal' SyncPeriod in units ticks.
+ * Note that some actual SyncPeriods are not normal, extended in duration while merging cliques.
+ */
 static const DeltaTime NormalSyncPeriodDuration = CountSlots * SlotDuration;
 
 

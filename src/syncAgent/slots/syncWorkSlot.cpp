@@ -1,27 +1,5 @@
 
-/*
- * Combined work/sync slot.
- * WorkSync message carries sync.
- *
- * Where sync period has one sync slot and no separate work slot.
- *
- * Each Clique is on a Schedule that includes a sync slot.
- * See general notes in Schedule.
- *
- * a) A clique's Master xmits sync FROM its sync slot.
- *
- * b) A Merger xmits sync FROM a sleeping slot INTO another clique's sync slot.
- *
- * c) One clique's sleeping slot may coincidentally be near in time to another clique's sleeping slot, or drift into each other.
- *
- * d) A clique Master or Slave may xmit work from this slot, carrying sync info
- *
- * Contention (two syncs in same interval of a sync slot):
- * - situation c:
- *   two cliques may unwittingly be in sync (two MASTERS xmitting in same interval)
- * - situation b:
- *   merging: a Merger of a better clique may be xmitting sync FROM its sleeping slot to merge this clique into an offset syncSlot
- */
+
 
 #include <cassert>
 
@@ -33,7 +11,21 @@
 
 
 
-// Private
+
+bool SyncWorkSlot::doListenHalfSyncWorkSlot(OSTime (*timeoutFunc)()) {
+	startReceiving();
+	bool result = syncSleeper.sleepUntilMsgAcceptedOrTimeout(
+					this,
+					timeoutFunc
+					);
+
+	// assert radio is on or off
+	return result;
+}
+
+
+
+
 
 /*
  * Transmit WorkSync in middle.
@@ -61,7 +53,7 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 	/*
 	 * Keep listening for other better Masters or WorkSync.
 	 *
-	 * Even if I heard a sync, I also sent one (whose main purpose was to convey work.)
+	 * Even if I heard a sync, I also sent one (to convey work.)
 	 * I could still hear my Master, or other work.
 	 *
 	 * Result doesn't matter, slot is over and we proceed regardless whether we heard sync keeping msg.
@@ -72,18 +64,6 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 }
 
 
-
-bool SyncWorkSlot::doListenHalfSyncWorkSlot(OSTime (*timeoutFunc)()) {
-	startReceiving();
-	bool result = syncSleeper.sleepUntilMsgAcceptedOrTimeout(
-					this,
-					timeoutFunc
-					);
-
-	// assert radio is on or off
-	return result;
-}
-
 #ifdef NOTUSED
 // Sleep with radio off for remainder of sync slot
 void SyncWorkSlot::doIdleSlotRemainder() {
@@ -92,8 +72,10 @@ void SyncWorkSlot::doIdleSlotRemainder() {
 }
 #endif
 
+/*
+ * listen for sync the whole period.
+ */
 void SyncWorkSlot::doSlaveSyncWorkSlot() {
-	// listen for sync the whole period
 	startReceiving();
 	// This assertion is time sensitive, can't stay in production code
 	assert(!radio->isDisabledState()); // listening for other's sync
@@ -108,15 +90,13 @@ void SyncWorkSlot::doSlaveSyncWorkSlot() {
 }
 
 
+
 /*
  * Transmit any sync in middle of slot.
- * Some literature refers to "guards" around the sync.
- * Syncing in middle has higher probability of being heard by drifted/skewed others.
  *
- * !!! The offset must be half the slot length, back to start of SyncPeriod
+ *
+ * !!! The offset must be about half the slot length, back to start of SyncPeriod
  */
-
-
 void SyncWorkSlot::doMasterSyncWorkSlot() {
 
 	bool heardSyncKeepingSync;
@@ -134,6 +114,7 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 		// Self is Master, send sync if didn't hear WorkSync or MergeSync
 		syncSender.sendMasterSync();
 	}
+
 	// Keep listening for other better Masters and work.
 	// Result doesn't matter, slot is over and we proceed whether we heard sync keeping sync or not.
 	(void) doListenHalfSyncWorkSlot(clique.schedule.deltaToThisSyncSlotEnd);
@@ -144,7 +125,11 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 
 
 
+
+
 /*
+ * Message handlers.
+ *
  * Sync handling is agnostic of role.isMaster or role.isSlave
  *
  * MasterSync and MergeSync handled the same.
@@ -186,7 +171,7 @@ bool SyncWorkSlot::doWorkMsg(SyncMessage* msg){
 	syncAgent.relayWorkToApp(msg->workPayload());
 
 	/*
-	 *  Handle the sync aspect of message.
+	 *  Handle sync aspect of message.
 	 */
 	syncBehaviour.doSyncMsg(msg);
 
@@ -243,6 +228,4 @@ void SyncWorkSlot::perform() {
 
 	assert(!radio->isPowerOn());	// ensure
 }
-
-
 

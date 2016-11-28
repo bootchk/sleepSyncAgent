@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <inttypes.h>
+#include "types.h"
 
 /*
  * Simple mailbox:
@@ -14,7 +14,7 @@
 
 class Mailbox {
 public:
-	static void put(uint32_t item);
-	static uint32_t fetch();
+	static void put(WorkPayload item);
+	static WorkPayload fetch();
 	static bool isMail();
 };
