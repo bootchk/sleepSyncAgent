@@ -62,17 +62,21 @@ public:
 		 * The listener may choose to ignore it if they lack power.
 		 * But we must send this workSync because it carries sync.
 		 */
-
-
 		DeltaTime forwardOffset = clique.schedule.deltaNowToNextSyncPoint();
-		// FUTURE mailbox is int32, coercing to int8
-		serializer.outwardCommonSyncMsg.makeWorkSync(forwardOffset, myID(), (WorkPayload) workOutMailbox->fetch());
+		serializer.outwardCommonSyncMsg.makeWorkSync(
+				forwardOffset,
+				/*
+				 * !!! Crux.  WorkSync identifies the clique Master,
+				 * even if self is not the Master.
+				 * I.E. WorkSync could be from a Slave.
+				 */
+				clique.getMasterID(),
+				workOutMailbox->fetch());
 		sendPrefabricatedMessage();
 	}
 
 
-	/*
-	 * Just the sending aspect, of a prefabricated SyncMessage in global outwardCommonSyncMsg
+	/* Just the sending aspect, of a prefabricated SyncMessage in global outwardCommonSyncMsg
 	 */
 	static void sendPrefabricatedMessage() {
 		// assert sender has created message in outwardCommonSyncMsg

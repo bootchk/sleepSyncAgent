@@ -34,7 +34,7 @@ bool dispatchMsgReceived(Slot* slot, SyncMessage* msg){
 		foundDesiredMessage = slot->doAbandonMastershipMsg(msg);
 		break;
 	case WorkSync:
-		log(LogMessage::Work);
+		log(LogMessage::WorkSync);
 		foundDesiredMessage = slot->doWorkMsg(msg);
 		break;
 	}

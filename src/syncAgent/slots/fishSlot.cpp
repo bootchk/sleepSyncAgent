@@ -9,6 +9,7 @@
 
 #include "../globals.h"
 #include "fishSlot.h"
+#include "../logMessage.h"
 
 
 namespace {
@@ -58,7 +59,10 @@ bool FishSlot::doMergeSyncMsg(SyncMessage* msg){ (void) msg; return true; }
  * Alternatively, when separate Work slot,
  * can calculate the other clique's sync slot from the Work msg.
  */
-bool FishSlot::doWorkMsg(SyncMessage* msg) { return doSyncMsg(msg);	}
+bool FishSlot::doWorkMsg(SyncMessage* msg) {
+	log(LogMessage::FishedWork);
+	return doSyncMsg(msg);
+}
 
 
 /*
@@ -102,7 +106,6 @@ void FishSlot::perform() {
 	assert(radio->isPowerOn());
 	assert(!radio->isDisabledState());
 	syncSleeper.sleepUntilMsgAcceptedOrTimeout(
-			//dispatchMsgReceived,
 			this,
 			clique.schedule.deltaToThisFishSlotEnd);
 	assert(radio->isDisabledState());
