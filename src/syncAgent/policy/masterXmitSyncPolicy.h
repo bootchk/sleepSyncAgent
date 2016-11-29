@@ -17,6 +17,8 @@ public:
 	static bool shouldXmitSync() { return clock.tickWithAlarm(); }
 
 	static void advanceStage() { }  // Nothing.  Policy has only one stage.
+
+	static void disarmForOnePeriod() { clock.disarmForOnePeriod(); }
 };
 
 

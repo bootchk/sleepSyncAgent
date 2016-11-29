@@ -38,6 +38,8 @@ public:
 
 	// Advance to next stage (retard frequency of xmittals.)
 	static void advanceStage();
+
+	static void disarmForOnePeriod();
 };
 
 

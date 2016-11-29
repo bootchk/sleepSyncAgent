@@ -47,9 +47,10 @@ public:
 		// Most likely case first
 		if (clique.isMsgFromMyClique(msg->masterID)) {
 			/*
-			 * My Master could have fished another better clique and be MergeSyncing self
-			 *
-			 * A slave member of my clique is sending synch (unusual, since self could be master.)
+			 * Cases:
+			 * - Master is MasterSync ing Slave self
+			 * - Master or Slave fished another better clique and is MergeSync ing self
+			 * - Slave is WorkSync ing Master or Slave self
 			 */
 			log("Sync from my clique (master or slave)\n");
 			// WAS clique.changeBySyncMessage(msg);
@@ -119,6 +120,12 @@ public:
 			// Already merging an other clique, now merge other clique to updated sync slot time
 			syncAgent.cliqueMerger.adjustMergerBySyncMsg(msg);
 		}
+
+		/*
+		 * Minor optimization: Master that heard WorkSync from Slave does not need to send sync again soon.
+		 * Avoids contention.
+		 */
+		if (clique.isSelfMaster()) clique.masterXmitSyncPolicy.disarmForOnePeriod();
 	}
 
 
