@@ -62,7 +62,7 @@ bool WorkSlot::doMasterSyncMsg(SyncMessage* msg){
 		 * join other clique, all my cohorts will hear same msg and likewise join other clique.
 		 * Not to role Merger, since my cohorts will merge without my telling them to.
 		 */
-		clique.changeBySyncMessage(msg);
+		clique.updateBySyncMessage(msg);
 		// assert schedule changed
 		// assert role unchanged
 		// assert if role.isMerger(), cliqueMerger was adjusted and will send MergeSync at proper time.

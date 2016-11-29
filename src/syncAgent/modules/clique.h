@@ -48,11 +48,11 @@ public:
 	static void onMasterDropout();
 
 	/*
-	 * Change clique from heard SyncMessage:
+	 * Update clique from heard SyncMessage:
 	 * - master <= SyncMessage
 	 * - schedule <= offset of SyncMessage
 	 */
-	static void changeBySyncMessage(SyncMessage* msg);
+	static void updateBySyncMessage(SyncMessage* msg);
 
 	// static void initFromSyncMsg(SyncMessage* msg);
 };

@@ -57,7 +57,7 @@ void CliqueMerger::initMergeMyClique(SyncMessage* msg){
 
 	// FUTURE migrate this outside and return result to indicate it should be done
 	// After using current clique above, change my clique (new master and new schedule)
-	owningClique->changeBySyncMessage(msg);
+	owningClique->updateBySyncMessage(msg);
 
 	masterID = msg->masterID;
 	assert(!owningClique->isSelfMaster());	// Even if true previously

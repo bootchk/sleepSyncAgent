@@ -81,8 +81,13 @@ void Clique::initFromSyncMsg(SyncMessage* msg){
 #endif
 
 
-
-void Clique::changeBySyncMessage(SyncMessage* msg) {
+/*
+ * An update, not necessarily a change.
+ * The MasterID may be the same as current.
+ * The offset may be zero.
+ * This method does not ensure that the new Clique data is different from old.
+ */
+void Clique::updateBySyncMessage(SyncMessage* msg) {
 	// assert (in Sync or Fish slot)
 	assert(msg->type == MasterSync || msg->type == MergeSync || msg->type == WorkSync);
 

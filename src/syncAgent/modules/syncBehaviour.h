@@ -112,8 +112,8 @@ public:
 		 * If it is from another clique, my Master does change, and schedule is adjusted.
 		 */
 
-		clique.changeBySyncMessage(msg);
-		// assert endOfSyncPeriod was changed
+		clique.updateBySyncMessage(msg);
+		// assert endOfSyncPeriod changed or not changed
 
 		if (role.isMerger()) {
 			// Already merging an other clique, now merge other clique to updated sync slot time

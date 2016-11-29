@@ -149,7 +149,7 @@ bool SyncSlot::doWorkMsg(SyncMessage* msg){
 		 * Any such merging would also contend with superior other's work slot.
 		 */
 		syncAgent.mangleWorkMsg(msg);
-		clique.changeBySyncMessage(msg);
+		clique.updateBySyncMessage(msg);
 	}
 	else {
 		/*

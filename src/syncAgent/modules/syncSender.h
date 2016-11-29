@@ -67,8 +67,7 @@ public:
 				forwardOffset,
 				/*
 				 * !!! Crux.  WorkSync identifies the clique Master,
-				 * even if self is not the Master.
-				 * I.E. WorkSync could be from a Slave.
+				 * even if self is not the Master I.E. WorkSync could be from a Slave.
 				 */
 				clique.getMasterID(),
 				workOutMailbox->fetch());
@@ -76,7 +75,9 @@ public:
 	}
 
 
-	/* Just the sending aspect, of a prefabricated SyncMessage in global outwardCommonSyncMsg
+	/*
+	 * Convert a prefabricated SyncMessage in global outwardCommonSyncMsg
+	 * from object/struct into a byte array, and xmit OTA.
 	 */
 	static void sendPrefabricatedMessage() {
 		// assert sender has created message in outwardCommonSyncMsg
