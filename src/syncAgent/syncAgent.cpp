@@ -10,8 +10,6 @@ bool SyncAgent::isSyncingState = false;
 
 CliqueMerger SyncAgent::cliqueMerger;
 
-PowerManager SyncAgent::powerManager;
-
 void (*SyncAgent::onWorkMsgCallback)(WorkPayload);
 void (*SyncAgent::onSyncPointCallback)();
 

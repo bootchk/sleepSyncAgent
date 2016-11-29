@@ -1,8 +1,6 @@
 
 #pragma once
 
-#include "../platform/platform.h"	// powerManager
-
 #include "modules/message.h"
 #include "modules/cliqueMerger.h"
 #include "modules/role.h"
@@ -34,9 +32,6 @@
 
 
 
-
-
-
 class SyncAgent {
 
 // data members
@@ -48,9 +43,7 @@ private:
 public:	// to SyncSlot mainly
 	static CliqueMerger cliqueMerger;
 private:
-	static SimpleSyncPeriod syncPeriod;
-	static PowerManager powerManager;
-
+	// syncPeriod and powerManager local to syncAgentLoop.c
 	static LEDLogger ledLogger;
 
 	// Interface towards app

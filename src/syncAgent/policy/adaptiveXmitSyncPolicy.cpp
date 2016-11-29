@@ -30,6 +30,6 @@ void AdaptiveXmitSyncPolicy::advanceStage() {
 	isAdvancedStage = true;
 }
 
-void AdaptiveXmitSyncPolicy::disarmForOnePeriod() {
-	wrappedXmitSyncPolicy.disarmForOnePeriod();
+void AdaptiveXmitSyncPolicy::disarmForOneCycle() {
+	wrappedXmitSyncPolicy.disarmForOneCycle();
 }

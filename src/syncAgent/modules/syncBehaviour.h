@@ -125,7 +125,7 @@ public:
 		 * Minor optimization: Master that heard WorkSync from Slave does not need to send sync again soon.
 		 * Avoids contention.
 		 */
-		if (clique.isSelfMaster()) clique.masterXmitSyncPolicy.disarmForOnePeriod();
+		if (clique.isSelfMaster()) clique.masterXmitSyncPolicy.disarmForOneCycle();
 	}
 
 

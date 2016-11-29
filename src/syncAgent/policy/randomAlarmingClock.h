@@ -39,5 +39,5 @@ public:
 	 * Disable alarm in current period.
 	 * Alarm will reenable itself in next period.
 	 */
-	static void disarmForOnePeriod();
+	static void disarmForOneCycle();
 };

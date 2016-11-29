@@ -192,11 +192,15 @@ bool SyncWorkSlot::doWorkMsg(SyncMessage* msg){
 void SyncWorkSlot::perform() {
 	prepareRadioToTransmitOrReceive();
 
+	// TODO call shouldTransmitSync every time
+
 	/*
 	 * Work is higher priority than ordinary sync.
 	 * Work must be rare, lest it flood network and destroy sync
 	 * (colliding too often with MergeSync or MasterSync.)
 	 */
+	log(".\n");	// Indicate start syncSlot
+	log(LogMessage::SyncSlot);
 	if (workOutMailbox->isMail() ) {
 		doSendingWorkSyncWorkSlot();
 	}

@@ -12,15 +12,17 @@ public:
 	static constexpr const char* MergeSlot = "MergeSlot\n";
 
 	// logged in dispatch messages received
-	static constexpr const char* MasterSync = "MasterSync\n";
-	static constexpr const char* WorseMasterSync = "WorseMasterSync\n";
-	static constexpr const char* MergeSync = "MergeSync\n";
-	static constexpr const char* AbandonMastership = "AbandonMastership\n";
-	static constexpr const char* WorkSync = "WorkSync\n";
-	static constexpr const char* FishedWork = "FishedWork\n";
+	static constexpr const char* MasterSync = "RX MasterSync\n";
+	static constexpr const char* WorseMasterSync = "RX WorseMasterSync\n";
+	static constexpr const char* MergeSync = "RX MergeSync\n";
+	static constexpr const char* AbandonMastership = "RX AbandonMastership\n";
+	static constexpr const char* WorkSync = "RX WorkSync\n";
+	static constexpr const char* FishedWork = "RX FishedWork\n";
 
 	// Sending
-	static constexpr const char* SendMasterSync = "SendMasterSync\n";
-	static constexpr const char* SendWork = "SendWork\n";
-	static constexpr const char* SendMergeSync = "SendMergeSync\n";
+	static constexpr const char* SendMasterSync = "TX MasterSync\n";
+	static constexpr const char* SendWork = "TX WorkSync\n";
+	static constexpr const char* SendMergeSync = "TX MergeSync\n";
+	static constexpr const char* SendNone = "Listen\n";
+
 };

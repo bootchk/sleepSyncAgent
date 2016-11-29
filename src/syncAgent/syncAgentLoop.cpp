@@ -1,7 +1,7 @@
 
 
 #include <cassert>
-#include "../platform/platform.h"
+#include "../platform/platform.h"	// PowerManager, etc.
 #include "syncAgent.h"
 #include "globals.h"
 #include "syncPeriod/syncPeriod.h"
@@ -17,11 +17,19 @@
  * After inactive sync periods, we attempt to resume drifted schedule.
 */
 
+namespace {
+
 #ifdef SIMPLE_SYNC_PERIOD
 SimpleSyncPeriod syncPeriod;
 #else
 CombinedSyncPeriod syncPeriod;
 #endif
+
+// FUTURE, we could check power again before each slot, namely fishing slot
+PowerManager powerManager;
+
+} // namespace
+
 
 
 void SyncAgent::loop(){

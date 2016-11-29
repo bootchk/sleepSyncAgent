@@ -61,7 +61,7 @@ bool RandomAlarmingCircularClock::tickWithAlarm(){
 }
 
 
-void RandomAlarmingCircularClock::disarmForOnePeriod() {
+void RandomAlarmingCircularClock::disarmForOneCycle() {
 	isAlarmEnabled = false;
 }
 
