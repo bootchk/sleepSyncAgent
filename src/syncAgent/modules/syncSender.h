@@ -62,6 +62,7 @@ public:
 		 * The listener may choose to ignore it if they lack power.
 		 * But we must send this workSync because it carries sync.
 		 */
+		log(LogMessage::SendWorkSync);
 		DeltaTime forwardOffset = clique.schedule.deltaNowToNextSyncPoint();
 		serializer.outwardCommonSyncMsg.makeWorkSync(
 				forwardOffset,

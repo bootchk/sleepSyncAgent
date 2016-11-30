@@ -21,8 +21,9 @@ public:
 
 	// Sending
 	static constexpr const char* SendMasterSync = "TX MasterSync\n";
-	static constexpr const char* SendWork = "TX WorkSync\n";
+	static constexpr const char* SendWorkSync = "TX WorkSync\n";
 	static constexpr const char* SendMergeSync = "TX MergeSync\n";
+	static constexpr const char* SendWork = "TX Work\n";
 	static constexpr const char* SendNone = "Listen\n";
 
 };

@@ -192,21 +192,22 @@ bool SyncWorkSlot::doWorkMsg(SyncMessage* msg){
 void SyncWorkSlot::perform() {
 	prepareRadioToTransmitOrReceive();
 
-	// TODO call shouldTransmitSync every time
+	// Call shouldTransmitSync every time, since it needs calls sideeffect reset itself
+	bool needXmitSync = syncBehaviour.shouldTransmitSync();
 
 	/*
 	 * Work is higher priority than ordinary sync.
 	 * Work must be rare, lest it flood network and destroy sync
 	 * (colliding too often with MergeSync or MasterSync.)
 	 */
-	log(".\n");	// Indicate start syncSlot
-	log(LogMessage::SyncSlot);
+	log(". ");	// Indicate start syncSlot
 	if (workOutMailbox->isMail() ) {
+		// This satisfies needXmitSync
 		doSendingWorkSyncWorkSlot();
 	}
 	else {
 		// No work to send, maintain sync if master
-		if (syncBehaviour.shouldTransmitSync())
+		if (needXmitSync)
 			doMasterSyncWorkSlot();
 		else
 			// isSlave or (isMaster and not xmitting (coin flip))
