@@ -1,5 +1,6 @@
 
 #include "adaptiveXmitSyncPolicy.h"
+#include "../../augment/random.h"
 
 
 namespace {
@@ -20,9 +21,12 @@ bool AdaptiveXmitSyncPolicy::shouldXmitSync() {
 	if (isAdvancedStage )
 		// xmit sync according to wrapped policy (which is more random, and less frequently.)
 		return wrappedXmitSyncPolicy.shouldXmitSync();
-	else
-		// xmit sync on every call
-		return true;
+	else {
+		/*
+		 * !!!! Should not xmit sync on every call, since it would always contend with MergeSync intended for us.
+		 */
+		return randBool();
+	}
 }
 
 // Advance to next stage (retard frequency of xmittals.)
