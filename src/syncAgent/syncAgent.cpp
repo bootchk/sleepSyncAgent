@@ -93,9 +93,9 @@ void SyncAgent::doDyingBreath() {
 // Merger and Fisher are duals
 
 void SyncAgent::toMergerRole(SyncMessage* msg){
-	// msg received in fishSlot is MasterSync
-	// msg received in syncSlot is Work (mangled)
-	assert(msg->type == MasterSync || msg->type == WorkSync);
+	// assert slot is fishSlot
+	assert(msg->carriesSync(msg->type));
+	assert(msg->type != MergeSync);
 	assert(role.isFisher());
 	role.setMerger();
 	cliqueMerger.initFromMsg(msg);

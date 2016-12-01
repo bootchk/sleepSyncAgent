@@ -18,7 +18,7 @@ void CliqueMerger::initFromMsg(SyncMessage* msg){
 	 * Save design so later, at endSyncSlot, we can schedule any mergeSlot.
 	 */
 
-	assert(msg->type == MasterSync);
+	assert(msg->carriesSync(msg->type));
 	log("Other Master ID: \n");
 	logLongLong(msg->masterID);
 

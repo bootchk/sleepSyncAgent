@@ -65,7 +65,7 @@ public:
 
 	// Class method
 
-	// !!! Work carries enough information to help syncing
+	// Does an OTA received byte seem like a MessageType?
 	static bool isReceivedTypeASyncType(uint8_t receivedType) {
 		return      (receivedType == MasterSync)
 				|| (receivedType == MergeSync)
@@ -74,6 +74,14 @@ public:
 				;
 	}
 
+
+	// Should this kind of SyncMsg have a non-null offset?
+	static bool carriesSync(uint8_t receivedType) {
+		// AbandonMastership does not
+		return receivedType == MasterSync
+				|| receivedType == MergeSync
+				|| receivedType == WorkSync;
+	}
 
 	/*
 	 * Dying breath message from master which is power failing.  deltaToNextSyncPoint is moot.
