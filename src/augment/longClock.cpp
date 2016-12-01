@@ -51,6 +51,10 @@ LongTime LongClock::nowTime() {
  * Returns forward time difference when laterTime after earlierTime.
  * Returns zero when laterTime before earlierTime.
  * Requires difference < MaxDeltaTime.
+ *
+ * Private
+ *
+ * !!!! Note the parameters are not in time order, the laterTime is first parameter
  */
 DeltaTime LongClock::clampedTimeDifference(LongTime laterTime, LongTime earlierTime) {
 	//
@@ -71,6 +75,11 @@ DeltaTime LongClock::clampedTimeDifference(LongTime laterTime, LongTime earlierT
  */
 DeltaTime LongClock::clampedTimeDifferenceFromNow(LongTime futureTime) {
 	DeltaTime result = clampedTimeDifference(futureTime, nowTime()); // Coerced to 32-bit with possible loss
+	// Already asserted: assert(result < MaxDeltaTime);
+	return result;
+}
+DeltaTime LongClock::clampedTimeDifferenceToNow(LongTime pastTime) {
+	DeltaTime result = clampedTimeDifference(nowTime(), pastTime); // Coerced to 32-bit with possible loss
 	// Already asserted: assert(result < MaxDeltaTime);
 	return result;
 }

@@ -136,7 +136,7 @@ DeltaTime  Schedule::deltaNowToNextSyncPoint() {
 
 // Different: backwards from others: from past time to now
 DeltaTime  Schedule::deltaPastSyncPointToNow() {
-	return longClock.clampedTimeDifference(longClock.nowTime(), startTimeOfSyncPeriod);
+	return longClock.clampedTimeDifferenceToNow(startTimeOfSyncPeriod);
 }
 
 DeltaTime Schedule::deltaToThisSyncSlotMiddleSubslot(){

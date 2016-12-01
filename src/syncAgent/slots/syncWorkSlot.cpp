@@ -165,8 +165,8 @@ bool SyncWorkSlot::doAbandonMastershipMsg(SyncMessage* msg){
 bool SyncWorkSlot::doWorkMsg(SyncMessage* msg){
 
 	/*
-	 * Doesn't matter which clique it came from, relay the work.
-	 * I.E. handle the work aspect of message.
+	 * Handle work aspect of message.
+	 * Doesn't matter which clique it came from, relay work.
 	 */
 	syncAgent.relayWorkToApp(msg->workPayload());
 

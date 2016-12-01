@@ -47,7 +47,7 @@ void CliqueMerger::initMergeMyClique(SyncMessage* msg){
 	 * |S..|W..|...|...|F..|...|...|S..|  current schedule
 	 *                    ^--------^   deltaNowToNextSyncPoint
 	 *                  |S..|W..|....M........|S..|  my adjusted schedule
-	 *
+	 *                  ^H----------H^
 	 * Note:
 	 * - adjusted schedule is not slot aligned with old.
 	 * - mergeSlot is not aligned with slots in adjusted schedule.

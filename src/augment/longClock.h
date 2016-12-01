@@ -40,6 +40,8 @@ private:
 	// Used to detect OSClock rollover
 	static OSTime previousOSClockTicks;
 
+	static DeltaTime clampedTimeDifference(LongTime laterTime, LongTime earlierTime);
+
 public:
 	static void reset();
 
@@ -47,8 +49,9 @@ public:
 	static LongTime nowTime();
 
 	// Arithmetic on LongTime yielding a DeltaTime suitable for timeouts on platform
-	static DeltaTime clampedTimeDifference(LongTime laterTime, LongTime earlierTime);
+
 	static DeltaTime clampedTimeDifferenceFromNow(LongTime laterTime);
+	static DeltaTime clampedTimeDifferenceToNow(LongTime earlierTime);
 	static DeltaTime timeDifferenceFromNow(LongTime givenTime);
 	static DeltaTime convertLongTimeToOSTime(LongTime givenTime);
 };
