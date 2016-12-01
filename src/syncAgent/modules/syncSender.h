@@ -71,7 +71,7 @@ public:
 				 * even if self is not the Master I.E. WorkSync could be from a Slave.
 				 */
 				clique.getMasterID(),
-				workOutMailbox->fetch());
+				workOutMailbox->fetch());	// from app, outward
 		sendPrefabricatedMessage();
 	}
 

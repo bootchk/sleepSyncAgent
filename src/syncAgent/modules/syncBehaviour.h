@@ -40,8 +40,9 @@ public:
 	static bool doSyncMsg(SyncMessage* msg){
 		// assert sync not from self (xmitter and receiver are exclusive)
 		// assert self.isMaster || self.isSlave i.e. this code doesn't require any particular role
-		assert (msg->type == MasterSync || msg->type == MergeSync || msg->type == WorkSync);
+		assert (msg->carriesSync(msg->type));
 
+		// Carries sync, but doesn't keep sync if not from better master
 		bool doesMsgKeepSynch;
 
 		// Most likely case first

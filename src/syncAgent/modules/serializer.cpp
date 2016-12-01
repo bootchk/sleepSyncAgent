@@ -100,8 +100,9 @@ void serializeOffsetCommonIntoStream(SyncMessage& msg) {
 #pragma GCC diagnostic pop
 
 void unserializeIntoCommonSyncMessage() {
-	// assert(aType == MasterSync || aType == MergeSync || aType == AbandonMastership);
-	Serializer::inwardCommonSyncMsg.type = (MessageType) radioBufferPtr[0];
+	MessageType msgType = (MessageType) radioBufferPtr[0];
+	// already assert isReceivedTypeASyncType
+	Serializer::inwardCommonSyncMsg.type = msgType;
 	unserializeMasterIDIntoCommon();
 	unserializeOffsetIntoCommon();
 	unserializeWorkIntoCommon();

@@ -82,24 +82,20 @@ void Clique::initFromSyncMsg(SyncMessage* msg){
 
 
 /*
- * An update, not necessarily a change.
+ * An update, not necessarily a change.  Not assert result data different from current data.
  * The MasterID may be the same as current.
  * The offset may be zero.
- * This method does not ensure that the new Clique data is different from old.
  */
 void Clique::updateBySyncMessage(SyncMessage* msg) {
 	// assert (in Sync or Fish slot)
-	assert(msg->type == MasterSync || msg->type == MergeSync || msg->type == WorkSync);
+	assert(msg->carriesSync(msg->type));
 
 	/*
-	 * !!! Not assert that msg.MasterID != self.masterID:
+	 * !!! Update.  Not assert that msg.MasterID != self.masterID:
 	 * a WorkSync from a Slave carries MasterID of clique which could match my MasterID when self is Master
 	 */
-	// Change master
 	setOtherMastership(msg->masterID);
-
-	// TODO this assertion is probably wrong for a WorkSync message received by current master
-	assert(!isSelfMaster()); // even if I was before
+	// Not assert master changed
 
 	/*
 	 * Self has heard another unit, retard policy.
