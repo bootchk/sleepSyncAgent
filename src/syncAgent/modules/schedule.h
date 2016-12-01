@@ -104,12 +104,10 @@ public:
 
 	/*
 	 * Deltas from past time to now.
+	 *
+	 * nowTime is not aligned with slot starts.  Result need not be multiple of slotDuration.
 	 */
-	// nowTime is not aligned with slot starts.  Result need not be multiple of slotDuration.
-	// Used by CliqueMerger()
-
-	//static DeltaTime deltaNowToStartNextSync();
-	//static DeltaTime deltaStartThisSyncPeriodToNow();
+	static DeltaTime deltaPastSyncPointToNow();
 
 	/*
 	 * Deltas from now to future time.

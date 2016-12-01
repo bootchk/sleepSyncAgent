@@ -134,6 +134,11 @@ DeltaTime  Schedule::deltaNowToNextSyncPoint() {
 	return longClock.clampedTimeDifferenceFromNow(timeOfNextSyncPoint());
 }
 
+// Different: backwards from others: from past time to now
+DeltaTime  Schedule::deltaPastSyncPointToNow() {
+	return longClock.clampedTimeDifference(longClock.nowTime(), startTimeOfSyncPeriod);
+}
+
 DeltaTime Schedule::deltaToThisSyncSlotMiddleSubslot(){
 	return longClock.clampedTimeDifferenceFromNow(timeOfThisSyncSlotMiddleSubslot());
 }
@@ -275,11 +280,6 @@ LongTime Schedule::timeOfThisMergeStart(DeltaTime offset) { return startTimeOfSy
 
 //LongTime Schedule::timeOfNextSyncSlotStart() { return timeOfNextSyncPeriodStart(); }
 
-
-// Different: backwards from others: from past time to now
-DeltaTime  Schedule::deltaStartThisSyncPeriodToNow() {
-	return longClock.clampedTimeDifference(longClock.nowTime(), startTimeOfSyncPeriod);
-}
 
 /*
  * Duration of this SyncPeriod, possibly as adjusted.
