@@ -82,7 +82,7 @@ bool dispatchFilteredMsg(
 		}
 		else {
 			// Ignore MessageType garbled
-			log(">>>>!Type");
+			log(">>>>Type\n");
 			countInvalidTypeReceives++;
 			//ledLogger2.toggleLED(4);	// debug: LED 4 invalid MessageType received
 			// continuation is sleep
@@ -93,7 +93,7 @@ bool dispatchFilteredMsg(
 	else {
 		// ignore CRC invalid packet
 		countInvalidCRCReceives++;
-		log(">>>>!CRC");
+		log(">>>>CRC\n");
 		//ledLogger2.toggleLED(4);	// debug: LED 4 invalid CRC received
 		// continuation is sleep
 	}
