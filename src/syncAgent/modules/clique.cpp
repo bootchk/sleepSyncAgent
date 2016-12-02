@@ -2,6 +2,7 @@
 #include <cassert>
 #include "../../platform/platform.h"
 #include "clique.h"
+#include "../globals.h"  // fishPolicy
 
 
 // static singleton
@@ -65,11 +66,22 @@ void Clique::checkMasterDroppedOut() {
 }
 
 void Clique::onMasterDropout() {
+	/*
+	 * Change clique.
+	 * Other Slaves might do this and engender contention (many Masters.)
+	 */
 	// Brute force: assume mastership.
-	// Many units may do this and suffer contention.
+	// FUTURE: history of masters, self assume mastership only if was most recent master,
+	// thus avoiding contention.
 	reset();
 
-	// FUTURE: history of masters
+	/*
+	 * Change fishing policy.
+	 * This might help recover a Master who didn't permanently drop out:
+	 * - busy or insufficient power temporarily
+	 * - drifted too much
+	 */
+	fishPolicy.reset();
 }
 
 #ifdef NOT_USED

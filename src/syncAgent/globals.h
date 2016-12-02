@@ -38,7 +38,9 @@ extern SyncSender syncSender;
 extern SyncBehaviour syncBehaviour;
 
 #include "policy/fishPolicy.h"
-extern FishPolicy fishPolicy;
+//extern SimpleFishPolicy fishPolicy;
+extern SyncRecoveryFishPolicy fishPolicy;
+
 
 
 

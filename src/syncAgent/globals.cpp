@@ -8,4 +8,6 @@ Clique clique;
 SyncAgent syncAgent;
 Serializer serializer;
 
-FishPolicy fishPolicy;
+//SimpleFishPolicy fishPolicy;
+SyncRecoveryFishPolicy fishPolicy;
+
