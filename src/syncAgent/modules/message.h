@@ -75,12 +75,17 @@ public:
 	}
 
 
-	// Should this kind of SyncMsg have a non-null offset?
-	static bool carriesSync(uint8_t receivedType) {
-		// AbandonMastership does not
-		return receivedType == MasterSync
-				|| receivedType == MergeSync
-				|| receivedType == WorkSync;
+	/*
+	 * Should this kind of SyncMsg have:
+	 * - non-null offset?
+	 * - non-null MasterID
+	 *
+	 * AbandonMastership may have null offset
+	 */
+	static bool carriesSync(MessageType type) {
+		return type == MasterSync
+				|| type == MergeSync
+				|| type == WorkSync;
 	}
 
 	/*

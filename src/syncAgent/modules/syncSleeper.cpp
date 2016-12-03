@@ -46,8 +46,7 @@ bool dispatchMsgReceived(Slot* slot, SyncMessage* msg){
  * Filter invalid messages.
  * Return result of dispatching valid messages.
  */
-bool dispatchFilteredMsg(
-		Slot * msgHandlingSlot) { //DispatchFuncPtr dispatchFuncOnType) {
+bool dispatchFilteredMsg( Slot * msgHandlingSlot) { // Slot knows how to dispatch
 	// FUTURE while any received messages queued
 
 	bool didReceiveDesiredMsg = false;
@@ -61,7 +60,6 @@ bool dispatchFilteredMsg(
 
 			//ledLogger2.toggleLED(3);	// debug: LED 3 valid received
 
-			//didReceiveDesiredMsg = dispatchFuncOnType(msg);
 			didReceiveDesiredMsg = dispatchMsgReceived(msgHandlingSlot, msg);
 			if (didReceiveDesiredMsg) {
 				// Ultra low power sleep remainder of duration (radio power off)
@@ -91,7 +89,11 @@ bool dispatchFilteredMsg(
 		// No memory managment for messages
 	}
 	else {
-		// ignore CRC invalid packet
+		/* Ignore CRC invalid packet except to log it.
+		 *
+		 * Note CRCSTATUS register remains showing invalid until another message is received.
+		 */
+
 		countInvalidCRCReceives++;
 		log(">>>>CRC\n");
 		//ledLogger2.toggleLED(4);	// debug: LED 4 invalid CRC received
@@ -118,7 +120,12 @@ void SyncSleeper::clearReasonForWake() { sleeper.clearReasonForWake(); }
  */
 void SyncSleeper::sleepUntilTimeout(OSTime (*timeoutFunc)()) {
 	while (true) {
-		sleeper.sleepUntilEventWithTimeout(timeoutFunc());
+		OSTime timeout = timeoutFunc();
+
+		// Sanity.  SleepSync uses timeouts less than this, 5 seconds
+		assert(timeout < 164000);
+
+		sleeper.sleepUntilEventWithTimeout(timeout);
 		// wakened by msg or timeout or unexpected event
 		if ( sleeper.getReasonForWake() != None )
 			break;	// while true
@@ -190,8 +197,56 @@ bool SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 		case TimerExpired:
 			// Timeout could be interrupting a receive.
 			// Better to handle message and delay next slot: fewer missed syncs.
+
+			radio->stopReceive();
+			// assert msg queue empty, except for race between timeout and receiver
+			// Slot done.
+			didTimeout = true;
+			break;	// switch
+			// FUTURE try handle receive in progress, see code fragment at eof
+
+		case None:
+		default:
+			// Unexpected reasonForWake or no IRQ handler set the reason
+			// FUTURE put this in some Handler to see?  But I already know what handlers are called.
+			//#include "app_util_platform.h"
+			// uint32_t ipsr = __get_IPSR();
+
+			// Insert this code to know that this DOES happen
+			// assert(false);
+
+			// For now the solution is: continue in loop and sleep again.
+			// assert the timeoutFunc() will eventually return zero and not sleep with reason==TimerExpired
+			;
+		}
+		// Timer might be canceled, but sleepUntilEventWithTimeout will restart it
+
+		if (didReceiveDesiredMsg || didTimeout) {
+			/*
+			 * assert radio off and timer cancelled.
+			 */
+			break;	// while(true)
+		}
+		// else continue while(true)
+
+	}	// while(true)
+
+	assert(radio->isDisabledState());  // not receiving
+	// radio is on or off
+	// ensure message queue nearly empty
+	// ensure timeout or didReceiveDesiredMsg
+	return didReceiveDesiredMsg;
+}
+
+
+voidFuncPtr SyncSleeper::getMsgReceivedCallback() {
+	// Return callback of the owned/wrapped sleeper.
+	return sleeper.msgReceivedCallback;
+}
+
+
 #ifdef FUTURE
-//This experiment doesn't work see my post in DevZone
+			//This experiment doesn't work see my post in DevZone
 			if (radio->isReceiveInProgress()) {
 				/*
 				 * !!! Still interrupt enabled for Disabled i.e. receive complete.
@@ -214,44 +269,4 @@ bool SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 			}
 			else {
 #endif
-				radio->stopReceive();
-				// assert msg queue empty, except for race between timeout and receiver
-				// Slot done.
-				didTimeout = true;
-			break;	// switch
-
-		case None:
-		default:
-			// Unexpected reasonForWake or no IRQ handler set the reason
-			// FUTURE put this in some Handler to see?  But I already know what handlers are called.
-			//#include "app_util_platform.h"
-			// uint32_t ipsr = __get_IPSR();
-
-			// Insert this code to know that this DOES happen
-			// assert(false);
-
-			// For now the solution is: continue in loop and sleep again.
-			// assert the timeoutFunc() will eventually return zero and not sleep with reason==TimerExpired
-			{}
-		}
-		// Timer might be canceled, but sleepUntilEventWithTimeout will restart it
-
-		if (didReceiveDesiredMsg || didTimeout) break;	// while(true)
-	}
-
-	assert(radio->isDisabledState());  // not receiving
-	// radio is on or off
-	// ensure message queue nearly empty
-	// ensure timeout or didReceiveDesiredMsg
-	return didReceiveDesiredMsg;
-}
-
-
-voidFuncPtr SyncSleeper::getMsgReceivedCallback() {
-	// Return callback of the owned/wrapped sleeper.
-	return sleeper.msgReceivedCallback;
-}
-
-
-
 
