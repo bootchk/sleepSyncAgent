@@ -46,7 +46,7 @@ bool dispatchMsgReceived(Slot* slot, SyncMessage* msg){
  * Filter invalid messages.
  * Return result of dispatching valid messages.
  */
-bool dispatchFilteredMsg( Slot * msgHandlingSlot) { // Slot knows how to dispatch
+bool dispatchFilteredMsg( Slot * msgHandlingSlot) { // Slot has handlers per message type
 	// FUTURE while any received messages queued
 
 	bool didReceiveDesiredMsg = false;

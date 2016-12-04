@@ -17,7 +17,10 @@ public:
 	static constexpr const char* MergeSync = "RX MergeSync\n";
 	static constexpr const char* AbandonMastership = "RX AbandonMastership\n";
 	static constexpr const char* WorkSync = "RX WorkSync\n";
-	static constexpr const char* FishedWork = "RX FishedWork\n";
+
+	static constexpr const char* FishedMasterSync = "Fished MasterSync\n";
+	static constexpr const char* FishedMergeSync = "Fished MergeSync\n";
+	static constexpr const char* FishedWorkSync = "Fished WorkSync\n";
 
 	// Sending
 	static constexpr const char* SendMasterSync = "TX MasterSync\n";

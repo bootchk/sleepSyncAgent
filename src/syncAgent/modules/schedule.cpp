@@ -27,33 +27,47 @@ LongTime Schedule::memoStartTimeOfFishSlot;
 void Schedule::startFreshAfterHWReset(){
 	log("Schedule reset\n");
 	longClock.reset();
-	startTimeOfSyncPeriod = longClock.nowTime();
-	endTimeOfSyncPeriod = startTimeOfSyncPeriod + NormalSyncPeriodDuration;
+	rollPeriodForwardToNow();
 	// Out of sync with other cliques
 }
 
 
-
+/*
+ * Called at wall time that should be SyncPoint.
+ * That is, called when a timer expires that indicates end of sync period and time to begin next.
+ *
+ * There are cases when this is called late:
+ * 1) Since we can fish in the last slot before this time, and fishing code may delay us a short time,
+ * this may be called a short time later than usual.
+ * If not a short time, is error in algorithm.
+ *
+ * 2) There could be other faults that delay a call to this (timer does not expire at correct wall time.)
+ * E.G. there is a mysterious delay when an invalid CRC is detected.
+ *
+ * 3) Also, using the debugger could delay timer expiration.
+ *
+ * In those cases, if the delay is not short, sync is lost
+ * (the wall time of our SyncPoint not the same as other clique member's wall time of SyncPoint.)
+ * But it is unavoidable for a robust algorithm.  See next paragraph.
+ *
+ * FLAWED design if called late:
+ *    startTimeOfSyncPeriod = endTimeOfSyncPeriod;
+ *    endTimeOfSyncPeriod = startTimeOfSyncPeriod + NormalSyncPeriodDuration;
+ * That yields flawed scheduling (scheduling events in the past or at zero timeout) later
+ * since it leaves the startTimeOfSyncPeriod much in the past.
+ * It yields setting timers for times in the past, which should expire immediately.
+ */
 void Schedule::rollPeriodForwardToNow() {
-	/*
-	 * Called at SyncPoint.
-	 * One begins where other ends.  See following comment.
-	 */
-	startTimeOfSyncPeriod = endTimeOfSyncPeriod;
+
+	LongTime startOfPreviousSyncPeriod = startTimeOfSyncPeriod;
+
+	// Remember startTime as nowTime.  See above.  If called late, sync might be lost.
+	startTimeOfSyncPeriod = longClock.nowTime();
 	endTimeOfSyncPeriod = startTimeOfSyncPeriod + NormalSyncPeriodDuration;
 
-	/*
-	 * assert startTimeOfSyncPeriod is close to nowTime().
-	 * This is called at the time that should be SyncPoint.
-	 * But since we can fish in the last slot before this time,
-	 * and fishing may delay us a short time,
-	 * this may be called a short time later than usual.
-	 * If not a short time, is error in algorithm.
-	 */
-	/*
-	 * !!! This assertion can't be stepped-in while debugging
-	 * since the RTC continues to run while you are stepping.
-	 */
+	logInt(longClock.clampedTimeDifference(startTimeOfSyncPeriod, startOfPreviousSyncPeriod));
+
+	//!!! This assertion can't be stepped-in while debugging since RTC continues to run while you are stepping.
 	//assert( longClock.timeDifferenceFromNow(startTimeOfSyncPeriod) < SlotDuration );
 }
 
@@ -69,7 +83,7 @@ void Schedule::rollPeriodForwardToNow() {
  * A sync message adds to ***end*** of period (farther into the future).
  * Scheduling end of period in the past would make schedule late.
  *
- * It is not trivial to schedule end or period in the future,
+ * It is not trivial to schedule end of period in the future,
  * since we might be near the current end of the period already.
  * assert startTimeOfSyncPeriod < nowTime()  < endTimeOfSyncPeriod
  * i.e. now in the current period, but may be near the end of it,
@@ -84,8 +98,8 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 	 * assert endSyncSlot or endFishSlot has not yet occurred, but this doesn't affect that.
 	 */
 
-	(void) SEGGER_RTT_printf(0, "Adjust schedule: %lu \n", msg->deltaToNextSyncPoint);
-	(void) SEGGER_RTT_printf(0, "Current next sync: %lu \n", deltaNowToNextSyncPoint());
+	logInt(msg->deltaToNextSyncPoint); log(":Adj sched by\n");
+	logInt(deltaNowToNextSyncPoint()); log(":Delta to next sync\n");
 
 	// FUTURE optimization?? If adjustedEndTime is near old endTime, forego setting it?
 	endTimeOfSyncPeriod = adjustedEndTime(msg->deltaToNextSyncPoint);
@@ -136,7 +150,13 @@ DeltaTime  Schedule::deltaNowToNextSyncPoint() {
 
 // Different: backwards from others: from past time to now
 DeltaTime  Schedule::deltaPastSyncPointToNow() {
-	return longClock.clampedTimeDifferenceToNow(startTimeOfSyncPeriod);
+	DeltaTime result = longClock.clampedTimeDifferenceToNow(startTimeOfSyncPeriod);
+	/*
+	 * This can only be called when now is within current sync period,
+	 * hence result must be less than sync period duration
+	 */
+	assert(result <= NormalSyncPeriodDuration);
+	return result;
 }
 
 DeltaTime Schedule::deltaToThisSyncSlotMiddleSubslot(){

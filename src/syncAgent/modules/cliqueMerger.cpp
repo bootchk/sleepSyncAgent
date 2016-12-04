@@ -149,7 +149,7 @@ void CliqueMerger::setOffsetToMergee(DeltaTime offset) {
 	 */
 	assert(offset <= Schedule::NormalSyncPeriodDuration );	// Less than end of last sleeping slot
 	assert(offset >= Schedule::SlotDuration);	// Past the sync slot
-	(void) SEGGER_RTT_printf(0, "Merger offset: %u\n", offset);
+	logInt(offset); log(":Merger offset\n");
 	offsetToMergee = offset;
 }
 

@@ -40,7 +40,9 @@ bool doSyncMsg(SyncMessage* msg){
 /*
  * Intended catch: MasterSync from another clique's Master in its sync slot.
  */
-bool FishSlot::doMasterSyncMsg(SyncMessage* msg){ return doSyncMsg(msg); }
+bool FishSlot::doMasterSyncMsg(SyncMessage* msg){
+	log(LogMessage::FishedMasterSync);
+	return doSyncMsg(msg); }
 
 
 /*
@@ -48,7 +50,9 @@ bool FishSlot::doMasterSyncMsg(SyncMessage* msg){ return doSyncMsg(msg); }
  * is already xmitting into this time thinking it is SyncSlot of some third clique.
  * Ignore except to stop fishing this slot.
  */
-bool FishSlot::doMergeSyncMsg(SyncMessage* msg){ (void) msg; return true; }
+bool FishSlot::doMergeSyncMsg(SyncMessage* msg){
+	log(LogMessage::FishedMergeSync);
+	(void) msg; return true; }
 
 /*
  * Intended catch: another clique's Master or Slave sending WorkSync in its sync slot.
@@ -60,7 +64,7 @@ bool FishSlot::doMergeSyncMsg(SyncMessage* msg){ (void) msg; return true; }
  * can calculate the other clique's sync slot from the Work msg.
  */
 bool FishSlot::doWorkMsg(SyncMessage* msg) {
-	log(LogMessage::FishedWork);
+	log(LogMessage::FishedWorkSync);
 	return doSyncMsg(msg);
 }
 
