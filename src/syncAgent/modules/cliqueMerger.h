@@ -18,20 +18,6 @@
  */
 class CliqueMerger {
 
-private:
-	/*
-	 * Private state, redundant to outside logic about role.
-	 * Invariant: true => role is Merger
-	 * outside logic calls deactivate
-	 */
-	static bool isActive;
-
-	static SystemID masterID;
-	static Clique* owningClique;	// 2-way relation: Clique owns CliqueMerger, CliqueMerger uses owning Clique
-
-	// attributes of mergee clique, offset relative to owning clique's current schedule
-	static MergeOffset offsetToMergee;
-
 public:
 	/*
 	 * Received a SyncMessage while fishing that means we will assumer role Merger.
@@ -50,11 +36,5 @@ public:
 	 */
 	static void makeMergeSync(SyncMessage& msg);
 
-	// Constraints enforced on setting
-	static void setOffsetToMergee(DeltaTime offset);
 	static MergeOffset getOffsetToMergee();
-
-private:
-	static void initMergeMyClique(SyncMessage* msg);
-	static void initMergeOtherClique();
 };

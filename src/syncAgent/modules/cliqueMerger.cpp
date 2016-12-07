@@ -3,12 +3,84 @@
 #include "cliqueMerger.h"
 
 
-// Singleton data members
-bool CliqueMerger::isActive = false;
-MergeOffset CliqueMerger::offsetToMergee;
-SystemID CliqueMerger::masterID;
-Clique* CliqueMerger::owningClique;
+namespace {
 
+/*
+ * Private state, redundant to outside logic about role.
+ * Invariant: true => role is Merger
+ * outside logic calls deactivate
+ */
+bool isActive = false;
+
+// 2-way relation: Clique owns CliqueMerger, CliqueMerger uses owning Clique
+Clique* owningClique;
+
+MergeOffset offsetToMergee;
+SystemID masterID;
+
+
+
+void initMergeMyClique(SyncMessage* msg){
+	/*
+	 * Arrange state to start sending sync to my clique telling members to merge to other.
+	 *
+	 * Adjust self schedule.
+	 *
+	 * This instant becomes startSyncSlot in my adjusted schedule.
+	 * My old syncSlot becomes a mergeSlot in my adjusted schedule.
+	 *
+	 * |S..|W..|...CliqueMerger::|...|F..|...|...|S..|  current schedule
+	 *                    ^--------^   deltaNowToNextSyncPoint
+	 *                  |S..|W..|....M........|S..|  my adjusted schedule
+	 *                  ^H----------H^
+	 * Note:
+	 * - adjusted schedule is not slot aligned with old.
+	 * - mergeSlot is not aligned with slots in adjusted schedule.
+	 * - want total offset to include two halfSlotDurations
+	 * -- one to get back to syncPoint of adjusted schedule
+	 * -- ont to get forward to middle of syncSlot of old, unadjusted schedule
+	 */
+	log("Merge my clique\n");
+
+	// calculate delta from current, unadjusted schedule
+	offsetToMergee.set(
+			owningClique->schedule.deltaNowToNextSyncPoint()
+			+ ScheduleParameters::SlotDuration);	// plus two half slots
+
+	// FUTURE migrate this outside and return result to indicate it should be done
+	// After using CliqueMerger::current clique above, change my clique (new master and new schedule)
+	owningClique->updateBySyncMessage(msg);
+
+	masterID = msg->masterID;
+	assert(!owningClique->isSelfMaster());	// Even if true previously
+}
+
+
+void initMergeOtherClique(){
+	/*
+	 * Start sending sync to other clique members telling them to merge to self's clique,
+	 * and pass them offset from now to next SyncPoint
+	 * Self (owning) schedule is unchanged.
+	 * Now time becomes a mergeSlot in self schedule.
+	 *
+	 * * |S..|W..|...|...|F..|...|...|S |  current schedule
+	 *   ^------------------^            delta
+	 *   |S..|W..|..........M........|S |
+	 *   mergeSlot is not aligned with slots in schedule.
+	 *
+	 * We don't care which SyncMessage we fished or which MasterID owned the other clique.
+	 */
+	log("Merge other clique\n");
+
+	// WRONG setOffsetToMergee(owningClique->schedule.deltaNowToNextSyncPoint());
+	offsetToMergee.set(owningClique->schedule.deltaPastSyncPointToNow());
+
+	// Self fished and caught other clique, and I will send MergeSync (contending with current other master)
+	// but saying the new master is my clique.masterID, not necessarily myID
+	masterID = owningClique->getMasterID();
+}
+
+} // namespace
 
 
 void CliqueMerger::initFromMsg(SyncMessage* msg){
@@ -35,65 +107,6 @@ void CliqueMerger::initFromMsg(SyncMessage* msg){
 void CliqueMerger::deactivate(){ isActive = false; }
 
 
-void CliqueMerger::initMergeMyClique(SyncMessage* msg){
-	/*
-	 * Arrange state to start sending sync to my clique telling members to merge to other.
-	 *
-	 * Adjust self schedule.
-	 *
-	 * This instant becomes startSyncSlot in my adjusted schedule.
-	 * My old syncSlot becomes a mergeSlot in my adjusted schedule.
-	 *
-	 * |S..|W..|...|...|F..|...|...|S..|  current schedule
-	 *                    ^--------^   deltaNowToNextSyncPoint
-	 *                  |S..|W..|....M........|S..|  my adjusted schedule
-	 *                  ^H----------H^
-	 * Note:
-	 * - adjusted schedule is not slot aligned with old.
-	 * - mergeSlot is not aligned with slots in adjusted schedule.
-	 * - want total offset to include two halfSlotDurations
-	 * -- one to get back to syncPoint of adjusted schedule
-	 * -- ont to get forward to middle of syncSlot of old, unadjusted schedule
-	 */
-	log("Merge my clique\n");
-
-	// calculate delta from current, unadjusted schedule
-	setOffsetToMergee(
-			owningClique->schedule.deltaNowToNextSyncPoint()
-			+ ScheduleParameters::SlotDuration);	// plus two half slots
-
-	// FUTURE migrate this outside and return result to indicate it should be done
-	// After using current clique above, change my clique (new master and new schedule)
-	owningClique->updateBySyncMessage(msg);
-
-	masterID = msg->masterID;
-	assert(!owningClique->isSelfMaster());	// Even if true previously
-}
-
-
-void CliqueMerger::initMergeOtherClique(){
-	/*
-	 * Start sending sync to other clique members telling them to merge to self's clique,
-	 * and pass them offset from now to next SyncPoint
-	 * Self (owning) schedule is unchanged.
-	 * Now time becomes a mergeSlot in self schedule.
-	 *
-	 * * |S..|W..|...|...|F..|...|...|S |  current schedule
-	 *   ^------------------^            delta
-	 *   |S..|W..|..........M........|S |
-	 *   mergeSlot is not aligned with slots in schedule.
-	 *
-	 * We don't care which SyncMessage we fished or which MasterID owned the other clique.
-	 */
-	log("Merge other clique\n");
-
-	// WRONG setOffsetToMergee(owningClique->schedule.deltaNowToNextSyncPoint());
-	setOffsetToMergee(owningClique->schedule.deltaPastSyncPointToNow());
-
-	// Self fished and caught other clique, and I will send MergeSync (contending with current other master)
-	// but saying the new master is my clique.masterID, not necessarily myID
-	masterID = owningClique->getMasterID();
-}
 
 
 void CliqueMerger::adjustMergerBySyncMsg(SyncMessage* msg) {
@@ -151,11 +164,6 @@ void CliqueMerger::makeMergeSync(SyncMessage& msg){
 }
 
 
-void CliqueMerger::setOffsetToMergee(DeltaTime offset) {
-	(void) SEGGER_RTT_printf(0, "Merger offset: %u\n", offset);
-	// May throw assertion
-	offsetToMergee.set(offset);
-}
 
 MergeOffset CliqueMerger::getOffsetToMergee() {
 	return offsetToMergee;
