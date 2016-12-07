@@ -1,7 +1,9 @@
 
 #pragma once
 
-#include "../platform/platform.h"
+#include <cassert>
+#include "../platform/platform.h"	// DeltaTime
+#include "scheduleParameters.h"
 
 /*
  * Type of field of SyncMessage to adjust SyncPoint.
@@ -18,7 +20,7 @@
  * As illustrated by the following derivation:
  * MaxSyncPeriod == MaxDeltaSync / 2    (we must schedule two SyncPeriods forward)
  * MaxSlotCount = MaxSyncPeriod / SlotDuration
- * MaxDutyCycle == 3 awake slots / MaxSlotCount
+ * MaxDutyCycle == 3 awake slots / MaxSlotCou;nt
  * MaxDutyCycleInverse = 1 / MaxDutyCycle
  *
  * Example design choices:
@@ -43,17 +45,22 @@
 
 
 class DeltaSync {
+private:
+	DeltaTime _deltaSync;
 public:
 	// Need constructors else can't define instances without "error: use of deleted function"
-	DeltaSync();
-	DeltaSync(int);
+	DeltaSync()  { _deltaSync = 0; }
+	DeltaSync(int value) { this->set(value); }
 
-	DeltaTime get();
+	DeltaTime get() { return _deltaSync; }
 
 	// Throws assertion if out of range
-	void set(DeltaTime value);
+	void set(DeltaTime value){
+		assert(isValidValue(value));
+		_deltaSync = value;
+	}
 
 	// Preflight check value not out of range
-	static bool isValidValue(DeltaTime value);
+	static bool isValidValue(DeltaTime value) { return value <= ScheduleParameters::NormalSyncPeriodDuration; }
 };
 

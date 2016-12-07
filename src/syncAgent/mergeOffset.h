@@ -2,7 +2,6 @@
 #pragma once
 
 #include <cassert>
-
 #include "scheduleParameters.h"
 
 /*
