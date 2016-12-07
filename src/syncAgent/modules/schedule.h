@@ -3,6 +3,7 @@
 
 #include "message.h"
 #include "../../augment/longClock.h"
+#include "../mergeOffset.h"
 
 
 /*
@@ -86,9 +87,6 @@ private:
 
 	static LongTime memoStartTimeOfFishSlot;	// memoed when fish slot start calculated
 
-// Constants defined in more visible file
-#include "../scheduleParameters.h"
-
 
 // static member funcs
 public:
@@ -100,7 +98,7 @@ public:
 	static LongTime adjustedEndTime(DeltaSync senderDeltaToSyncPoint);
 	static DeltaTime thisSyncPeriodDuration();
 
-	static DeltaTime halfSlotDuration() { return SlotDuration / 2 ; }
+	static DeltaTime halfSlotDuration() { return ScheduleParameters::SlotDuration / 2 ; }
 
 	/*
 	 * Deltas from past time to now.
@@ -125,7 +123,7 @@ public:
 	static DeltaTime deltaToThisFishSlotStart();
 	static DeltaTime deltaToThisFishSlotEnd();
 
-	static DeltaTime deltaToThisMergeStart(DeltaTime offset);
+	static DeltaTime deltaToThisMergeStart(MergeOffset offset);
 
 	static DeltaTime deltaFromWorkMiddleToEndSyncPeriod();
 

@@ -4,6 +4,7 @@
 #include "../globals.h" // fishPolicy
 
 #include "schedule.h"
+#include "../scheduleParameters.h"	// probably already included by MergeOffset
 
 
 // static singleton data
@@ -28,7 +29,7 @@ void Schedule::startFreshAfterHWReset(){
 	log("Schedule reset\n");
 	longClock.reset();
 	startTimeOfSyncPeriod = longClock.nowTime();
-	endTimeOfSyncPeriod = startTimeOfSyncPeriod + NormalSyncPeriodDuration;
+	endTimeOfSyncPeriod = startTimeOfSyncPeriod + ScheduleParameters::NormalSyncPeriodDuration;
 	// Out of sync with other cliques
 }
 
@@ -40,7 +41,7 @@ void Schedule::rollPeriodForwardToNow() {
 	 * One begins where other ends.  See following comment.
 	 */
 	startTimeOfSyncPeriod = endTimeOfSyncPeriod;
-	endTimeOfSyncPeriod = startTimeOfSyncPeriod + NormalSyncPeriodDuration;
+	endTimeOfSyncPeriod = startTimeOfSyncPeriod + ScheduleParameters::NormalSyncPeriodDuration;
 
 	/*
 	 * assert startTimeOfSyncPeriod is close to nowTime().
@@ -54,7 +55,7 @@ void Schedule::rollPeriodForwardToNow() {
 	 * !!! This assertion can't be stepped-in while debugging
 	 * since the RTC continues to run while you are stepping.
 	 */
-	//assert( longClock.timeDifferenceFromNow(startTimeOfSyncPeriod) < SlotDuration );
+	//assert( longClock.timeDifferenceFromNow(startTimeOfSyncPeriod) < ScheduleParameters::SlotDuration );
 }
 
 
@@ -100,13 +101,13 @@ LongTime Schedule::adjustedEndTime(DeltaSync senderDeltaToSyncPoint) {
 #ifdef TODO
 	unsigned int localDeltaSync = senderDeltaToSyncPoint;
 
-	if (senderDeltaToSyncPoint > SlotDuration) {
+	if (senderDeltaToSyncPoint > ScheduleParameters::SlotDuration) {
 		// Self is not already near end of adjusted SyncPeriod
 		result = longClock.nowTime() + senderDeltaToSyncPoint;
 	}
 	else {
 		// Skip the adjusted SyncPoint near in time, choose the next SyncPoint
-		result = longClock.nowTime() + senderDeltaToSyncPoint + NormalSyncPeriodDuration;
+		result = longClock.nowTime() + senderDeltaToSyncPoint + ScheduleParameters::NormalSyncPeriodDuration;
 	}
 #endif
 	return result;
@@ -162,8 +163,8 @@ DeltaTime Schedule::deltaToThisFishSlotEnd(){
 	return longClock.clampedTimeDifferenceFromNow(timeOfThisFishSlotEnd());
 }
 
-DeltaTime Schedule::deltaToThisMergeStart(DeltaTime offset){
-	return longClock.clampedTimeDifferenceFromNow(timeOfThisMergeStart(offset));
+DeltaTime Schedule::deltaToThisMergeStart(MergeOffset offset){
+	return longClock.clampedTimeDifferenceFromNow(timeOfThisMergeStart(offset.get()));
 }
 
 
@@ -182,7 +183,7 @@ DeltaTime Schedule::rampupDelay() {
  * A Work message is sent 1-1/2 slots from SyncPoint.
  */
 DeltaTime Schedule::deltaFromWorkMiddleToEndSyncPeriod(){
-	return NormalSyncPeriodDuration - SlotDuration - halfSlotDuration();
+	return ScheduleParameters::NormalSyncPeriodDuration - ScheduleParameters::SlotDuration - halfSlotDuration();
 }
 
 
@@ -214,11 +215,11 @@ LongTime Schedule::timeOfThisSyncSlotMiddleSubslot() {
 }
 
 
-LongTime Schedule::timeOfThisSyncSlotEnd() { return startTimeOfSyncPeriod + SlotDuration; }
+LongTime Schedule::timeOfThisSyncSlotEnd() { return startTimeOfSyncPeriod + ScheduleParameters::SlotDuration; }
 
 // WorkSlot immediately after SyncSlot
-LongTime Schedule::timeOfThisWorkSlotMiddle() { return startTimeOfSyncPeriod + SlotDuration + halfSlotDuration(); }
-LongTime Schedule::timeOfThisWorkSlotEnd() { return startTimeOfSyncPeriod + 2 * SlotDuration; }
+LongTime Schedule::timeOfThisWorkSlotMiddle() { return startTimeOfSyncPeriod + ScheduleParameters::SlotDuration + halfSlotDuration(); }
+LongTime Schedule::timeOfThisWorkSlotEnd() { return startTimeOfSyncPeriod + 2 * ScheduleParameters::SlotDuration; }
 
 
 /*
@@ -233,7 +234,7 @@ LongTime Schedule::timeOfThisFishSlotStart() {
 	// policy chooses which normally sleeping slots to fish in.
 	ScheduleCount sleepingSlotOrdinal = fishPolicy.next();
 	// minus 1: convert ordinal to zero-based duration multiplier
-	LongTime result = startTimeOfSyncPeriod +  (sleepingSlotOrdinal - 1) * SlotDuration;
+	LongTime result = startTimeOfSyncPeriod +  (sleepingSlotOrdinal - 1) * ScheduleParameters::SlotDuration;
 
 	/*
 	 * Since some cpu cycles have elapsed after end of work slot,
@@ -249,7 +250,7 @@ LongTime Schedule::timeOfThisFishSlotStart() {
 	 * else we won't start next sync period on time.
 	 */
 	LongTime nextSyncPoint = timeOfNextSyncPoint();
-	assert(result <= (nextSyncPoint - SlotDuration + 10*MsgDurationInTicks));
+	assert(result <= (nextSyncPoint - ScheduleParameters::SlotDuration + 10*ScheduleParameters::MsgDurationInTicks));
 
 	// !!! Memoize
 	memoStartTimeOfFishSlot = result;
@@ -258,7 +259,7 @@ LongTime Schedule::timeOfThisFishSlotStart() {
 }
 
 LongTime Schedule::timeOfThisFishSlotEnd() {
-	LongTime result = memoStartTimeOfFishSlot + SlotDuration;
+	LongTime result = memoStartTimeOfFishSlot + ScheduleParameters::SlotDuration;
 
 	// A Fish slot can be the last slot
 	// Fish slot should not end after next SyncPoint

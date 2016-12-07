@@ -5,7 +5,7 @@
 
 // Singleton data members
 bool CliqueMerger::isActive = false;
-DeltaTime CliqueMerger::offsetToMergee;
+MergeOffset CliqueMerger::offsetToMergee;
 SystemID CliqueMerger::masterID;
 Clique* CliqueMerger::owningClique;
 
@@ -60,7 +60,7 @@ void CliqueMerger::initMergeMyClique(SyncMessage* msg){
 	// calculate delta from current, unadjusted schedule
 	setOffsetToMergee(
 			owningClique->schedule.deltaNowToNextSyncPoint()
-			+ Schedule::SlotDuration);	// plus two half slots
+			+ ScheduleParameters::SlotDuration);	// plus two half slots
 
 	// FUTURE migrate this outside and return result to indicate it should be done
 	// After using current clique above, change my clique (new master and new schedule)
@@ -138,16 +138,25 @@ void CliqueMerger::adjustMergerBySyncMsg(SyncMessage* msg) {
 void CliqueMerger::makeMergeSync(SyncMessage& msg){
 	// side effect on passed msg
 	assert(isActive);
-	// Both parameters from this CliqueMerger
-	msg.makeMergeSync(getOffsetToMergee(), masterID);
+
+	/*
+	 * masterID from this CliqueMerger
+	 *
+	 * DeltaSync calculate now.
+	 * The call here must be just before sending.
+	 */
+	DeltaSync deltaToNextSyncPoint = owningClique->schedule.deltaNowToNextSyncPoint();
+
+	msg.makeMergeSync(deltaToNextSyncPoint, masterID);
 }
 
 
 void CliqueMerger::setOffsetToMergee(DeltaTime offset) {
 	(void) SEGGER_RTT_printf(0, "Merger offset: %u\n", offset);
-	offsetToMergee = offset;
+	// May throw assertion
+	offsetToMergee.set(offset);
 }
 
-DeltaTime CliqueMerger::getOffsetToMergee() {
+MergeOffset CliqueMerger::getOffsetToMergee() {
 	return offsetToMergee;
 }

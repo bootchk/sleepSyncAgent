@@ -25,17 +25,15 @@ public:
 		 * - forwardOffset unsigned delta now to next SyncPoint
 		 * - self ID
 		 */
-		DeltaTime forwardOffset = clique.schedule.deltaNowToNextSyncPoint();
-		// FUTURE include correction for latency (on receiver's end)
-
-		// Since we are in sync slot near front of sync period, offset should (0, NormalSyncPeriodDuration)
 		/*
-		 * !!! Soft assertion susceptible to breakpoints.
-		 * If breakpointed, nextSyncPoint is in past and forwardOffset is zero.
+		 * Since we are in sync slot near front of sync period, offset should (0, NormalSyncPeriodDuration)
+		 * Type DeltaSync ensures that.
+		 *
+		 * TODO should it also be greater than zero?
+		 * Susceptible to breakpoints: If breakpointed, nextSyncPoint is in past and forwardOffset is zero.
 		 */
-		// assert( forwardOffset > 0);
-
-		assert( forwardOffset < clique.schedule.NormalSyncPeriodDuration);
+		DeltaSync forwardOffset = clique.schedule.deltaNowToNextSyncPoint();
+		// FUTURE include correction for latency (on receiver's end)
 
 		// FUTURE assert we are not xmitting sync past end of syncSlot?
 		// i.e. calculations are rapid and sync slot not too short?

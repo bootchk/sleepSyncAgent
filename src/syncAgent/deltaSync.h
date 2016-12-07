@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <inttypes.h>
+#include "../platform/platform.h"
 
 /*
  * Type of field of SyncMessage to adjust SyncPoint.
@@ -48,12 +48,12 @@ public:
 	DeltaSync();
 	DeltaSync(int);
 
-	uint32_t get();
+	DeltaTime get();
 
 	// Throws assertion if out of range
-	void set(uint32_t value);
+	void set(DeltaTime value);
 
 	// Preflight check value not out of range
-	static bool isValidValue(uint32_t value);
+	static bool isValidValue(DeltaTime value);
 };
 
