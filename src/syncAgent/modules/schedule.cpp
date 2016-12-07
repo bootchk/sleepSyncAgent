@@ -94,11 +94,11 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 	// i.e. new endTimeOfSyncPeriod is within the span of old period or up to
 }
 
-LongTime Schedule::adjustedEndTime(DeltaTime senderDeltaToSyncPoint) {
+LongTime Schedule::adjustedEndTime(DeltaSync senderDeltaToSyncPoint) {
 	LongTime result;
 
-	assert(senderDeltaToSyncPoint < NormalSyncPeriodDuration);
-
+#ifdef TODO
+	unsigned int localDeltaSync = senderDeltaToSyncPoint;
 
 	if (senderDeltaToSyncPoint > SlotDuration) {
 		// Self is not already near end of adjusted SyncPeriod
@@ -108,6 +108,7 @@ LongTime Schedule::adjustedEndTime(DeltaTime senderDeltaToSyncPoint) {
 		// Skip the adjusted SyncPoint near in time, choose the next SyncPoint
 		result = longClock.nowTime() + senderDeltaToSyncPoint + NormalSyncPeriodDuration;
 	}
+#endif
 	return result;
 }
 

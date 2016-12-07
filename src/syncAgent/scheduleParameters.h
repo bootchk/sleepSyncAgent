@@ -1,5 +1,9 @@
-/*
- * !!! Parameters of schedule.
+
+#include "types.h"  // ScheduleCount
+
+
+
+/* !!! Parameters of schedule.
  *
  * Included by schedule.h, i.e. constants of the Schedule class
  *

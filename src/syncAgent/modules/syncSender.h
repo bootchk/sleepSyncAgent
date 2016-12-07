@@ -13,7 +13,6 @@
 
 #include "../logMessage.h"
 
-
 class SyncSender {
 public:
 

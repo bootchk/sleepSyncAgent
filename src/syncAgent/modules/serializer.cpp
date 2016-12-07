@@ -78,16 +78,30 @@ void serializeMasterIDCommonIntoStream(SyncMessage& msg) {
 
 
 void unserializeOffsetIntoCommon() {
+	// TODO this assertion must go
 	assert(sizeof(Serializer::inwardCommonSyncMsg.deltaToNextSyncPoint)==4);
-	// 24-bit offset:
-	// Little-endian into LSB three bytes of a 32-bit OSTime
+
+	/*
+	 * Data was received OTA.
+	 * To protect against malice broadcasters, and failure of CRC to detect multiple bit errors,
+	 * we enforce algorithm's constraints on DeltaSync.
+	 */
+	// TODO return failure code
+
+	DeltaTime otaDeltaSync;
+	// FUTURE, code for 32-bit OSClock
+	// 24-bits OTA, little-endian into LSB three bytes of a 32-bit OSTime
 	Serializer::inwardCommonSyncMsg.deltaToNextSyncPoint = 0;	// ensure MSB byte is zero
-	memcpy( (void*) &Serializer::inwardCommonSyncMsg.deltaToNextSyncPoint, 	// dest
+	memcpy( (void*) &otaDeltaSync, 	// dest
 			(void*) radioBufferPtr + OTAPayload::OffsetIndex,	// src
 			OTAPayload::OffsetLength);	// count
 
-	// FUTURE, code for 32-bit OSClock
-	assert(Serializer::inwardCommonSyncMsg.deltaToNextSyncPoint < MaxDeltaTime);
+	// TODO range check so we don't get assertion implemented in DeltaSync.set()
+	if ( DeltaSync::isValidValue(otaDeltaSync))
+		Serializer::inwardCommonSyncMsg.deltaToNextSyncPoint.set(otaDeltaSync);
+	// TODO else
+
+	// assert deltaToNextSyncPoint is set to a valid value
 }
 
 void serializeOffsetCommonIntoStream(SyncMessage& msg) {
