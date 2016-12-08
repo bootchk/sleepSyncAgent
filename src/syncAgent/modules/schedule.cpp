@@ -241,20 +241,30 @@ LongTime Schedule::timeOfThisFishSlotStart() {
 	LongTime result = startTimeOfSyncPeriod +  (sleepingSlotOrdinal - 1) * ScheduleParameters::SlotDuration;
 
 	/*
-	 * Since some cpu cycles have elapsed after end of work slot,
+	 * Since some cpu cycles have elapsed after end of previous slot,
 	 * startTimeOfFishSlot can be < longClock.nowTime().
-	 * In other words, the case where chosen slot (to fish in) is slot immediately following work slot,
+	 * In other words, the case where chosen slot (to fish in) is slot immediately following previous slot,
 	 * and time to start fish slot is already past.
 	 * In this case, the subsequently calculated timeout will be zero,
 	 * and there will be no sleep.
 	 */
 
+#ifdef FUTURE
+	??? Dubious code.
 	/*
 	 * Time to start fish slot must be no later than start time of last sleeping slot,
 	 * else we won't start next sync period on time.
 	 */
 	LongTime nextSyncPoint = timeOfNextSyncPoint();
 	assert(result <= (nextSyncPoint - ScheduleParameters::SlotDuration + 10*ScheduleParameters::MsgDurationInTicks));
+#endif
+
+	/*
+	 * SyncPeriod is never shortened by adjustment.
+	 * Hence result must be less than timeOfNextSyncPoint,
+	 * else not enough time to perform a FishSlot without delaying end of SyncPeriod.
+	 */
+	assert(result > timeOfNextSyncPoint() );
 
 	// !!! Memoize
 	memoStartTimeOfFishSlot = result;
@@ -278,8 +288,18 @@ LongTime Schedule::timeOfThisFishSlotEnd() {
 
 
 
-// Merge slot: offset from cliqueMerger, and no slotEnd needed
-LongTime Schedule::timeOfThisMergeStart(DeltaTime offset) { return startTimeOfSyncPeriod + offset; }
+/*
+ * Merge slot:
+ * Only start of slot is needed, not the end (slot ends when MergeSynce is xmitted.)
+ *
+ * offset comes from cliqueMerger.mergeOffset
+ */
+LongTime Schedule::timeOfThisMergeStart(DeltaTime offset) {
+	LongTime result;
+	result = startTimeOfSyncPeriod + offset;
+	assert(result < endTimeOfSyncPeriod);
+	return result;
+}
 
 
 #ifdef OBSOLETE
