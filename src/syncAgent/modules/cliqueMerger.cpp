@@ -19,7 +19,79 @@ MergeOffset offsetToMergee;
 SystemID masterID;
 
 
+/*
+ * Many of the following routines are coded nievely, to be understandable and correct.
+ *
+ * They could be optimized: substitute and algebraically simplify yielding a simpler formula.
+ */
 
+/*
+ * Allow for future changes and more robustness.
+ * For now, assert little time has passed executing code since message arrived, so nowTime() is close enough.
+ * FUTURE: record TOA when message arrives.
+ */
+LongTime messageTimeOfArrival() {
+	return owningClique->schedule.nowTime();
+}
+
+LongTime middleOfNextSyncSlotOfFisher() {
+	LongTime result = owningClique->schedule.timeOfNextSyncPoint() + ScheduleParameters::SlotDuration;
+	return result;
+}
+
+LongTime nextSyncPointOfFisher() {
+	LongTime result = owningClique->schedule.timeOfNextSyncPoint();
+	return result;
+}
+/*
+ * Assert now we just received a SyncMsg from middle of SyncSlot of Catch clique
+ */
+// Time in future when Catch will be in middle of next SyncSlot
+LongTime middleOfNextSyncSlotOfCatch() {
+	LongTime result = messageTimeOfArrival() + ScheduleParameters::NormalSyncPeriodDuration;
+	return result;
+}
+// Time in past when Catch started SyncSlot
+LongTime pastSyncPointOfCatch() {
+	LongTime result = messageTimeOfArrival() - owningClique->schedule.halfSlotDuration();
+	return result;
+}
+
+
+
+DeltaTime offsetForMergeMyClique() {
+	/*
+	TODO this might be an optimized equivalent.
+	owningClique->schedule.deltaNowToNextSyncPoint()
+				+ ScheduleParameters::SlotDuration;	// plus two half slots
+	*/
+	DeltaTime result = LongClock::clampedTimeDifference(middleOfNextSyncSlotOfFisher(), pastSyncPointOfCatch())
+			% ScheduleParameters::NormalSyncPeriodDuration;
+	return result;
+}
+
+DeltaTime offsetForMergeOtherClique() {
+	/*
+	 * TODO this might be an optimized equivalent.
+	 * owningClique->schedule.deltaPastSyncPointToNow();
+	 */
+	DeltaTime result =  LongClock::clampedTimeDifference(middleOfNextSyncSlotOfCatch(), nextSyncPointOfFisher())
+		% ScheduleParameters::NormalSyncPeriodDuration;
+
+	return result;
+}
+
+
+
+
+/*
+ * Two variants: mergeMy and mergeOther
+ *
+ * For both, only the offsetToMergee need be calculated.
+ * A DeltaSync will be calculated at the time self sends MergeSync.
+ *
+ * For mergeMy, self's schedule is adjusted.  For mergeOther, not adjust self's schedule.
+ */
 void initMergeMyClique(SyncMessage* msg){
 	/*
 	 * Arrange state to start sending sync to my clique telling members to merge to other.
@@ -29,10 +101,10 @@ void initMergeMyClique(SyncMessage* msg){
 	 * This instant becomes startSyncSlot in my adjusted schedule.
 	 * My old syncSlot becomes a mergeSlot in my adjusted schedule.
 	 *
-	 * |S..|W..|...CliqueMerger::|...|F..|...|...|S..|  current schedule
+	 * |S..|W..|...|...|F..|...|...|S..|  current schedule
 	 *                    ^--------^   deltaNowToNextSyncPoint
 	 *                  |S..|W..|....M........|S..|  my adjusted schedule
-	 *                  ^H----------H^
+	 *                  ^H----------H^ offsetToMergee
 	 * Note:
 	 * - adjusted schedule is not slot aligned with old.
 	 * - mergeSlot is not aligned with slots in adjusted schedule.
@@ -42,15 +114,14 @@ void initMergeMyClique(SyncMessage* msg){
 	 */
 	log("Merge my clique\n");
 
-	// calculate delta from current, unadjusted schedule
-	offsetToMergee.set(
-			owningClique->schedule.deltaNowToNextSyncPoint()
-			+ ScheduleParameters::SlotDuration);	// plus two half slots
+	// Using unadjusted schedule
+	offsetToMergee.set(offsetForMergeMyClique());
 
 	// FUTURE migrate this outside and return result to indicate it should be done
-	// After using CliqueMerger::current clique above, change my clique (new master and new schedule)
+	// After using current clique above, change my clique (new master and new schedule)
 	owningClique->updateBySyncMessage(msg);
 
+	// Merging my clique into clique ID of message
 	masterID = msg->masterID;
 	assert(!owningClique->isSelfMaster());	// Even if true previously
 }
@@ -73,10 +144,12 @@ void initMergeOtherClique(){
 	log("Merge other clique\n");
 
 	// WRONG setOffsetToMergee(owningClique->schedule.deltaNowToNextSyncPoint());
-	offsetToMergee.set(owningClique->schedule.deltaPastSyncPointToNow());
+	offsetToMergee.set(offsetForMergeOtherClique());
 
-	// Self fished and caught other clique, and I will send MergeSync (contending with current other master)
-	// but saying the new master is my clique.masterID, not necessarily myID
+	// No adjustment to self schedule
+
+	// Self fished and caught other clique, and self will send MergeSync (contending with current other master)
+	// but saying master is self's clique.masterID, not necessarily self's masterID
 	masterID = owningClique->getMasterID();
 }
 
