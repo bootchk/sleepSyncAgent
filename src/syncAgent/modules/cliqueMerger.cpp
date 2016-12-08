@@ -109,7 +109,7 @@ void CliqueMerger::adjustMergerBySyncMsg(SyncMessage* msg) {
 	// assert endOfSyncPeriod was changed, it now is my new end of sync period
 
 	(void) msg;	// temporarily suppress warnings
-	log("NI adjustMerger\n");
+	log("Not implemented: adjustMerger\n");
 	// TODO implement adjustMerger
 	/*
 	 * FUTURE, when more than two units.

@@ -27,6 +27,7 @@ LongTime Schedule::memoStartTimeOfFishSlot;
 void Schedule::startFreshAfterHWReset(){
 	log("Schedule reset\n");
 	longClock.reset();
+	startTimeOfSyncPeriod = longClock.nowTime();	// Must do this to avoid assertion in rollPeriodForwardToNow
 	rollPeriodForwardToNow();
 	// Out of sync with other cliques
 }
@@ -81,7 +82,11 @@ void Schedule::rollPeriodForwardToNow() {
  * - very rarely, a MasterSync in a Fish slot
  *
  * A sync message adds to ***end*** of period (farther into the future).
- * Scheduling end of period in the past would make schedule late.
+ * TODO not true for a MasterSync in SyncSlot?
+ *
+ * Otherwise, for a fish slot, the calculation of the end of the fish slot
+ * (based on the start) might be beyond the end of sync period?
+ * (But a fish slot ends on the first msg, so not a concern?)
  *
  * It is not trivial to schedule end of period in the future,
  * since we might be near the current end of the period already.
@@ -105,7 +110,9 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 	endTimeOfSyncPeriod = adjustedEndTime(msg->deltaToNextSyncPoint);
 
 	// assert old startTimeOfSyncPeriod < new endTimeOfSyncPeriod  < nowTime() + 2*periodDuration
-	// i.e. new endTimeOfSyncPeriod is within the span of old period or up to
+
+	// Not schedule end time too far from remembered start time.
+	assert( (endTimeOfSyncPeriod - startTimeOfSyncPeriod) < 2*NormalSyncPeriodDuration);
 }
 
 LongTime Schedule::adjustedEndTime(DeltaTime senderDeltaToSyncPoint) {
@@ -113,15 +120,16 @@ LongTime Schedule::adjustedEndTime(DeltaTime senderDeltaToSyncPoint) {
 
 	assert(senderDeltaToSyncPoint < NormalSyncPeriodDuration);
 
-
+	DeltaTime adjustment;
 	if (senderDeltaToSyncPoint > SlotDuration) {
 		// Self is not already near end of adjusted SyncPeriod
-		result = longClock.nowTime() + senderDeltaToSyncPoint;
+		adjustment = senderDeltaToSyncPoint;
 	}
 	else {
 		// Skip the adjusted SyncPoint near in time, choose the next SyncPoint
-		result = longClock.nowTime() + senderDeltaToSyncPoint + NormalSyncPeriodDuration;
+		adjustment = senderDeltaToSyncPoint + NormalSyncPeriodDuration;
 	}
+	result = longClock.nowTime() + adjustment;
 	return result;
 }
 
@@ -282,8 +290,10 @@ LongTime Schedule::timeOfThisFishSlotEnd() {
 	// A Fish slot can be the last slot
 	// Fish slot should not end after next SyncPoint
 	LongTime nextSyncPoint = timeOfNextSyncPoint();
-	if (result > nextSyncPoint)
-			result = nextSyncPoint;
+	if (result > nextSyncPoint) {
+		log("End fish slot at sync point\n");
+		result = nextSyncPoint;
+	}
 
 	// result may be < nowTime() i.e. in the past
 	// in which case delta==0 and sleepUntilTimeout(delta) will timeout immediately.
