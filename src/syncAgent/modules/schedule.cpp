@@ -95,21 +95,25 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 	// i.e. new endTimeOfSyncPeriod is within the span of old period or up to
 }
 
-LongTime Schedule::adjustedEndTime(DeltaSync senderDeltaToSyncPoint) {
-	LongTime result;
 
-#ifdef TODO
-	unsigned int localDeltaSync = senderDeltaToSyncPoint;
+/*
+ * ALTERNATIVE DESIGN: NOT IMPLEMENTED
+ * Adjusted end time of SyncPeriod, where SyncPeriod is never shortened by much, only lengthened.
+ * "By much" means: not more than one slot before current end time of SyncPeriod.
+ * Here, elsewhere there must be code to insure that fishing in the last slot
+ * and MergeSync transmit does not fall outside the shortened SyncPeriod.
+ */
 
-	if (senderDeltaToSyncPoint > ScheduleParameters::SlotDuration) {
-		// Self is not already near end of adjusted SyncPeriod
-		result = longClock.nowTime() + senderDeltaToSyncPoint;
+/*
+ * Adjusted end time of SyncPeriod, where SyncPeriod is never shortened (at all), only lengthened.
+ */
+LongTime Schedule::adjustedEndTime(DeltaSync deltaSync) {
+	LongTime result = longClock.nowTime() + deltaSync.get();
+	if (result < timeOfNextSyncPoint()) {
+		result += ScheduleParameters::NormalSyncPeriodDuration;
 	}
-	else {
-		// Skip the adjusted SyncPoint near in time, choose the next SyncPoint
-		result = longClock.nowTime() + senderDeltaToSyncPoint + ScheduleParameters::NormalSyncPeriodDuration;
-	}
-#endif
+	assert( result < 2 * ScheduleParameters::NormalSyncPeriodDuration);
+	assert( result > timeOfNextSyncPoint());
 	return result;
 }
 

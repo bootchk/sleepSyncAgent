@@ -58,7 +58,13 @@ LongTime pastSyncPointOfCatch() {
 }
 
 
+/*
+ * MergeOffset is TimeToXmitMergeSync - SyncPointOfSender
+ */
 
+/*
+ * Here, self will be sender, but will be on schedule of Catch clique
+ */
 DeltaTime offsetForMergeMyClique() {
 	/*
 	TODO this might be an optimized equivalent.
@@ -70,6 +76,9 @@ DeltaTime offsetForMergeMyClique() {
 	return result;
 }
 
+/*
+ * Here, self will be sender, and on self's same schedule
+ */
 DeltaTime offsetForMergeOtherClique() {
 	/*
 	 * TODO this might be an optimized equivalent.
