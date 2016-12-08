@@ -1,6 +1,6 @@
 
 #include "fishPolicy.h"
-#include "../modules/schedule.h"
+#include "../scheduleParameters.h"
 
 /*
  * Last sleeping slot is the last slot i.e. CountSlots
@@ -8,19 +8,19 @@
 
 namespace {
 
-ScheduleCount counter = Schedule::FirstSleepingSlotOrdinal;
+ScheduleCount counter = ScheduleParameters::FirstSleepingSlotOrdinal;
 
 void incrementCounterModuloSleepingSlots(ScheduleCount* counter) {
 	(*counter)++;
-	if (*counter > Schedule::CountSlots) {
-		*counter = Schedule::FirstSleepingSlotOrdinal;
+	if (*counter > ScheduleParameters::CountSlots) {
+		*counter = ScheduleParameters::FirstSleepingSlotOrdinal;
 	}
 }
 
 void decrementCounterModuloSleepingSlots(ScheduleCount* counter) {
 	(*counter)--;
-	if (*counter < Schedule::FirstSleepingSlotOrdinal) {
-		*counter = Schedule::CountSlots;
+	if (*counter < ScheduleParameters::FirstSleepingSlotOrdinal) {
+		*counter = ScheduleParameters::CountSlots;
 	}
 }
 }
@@ -31,14 +31,14 @@ ScheduleCount SimpleFishPolicy::next() {
 
 	incrementCounterModuloSleepingSlots(&counter);
 	result = counter;
-	assert(result >= Schedule::FirstSleepingSlotOrdinal && result <= Schedule::CountSlots);
+	assert(result >= ScheduleParameters::FirstSleepingSlotOrdinal && result <= ScheduleParameters::CountSlots);
 	return result;
 }
 
 
 namespace {
-	ScheduleCount upCounter = Schedule::FirstSleepingSlotOrdinal;
-	ScheduleCount downCounter = Schedule::CountSlots;
+	ScheduleCount upCounter = ScheduleParameters::FirstSleepingSlotOrdinal;
+	ScheduleCount downCounter = ScheduleParameters::CountSlots;
 	bool direction = true;
 }
 
@@ -56,13 +56,13 @@ ScheduleCount SyncRecoveryFishPolicy::next() {
 
 	direction = ! direction;	// reverse direction, i.e. counter to return next call
 
-	assert(result >= Schedule::FirstSleepingSlotOrdinal && result <= Schedule::CountSlots);
+	assert(result >= ScheduleParameters::FirstSleepingSlotOrdinal && result <= ScheduleParameters::CountSlots);
 	return result;
 }
 
 void SyncRecoveryFishPolicy::reset() {
-	upCounter = Schedule::FirstSleepingSlotOrdinal;
-	downCounter = Schedule::CountSlots;
+	upCounter = ScheduleParameters::FirstSleepingSlotOrdinal;
+	downCounter = ScheduleParameters::CountSlots;
 	direction = true;
 	// next generated ordinal will be first sleeping slot
 }

@@ -77,13 +77,11 @@
 
 /*
  * Define if SyncAgent is built as a library.
- * Building as library is 'production.'
- * Not building for library is only a clean compile, non-functional executable for the host.
- *
- * Yes:
+ * Building as library is 'for release' but uses cross-compiling Eclipse build configuration e.g. ArchiveM0
  * SyncAgent expects platform to implement certain functions (undefined in the library.)
  *
- * No:
+ * If not defined, change Eclipse build configuration to "Debug"
+ * Yields a clean compile, non-functional executable for the host.
  * Stubs are compiled in so project builds and links cleanly
  * (but it is non-functional.)
  */

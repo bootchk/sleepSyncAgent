@@ -1,8 +1,5 @@
 #pragma once
 
-// This is not from platform, is local.
-#include "../types.h" // ScheduleCount
-
 /*
  * Specialized RNG Random Number Generator
  *

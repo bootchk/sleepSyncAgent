@@ -2,7 +2,9 @@
 #pragma once
 
 #include "../../platform/types.h"  // SystemID
-#include "../types.h"
+//#include "../types.h"
+#include "../deltaSync.h"
+
 
 /*
  * !!! Message is not a singleton class.
@@ -92,7 +94,7 @@ public:
 	 * Dying breath message from master which is power failing.  deltaToNextSyncPoint is moot.
 	 */
 	void makeAbandonMastership(SystemID aMasterID) {
-		init(AbandonMastership, 0, aMasterID);
+		init(AbandonMastership, (DeltaSync) 0, aMasterID);
 	}
 
 	/*

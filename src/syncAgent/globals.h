@@ -1,8 +1,6 @@
 
 #pragma once
 
-
-
 /*
  * Singletons.
  * Global:
@@ -16,11 +14,12 @@
 extern Radio* radio;
 extern Mailbox* workOutMailbox;
 
-#include "modules/clique.h"
-extern Clique clique;
-
 #include "syncAgent.h"
 extern SyncAgent syncAgent;
+
+class Clique;
+//#include "modules/clique.h"
+extern Clique clique;
 
 #include "modules/role.h"
 extern MergerFisherRole role;
@@ -40,6 +39,8 @@ extern SyncBehaviour syncBehaviour;
 #include "policy/fishPolicy.h"
 //extern SimpleFishPolicy fishPolicy;
 extern SyncRecoveryFishPolicy fishPolicy;
+
+
 
 
 

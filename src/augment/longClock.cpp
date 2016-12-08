@@ -52,8 +52,6 @@ LongTime LongClock::nowTime() {
  * Returns zero when laterTime before earlierTime.
  * Requires difference < MaxDeltaTime.
  *
- * Private
- *
  * !!!! Note the parameters are not in time order, the laterTime is first parameter
  */
 DeltaTime LongClock::clampedTimeDifference(LongTime laterTime, LongTime earlierTime) {

@@ -1,8 +1,9 @@
 #pragma once
 
-#include "../../platform/types.h"
+#include "../../platform/types.h"	// SystemID
 #include "schedule.h"
-
+// TODO why this doesn't need to be included?
+//#include "message.h"
 #include "../policy/dropoutMonitor.h"
 //#include "../policy/masterXmitSyncPolicy.h"
 #include "../policy/adaptiveXmitSyncPolicy.h"

@@ -29,7 +29,6 @@ typedef uint64_t LongTime;
 
 
 
-// FUTURE namespace for data members
 class LongClock {
 private:
 	// Components of LongTime
@@ -40,7 +39,6 @@ private:
 
 	// Used to detect OSClock rollover
 	static OSTime previousOSClockTicks;
-
 
 public:
 	static void reset();

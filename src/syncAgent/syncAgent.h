@@ -3,8 +3,7 @@
 
 #include "modules/message.h"
 #include "modules/cliqueMerger.h"
-#include "modules/role.h"
-#include "syncPeriod/syncPeriod.h"
+
 
 
 /*
@@ -34,14 +33,18 @@
 
 class SyncAgent {
 
-// data members
+// Some of data members: see also anon namespaces for other owned objects
 private:
 	static bool isSyncingState;
 	// DYNAMIC static uint8_t receiveBuffer[Radio::MaxMsgLength];
 	// FIXED: Radio owns fixed length buffer
 
-public:	// to SyncSlot mainly
+#ifdef OBS
+	// TODO make this a global or private and delegate to it.
+#endif
+	public:	// to SyncSlot mainly
 	static CliqueMerger cliqueMerger;
+
 private:
 	// syncPeriod and powerManager local to syncAgentLoop.c
 	static LEDLogger ledLogger;

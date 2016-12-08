@@ -1,11 +1,17 @@
-/*
- * !!! Parameters of schedule.
+#pragma once
+
+#include "types.h"  // ScheduleCount
+#include "../platform/platform.h"  // DeltaTime
+
+
+/* !!! Parameters of schedule.
  *
- * Included by schedule.h, i.e. constants of the Schedule class
+ * Used by schedule.h, mergeOffset.h, deltaSync.h and others, i.e. constants of the Schedule class
  *
  * Other params of algorithm at DropoutMonitor.h
  */
 
+class ScheduleParameters {
 public:	// for assertions
 
 
@@ -114,3 +120,4 @@ static const DeltaTime MsgDurationInTicks = 3;
 // 2 Mbit, 120 bits, 32kHz yields 1.8 ticks
 // static const DeltaTime MsgDurationInTicks = 2;
 
+};
