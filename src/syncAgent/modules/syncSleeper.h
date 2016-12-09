@@ -24,7 +24,7 @@ typedef void (*voidFuncPtr)();
 class SyncSleeper {
 
 public:
-	static void init();
+	static void init(OSTime maxSaneTimeout);
 
 	static void clearReasonForWake();
 

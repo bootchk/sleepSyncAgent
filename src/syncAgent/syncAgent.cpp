@@ -32,7 +32,7 @@ void SyncAgent::init(
 		void (*aOnSyncPointCallback)()
 	)
 {
-	syncSleeper.init();
+	syncSleeper.init(2* ScheduleParameters::NormalSyncPeriodDuration);
 	// FUTURE hard to know who owns clock assert(sleeper.isOSClockRunning());
 
 	// Copy parameters to globals

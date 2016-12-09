@@ -61,7 +61,7 @@ void Schedule::startFreshAfterHWReset(){
  */
 void Schedule::rollPeriodForwardToNow() {
 
-	LongTime startOfPreviousSyncPeriod = startTimeOfSyncPeriod;
+	//LongTime startOfPreviousSyncPeriod = startTimeOfSyncPeriod;
 
 	// Remember startTime as nowTime.  See above.  If called late, sync might be lost.
 	startTimeOfSyncPeriod = longClock.nowTime();
@@ -116,12 +116,17 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 	logInt(msg->deltaToNextSyncPoint.get()); log(":Adj sched by\n");
 	logInt(deltaNowToNextSyncPoint()); log(":Delta to next sync\n");
 
+	LongTime oldEndTimeOfSyncPeriod = endTimeOfSyncPeriod;
+
 	// FUTURE optimization?? If adjustedEndTime is near old endTime, forego setting it?
 	endTimeOfSyncPeriod = adjustedEndTime(msg->deltaToNextSyncPoint);
 
 	// assert old startTimeOfSyncPeriod < new endTimeOfSyncPeriod  < nowTime() + 2*periodDuration
 
-	// Not schedule end time too far from remembered start time.
+	// endTime never advances backward
+	assert(endTimeOfSyncPeriod > oldEndTimeOfSyncPeriod);
+
+	// end time never jumps too far forward from remembered start time.
 	assert( (endTimeOfSyncPeriod - startTimeOfSyncPeriod) < 2* ScheduleParameters::NormalSyncPeriodDuration);
 }
 
@@ -142,12 +147,21 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
  * Adjusted end time of SyncPeriod, where SyncPeriod is never shortened (at all), only lengthened.
  */
 LongTime Schedule::adjustedEndTime(DeltaSync deltaSync) {
-	LongTime result = longClock.nowTime() + deltaSync.get();
-	if (result < timeOfNextSyncPoint()) {
+
+	// Crux: new end time is TOA of SyncMessage + DeltaSync
+	LongTime messageTOA = longClock.nowTime();
+	DeltaTime delta = deltaSync.get();
+	LongTime result = messageTOA + delta;
+
+	/*
+	 * !!!! < or = : if we are already past sync point,
+	 * both result and timeOfNextSyncPoint() could be the same
+	 * (both deltas are zero.)
+	 */
+	if (result <= timeOfNextSyncPoint()) {
 		result += ScheduleParameters::NormalSyncPeriodDuration;
 	}
-	assert( result < 2 * ScheduleParameters::NormalSyncPeriodDuration);
-	assert( result > timeOfNextSyncPoint());
+	// caller asserts result
 	return result;
 }
 
@@ -171,7 +185,14 @@ LongTime Schedule::adjustedEndTime(DeltaSync deltaSync) {
 
 
 DeltaTime  Schedule::deltaNowToNextSyncPoint() {
-	return longClock.clampedTimeDifferenceFromNow(timeOfNextSyncPoint());
+	DeltaTime result = longClock.clampedTimeDifferenceFromNow(timeOfNextSyncPoint());
+	/*
+	 * Usually next SyncPoint is future.
+	 * If we are already past it, is algorithm robust??
+	 * It could happen if we fish in the last slot and code delays us past nextSyncPoint.
+	 */
+	if (result == 0) log(">>> zero delta to next SyncPoint\n");
+	return result;
 }
 
 // Different: backwards from others: from past time to now
