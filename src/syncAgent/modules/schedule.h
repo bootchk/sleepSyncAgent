@@ -1,9 +1,14 @@
 
 #pragma once
 
-#include "message.h"
-#include "../../augment/longClock.h"
-#include "../mergeOffset.h"
+
+/*
+ * Crux types are DeltaSync and MergeOffset.
+ * LongTime and DeltaTime are important but conventional.
+ */
+#include "message.h"	// SyncMessage, DeltaSync
+#include "../../augment/longClock.h"	// LongTime, LongClock, DeltaTime
+#include "../mergeOffset.h"	// MergeOffset
 
 
 /*
@@ -95,7 +100,7 @@ public:
 
 	static void rollPeriodForwardToNow();
 	static void adjustBySyncMsg(SyncMessage* msg);
-	static LongTime adjustedEndTime(DeltaSync senderDeltaToSyncPoint);
+	static LongTime adjustedEndTime(DeltaSync senderDeltaToSyncPoint);	// <<<<
 	static DeltaTime thisSyncPeriodDuration();
 
 	static DeltaTime halfSlotDuration() { return ScheduleParameters::SlotDuration / 2 ; }
@@ -123,7 +128,7 @@ public:
 	static DeltaTime deltaToThisFishSlotStart();
 	static DeltaTime deltaToThisFishSlotEnd();
 
-	static DeltaTime deltaToThisMergeStart(MergeOffset offset);
+	static DeltaTime deltaToThisMergeStart(MergeOffset offset);	 // <<<<
 
 	static DeltaTime deltaFromWorkMiddleToEndSyncPeriod();
 

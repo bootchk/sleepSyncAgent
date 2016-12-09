@@ -304,7 +304,7 @@ LongTime Schedule::timeOfThisFishSlotStart() {
 	 * Hence result must be less than timeOfNextSyncPoint,
 	 * else not enough time to perform a FishSlot without delaying end of SyncPeriod.
 	 */
-	assert(result > timeOfNextSyncPoint() );
+	assert(result < timeOfNextSyncPoint() );
 
 	// !!! Memoize
 	memoStartTimeOfFishSlot = result;
