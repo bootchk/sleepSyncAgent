@@ -1,7 +1,6 @@
 #pragma once
 
-#include "types.h"  // ScheduleCount
-#include "../platform/platform.h"  // DeltaTime
+#include "types.h"  // ScheduleCount, DeltaTime
 
 
 /* !!! Parameters of schedule.

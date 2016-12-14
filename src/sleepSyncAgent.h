@@ -74,6 +74,7 @@ public:
 	static void init(
 			Radio*,
 			Mailbox*,
+			LongClockTimer*,
 			void (*onWorkMsg)(WorkPayload),
 			void (*onSyncPoint)()
 			);

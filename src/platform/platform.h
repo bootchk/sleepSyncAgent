@@ -64,6 +64,9 @@
 // Include newlib for rand()
 #include <cstdlib>
 
+#include <nRF5x.h>
+
+#ifdef OLD
 // Arrange project CFLAGS += -I/home/bootch/git/nRF5rawProtocol/modules
 #include <radio.h>
 
@@ -75,6 +78,7 @@
 #include <mailbox.h>
 #include <powerManager.h>
 #include <ledLogger.h>
+#endif
 
 
 #endif

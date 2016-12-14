@@ -105,8 +105,10 @@ bool dispatchFilteredMsg( Slot * msgHandlingSlot) { // Slot has handlers per mes
 }	// namespace
 
 
-void SyncSleeper::init(OSTime maxSaneTimeout){
-	sleeper.init(maxSaneTimeout);
+void SyncSleeper::init(
+		OSTime maxSaneTimeout,
+		LongClockTimer * aLCT){
+	sleeper.init(maxSaneTimeout, aLCT);
 }
 
 void SyncSleeper::clearReasonForWake() { sleeper.clearReasonForWake(); }

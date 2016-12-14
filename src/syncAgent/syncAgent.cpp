@@ -28,11 +28,16 @@ uint32_t countInvalidCRCReceives = 0;
 void SyncAgent::init(
 		Radio * aRadio,
 		Mailbox* aMailbox,
+		LongClockTimer * aLCT,
 		void (*aOnWorkMsgCallback)(WorkPayload),
 		void (*aOnSyncPointCallback)()
 	)
 {
-	syncSleeper.init(2* ScheduleParameters::NormalSyncPeriodDuration);
+	// require radio initialized
+
+	syncSleeper.init(
+			2* ScheduleParameters::NormalSyncPeriodDuration,
+			aLCT);
 	// FUTURE hard to know who owns clock assert(sleeper.isOSClockRunning());
 
 	// Copy parameters to globals
@@ -44,7 +49,7 @@ void SyncAgent::init(
 	onSyncPointCallback = aOnSyncPointCallback;
 
 	// Connect radio IRQ to syncSleeper so it knows reason for wake
-	radio->init(syncSleeper.getMsgReceivedCallback());
+	radio->setMsgReceivedCallback(syncSleeper.getMsgReceivedCallback());
 	// radio not configured until after powerOn()
 
 	// Serializer reads and writes directly to radio buffer

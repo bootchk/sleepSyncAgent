@@ -7,7 +7,7 @@
  * LongTime and DeltaTime are important but conventional.
  */
 #include "message.h"	// SyncMessage, DeltaSync
-#include "../../augment/longClock.h"	// LongTime, LongClock, DeltaTime
+#include "../../augment/timeMath.h"	// LongTime, LongClock, DeltaTime
 #include "../mergeOffset.h"	// MergeOffset
 
 
@@ -71,7 +71,6 @@
  */
 class Schedule {
 private:
-	static LongClock longClock;
 
 	/*
 	 * Set every SyncPoint (when SyncPeriod starts) and never elsewhere.
@@ -140,7 +139,7 @@ public:
 	/*
 	 *  Times
 	 */
-	static LongTime nowTime() { return longClock.nowTime(); }
+	static LongTime nowTime();
 
 	static LongTime timeOfNextSyncPoint();
 

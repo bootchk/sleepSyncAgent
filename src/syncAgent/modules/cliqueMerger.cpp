@@ -1,6 +1,7 @@
 
 #include <cassert>
 #include "cliqueMerger.h"
+#include "../../augment/timeMath.h"
 
 
 namespace {
@@ -71,7 +72,7 @@ DeltaTime offsetForMergeMyClique() {
 	owningClique->schedule.deltaNowToNextSyncPoint()
 				+ ScheduleParameters::SlotDuration;	// plus two half slots
 	*/
-	DeltaTime result = LongClock::clampedTimeDifference(middleOfNextSyncSlotOfFisher(), pastSyncPointOfCatch())
+	DeltaTime result = TimeMath::clampedTimeDifference(middleOfNextSyncSlotOfFisher(), pastSyncPointOfCatch())
 			% ScheduleParameters::NormalSyncPeriodDuration;
 	return result;
 }
@@ -84,7 +85,7 @@ DeltaTime offsetForMergeOtherClique() {
 	 * TODO this might be an optimized equivalent.
 	 * owningClique->schedule.deltaPastSyncPointToNow();
 	 */
-	DeltaTime result =  LongClock::clampedTimeDifference(middleOfNextSyncSlotOfCatch(), nextSyncPointOfFisher())
+	DeltaTime result =  TimeMath::clampedTimeDifference(middleOfNextSyncSlotOfCatch(), nextSyncPointOfFisher())
 		% ScheduleParameters::NormalSyncPeriodDuration;
 
 	return result;

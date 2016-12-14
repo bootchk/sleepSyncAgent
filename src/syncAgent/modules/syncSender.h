@@ -11,7 +11,10 @@
  * or in the middle of a sync period (omit listening in the fishSlot)?
  */
 
+#include <nRF5x.h>  // myID()
+
 #include "../logMessage.h"
+
 
 class SyncSender {
 public:

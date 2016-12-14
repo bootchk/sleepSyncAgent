@@ -61,6 +61,7 @@ private:
 public:
 	static void init( Radio* radio,
 			Mailbox* mailbox,
+			LongClockTimer * aLCT,
 			void (*onWorkMsg)(WorkPayload),
 			void (*onSyncPoint)()
 			);

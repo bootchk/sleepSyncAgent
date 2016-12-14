@@ -7,9 +7,21 @@
 #include "../scheduleParameters.h"	// probably already included by MergeOffset
 
 
-// static singleton data
+namespace {
 
-LongClock Schedule::longClock;	// has-a
+ //LongClock longClock;
+
+ //TimeMath timeMath;
+
+ LongClockTimer* longClock;
+
+
+
+} // namespace
+
+
+
+// static singleton data
 
 // Set when SyncPeriod starts, so invariant: in the past
 LongTime Schedule::startTimeOfSyncPeriod;
@@ -24,11 +36,14 @@ LongTime Schedule::endTimeOfSyncPeriod;
 LongTime Schedule::memoStartTimeOfFishSlot;
 
 
+LongTime Schedule::nowTime() {
+	return longClock->nowTime();
+}
 
 void Schedule::startFreshAfterHWReset(){
 	log("Schedule reset\n");
-	longClock.reset();
-	startTimeOfSyncPeriod = longClock.nowTime();	// Must do this to avoid assertion in rollPeriodForwardToNow
+	longClock->reset();
+	startTimeOfSyncPeriod = longClock->nowTime();	// Must do this to avoid assertion in rollPeriodForwardToNow
 	rollPeriodForwardToNow();
 	// Out of sync with other cliques
 }
@@ -63,8 +78,11 @@ void Schedule::rollPeriodForwardToNow() {
 
 	//LongTime startOfPreviousSyncPeriod = startTimeOfSyncPeriod;
 
-	// Remember startTime as nowTime.  See above.  If called late, sync might be lost.
-	startTimeOfSyncPeriod = longClock.nowTime();
+	LongTime now = longClock->nowTime();
+	logLongLong(now);
+
+	// Starts now.  See above.  If called late, sync might be lost.
+	startTimeOfSyncPeriod = now;
 	endTimeOfSyncPeriod = startTimeOfSyncPeriod + ScheduleParameters::NormalSyncPeriodDuration;
 
 	/*
@@ -79,7 +97,7 @@ void Schedule::rollPeriodForwardToNow() {
 	 * !!! This assertion can't be stepped-in while debugging
 	 * since the RTC continues to run while you are stepping.
 	 */
-	//assert( longClock.timeDifferenceFromNow(startTimeOfSyncPeriod) < ScheduleParameters::SlotDuration );
+	//assert( TimeMath::timeDifferenceFromNow(startTimeOfSyncPeriod) < ScheduleParameters::SlotDuration );
 }
 
 
@@ -149,7 +167,7 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 LongTime Schedule::adjustedEndTime(DeltaSync deltaSync) {
 
 	// Crux: new end time is TOA of SyncMessage + DeltaSync
-	LongTime messageTOA = longClock.nowTime();
+	LongTime messageTOA = longClock->nowTime();
 	DeltaTime delta = deltaSync.get();
 	LongTime result = messageTOA + delta;
 
@@ -161,7 +179,7 @@ LongTime Schedule::adjustedEndTime(DeltaSync deltaSync) {
 	if (result <= timeOfNextSyncPoint()) {
 		result += ScheduleParameters::NormalSyncPeriodDuration;
 	}
-	// caller asserts result
+	assert( (result - startTimeOfSyncPeriod) < 2* ScheduleParameters::NormalSyncPeriodDuration);
 	return result;
 }
 
@@ -185,7 +203,7 @@ LongTime Schedule::adjustedEndTime(DeltaSync deltaSync) {
 
 
 DeltaTime  Schedule::deltaNowToNextSyncPoint() {
-	DeltaTime result = longClock.clampedTimeDifferenceFromNow(timeOfNextSyncPoint());
+	DeltaTime result = TimeMath::clampedTimeDifferenceFromNow(timeOfNextSyncPoint());
 	/*
 	 * Usually next SyncPoint is future.
 	 * If we are already past it, is algorithm robust??
@@ -197,7 +215,7 @@ DeltaTime  Schedule::deltaNowToNextSyncPoint() {
 
 // Different: backwards from others: from past time to now
 DeltaTime  Schedule::deltaPastSyncPointToNow() {
-	DeltaTime result = longClock.clampedTimeDifferenceToNow(startTimeOfSyncPeriod);
+	DeltaTime result = TimeMath::clampedTimeDifferenceToNow(startTimeOfSyncPeriod);
 	/*
 	 * This can only be called when now is within current sync period,
 	 * hence result must be less than sync period duration
@@ -207,29 +225,29 @@ DeltaTime  Schedule::deltaPastSyncPointToNow() {
 }
 
 DeltaTime Schedule::deltaToThisSyncSlotMiddleSubslot(){
-	return longClock.clampedTimeDifferenceFromNow(timeOfThisSyncSlotMiddleSubslot());
+	return TimeMath::clampedTimeDifferenceFromNow(timeOfThisSyncSlotMiddleSubslot());
 }
 DeltaTime Schedule::deltaToThisSyncSlotEnd(){
-	return longClock.clampedTimeDifferenceFromNow(timeOfThisSyncSlotEnd());
+	return TimeMath::clampedTimeDifferenceFromNow(timeOfThisSyncSlotEnd());
 }
 
 // We don't need WorkSlot start
 DeltaTime Schedule::deltaToThisWorkSlotMiddle(){
-	return longClock.clampedTimeDifferenceFromNow(timeOfThisWorkSlotMiddle());
+	return TimeMath::clampedTimeDifferenceFromNow(timeOfThisWorkSlotMiddle());
 }
 DeltaTime Schedule::deltaToThisWorkSlotEnd(){
-	return longClock.clampedTimeDifferenceFromNow(timeOfThisWorkSlotEnd());
+	return TimeMath::clampedTimeDifferenceFromNow(timeOfThisWorkSlotEnd());
 }
 
 DeltaTime Schedule::deltaToThisFishSlotStart(){
-	return longClock.clampedTimeDifferenceFromNow(timeOfThisFishSlotStart());
+	return TimeMath::clampedTimeDifferenceFromNow(timeOfThisFishSlotStart());
 }
 DeltaTime Schedule::deltaToThisFishSlotEnd(){
-	return longClock.clampedTimeDifferenceFromNow(timeOfThisFishSlotEnd());
+	return TimeMath::clampedTimeDifferenceFromNow(timeOfThisFishSlotEnd());
 }
 
 DeltaTime Schedule::deltaToThisMergeStart(MergeOffset offset){
-	return longClock.clampedTimeDifferenceFromNow(timeOfThisMergeStart(offset.get()));
+	return TimeMath::clampedTimeDifferenceFromNow(timeOfThisMergeStart(offset.get()));
 }
 
 
@@ -303,7 +321,7 @@ LongTime Schedule::timeOfThisFishSlotStart() {
 
 	/*
 	 * Since some cpu cycles have elapsed after end of previous slot,
-	 * startTimeOfFishSlot can be < longClock.nowTime().
+	 * startTimeOfFishSlot can be < longClock->nowTime().
 	 * In other words, the case where chosen slot (to fish in) is slot immediately following previous slot,
 	 * and time to start fish slot is already past.
 	 * In this case, the subsequently calculated timeout will be zero,
