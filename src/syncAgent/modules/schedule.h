@@ -7,7 +7,7 @@
  * LongTime and DeltaTime are important but conventional.
  */
 #include "message.h"	// SyncMessage, DeltaSync
-#include "../../augment/timeMath.h"	// LongTime, LongClock, DeltaTime
+#include "../../augment/timeMath.h"	// LongTime, DeltaTime
 #include "../mergeOffset.h"	// MergeOffset
 
 
@@ -70,29 +70,7 @@
  * In other words, there is a deep unstated connection between LongClock and Timer.
  */
 class Schedule {
-private:
 
-	/*
-	 * Set every SyncPoint (when SyncPeriod starts) and never elsewhere.
-	 * I.E. It is history that we don't rewrite
-	 */
-	static LongTime startTimeOfSyncPeriod;
-
-	/*
-	 * Set every SyncPoint (when SyncPeriod starts) to normal end time
-	 * !!! but also might be adjusted further into the future
-	 * i.e. period extended
-	 * on hearing MasterSync or MergeSync.
-	 *
-	 * A property, with a getter that should always be used
-	 * in case we want to migrate calculations to the getter.
-	 */
-	static LongTime endTimeOfSyncPeriod;
-
-	static LongTime memoStartTimeOfFishSlot;	// memoed when fish slot start calculated
-
-
-// static member funcs
 public:
 	static void startFreshAfterHWReset();	// aka init()
 	// FUTURE static void resumeAfterPowerRestored();

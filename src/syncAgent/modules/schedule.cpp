@@ -17,23 +17,39 @@ namespace {
 
 
 
+/*
+ * Set every SyncPoint (when SyncPeriod starts) and never elsewhere.
+ * I.E. It is history that we don't rewrite.
+ * Invariant: in the past
+ */
+LongTime startTimeOfSyncPeriod;
+
+/*
+ * Set every SyncPoint (when SyncPeriod starts) to normal end time
+ * !!! but also might be adjusted further into the future
+ * i.e. period extended
+ * on hearing MasterSync or MergeSync.
+ *
+ * !!! Can change during current period.  See adjustBySyncMsg()
+ * Can be in future, advances forward in time.
+ *
+ * A property, with a getter that should always be used
+ * in case we want to migrate calculations to the getter.
+ */
+LongTime endTimeOfSyncPeriod;
+
+
+// Remembered at start of fish slot
+LongTime memoStartTimeOfFishSlot;
+
+
 } // namespace
 
 
 
-// static singleton data
 
-// Set when SyncPeriod starts, so invariant: in the past
-LongTime Schedule::startTimeOfSyncPeriod;
 
-/*
- * !!! Can change during current period.  See adjustBySyncMsg()
- * Can be in future, advances forward in time.
- */
-LongTime Schedule::endTimeOfSyncPeriod;
 
-// Remembered during fish slot
-LongTime Schedule::memoStartTimeOfFishSlot;
 
 
 LongTime Schedule::nowTime() {
