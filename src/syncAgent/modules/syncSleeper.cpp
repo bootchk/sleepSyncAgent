@@ -187,12 +187,19 @@ bool SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 	// FUTURE currently, this is being cleared in sleepUntil but that suffers from races
 
 	while (true) {
+
+		/*
+		 * The design depends on Timer semantics: can a Timer be restarted?
+		 * Here, we assume not, and always that Timer was canceled.
+		 */
 		sleeper.sleepUntilEventWithTimeout(timeoutFunc());
 		// wakened by msg or timeout or unexpected event
 
+		sleeper.cancelTimeout();
+
 		switch (sleeper.getReasonForWake()) {
 		case MsgReceived:
-			sleeper.cancelTimeout();
+			// if timer semantics are: restartable, cancel timer here
 			didReceiveDesiredMsg = dispatchFilteredMsg(msgHandlingSlot);
 			break;	// switch
 
@@ -221,7 +228,7 @@ bool SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 			// assert the timeoutFunc() will eventually return zero and not sleep with reason==TimerExpired
 			;
 		}
-		// Timer might be canceled, but sleepUntilEventWithTimeout will restart it
+		// If Timer semantics are restartable: timer might be canceled, but sleepUntilEventWithTimeout will restart it
 
 		if (didReceiveDesiredMsg || didTimeout) {
 			/*
