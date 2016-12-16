@@ -122,17 +122,21 @@ void SyncSleeper::clearReasonForWake() { sleeper.clearReasonForWake(); }
  */
 void SyncSleeper::sleepUntilTimeout(OSTime (*timeoutFunc)()) {
 	while (true) {
+		// Calculate remaining timeout on each loop iteration
 		OSTime timeout = timeoutFunc();
 
 		// Sanity.  SleepSync uses timeouts less than this, 5 seconds
+		// TODO symbolic constant
 		assert(timeout < 164000);
 
 		sleeper.sleepUntilEventWithTimeout(timeout);
 		// wakened by msg or timeout or unexpected event
-		if ( sleeper.getReasonForWake() != None )
+		if ( sleeper.getReasonForWake() == TimerExpired)
+			// assert time specified by timeoutFunc has elapsed.
 			break;	// while true
 		else {
-			// reasonForWake is still None
+			// reasonForWake is not TimerExpired, e.g. an unexpected reason
+			// continue next loop iteration
 		}
 		/*
 		 * timeoutFunc is monotonic and will eventually return 0
