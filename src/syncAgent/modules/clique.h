@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../platform/types.h"	// SystemID
+#include <nRF5x.h>	// SystemID
 #include "schedule.h"
 // TODO why this doesn't need to be included?
 //#include "message.h"

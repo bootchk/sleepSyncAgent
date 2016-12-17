@@ -2,7 +2,8 @@
 #pragma once
 
 #include <cassert>
-#include "../platform/platform.h"	// DeltaTime
+
+#include "../platformHeaders/platform.h"	// DeltaTime
 #include "scheduleParameters.h"
 
 /*

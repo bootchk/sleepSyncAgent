@@ -2,11 +2,10 @@
 
 #include <cassert>
 
-#include "../../platform/platform.h"
-
 #include "../globals.h"
 #include "workSlot.h"
 
+#include "../../platformHeaders/platform.h"
 #include "../logMessage.h"
 
 

@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "types.h"	// OSTIme
+#include "../platformHeaders/types.h"	// OSTIme
 
 /*
  * Sleep until a waking event occurs, or until timeout.

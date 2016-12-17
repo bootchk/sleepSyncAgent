@@ -1,8 +1,7 @@
 
 #pragma once
 
-#include "../../platform/types.h"  // SystemID
-//#include "../types.h"
+#include "../../platformHeaders/types.h"  // SystemID
 #include "../deltaSync.h"
 
 

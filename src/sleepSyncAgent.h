@@ -1,6 +1,6 @@
 
 #include "syncAgent/syncAgent.h"
-#include "platform/platform.h"	// Radio
+#include <nRF5x.h>	// Radio, Mailbox, LongClockTimer
 
 
 

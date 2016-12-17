@@ -2,7 +2,7 @@
 
 #include <inttypes.h>
 
-#include "../../platform/platform.h"	// BufferPointer
+#include <nRF5x.h>	// BufferPointer
 #include "message.h"
 
 

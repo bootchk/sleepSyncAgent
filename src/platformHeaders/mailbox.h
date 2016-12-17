@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "types.h"
+#include "../platformHeaders/types.h"
 
 /*
  * Simple mailbox:

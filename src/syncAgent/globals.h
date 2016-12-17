@@ -10,7 +10,7 @@
  */
 
 
-#include "../platform/platform.h"	// Radio, Sleeper, LEDLogger
+#include "../platformHeaders/platform.h"	// Radio, Sleeper, LEDLogger
 extern Radio* radio;
 extern Mailbox* workOutMailbox;
 

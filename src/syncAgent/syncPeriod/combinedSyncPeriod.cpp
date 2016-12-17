@@ -1,6 +1,7 @@
 
 #include <cassert>
-#include "../../platform/platform.h"
+
+#include "../../platformHeaders/platform.h"
 #include "../globals.h"
 #include "syncPeriod.h"
 

@@ -1,10 +1,10 @@
 
 #include <cassert>
 
-#include "../../platform/platform.h"
 #include "../globals.h"
 #include "syncSleeper.h"
 
+#include "../../platformHeaders/platform.h"
 #include "../logMessage.h"
 
 namespace {
@@ -107,7 +107,8 @@ bool dispatchFilteredMsg( Slot * msgHandlingSlot) { // Slot has handlers per mes
 
 void SyncSleeper::init(
 		OSTime maxSaneTimeout,
-		LongClockTimer * aLCT){
+		LongClockTimer * aLCT)
+{
 	sleeper.init(maxSaneTimeout, aLCT);
 }
 

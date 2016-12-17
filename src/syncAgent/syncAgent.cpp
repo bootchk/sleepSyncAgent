@@ -1,7 +1,7 @@
 
 #include <cassert>
 #include "syncAgent.h"
-#include "globals.h"
+#include "globals.h"	// which includes nRF5x.h
 
 
 // Static data members

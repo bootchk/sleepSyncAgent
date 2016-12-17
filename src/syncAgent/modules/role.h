@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-#include "../../platform/platform.h"  // logging
+#include "../../platformHeaders/platform.h"  // logging
 
 typedef enum { Merger, Fisher } RoleType;
 // OBS WorkMerger

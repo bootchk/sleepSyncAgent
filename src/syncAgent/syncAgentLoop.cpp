@@ -1,7 +1,8 @@
 
 
 #include <cassert>
-#include "../platform/platform.h"	// PowerManager, etc.
+
+#include "../platformHeaders/platform.h"	// PowerManager, etc.
 #include "syncAgent.h"
 #include "globals.h"
 #include "syncPeriod/syncPeriod.h"

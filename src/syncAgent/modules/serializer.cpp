@@ -2,9 +2,9 @@
 #include <cassert>
 #include <cstring>	// memcpy
 
-#include "../../platform/platform.h"  // MaxDeltaTime
-
 #include "serializer.h"
+
+#include "../../platformHeaders/platform.h"  // MaxDeltaTime
 #include "otaPacket.h"
 
 

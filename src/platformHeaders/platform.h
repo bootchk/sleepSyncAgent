@@ -43,16 +43,16 @@
 // std C lib provides
 #include <cstdlib>
 
-#include "radio.h"
-#include "sleeper.h"
-#include "osClock.h"
-#include "uniqueID.h"
-#include "ledLogger.h"
+#include "../platformHeaders/radio.h"
+#include "../platformHeaders/sleeper.h"
+#include "../platformHeaders/osClock.h"
+#include "../platformHeaders/uniqueID.h"
+#include "../platformHeaders/ledLogger.h"
 
-#include "powerManager.h"
-#include "mailbox.h"
-#include "logger.h"
-#include "types.h"
+#include "../platformHeaders/powerManager.h"
+#include "../platformHeaders/mailbox.h"
+#include "../platformHeaders/logger.h"
+#include "../platformHeaders/types.h"
 
 
 
