@@ -43,6 +43,9 @@
 
 // callbacks
 
+void onWorkMsg(WorkPayload work);
+void onSyncPoint();
+
 void onWorkMsg(WorkPayload work) {
 	// SleepSyncAgent received and queued a work msg.
 	// FUTURE schedule low priority work thread/task to do work

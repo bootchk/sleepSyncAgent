@@ -16,6 +16,9 @@ public:
 	 *
 	 * Not pure virtual: subclasses must override for different behaviour.
 	 */
+	// virtual destructor to avoid warnings
+	virtual ~Slot() {};
+
 	virtual bool doMasterSyncMsg(SyncMessage* msg) {(void) msg; return false;};
 	virtual bool doMergeSyncMsg(SyncMessage* msg) {(void) msg; return false;};
 	virtual bool doAbandonMastershipMsg(SyncMessage* msg) {(void) msg; return false;};

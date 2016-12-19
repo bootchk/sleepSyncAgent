@@ -8,7 +8,7 @@
 
 namespace {
 
-ScheduleCount counter = ScheduleParameters::FirstSleepingSlotOrdinal;
+ScheduleCount simpleUpCounter = ScheduleParameters::FirstSleepingSlotOrdinal;
 
 void incrementCounterModuloSleepingSlots(ScheduleCount* counter) {
 	(*counter)++;
@@ -29,8 +29,8 @@ void decrementCounterModuloSleepingSlots(ScheduleCount* counter) {
 ScheduleCount SimpleFishPolicy::next() {
 	ScheduleCount result;
 
-	incrementCounterModuloSleepingSlots(&counter);
-	result = counter;
+	incrementCounterModuloSleepingSlots(&simpleUpCounter);
+	result = simpleUpCounter;
 	assert(result >= ScheduleParameters::FirstSleepingSlotOrdinal && result <= ScheduleParameters::CountSlots);
 	return result;
 }

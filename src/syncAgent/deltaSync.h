@@ -50,8 +50,8 @@ private:
 	DeltaTime _deltaSync;
 public:
 	// Need constructors else can't define instances without "error: use of deleted function"
-	DeltaSync()  { _deltaSync = 0; }
-	DeltaSync(int value) { this->set(value); }
+	DeltaSync() : _deltaSync(0) {}
+	DeltaSync(int value) : _deltaSync(value) {}
 
 	DeltaTime get() { return _deltaSync; }
 

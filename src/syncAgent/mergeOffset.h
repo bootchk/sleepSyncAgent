@@ -15,8 +15,8 @@ private:
 
 public:
 	// Need constructors else can't define instances without "error: use of deleted function"
-	MergeOffset() { _offset = 0; }
-	MergeOffset(int value) { this->set(value); }
+	MergeOffset() : _offset(0) {}
+	MergeOffset(int value) : _offset(value) {} // { this->set(value); }
 
 	/*
 	 * Returns constrained DeltaTime.
@@ -25,7 +25,7 @@ public:
 	DeltaTime get() { return _offset; }
 
 	/*
-	 * Constrained: throws assertion if out of range
+	 * Constrained: asserts if out of range
 	 */
 	void set(DeltaTime value) {
 		assert(isValidValue(value));

@@ -17,26 +17,31 @@ static uint32_t countInvalidTypeReceives;
 static uint32_t countInvalidCRCReceives;
 
 
+/*
+ * Dispatch received msg to appropriate method of slot.
+ */
 bool dispatchMsgReceived(Slot* slot, SyncMessage* msg){
 	bool foundDesiredMessage = false;
 
 	switch(msg->type) {
 	case MasterSync:
-		log(LogMessage::MasterSync);
+		log(LogMessage::RXMasterSync);
 		foundDesiredMessage = slot->doMasterSyncMsg(msg);
 		break;
 	case MergeSync:
-		log(LogMessage::MergeSync);
+		log(LogMessage::RXMergeSync);
 		foundDesiredMessage = slot->doMergeSyncMsg(msg);
 		break;
 	case AbandonMastership:
-		log(LogMessage::AbandonMastership);
+		log(LogMessage::RXAbandonMastership);
 		foundDesiredMessage = slot->doAbandonMastershipMsg(msg);
 		break;
 	case WorkSync:
-		log(LogMessage::WorkSync);
+		log(LogMessage::RXWorkSync);
 		foundDesiredMessage = slot->doWorkMsg(msg);
 		break;
+	default:
+		log(LogMessage::RXUnknown);
 	}
 
 	return foundDesiredMessage;

@@ -168,7 +168,7 @@ bool SyncWorkSlot::doWorkMsg(SyncMessage* msg){
 	 * Handle work aspect of message.
 	 * Doesn't matter which clique it came from, relay work.
 	 */
-	syncAgent.relayWorkToApp(msg->workPayload());
+	syncAgent.relayWorkToApp(msg->getWorkPayload());
 
 	/*
 	 *  Handle sync aspect of message.

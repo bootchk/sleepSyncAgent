@@ -68,7 +68,7 @@ bool WorkSlot::doMasterSyncMsg(SyncMessage* msg){
 		// TODO: OLD abandon this work slot or be sure to calculate end based on original schedule
 	}
 	else {
-		log(LogMessage::WorseMasterSync);
+		log(LogMessage::RXWorseMasterSync);
 		/*
 		 * Other clique myMaster or worse.
 		 *
@@ -123,7 +123,7 @@ Alternative design: this cliques merges inferior clique.
 // Pass work from other units to app
 bool WorkSlot::doWorkMsg(SyncMessage* msg) {
 	assert(msg->type == WorkSync);
-	syncAgent.relayWorkToApp(msg->workPayload());
+	syncAgent.relayWorkToApp(msg->getWorkPayload());
 	return false;	// keep looking
 }
 

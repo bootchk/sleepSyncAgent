@@ -56,12 +56,15 @@ public:
 	SystemID masterID;
 	WorkPayload work;	// work always present, not always defined
 
+	SyncMessage() :type(MasterSync), deltaToNextSyncPoint(0), masterID(0), work(0) {}
+
 	void init(MessageType aType, DeltaSync aDeltaToNextSyncPoint, SystemID aMasterID) {
 		type = aType;
 		deltaToNextSyncPoint = aDeltaToNextSyncPoint;
 		masterID = aMasterID;
-		// !!! omits work
+		work = 0;
 	}
+
 
 
 	// Class method
@@ -121,7 +124,7 @@ public:
 	}
 
 	// See dual: makeWork()
-	WorkPayload workPayload() {
+	WorkPayload getWorkPayload() {
 		return work;
 	}
 };

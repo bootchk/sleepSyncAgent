@@ -128,7 +128,7 @@ bool SyncSlot::doWorkMsg(SyncMessage* msg){
 	 * Work is done even out of sync with others.
 	 * Alternatively, don't do work that is out of sync.  Change this to ignore the msg if from inferior clique.
 	 */
-	syncAgent.relayWorkToApp(msg->workPayload());
+	syncAgent.relayWorkToApp(msg->getWorkPayload());
 
 	/*
 	 * Design: (see "duality" in WorkSlot)
