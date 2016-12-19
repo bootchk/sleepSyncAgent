@@ -186,11 +186,14 @@ bool Serializer::bufferIsSane(){
 
 
 
-// Payload is 6+3+1==10
+
 void Serializer::serializeOutwardCommonSyncMessage() {
-	radioBufferPtr[0] = outwardCommonSyncMsg.type;
-	serializeMasterIDCommonIntoStream(outwardCommonSyncMsg);
-	serializeOffsetCommonIntoStream(outwardCommonSyncMsg);
-	serializeWorkCommonIntoStream(outwardCommonSyncMsg);
+	radioBufferPtr[0] = outwardCommonSyncMsg.type;	// 1
+	serializeMasterIDCommonIntoStream(outwardCommonSyncMsg);	// 6
+	serializeOffsetCommonIntoStream(outwardCommonSyncMsg);	// 3
+	serializeWorkCommonIntoStream(outwardCommonSyncMsg);	// 1
+
+	// Size of serialized message equals size fixed length payload of the wireless protocol
+	static_assert(Radio::FixedPayloadCount == 11, "Protocol payload length mismatch.");
 }
 
