@@ -8,7 +8,7 @@
  *
  * Owns Slot instances.
  * One method, to execute one cycle through the slots.
- * Defines slot order and how state determines which slots executed.
+ * Defines slot order and how state determines which slots performed.
  */
 
 

@@ -33,6 +33,15 @@ bool doSyncMsg(SyncMessage* msg){
 	return true;
 }
 
+
+void sleepUntilFishSlotStart() {
+	DeltaTime deltaToStart = clique.schedule.deltaToThisFishSlotStart();
+
+	// pass function to sleeper
+	syncSleeper.sleepUntilTimeout(clique.schedule.deltaToThisFishSlotStart);
+}
+
+
 } //namespace
 
 
@@ -102,13 +111,16 @@ void FishSlot::perform() {
 
 	// Sleep ultra low-power across normally sleeping slots to start of fish slot
 	assert(!radio->isPowerOn());
-	syncSleeper.sleepUntilTimeout(clique.schedule.deltaToThisFishSlotStart);
+
+	sleepUntilFishSlotStart();
 
 	prepareRadioToTransmitOrReceive();
-	startReceiving();
-	// assert can receive an event that wakes imminently: race to sleep
 	assert(radio->isPowerOn());
+
+	startReceiving();
 	assert(!radio->isDisabledState());
+
+	// assert can receive an event that wakes imminently: race to sleep
 	syncSleeper.sleepUntilMsgAcceptedOrTimeout(
 			this,
 			clique.schedule.deltaToThisFishSlotEnd);
