@@ -119,4 +119,7 @@ static const DeltaTime MsgDurationInTicks = 3;
 // 2 Mbit, 120 bits, 32kHz yields 1.8 ticks
 // static const DeltaTime MsgDurationInTicks = 2;
 
+
+// Sanity.  SleepSync uses timeouts less than this, 5 seconds
+static const DeltaTime MaxSaneTimeout = 164000;
 };

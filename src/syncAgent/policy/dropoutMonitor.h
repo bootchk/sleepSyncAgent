@@ -1,9 +1,9 @@
 
 #pragma once
 
-// TODO temporary hack fighting compiler, couldn't get this include to work, circular?
+// ScheduleCount is already defined, not need for this and it is circular?
 //#include "../types.h" 	// ScheduleCount
-typedef uint16_t ScheduleCount;
+
 
 /*
  * Dropout: the condition of failing to hear sync for a long time.

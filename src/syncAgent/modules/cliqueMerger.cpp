@@ -247,7 +247,7 @@ void CliqueMerger::makeMergeSync(SyncMessage& msg){
 
 
 
-// TODO this returns a copy of the class (an aggregate) on the stack
+// FUTURE this returns a copy of the instance (an aggregate) on the stack
 // not an error, but slower
 MergeOffset CliqueMerger::getOffsetToMergee() {
 	return offsetToMergee;

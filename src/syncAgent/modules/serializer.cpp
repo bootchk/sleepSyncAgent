@@ -76,31 +76,24 @@ void serializeMasterIDCommonIntoStream(SyncMessage& msg) {
 			OTAPayload::MasterIDLength);
 }
 
+DeltaTime unserializeOffset() {
+	// assert sizeof(DeltaTime) >= OTAPayload::OffsetLength
+	DeltaTime result;
+	memcpy( (void*) &result, 	// dest
+			(void*) radioBufferPtr + OTAPayload::OffsetIndex,	// src
+			OTAPayload::OffsetLength);	// count
+	return result;
+}
+
 
 void unserializeOffsetIntoCommon() {
-	// TODO this assertion must go
-	assert(sizeof(Serializer::inwardCommonSyncMsg.deltaToNextSyncPoint)==4);
 
-	/*
-	 * Data was received OTA.
-	 * To protect against malice broadcasters, and failure of CRC to detect multiple bit errors,
-	 * we enforce algorithm's constraints on DeltaSync.
-	 */
-	// TODO return failure code
-
-	DeltaTime otaDeltaSync;
+	DeltaTime otaDeltaSync = unserializeOffset();
 	// FUTURE, code for 32-bit OSClock
 	// 24-bits OTA, little-endian into LSB three bytes of a 32-bit OSTime
 	Serializer::inwardCommonSyncMsg.deltaToNextSyncPoint = 0;	// ensure MSB byte is zero
-	memcpy( (void*) &otaDeltaSync, 	// dest
-			(void*) radioBufferPtr + OTAPayload::OffsetIndex,	// src
-			OTAPayload::OffsetLength);	// count
 
-	// TODO range check so we don't get assertion implemented in DeltaSync.set()
-	if ( DeltaSync::isValidValue(otaDeltaSync))
-		Serializer::inwardCommonSyncMsg.deltaToNextSyncPoint.set(otaDeltaSync);
-	// TODO else
-
+	Serializer::inwardCommonSyncMsg.deltaToNextSyncPoint.set(otaDeltaSync);
 	// assert deltaToNextSyncPoint is set to a valid value
 }
 
@@ -122,6 +115,35 @@ void unserializeIntoCommonSyncMessage() {
 	unserializeWorkIntoCommon();
 }
 
+// FUTURE only unserializeOffset() once
+/*
+ * Check received OTA data.
+ *
+ * To protect against malice broadcasters, and failure of CRC to detect multiple bit errors,
+ * enforce algorithm's constraints on DeltaSync,
+ * and valid MessageType
+ *
+ * This should be rare, since CRC was valid.
+ * It would take multiple bit errors to corrupt message type and still have valid CRC?
+ * Or does preamble, address, all zeroes have a correct CRC?
+ *
+ * validity of SystemID and WorkPayload not checked.
+ * An invalid SystemID might change master temporarily, but algorithm should recover.
+ */
+bool isOTABufferAlgorithmicallyValid() {
+	bool result = true;
+	if (! SyncMessage::isReceivedTypeASyncType(radioBufferPtr[0])) {
+		log("Invalid message type\n");
+		logByte(radioBufferPtr[0]);
+		result = false;
+	}
+	if (! DeltaSync::isValidValue(unserializeOffset())) {
+		log("OTA offset out of range\n");
+		result = false;
+	}
+
+	return result;
+}
 
 }	// namespace
 
@@ -142,13 +164,12 @@ void Serializer::init(BufferPointer aRadioBuffer, uint8_t aBufferSize)
 }
 
 SyncMessage* Serializer::unserialize() {
-	// assert valid data in radioBuffer, of proper length
+	// require validCRC  data in radioBuffer, of proper length
 	SyncMessage * result;
 
 	// Minor optimization: only access radioBufferPtr[0] once.
 	// It is volatile, which prevents compiler from optimizing repeated references.
-	if (SyncMessage::isReceivedTypeASyncType(radioBufferPtr[0]))
-	{
+	if (isOTABufferAlgorithmicallyValid()) {
 		unserializeIntoCommonSyncMessage();
 		result = &inwardCommonSyncMsg;
 	}
@@ -159,21 +180,9 @@ SyncMessage* Serializer::unserialize() {
 	}
 	*/
 	else {
-		/*
-		 * Unexpected or garbled message type.
-		 * This should be rare, since CRC was valid.
-		 * It would take multiple bit errors to corrupt message type and still have valid CRC?
-		 * Or does preamble, address, all zeroes have a correct CRC?
-		 */
-		// Unserialize it so we can debug it
-		// unserializeIntoCommonSyncMessage();
 		//assert(false);	// TESTING
-		log("Invalid message type\n");
-		logLongLong(radioBufferPtr[0]);
 		result = nullptr;	// PRODUCTION
 	}
-	// assert validity of SystemID and offset have not been checked
-	// FUTURE check offset is in range that scheduling can handle
 	return result;
 }
 

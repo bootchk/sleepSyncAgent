@@ -3,7 +3,7 @@
 
 #include "../globals.h"  // clique, fishPolicy
 
-// TODO memoize end time also???
+// FUTURE memoize end time also???
 
 
 

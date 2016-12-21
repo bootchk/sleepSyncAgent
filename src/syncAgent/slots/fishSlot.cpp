@@ -7,8 +7,8 @@
 
 #include <cassert>
 
-// TODO elide, move fishPolicy here
-#include "../globals.h"
+
+#include "../globals.h"	// syncAgent
 
 #include "fishSlot.h"
 #include "fishSchedule.h"
@@ -40,9 +40,6 @@ bool doSyncMsg(SyncMessage* msg){
 
 
 void sleepUntilFishSlotStart() {
-	// TODO log this
-	// DeltaTime deltaToStart = fishSchedule.deltaToSlotStart();
-
 	// pass function to sleeper
 	syncSleeper.sleepUntilTimeout(fishSchedule.deltaToSlotStart);
 }
@@ -121,6 +118,9 @@ void FishSlot::perform() {
 	fishSchedule.init();	// Calculate start time once
 
 	sleepUntilFishSlotStart();
+
+	logInt(Schedule::deltaNowToNextSyncPoint());
+	log("Fish start\n");
 
 	prepareRadioToTransmitOrReceive();
 	assert(radio->isPowerOn());

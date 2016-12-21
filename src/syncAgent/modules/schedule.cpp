@@ -7,12 +7,7 @@
 
 namespace {
 
-// TODO who owns these now
- //LongClock longClock;
-
- //TimeMath timeMath;
-
- LongClockTimer* longClock;
+LongClockTimer* longClock;
 
 
 

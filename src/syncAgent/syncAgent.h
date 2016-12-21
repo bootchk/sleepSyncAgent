@@ -39,10 +39,8 @@ private:
 	// DYNAMIC static uint8_t receiveBuffer[Radio::MaxMsgLength];
 	// FIXED: Radio owns fixed length buffer
 
-#ifdef OBS
-	// TODO make this a global or private and delegate to it.
-#endif
-	public:	// to SyncSlot mainly
+// FUTURE: global instead of public?
+public:	// to SyncSlot mainly
 	static CliqueMerger cliqueMerger;
 
 private:

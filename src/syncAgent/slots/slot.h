@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../modules/message.h"
+
 
 class Slot {
 

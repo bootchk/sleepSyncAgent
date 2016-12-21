@@ -39,7 +39,7 @@ void SimpleSyncPeriod::doSlotSequence() {
 
 
 #ifdef SYNC_AGENT_CONVEYS_WORK
-	// TODO also ORDINAL OF FIRST FISHING SLOT
+	// FUTURE also ORDINAL OF FIRST FISHING SLOT
 	workSlot.performWork();
 #endif
 

@@ -131,9 +131,7 @@ void SyncSleeper::sleepUntilTimeout(OSTime (*timeoutFunc)()) {
 		// Calculate remaining timeout on each loop iteration
 		OSTime timeout = timeoutFunc();
 
-		// Sanity.  SleepSync uses timeouts less than this, 5 seconds
-		// TODO symbolic constant
-		assert(timeout < 164000);
+		assert(timeout < ScheduleParameters::MaxSaneTimeout);
 
 		sleeper.sleepUntilEventWithTimeout(timeout);
 		// wakened by msg or timeout or unexpected event
