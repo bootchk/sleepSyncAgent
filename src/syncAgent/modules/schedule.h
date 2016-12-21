@@ -81,6 +81,7 @@ public:
 	static DeltaTime thisSyncPeriodDuration();
 
 	static DeltaTime halfSlotDuration() { return ScheduleParameters::SlotDuration / 2 ; }
+	static LongTime startTimeOfSyncPeriod();
 
 	/*
 	 * Deltas from past time to now.
@@ -101,9 +102,6 @@ public:
 
 	static DeltaTime deltaToThisWorkSlotMiddle();
 	static DeltaTime deltaToThisWorkSlotEnd();
-
-	static DeltaTime deltaToThisFishSlotStart();
-	static DeltaTime deltaToThisFishSlotEnd();
 
 	static DeltaTime deltaToThisMergeStart(MergeOffset offset);	 // <<<<
 
@@ -135,8 +133,7 @@ public:
 	static LongTime timeOfThisWorkSlotMiddle();
 	static LongTime timeOfThisWorkSlotEnd();
 
-	static LongTime timeOfThisFishSlotStart();
-	static LongTime timeOfThisFishSlotEnd();
+
 
 	static LongTime timeOfThisMergeStart(DeltaTime offset);
 };

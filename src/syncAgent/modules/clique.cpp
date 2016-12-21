@@ -85,6 +85,8 @@ void Clique::onMasterDropout() {
 	fishPolicy.reset();
 }
 
+
+
 #ifdef NOT_USED
 void Clique::initFromSyncMsg(SyncMessage* msg){
 	assert(msg->type == Sync);	// require

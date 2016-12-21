@@ -7,12 +7,17 @@
 
 #include <cassert>
 
+// TODO elide, move fishPolicy here
 #include "../globals.h"
+
 #include "fishSlot.h"
+#include "fishSchedule.h"
 #include "../logMessage.h"
 
 
 namespace {
+
+FishSchedule fishSchedule;
 
 
 bool doSyncMsg(SyncMessage* msg){
@@ -35,10 +40,11 @@ bool doSyncMsg(SyncMessage* msg){
 
 
 void sleepUntilFishSlotStart() {
-	DeltaTime deltaToStart = clique.schedule.deltaToThisFishSlotStart();
+	// TODO log this
+	// DeltaTime deltaToStart = fishSchedule.deltaToSlotStart();
 
 	// pass function to sleeper
-	syncSleeper.sleepUntilTimeout(clique.schedule.deltaToThisFishSlotStart);
+	syncSleeper.sleepUntilTimeout(fishSchedule.deltaToSlotStart);
 }
 
 
@@ -112,6 +118,8 @@ void FishSlot::perform() {
 	// Sleep ultra low-power across normally sleeping slots to start of fish slot
 	assert(!radio->isPowerOn());
 
+	fishSchedule.init();	// Calculate start time once
+
 	sleepUntilFishSlotStart();
 
 	prepareRadioToTransmitOrReceive();
@@ -123,7 +131,7 @@ void FishSlot::perform() {
 	// assert can receive an event that wakes imminently: race to sleep
 	syncSleeper.sleepUntilMsgAcceptedOrTimeout(
 			this,
-			clique.schedule.deltaToThisFishSlotEnd);
+			fishSchedule.deltaToSlotEnd);
 	assert(radio->isDisabledState());
 	/*
 	 * Conditions:
