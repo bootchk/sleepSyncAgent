@@ -9,8 +9,9 @@
  * Formerly owned by SyncAgent.
  */
 
+#include <nRF5x.h>	// Radio, Sleeper, LEDLogger
 
-#include "../platformHeaders/platform.h"	// Radio, Sleeper, LEDLogger
+
 extern Radio* radio;
 extern Mailbox* workOutMailbox;
 

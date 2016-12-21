@@ -2,9 +2,9 @@
 
 #include <cassert>
 
-#include "../platformHeaders/platform.h"	// PowerManager, etc.
+#include "globals.h"	// PowerManager, etc.
 #include "syncAgent.h"
-#include "globals.h"
+
 #include "syncPeriod/syncPeriod.h"
 
 

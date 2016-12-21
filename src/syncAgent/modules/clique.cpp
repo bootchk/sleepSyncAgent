@@ -2,7 +2,6 @@
 #include <cassert>
 #include "clique.h"
 
-#include "../../platformHeaders/platform.h"
 #include "../globals.h"  // fishPolicy
 
 

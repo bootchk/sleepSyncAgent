@@ -3,7 +3,6 @@
 
 #include <cassert>
 
-#include "../platformHeaders/platform.h"	// DeltaTime
 #include "scheduleParameters.h"
 
 /*

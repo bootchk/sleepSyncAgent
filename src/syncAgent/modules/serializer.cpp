@@ -1,10 +1,10 @@
 
 #include <cassert>
 #include <cstring>	// memcpy
+#include <nRF5x.h>	// MaxDeltaTime
 
 #include "serializer.h"
 
-#include "../../platformHeaders/platform.h"  // MaxDeltaTime
 #include "otaPacket.h"
 
 

@@ -4,7 +4,6 @@
 #include "../globals.h"
 #include "syncSleeper.h"
 
-#include "../../platformHeaders/platform.h"
 #include "../logMessage.h"
 
 namespace {
@@ -234,6 +233,7 @@ bool SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 
 			// For now the solution is: continue in loop and sleep again.
 			// assert the timeoutFunc() will eventually return zero and not sleep with reason==TimerExpired
+			log("Unexpected wake, resume sleep.\n")
 			;
 		}
 		// If Timer semantics are restartable: timer might be canceled, but sleepUntilEventWithTimeout will restart it

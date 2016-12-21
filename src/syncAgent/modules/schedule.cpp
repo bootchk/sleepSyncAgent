@@ -190,6 +190,10 @@ LongTime Schedule::adjustedEndTime(DeltaSync deltaSync) {
 }
 
 
+LongTime Schedule::startTimeOfSyncPeriod(){
+	return _startTimeOfSyncPeriod;
+}
+
 /*
  * Deltas
  *
