@@ -36,9 +36,21 @@ ScheduleCount SimpleFishPolicy::next() {
 }
 
 
+
+
+
+
+
+
+
 namespace {
-	ScheduleCount upCounter = ScheduleParameters::FirstSleepingSlotOrdinal;
-	ScheduleCount downCounter = ScheduleParameters::CountSlots;
+
+/*
+ * !!! upCounter initialized to  last slot, the first call after reset increments,
+ * and the first result is FirstSleepingSlotOrdinal.
+ */
+	ScheduleCount upCounter = ScheduleParameters::CountSlots;
+	ScheduleCount downCounter = ScheduleParameters::FirstSleepingSlotOrdinal;
 	bool direction = true;
 }
 

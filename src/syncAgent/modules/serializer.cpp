@@ -134,7 +134,7 @@ bool isOTABufferAlgorithmicallyValid() {
 	bool result = true;
 	if (! SyncMessage::isReceivedTypeASyncType(radioBufferPtr[0])) {
 		log("Invalid message type\n");
-		logByte(radioBufferPtr[0]);
+		logInt(radioBufferPtr[0]);
 		result = false;
 	}
 	if (! DeltaSync::isValidValue(unserializeOffset())) {

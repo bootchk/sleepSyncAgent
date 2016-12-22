@@ -25,10 +25,6 @@
  */
 
 class Serializer {
-private:
-
-	//static BufferPointer radioBufferPtr;
-	//static uint8_t radioBufferSize;
 
 public:
 	// Owns Message instances, and returns address of them
