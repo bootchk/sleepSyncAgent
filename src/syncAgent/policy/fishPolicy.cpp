@@ -1,4 +1,6 @@
 
+#include <nRF5x.h>	// logger
+
 #include "fishPolicy.h"
 #include "../scheduleParameters.h"
 
@@ -73,6 +75,7 @@ ScheduleCount SyncRecoveryFishPolicy::next() {
 }
 
 void SyncRecoveryFishPolicy::reset() {
+	log("reset FishPolicy\n");
 	upCounter = ScheduleParameters::FirstSleepingSlotOrdinal;
 	downCounter = ScheduleParameters::CountSlots;
 	direction = true;

@@ -55,7 +55,7 @@ void SyncAgent::init(
 	// Serializer reads and writes directly to radio buffer
 	serializer.init(radio->getBufferAddress(), Radio::FixedPayloadCount);
 
-	clique.reset();
+	clique.init();
 	// Assert LongClock is reset and running
 
 	// radio device may be on from prior debugging w/o hard reset

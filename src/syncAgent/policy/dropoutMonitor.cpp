@@ -3,8 +3,21 @@
 #include "policyParameters.h"
 #include "dropoutMonitor.h"
 
-ScheduleCount DropoutMonitor::countSyncSlotsWithoutSyncMsg;
 
+namespace {
+
+ScheduleCount countSyncSlotsWithoutSyncMsg;
+
+void reset() { countSyncSlotsWithoutSyncMsg = 0; }
+
+} // namespace
+
+
+/*
+ * constructor and heardSync() have same effect: reset counter
+ */
+
+DropoutMonitor::DropoutMonitor() { reset(); }
 
 void DropoutMonitor::heardSync() { reset(); }
 

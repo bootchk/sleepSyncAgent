@@ -3,39 +3,71 @@
 #include "clique.h"
 
 #include "../globals.h"  // fishPolicy
+#include "../policy/dropoutMonitor.h"
+//#include "../policy/masterXmitSyncPolicy.h"
+#include "../policy/adaptiveXmitSyncPolicy.h"
 
+namespace {
 
-// static singleton
-Schedule Clique::schedule;
-DropoutMonitor Clique::dropoutMonitor;
-SystemID Clique::masterID;
+// attributes of clique
+SystemID masterID;
+
+// collaborators
+DropoutMonitor dropoutMonitor;
 
 // Choices here:  Adaptive or Master
-AdaptiveXmitSyncPolicy Clique::masterXmitSyncPolicy;
+//static MasterXmitSyncPolicy masterXmitSyncPolicy;
+AdaptiveXmitSyncPolicy masterXmitSyncPolicy;
+
+} // namespace
 
 
-void Clique::reset(){
-	log("Clique reset\n");
+// Schedule is public
+Schedule Clique::schedule;
 
-	masterID = myID();	// This unit (with ID given by myID() ) is master of clique
 
+/*
+ * Init is called only after a hw, power on reset POR
+ */
+void Clique::init(){
+	log("Clique init\n");
+
+	setSelfMastership();
 	masterXmitSyncPolicy.reset();
 	schedule.startFreshAfterHWReset();
 	// assert clock is running and first period started but no tasks scheduled
+	// assert dropoutMonitor is initialized
+	// assert xmitPolicy is initialized
+	assert(isSelfMaster());
 }
 
+
+
+
+SystemID Clique::getMasterID() { return masterID; }
+
 void Clique::setSelfMastership() {
-	log("Self mastership\n");
+	log("set self mastership\n");
 	masterID = myID();
 }
 
 void Clique::setOtherMastership(SystemID otherID) {
 	assert(otherID != myID());	// we can't hear our own sync
-	log("Other mastership\n");
+	log("set other mastership\n");
 	masterID = otherID;
 }
 
 bool Clique::isSelfMaster() { return masterID == myID(); }
+
+
+/*
+ * Only master xmits FROM its sync slot.
+ * And then with policy of randomness for collision avoidance.
+ */
+bool Clique::shouldXmitSync() {
+	return isSelfMaster() && masterXmitSyncPolicy.shouldXmitSync();
+}
+
 
 
 /*
@@ -57,6 +89,25 @@ bool Clique::isMsgFromMyClique(SystemID otherMasterID){ return masterID == other
 bool Clique::isOtherCliqueBetter(SystemID otherMasterID){ return masterID > otherMasterID; }
 
 
+
+
+void Clique::heardSync() {
+	// relevant to role Slave
+	dropoutMonitor.heardSync();
+
+	/*
+	 * Relevant to role Master.
+	 * Master can hear a WorkSync from Slaves.
+	 * Assume all other clique members heard it too.
+     * Minor optimization: Master that heard WorkSync from Slave does not need to send sync again soon.
+	 * Avoids contention.
+	 */
+	if (isSelfMaster())
+		masterXmitSyncPolicy.disarmForOneCycle();
+}
+
+
+
 void Clique::checkMasterDroppedOut() {
 	if (dropoutMonitor.isDropout()) {
 		// assert dropoutMonitor is reset
@@ -67,13 +118,18 @@ void Clique::checkMasterDroppedOut() {
 
 void Clique::onMasterDropout() {
 	/*
-	 * Change clique.
+	 * Self unit has not heard sync from any member for a long time.
+	 * Brute force: assume mastership.
 	 * Other Slaves might do this and engender contention (many Masters.)
 	 */
-	// Brute force: assume mastership.
-	// FUTURE: history of masters, self assume mastership only if was most recent master,
-	// thus avoiding contention.
-	reset();
+	// FUTURE: history of masters, self assume mastership only if was most recent master, thus avoiding contention.
+
+	setSelfMastership();	// !!! changes role: self will start xmitting sync
+	masterXmitSyncPolicy.reset();
+
+	/*
+	 * !!! Schedule is NOT changed. We may be able to recover by fishing nearby.
+	 */
 
 	/*
 	 * Change fishing policy.
@@ -85,14 +141,6 @@ void Clique::onMasterDropout() {
 }
 
 
-
-#ifdef NOT_USED
-void Clique::initFromSyncMsg(SyncMessage* msg){
-	assert(msg->type == Sync);	// require
-	assert(msg->masterID != myID());	// invariant: we can't hear our own sync
-	masterID = msg->masterID;
-}
-#endif
 
 
 /*
@@ -127,3 +175,12 @@ void Clique::updateBySyncMessage(SyncMessage* msg) {
 	schedule.adjustBySyncMsg(msg);
 }
 
+
+
+#ifdef NOT_USED
+void Clique::initFromSyncMsg(SyncMessage* msg){
+	assert(msg->type == Sync);	// require
+	assert(msg->masterID != myID());	// invariant: we can't hear our own sync
+	masterID = msg->masterID;
+}
+#endif

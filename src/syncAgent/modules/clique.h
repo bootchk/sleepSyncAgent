@@ -2,9 +2,7 @@
 
 #include <nRF5x.h>	// SystemID
 #include "schedule.h"
-#include "../policy/dropoutMonitor.h"
-//#include "../policy/masterXmitSyncPolicy.h"
-#include "../policy/adaptiveXmitSyncPolicy.h"
+
 
 /*
  *
@@ -20,28 +18,34 @@
  * This only implements the smaller sense.
  */
 class Clique {
-private:
-	static SystemID masterID;	// self or other unit
 
 public:
 	static Schedule schedule;
 
-	static DropoutMonitor dropoutMonitor;
+	// Newly created Clique instance
+	static void init();
 
-	// Choices:
-	//static MasterXmitSyncPolicy masterXmitSyncPolicy;
-	static AdaptiveXmitSyncPolicy masterXmitSyncPolicy;
 
-	static SystemID getMasterID() { return masterID; }
+
+	/*
+	 * Methods related to mastership and ID of clique.
+	 */
+	static SystemID getMasterID();
+	// This unit (with ID given by myID() ) is master of clique
 	static void setSelfMastership();
 	static void setOtherMastership(SystemID otherMasterID);
 	static bool isSelfMaster();
+	static bool shouldXmitSync();
+
 	static bool isOtherCliqueBetter(SystemID otherMasterID);
 	static bool isMsgFromMyClique(SystemID otherMasterID);
 
-	// New clique
-	static void reset();
 
+
+	/*
+	 * Methods for determining whether we lost sync (master dropped out, or other reasons.)
+	 */
+	static void heardSync();
 	static void checkMasterDroppedOut();
 	// Clique is losing member that was Master
 	static void onMasterDropout();

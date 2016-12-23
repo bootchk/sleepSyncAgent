@@ -1,12 +1,15 @@
 
+#include <nRF5x.h>  // logger
+
 #include "adaptiveXmitSyncPolicy.h"
 #include "../../augment/random.h"
+
 
 
 namespace {
 
 MasterXmitSyncPolicy wrappedXmitSyncPolicy;
-static bool isAdvancedStage;
+static bool isAdvancedStage = false;
 
 } // namespace
 
@@ -35,5 +38,6 @@ void AdaptiveXmitSyncPolicy::advanceStage() {
 }
 
 void AdaptiveXmitSyncPolicy::disarmForOneCycle() {
+	log("disarm xmit policy\n");
 	wrappedXmitSyncPolicy.disarmForOneCycle();
 }

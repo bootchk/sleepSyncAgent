@@ -72,7 +72,14 @@
 class Schedule {
 
 public:
-	static void startFreshAfterHWReset();	// aka init()
+	/*
+	 * aka init().
+	 * Set start of sync period to now, essentially a random time in relation to all other units.
+	 * This should only be called once:  after that, whatever schedule we are on
+	 * is the best estimate of other unit's schedule.
+	 */
+	static void startFreshAfterHWReset();
+
 	// FUTURE static void resumeAfterPowerRestored();
 
 	static void rollPeriodForwardToNow();

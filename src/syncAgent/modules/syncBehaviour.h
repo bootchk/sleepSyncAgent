@@ -56,14 +56,14 @@ public:
 			log("Sync from my clique (master or slave)\n");
 			// WAS clique.changeBySyncMessage(msg);
 			handleSyncMsg(msg);
-			clique.dropoutMonitor.heardSync();
+			clique.heardSync();
 			doesMsgKeepSynch = true;
 		}
 		else if (clique.isOtherCliqueBetter(msg->masterID)) {
 			// Strictly better
 			log("Better master\n");
 			handleSyncMsg(msg);
-			clique.dropoutMonitor.heardSync();
+			clique.heardSync();
 			doesMsgKeepSynch = true;
 		}
 		else {
@@ -87,13 +87,9 @@ public:
 
 
 
-	/*
-	 * Deciding whether to xmit MasterSync.
-	 * Only master xmits FROM its sync slot.
-	 * And then with policy: a coin-flip, for collision avoidance.
-	 */
 	static bool shouldTransmitSync() {
-		return clique.isSelfMaster() && clique.masterXmitSyncPolicy.shouldXmitSync();
+		// Clique knows
+		return clique.shouldXmitSync();
 	}
 
 
@@ -121,12 +117,6 @@ public:
 			// Already merging an other clique, now merge other clique to updated sync slot time
 			syncAgent.cliqueMerger.adjustMergerBySyncMsg(msg);
 		}
-
-		/*
-		 * Minor optimization: Master that heard WorkSync from Slave does not need to send sync again soon.
-		 * Avoids contention.
-		 */
-		if (clique.isSelfMaster()) clique.masterXmitSyncPolicy.disarmForOneCycle();
 	}
 
 

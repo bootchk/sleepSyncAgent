@@ -55,8 +55,12 @@ public:	// for assertions
 
 // 30, 400 Sync period 0.7 sec, average current 10uA?
 // 40, 400 Sync period 1.0 sec
+//static const DeltaTime     SlotDuration = 40;
+//static const int           DutyCycleInverse = 400;
+
+// 40, 100 Sync period 2.5 mSec
 static const DeltaTime     SlotDuration = 40;
-static const int           DutyCycleInverse = 400;
+static const int           DutyCycleInverse = 100;
 
 
 
