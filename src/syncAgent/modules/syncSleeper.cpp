@@ -83,8 +83,8 @@ bool dispatchFilteredMsg( Slot * msgHandlingSlot) { // Slot has handlers per mes
 			// assert msg queue is empty (since we received and didn't restart receiver)
 		}
 		else {
-			// Ignore MessageType garbled
-			log(">>>>Type\n");
+			// Ignore garbled type or offset
+			log(">>>>Message garbled\n");
 			countInvalidTypeReceives++;
 			//ledLogger2.toggleLED(4);	// debug: LED 4 invalid MessageType received
 			// continuation is sleep

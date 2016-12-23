@@ -78,7 +78,11 @@ void serializeMasterIDCommonIntoStream(SyncMessage& msg) {
 
 DeltaTime unserializeOffset() {
 	// assert sizeof(DeltaTime) >= OTAPayload::OffsetLength
-	DeltaTime result;
+	// 24-bits OTA, little-endian into LSB three bytes of a 32-bit OSTime
+	// FUTURE, code for 32-bit OSClock
+
+	// !!! // Ensure MSB byte is zero because we only copy in LSB
+	DeltaTime result = 0;
 	memcpy( (void*) &result, 	// dest
 			(void*) radioBufferPtr + OTAPayload::OffsetIndex,	// src
 			OTAPayload::OffsetLength);	// count
@@ -87,12 +91,7 @@ DeltaTime unserializeOffset() {
 
 
 void unserializeOffsetIntoCommon() {
-
 	DeltaTime otaDeltaSync = unserializeOffset();
-	// FUTURE, code for 32-bit OSClock
-	// 24-bits OTA, little-endian into LSB three bytes of a 32-bit OSTime
-	Serializer::inwardCommonSyncMsg.deltaToNextSyncPoint = 0;	// ensure MSB byte is zero
-
 	Serializer::inwardCommonSyncMsg.deltaToNextSyncPoint.set(otaDeltaSync);
 	// assert deltaToNextSyncPoint is set to a valid value
 }
@@ -129,6 +128,9 @@ void unserializeIntoCommonSyncMessage() {
  *
  * validity of SystemID and WorkPayload not checked.
  * An invalid SystemID might change master temporarily, but algorithm should recover.
+ *
+ * See also bufferIsSane, for outgoing messages.
+ * TODO combine them.
  */
 bool isOTABufferAlgorithmicallyValid() {
 	bool result = true;
