@@ -10,7 +10,7 @@
 namespace {
 
 // Remembered at start of fish slot
-LongTime memoStartTimeOfFishSlot;
+LongTime _memoStartTimeOfFishSlot;
 
 } // namespace
 
@@ -19,11 +19,11 @@ LongTime memoStartTimeOfFishSlot;
 
 void FishSchedule::init() {
 	// Calculate the start once, memoize it
-	memoStartTimeOfFishSlot = timeOfThisFishSlotStart();
+	memoizeTimeOfThisFishSlotStart();
 }
 
 DeltaTime FishSchedule::deltaToSlotStart(){
-	return TimeMath::clampedTimeDifferenceFromNow(memoStartTimeOfFishSlot);
+	return TimeMath::clampedTimeDifferenceFromNow(_memoStartTimeOfFishSlot);
 }
 
 DeltaTime FishSchedule::deltaToSlotEnd(){
@@ -39,9 +39,9 @@ DeltaTime FishSchedule::deltaToSlotEnd(){
  * Start time is calculated once, at end of sync slot, in FishSchedule.init()
  * Time til start is in [0, timeTilLastSleepingSlot]
  */
-LongTime FishSchedule::timeOfThisFishSlotStart() {
+void FishSchedule::memoizeTimeOfThisFishSlotStart() {
 	// policy chooses which normally sleeping slots to fish in.
-	ScheduleCount sleepingSlotOrdinal = fishPolicy.next();
+	ScheduleCount sleepingSlotOrdinal = fishPolicy.nextFishSlotOrdinal();
 	// minus 1: convert ordinal to zero-based duration multiplier
 	LongTime result = clique.schedule.startTimeOfSyncPeriod() +  (sleepingSlotOrdinal - 1) * ScheduleParameters::SlotDuration;
 
@@ -71,14 +71,11 @@ LongTime FishSchedule::timeOfThisFishSlotStart() {
 	 */
 	assert(result < clique.schedule.timeOfNextSyncPoint() );
 
-	// !!! Memoize
-	memoStartTimeOfFishSlot = result;
-
-	return result;
+	_memoStartTimeOfFishSlot = result;
 }
 
 LongTime FishSchedule::timeOfThisFishSlotEnd() {
-	LongTime result = memoStartTimeOfFishSlot + ScheduleParameters::SlotDuration;
+	LongTime result = _memoStartTimeOfFishSlot + ScheduleParameters::SlotDuration;
 
 	// A Fish slot can be the last slot
 	// Fish slot should not end after next SyncPoint

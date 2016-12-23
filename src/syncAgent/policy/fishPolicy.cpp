@@ -4,36 +4,43 @@
 #include "fishPolicy.h"
 #include "../scheduleParameters.h"
 
-/*
- * Last sleeping slot is the last slot i.e. CountSlots
- */
+
 
 namespace {
+/*
+ * Last sleeping slot could be the last slot i.e. CountSlots.
+ * But we don't fish it, since it delays start of SyncPeriod.
+ */
 
-ScheduleCount simpleUpCounter = ScheduleParameters::FirstSleepingSlotOrdinal;
+const ScheduleCount lastSlotToFish = ScheduleParameters::CountSlots - 1;	// !!!
+const ScheduleCount firstSlotToFish = ScheduleParameters::FirstSleepingSlotOrdinal;
+
+
+
+ScheduleCount simpleUpCounter = firstSlotToFish;
 
 void incrementCounterModuloSleepingSlots(ScheduleCount* counter) {
 	(*counter)++;
-	if (*counter > ScheduleParameters::CountSlots) {
-		*counter = ScheduleParameters::FirstSleepingSlotOrdinal;
+	if (*counter > lastSlotToFish) {
+		*counter = firstSlotToFish;
 	}
 }
 
 void decrementCounterModuloSleepingSlots(ScheduleCount* counter) {
 	(*counter)--;
-	if (*counter < ScheduleParameters::FirstSleepingSlotOrdinal) {
-		*counter = ScheduleParameters::CountSlots;
+	if (*counter < firstSlotToFish) {
+		*counter = lastSlotToFish;
 	}
 }
 }
 
 
-ScheduleCount SimpleFishPolicy::next() {
+ScheduleCount SimpleFishPolicy::nextFishSlotOrdinal() {
 	ScheduleCount result;
 
 	incrementCounterModuloSleepingSlots(&simpleUpCounter);
 	result = simpleUpCounter;
-	assert(result >= ScheduleParameters::FirstSleepingSlotOrdinal && result <= ScheduleParameters::CountSlots);
+	assert(result >= firstSlotToFish && result <= lastSlotToFish);
 	return result;
 }
 
@@ -47,16 +54,26 @@ ScheduleCount SimpleFishPolicy::next() {
 
 namespace {
 
+
 /*
  * !!! upCounter initialized to  last slot, the first call after reset increments,
  * and the first result is FirstSleepingSlotOrdinal.
  */
-	ScheduleCount upCounter = ScheduleParameters::CountSlots;
-	ScheduleCount downCounter = ScheduleParameters::FirstSleepingSlotOrdinal;
+	ScheduleCount upCounter = lastSlotToFish;
+	ScheduleCount downCounter = firstSlotToFish;
 	bool direction = true;
 }
 
-ScheduleCount SyncRecoveryFishPolicy::next() {
+// !!! This should be the same as above compile time initialization.
+void SyncRecoveryFishPolicy::reset() {
+	log("reset FishPolicy\n");
+	upCounter = firstSlotToFish;
+	downCounter = lastSlotToFish;
+	direction = true;
+	// next generated ordinal will be first sleeping slot
+}
+
+ScheduleCount SyncRecoveryFishPolicy::nextFishSlotOrdinal() {
 	ScheduleCount result;
 
 	if (direction) {
@@ -70,14 +87,8 @@ ScheduleCount SyncRecoveryFishPolicy::next() {
 
 	direction = ! direction;	// reverse direction, i.e. counter to return next call
 
-	assert(result >= ScheduleParameters::FirstSleepingSlotOrdinal && result <= ScheduleParameters::CountSlots);
+	assert(result >=firstSlotToFish && result <= lastSlotToFish);
 	return result;
 }
 
-void SyncRecoveryFishPolicy::reset() {
-	log("reset FishPolicy\n");
-	upCounter = ScheduleParameters::FirstSleepingSlotOrdinal;
-	downCounter = ScheduleParameters::CountSlots;
-	direction = true;
-	// next generated ordinal will be first sleeping slot
-}
+

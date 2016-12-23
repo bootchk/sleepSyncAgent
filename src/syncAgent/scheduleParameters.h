@@ -60,7 +60,7 @@ public:	// for assertions
 
 // 40, 100 Sync period 2.5 mSec
 static const DeltaTime     SlotDuration = 40;
-static const int           DutyCycleInverse = 100;
+static const unsigned int  DutyCycleInverse = 100;
 
 
 

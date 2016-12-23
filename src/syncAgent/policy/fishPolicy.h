@@ -33,7 +33,7 @@
  */
 class SimpleFishPolicy {
 public:
-	ScheduleCount next();
+	ScheduleCount nextFishSlotOrdinal();
 	void reset() {}	// Does nothing, generator continues as before
 };
 
@@ -50,13 +50,15 @@ public:
  *
  * In this example, the numbers are the ordinals of the slots,
  * where there are 8 slots and slot 1 is the SyncSlot.
- * Yields 2,8,3,7,4,6,5,5,6,4,7,3,8,   2,8,3,7,...
+ * Yields 2,8,3,7,4,6,5,5,6,4,7,3,8,2,2,8,3,...
+ *
+ * Note there are two places where the same slot is fished consecutively.
  *
  * !!! Note it is vital to start at the first sleeping slot past and before the SyncSlot.
  * That is where a drifted master is most likely to be.
  */
 class SyncRecoveryFishPolicy {
 public:
-	ScheduleCount next();
+	ScheduleCount nextFishSlotOrdinal();
 	void reset();
 };

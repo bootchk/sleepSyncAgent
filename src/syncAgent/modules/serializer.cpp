@@ -138,7 +138,7 @@ bool isOTABufferAlgorithmicallyValid() {
 		result = false;
 	}
 	if (! DeltaSync::isValidValue(unserializeOffset())) {
-		log("OTA offset out of range\n");
+		// already logged
 		result = false;
 	}
 

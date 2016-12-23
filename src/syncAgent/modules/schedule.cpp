@@ -89,7 +89,7 @@ void Schedule::rollPeriodForwardToNow() {
 
 	// Starts now.  See above.  If called late, sync might be lost.
 	_startTimeOfSyncPeriod = now;
-	_endTimeOfSyncPeriod = startTimeOfSyncPeriod() + ScheduleParameters::NormalSyncPeriodDuration;
+	_endTimeOfSyncPeriod = now + ScheduleParameters::NormalSyncPeriodDuration;
 
 	/*
 	 * assert startTimeOfSyncPeriod is close to nowTime().
@@ -216,10 +216,15 @@ DeltaTime  Schedule::deltaNowToNextSyncPoint() {
 	DeltaTime result = TimeMath::clampedTimeDifferenceFromNow(timeOfNextSyncPoint());
 	/*
 	 * Usually next SyncPoint is future.
-	 * If we are already past it, is algorithm robust??
+	 * If we are already past it, will whack sync.
 	 * It could happen if we fish in the last slot and code delays us past nextSyncPoint.
 	 */
-	if (result == 0) log(">>> zero delta to next SyncPoint\n");
+	if (result == 0) {
+		// Calculate magnitude in past, how late are we?
+		DeltaTime wrongDelta = TimeMath::clampedTimeDifferenceToNow(timeOfNextSyncPoint());
+		logInt(wrongDelta);
+		log(">>> zero or neg delta to next SyncPoint\n");
+	}
 	return result;
 }
 

@@ -17,6 +17,6 @@ public:
 	static LongTime timeOfThisFishSlotEnd();
 
 private:
-	static LongTime timeOfThisFishSlotStart();
+	static void memoizeTimeOfThisFishSlotStart();
 
 };

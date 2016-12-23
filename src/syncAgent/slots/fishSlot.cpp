@@ -120,7 +120,7 @@ void FishSlot::perform() {
 	sleepUntilFishSlotStart();
 
 	logInt(Schedule::deltaNowToNextSyncPoint());
-	log("Fish start\n");
+	log("fish time to period end\n");
 
 	prepareRadioToTransmitOrReceive();
 	assert(radio->isPowerOn());

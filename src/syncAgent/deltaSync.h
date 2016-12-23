@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include <nRF5x.h>  // logger
 #include <cassert>
 
 #include "scheduleParameters.h"
@@ -61,6 +62,13 @@ public:
 	}
 
 	// Preflight check value not out of range
-	static bool isValidValue(DeltaTime value) { return value <= ScheduleParameters::NormalSyncPeriodDuration; }
+	static bool isValidValue(DeltaTime value) {
+		bool result = value <= ScheduleParameters::NormalSyncPeriodDuration;
+		if (!result) {
+			logInt(value);
+			log("<<<<Invalid OTA offset\n");
+		}
+		return result;
+	}
 };
 
