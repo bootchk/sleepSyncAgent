@@ -115,10 +115,13 @@ static const DeltaTime NormalSyncPeriodDuration = CountSlots * SlotDuration;
  *
  * OTA ticks = 1/bitrate [second/bits] * messageLength [bits] * RTCFreq [ticks/second]
  *
+ * Message bytes 1 preamble 3 address 11 payload 1 CRC => 16 bytes
+ * 16 bytes is 128 bits
  * Used in sanity assertions only?
  */
-// 1 Mbit bitrate, ~100bit message, 32kHz   yields .1mSec
-static const DeltaTime MsgDurationInTicks = 3;
+// 1 Mbit bitrate, 128bit message, 32kHz   yields .12mSec = 4 ticks
+// 2 Mbit bitrate, 128bit message, 32kHz   yields .064mSec == 64uSec = 2 ticks
+static const DeltaTime MsgOverTheAirTimeInTicks = 2;
 
 // 2 Mbit, 120 bits, 32kHz yields 1.8 ticks
 // static const DeltaTime MsgDurationInTicks = 2;

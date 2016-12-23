@@ -141,6 +141,9 @@ public:
 	static LongTime timeOfThisWorkSlotEnd();
 
 
-
 	static LongTime timeOfThisMergeStart(DeltaTime offset);
+
+	static void recordMsgArrivalTime();
+	static LongTime getMsgArrivalTime();
+
 };

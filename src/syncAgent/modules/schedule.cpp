@@ -172,10 +172,13 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
  */
 LongTime Schedule::adjustedEndTime(DeltaSync deltaSync) {
 
+	// log time elapsed since toa
+	logInt(TimeMath::clampedTimeDifferenceToNow(getMsgArrivalTime())); log("<<<Elapsed since toa.\n");
+
 	// Crux: new end time is TOA of SyncMessage + DeltaSync
-	LongTime messageTOA = longClock->nowTime();
+	// LongTime messageTOA = longClock->nowTime();
 	DeltaTime delta = deltaSync.get();
-	LongTime result = messageTOA + delta;
+	LongTime result = getMsgArrivalTime() + delta - ScheduleParameters::MsgOverTheAirTimeInTicks;
 
 	/*
 	 * !!!! < or = : if we are already past sync point,

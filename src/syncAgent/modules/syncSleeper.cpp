@@ -8,6 +8,7 @@
 
 namespace {
 Sleeper sleeper;
+LongClockTimer* longClockTimer;	// for toa
 
 // Responsibility: statistics of invalid messages
 
@@ -114,6 +115,7 @@ void SyncSleeper::init(
 		LongClockTimer * aLCT)
 {
 	sleeper.init(maxSaneTimeout, aLCT);
+	longClockTimer = aLCT;
 }
 
 void SyncSleeper::clearReasonForWake() { sleeper.clearReasonForWake(); }
@@ -206,6 +208,9 @@ bool SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 
 		switch (sleeper.getReasonForWake()) {
 		case MsgReceived:
+			// Record TOA as soon as possible
+			clique.schedule.recordMsgArrivalTime();
+
 			// if timer semantics are: restartable, cancel timer here
 			didReceiveDesiredMsg = dispatchFilteredMsg(msgHandlingSlot);
 			break;	// switch
