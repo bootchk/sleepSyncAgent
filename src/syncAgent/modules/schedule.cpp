@@ -8,6 +8,7 @@
 namespace {
 
 LongClockTimer* longClock;
+LongTime messageTOA;
 
 
 
@@ -85,7 +86,7 @@ void Schedule::rollPeriodForwardToNow() {
 	//LongTime startOfPreviousSyncPeriod = startTimeOfSyncPeriod;
 
 	LongTime now = longClock->nowTime();
-	logLongLong(now);
+	logLongLong(now); log("<Sync pt\n");
 
 	// Starts now.  See above.  If called late, sync might be lost.
 	_startTimeOfSyncPeriod = now;
@@ -137,9 +138,6 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 	 * assert endSyncSlot or endFishSlot has not yet occurred, but this doesn't affect that.
 	 */
 
-	logInt(msg->deltaToNextSyncPoint.get()); log(":Adj sched by\n");
-	logInt(deltaNowToNextSyncPoint()); log(":Delta to next sync\n");
-
 	LongTime oldEndTimeOfSyncPeriod = _endTimeOfSyncPeriod;
 
 	// FUTURE optimization?? If adjustedEndTime is near old endTime, forego setting it?
@@ -172,13 +170,19 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
  */
 LongTime Schedule::adjustedEndTime(DeltaSync deltaSync) {
 
-	// log time elapsed since toa
-	logInt(TimeMath::clampedTimeDifferenceToNow(getMsgArrivalTime())); log("<<<Elapsed since toa.\n");
+	// log time elapsed since toa, not really used
+	//DeltaTime elapsedTicksSinceTOA = TimeMath::clampedTimeDifferenceToNow(getMsgArrivalTime());
+	//logInt(elapsedTicksSinceTOA); log("<<<Elapsed since toa.\n");
 
-	// Crux: new end time is TOA of SyncMessage + DeltaSync
-	// LongTime messageTOA = longClock->nowTime();
+	/*
+	 * Crux: new end time is TOA of SyncMessage + DeltaSync + various latencies
+	 */
 	DeltaTime delta = deltaSync.get();
-	LongTime result = getMsgArrivalTime() + delta - ScheduleParameters::MsgOverTheAirTimeInTicks;
+	LongTime toa = getMsgArrivalTime();
+	LongTime result = toa +
+			+ delta
+			- ScheduleParameters::MsgOverTheAirTimeInTicks
+			- ScheduleParameters::SenderLatency;
 
 	/*
 	 * !!!! < or = : if we are already past sync point,
@@ -188,6 +192,12 @@ LongTime Schedule::adjustedEndTime(DeltaSync deltaSync) {
 	if (result <= timeOfNextSyncPoint()) {
 		result += ScheduleParameters::NormalSyncPeriodDuration;
 	}
+
+	logLongLong(toa); log(":toa\n");
+	logInt(delta); log(":offset\n");
+	logLongLong(result); log(":new period end\n");
+	//logInt(deltaNowToNextSyncPoint()); log(":Delta to next sync\n");
+
 	assert( (result - startTimeOfSyncPeriod()) < 2* ScheduleParameters::NormalSyncPeriodDuration);
 	return result;
 }
@@ -335,6 +345,14 @@ LongTime Schedule::timeOfThisMergeStart(DeltaTime offset) {
 	return result;
 }
 
+
+void Schedule::recordMsgArrivalTime() {
+	messageTOA = longClock->nowTime();
+}
+
+LongTime Schedule::getMsgArrivalTime() {
+	return messageTOA;
+}
 
 #ifdef OBSOLETE
 

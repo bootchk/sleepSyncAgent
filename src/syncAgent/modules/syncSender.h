@@ -35,14 +35,18 @@ public:
 		 * TODO should it also be greater than zero?
 		 * Susceptible to breakpoints: If breakpointed, nextSyncPoint is in past and forwardOffset is zero.
 		 */
-		DeltaSync forwardOffset = clique.schedule.deltaNowToNextSyncPoint();
-		// FUTURE include correction for latency (on receiver's end)
+		DeltaTime rawOffset = clique.schedule.deltaNowToNextSyncPoint();
+		// Encapsulate in range checked type
+		DeltaSync forwardOffset = rawOffset;
 
 		// FUTURE assert we are not xmitting sync past end of syncSlot?
 		// i.e. calculations are rapid and sync slot not too short?
 
 		serializer.outwardCommonSyncMsg.makeMasterSync(forwardOffset, myID());
 		sendPrefabricatedMessage();
+
+		// Uncomment this to experimentally determine send latency.
+		//logInt(rawOffset - clique.schedule.deltaNowToNextSyncPoint()); log(":Send latency\n");
 	}
 
 
@@ -55,6 +59,7 @@ public:
 	}
 
 
+	// TODO should calculate offset as late as possible
 	static void sendWorkSync() {
 		/*
 		 * The app sends work OUT only when there is enough power for self to do work,

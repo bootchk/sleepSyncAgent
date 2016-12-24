@@ -200,7 +200,6 @@ void SyncWorkSlot::perform() {
 	 * Work must be rare, lest it flood network and destroy sync
 	 * (colliding too often with MergeSync or MasterSync.)
 	 */
-	log(". ");	// Indicate start syncSlot
 	if (workOutMailbox->isMail() ) {
 		// This satisfies needXmitSync
 		doSendingWorkSyncWorkSlot();

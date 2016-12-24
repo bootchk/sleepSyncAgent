@@ -38,6 +38,7 @@ void MergeSlot::perform() {
 	syncSleeper.sleepUntilTimeout(timeoutUntilMerge);
 	// assert time aligned with middle of a mergee sync slots (same wall time as fished sync from mergee.)
 	prepareRadioToTransmitOrReceive();
+	logLongLong(clique.schedule.nowTime()); log(":mergeSync");
 	syncSender.sendMergeSync();
 	shutdownRadio();
 

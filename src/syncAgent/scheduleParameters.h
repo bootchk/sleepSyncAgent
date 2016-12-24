@@ -58,10 +58,13 @@ public:	// for assertions
 //static const DeltaTime     SlotDuration = 40;
 //static const int           DutyCycleInverse = 400;
 
-// 40, 100 Sync period 2.5 mSec
-static const DeltaTime     SlotDuration = 40;
-static const unsigned int  DutyCycleInverse = 100;
+// 40, 100 Sync period 250 mSec (1/4 sec)
+//static const DeltaTime     SlotDuration = 40;
+//static const unsigned int  DutyCycleInverse = 100;
 
+// 50, 100
+static const DeltaTime     SlotDuration = 50;
+static const unsigned int  DutyCycleInverse = 100;
 
 
 /*
@@ -121,10 +124,18 @@ static const DeltaTime NormalSyncPeriodDuration = CountSlots * SlotDuration;
  */
 // 1 Mbit bitrate, 128bit message, 32kHz   yields .12mSec = 4 ticks
 // 2 Mbit bitrate, 128bit message, 32kHz   yields .064mSec == 64uSec = 2 ticks
+// 2 Mbit, 120 bits, 32kHz yields 1.8 ticks
 static const DeltaTime MsgOverTheAirTimeInTicks = 2;
 
-// 2 Mbit, 120 bits, 32kHz yields 1.8 ticks
-// static const DeltaTime MsgDurationInTicks = 2;
+/*
+ * The delay between the time the sender fetches offset time
+ * and sender actually sends it.
+ * This is currently just a guess or measured.
+ * If sending code changes, or optimization, this changes too.
+ */
+static const DeltaTime SenderLatency = 4;
+
+
 
 
 // Sanity.  SleepSync uses timeouts less than this, 5 seconds

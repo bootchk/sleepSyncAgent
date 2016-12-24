@@ -16,9 +16,7 @@ MergeSlot mergeSlot;
 
 void CombinedSyncPeriod::doSlotSequence() {
 
-	// log("Now time\n");
-	// logLongLong(clique.schedule.nowTime());
-
+	// Schedule.rollPeriodForward logs syncPoint
 
 	// first, arbitrary
 	syncWorkSlot.perform();
