@@ -43,7 +43,7 @@ void FishSchedule::memoizeTimeOfThisFishSlotStart() {
 	// policy chooses which normally sleeping slots to fish in.
 	ScheduleCount sleepingSlotOrdinal = fishPolicy.nextFishSlotOrdinal();
 	// minus 1: convert ordinal to zero-based duration multiplier
-	LongTime result = clique.schedule.startTimeOfSyncPeriod() +  (sleepingSlotOrdinal - 1) * ScheduleParameters::SlotDuration;
+	LongTime result = clique.schedule.startTimeOfSyncPeriod() +  (sleepingSlotOrdinal - 1) * ScheduleParameters::VirtualSlotDuration;
 
 	/*
 	 * Since some cpu cycles have elapsed after end of previous slot,
@@ -75,7 +75,8 @@ void FishSchedule::memoizeTimeOfThisFishSlotStart() {
 }
 
 LongTime FishSchedule::timeOfThisFishSlotEnd() {
-	LongTime result = _memoStartTimeOfFishSlot + ScheduleParameters::SlotDuration;
+	LongTime result = _memoStartTimeOfFishSlot
+			+ ScheduleParameters::RealSlotDuration;		// !!!!
 
 	// A Fish slot can be the last slot
 	// Fish slot should not end after next SyncPoint

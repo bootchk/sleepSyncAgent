@@ -7,8 +7,8 @@ Most slots prepareRadio, dispatchUntil(), shutdownRadio().
 
 Most slots listen and/or send.
 
-Ordering of slots is known by SyncAgent.loop()
+Ordering of slots is known by SyncPeriod
 
-Timing of the slots is known by Schedule.
+Timing of the slots is known by <slot>Schedule.
 
 Some slots change the Schedule and Role owned by SyncAgent.

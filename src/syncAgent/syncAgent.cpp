@@ -120,6 +120,21 @@ void SyncAgent::toFisherRole(){
 	ledLogger.toggleLED(3);
 }
 
+
+
+
+void SyncAgent::relayWorkToApp(WorkPayload work) {
+	/*
+	 * Alternatives are:
+	 * - queue to worktask (unblock it)
+	 * - onWorkMsgCallback(msg);  (callback)
+	 */
+	onWorkMsgCallback(work);	// call callback
+	// ledLogger.toggleLED(1);
+}
+
+
+#ifdef OBSOLETE
 /*
  * Hack
  *
@@ -140,14 +155,4 @@ void SyncAgent::mangleWorkMsg(SyncMessage* msg){
 	 */
 	msg->deltaToNextSyncPoint = clique.schedule.deltaFromWorkMiddleToEndSyncPeriod() ;
 }
-
-
-void SyncAgent::relayWorkToApp(WorkPayload work) {
-	/*
-	 * Alternatives are:
-	 * - queue to worktask (unblock it)
-	 * - onWorkMsgCallback(msg);  (callback)
-	 */
-	onWorkMsgCallback(work);	// call callback
-	// ledLogger.toggleLED(1);
-}
+#endif

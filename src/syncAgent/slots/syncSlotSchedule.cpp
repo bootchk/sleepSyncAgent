@@ -16,12 +16,20 @@ DeltaTime SyncSlotSchedule::deltaToThisSyncSlotEnd(){
  * FUTURE: Choice of sync slot at start of period is arbitrary, allow it to be anywhere in period?
  */
 
+
+
 LongTime SyncSlotSchedule::timeOfThisSyncSlotMiddleSubslot() {
-	return clique.schedule.startTimeOfSyncPeriod() + clique.schedule.halfSlotDuration() - ScheduleParameters::RampupDelay ;
+	return clique.schedule.startTimeOfSyncPeriod()
+			+ ScheduleParameters::DeltaToSyncSlotMiddle;
 }
 
 
+/*
+ * Real slot is longer than virtual slot,
+ * by startup delays for radio.
+ */
 LongTime SyncSlotSchedule::timeOfThisSyncSlotEnd() {
-	return clique.schedule.startTimeOfSyncPeriod() + ScheduleParameters::SlotDuration;
+	return clique.schedule.startTimeOfSyncPeriod()
+			+ ScheduleParameters::RealSlotDuration;		// !!!!
 }
 

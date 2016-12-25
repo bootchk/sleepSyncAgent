@@ -10,6 +10,31 @@
  * Other params of algorithm at DropoutMonitor.h
  */
 
+/*
+ * VirtualSlotDuration:
+ * Virtual slots divide a sync period into non-overlapping segments.
+ * Real slot duration is greater, and real slots overlap.
+ *
+ * Real slots are longer to accommodate RadioLag.
+ * That is, real slots waste some time waiting for radio lag, but then listen a full VirtualSlotDuration.
+ * Thus, a sequence of FishSlots listens to the whole sync period without gaps in listening.
+ *
+ * Virtual slots start on the divisions of a sync period.
+ * The end of one real slot overlaps onto the beginning of the next.
+ * The end of the sync slot overlaps onto the beginning of the first fish slot,
+ * so when a first fish slot is scheduled, the scheduled time is already over and the fish slot starts immediately.
+ *
+ * The last virtual slot of a sync period is not fished.
+ * The last fishing slot overlaps into the last virtual slot of the sync period.
+ *
+ * Thus there are some dead gaps: a short time at the beginning of the first fishing slot (when the radio is lagging)
+ * and the tail end of the last virtual slot (which is not fished at all.)
+ *
+ * TODO a better design that doesn't have those gaps
+ * e.g. that keeps the radio hot after the sync slot, when the second virtual slot (the first fish slot) is to be fished.
+ * And some way of fishing closer to the sync point in the last virtual slot.
+ */
+
 
 
 class ScheduleParameters {
@@ -65,9 +90,9 @@ public:	// for assertions
 //static const unsigned int  DutyCycleInverse = 100;
 
 // 50, 100
-static const DeltaTime     SlotDuration = 50;
+static const DeltaTime     VirtualSlotDuration = 50;
 static const unsigned int  DutyCycleInverse = 100;
-
+static const DeltaTime     HalfSlotDuration = VirtualSlotDuration / 2;
 
 /*
  * This is:
@@ -109,7 +134,7 @@ static const ScheduleCount CountSlots = CountActiveSlots*DutyCycleInverse;
  * Duration of 'normal' SyncPeriod in units ticks.
  * Note that some actual SyncPeriods are not normal, extended in duration while merging cliques.
  */
-static const DeltaTime NormalSyncPeriodDuration = CountSlots * SlotDuration;
+static const DeltaTime NormalSyncPeriodDuration = CountSlots * VirtualSlotDuration;
 
 
 
@@ -164,6 +189,29 @@ static const DeltaTime PowerOffToActiveDelay = 16;
 	// ramp up is 130 uSec i.e. 4.3 ticks
 	static const DeltaTime RampupDelay = 4;
 #endif
+
+/*
+ * Delay from radio.powerOn() to start of xmit or rcv.
+ * !!! RampupDelay can be incurred again when switching from xmit to rcv or vice versa.
+ */
+static const DeltaTime RadioLag = PowerOffToActiveDelay + RampupDelay;
+
+/*
+ * Real slots are greater duration than virtual slots.
+ */
+static const DeltaTime RealSlotDuration = VirtualSlotDuration + RadioLag;
+
+/*
+ * Middle of active portion of sync slot.
+ *
+ * Radio is active after RadioLag.
+ * Radio is active a full VirtualSlotDuration
+ * Center of the active period is RadioLag plus HalfSlotDuration.
+ * But a RampupDelay is incurred switching from rcv to xmit.
+ * So to center the xmit, must start one RampupDelay before center of active period,
+ * hence we subtract one RampupDelay.
+ */
+static const DeltaTime DeltaToSyncSlotMiddle = HalfSlotDuration + RadioLag - RampupDelay;
 
 
 

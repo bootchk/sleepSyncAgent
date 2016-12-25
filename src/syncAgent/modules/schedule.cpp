@@ -86,7 +86,7 @@ void Schedule::rollPeriodForwardToNow() {
 	//LongTime startOfPreviousSyncPeriod = startTimeOfSyncPeriod;
 
 	LongTime now = longClock->nowTime();
-	logLongLong(now); log("<Sync pt\n");
+	logLongLong(now); log("<Sync\n");
 
 	// Starts now.  See above.  If called late, sync might be lost.
 	_startTimeOfSyncPeriod = now;
@@ -149,7 +149,7 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 	assert(_endTimeOfSyncPeriod > oldEndTimeOfSyncPeriod);
 
 	// end time never jumps too far forward from remembered start time.
-	assert( (_endTimeOfSyncPeriod - startTimeOfSyncPeriod()) < 2* ScheduleParameters::NormalSyncPeriodDuration);
+	assert( (_endTimeOfSyncPeriod - startTimeOfSyncPeriod()) <= 2* ScheduleParameters::NormalSyncPeriodDuration);
 }
 
 /*
@@ -178,6 +178,8 @@ LongTime Schedule::adjustedEndTime(DeltaSync deltaSync) {
 	 * Crux: new end time is TOA of SyncMessage + DeltaSync + various latencies
 	 */
 	DeltaTime delta = deltaSync.get();
+	// delta < SyncPeriodDuration
+
 	LongTime toa = getMsgArrivalTime();
 	LongTime result = toa +
 			+ delta
@@ -185,6 +187,9 @@ LongTime Schedule::adjustedEndTime(DeltaSync deltaSync) {
 			- ScheduleParameters::SenderLatency;
 
 	/*
+	 * Don't adjust end time sooner than it already is,
+	 * otherwise fishing and merging in this sync period also need adjusting.
+	 *
 	 * !!!! < or = : if we are already past sync point,
 	 * both result and timeOfNextSyncPoint() could be the same
 	 * (both deltas are zero.)
@@ -198,7 +203,7 @@ LongTime Schedule::adjustedEndTime(DeltaSync deltaSync) {
 	logLongLong(result); log(":new period end\n");
 	//logInt(deltaNowToNextSyncPoint()); log(":Delta to next sync\n");
 
-	assert( (result - startTimeOfSyncPeriod()) < 2* ScheduleParameters::NormalSyncPeriodDuration);
+	assert( (result - startTimeOfSyncPeriod()) <= 2* ScheduleParameters::NormalSyncPeriodDuration);
 	return result;
 }
 

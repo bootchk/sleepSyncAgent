@@ -85,9 +85,6 @@ public:
 	static void rollPeriodForwardToNow();
 	static void adjustBySyncMsg(SyncMessage* msg);
 	static LongTime adjustedEndTime(DeltaSync senderDeltaToSyncPoint);	// <<<<
-	static DeltaTime thisSyncPeriodDuration();
-
-	static DeltaTime halfSlotDuration() { return ScheduleParameters::SlotDuration / 2 ; }
 	static LongTime startTimeOfSyncPeriod();
 
 	/*
@@ -114,21 +111,12 @@ public:
 	static DeltaTime deltaFromWorkMiddleToEndSyncPeriod();
 
 
-	/*
-	 *  Times
-	 */
 	static LongTime nowTime();
-
 	static LongTime timeOfNextSyncPoint();
 
 	// slot times
 
-	/*
-	 * Start time of the middle subslot of the SyncSlot.
-	 * Transmit occurs in the middle subslot.
-	 * We want the transmit to be in the middle of the subslot.
-	 * Since there is a ramp up delay, start the subslot before the middle of the SyncSlot.
-	 */
+
 
 
 	static LongTime timeOfThisWorkSlotMiddle();

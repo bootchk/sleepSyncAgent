@@ -88,7 +88,7 @@ void SyncWorkSlot::doSlaveSyncWorkSlot() {
 	assert(!radio->isDisabledState()); // listening for other's sync
 
 	// Log delay from sync point to actual start listening.
-	logInt(clique.schedule.deltaPastSyncPointToNow()); log("<delta SP to sync listen.\n");
+	// logInt(clique.schedule.deltaPastSyncPointToNow()); log("<delta SP to sync listen.\n");
 
 	(void) syncSleeper.sleepUntilMsgAcceptedOrTimeout(
 				this,
@@ -197,7 +197,7 @@ bool SyncWorkSlot::doWorkMsg(SyncMessage* msg){
  */
 
 void SyncWorkSlot::perform() {
-	logInt(clique.schedule.deltaPastSyncPointToNow()); log("<delta SP to start slot.\n");
+	// logInt(clique.schedule.deltaPastSyncPointToNow()); log("<delta SP to start slot.\n");
 
 	prepareRadioToTransmitOrReceive();
 

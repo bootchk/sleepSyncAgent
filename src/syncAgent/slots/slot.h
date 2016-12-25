@@ -2,11 +2,22 @@
 
 #include "../modules/message.h"
 
-
+/*
+ * Superclass API for a slot.
+ * Subclasses:
+ *    SyncWorkSlot
+ *    FishSlot
+ *
+ * MergeSlot is different (not a Slot)
+ * WorkSlot is obsolete.
+ *
+ */
 class Slot {
 
+	/*
+	 * All slots use radio
+	 */
 protected:
-
 	static void prepareRadioToTransmitOrReceive();
 	static void startReceiving();
 	static void stopReceiving();

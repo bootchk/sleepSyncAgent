@@ -36,7 +36,7 @@ LongTime messageTimeOfArrival() {
 }
 
 LongTime middleOfNextSyncSlotOfFisher() {
-	LongTime result = owningClique->schedule.timeOfNextSyncPoint() + ScheduleParameters::SlotDuration;
+	LongTime result = owningClique->schedule.timeOfNextSyncPoint() + ScheduleParameters::DeltaToSyncSlotMiddle;
 	return result;
 }
 
@@ -54,7 +54,9 @@ LongTime middleOfNextSyncSlotOfCatch() {
 }
 // Time in past when Catch started SyncSlot
 LongTime pastSyncPointOfCatch() {
-	LongTime result = messageTimeOfArrival() - owningClique->schedule.halfSlotDuration();
+	LongTime result = messageTimeOfArrival() - ScheduleParameters::DeltaToSyncSlotMiddle;
+	// TODO minus a halfMessageLatency or other adjustment???
+	// WAS: owningClique->schedule.halfSlotDuration();
 	return result;
 }
 

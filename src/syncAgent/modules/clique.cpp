@@ -111,7 +111,7 @@ void Clique::heardSync() {
 void Clique::checkMasterDroppedOut() {
 	if (dropoutMonitor.isDropout()) {
 		// assert dropoutMonitor is reset
-		log("Master dropped out\n");
+		log("    MASTER DROP OUT\n");
 		onMasterDropout();
 	}
 }
