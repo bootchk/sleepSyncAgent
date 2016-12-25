@@ -52,9 +52,17 @@ void Clique::setSelfMastership() {
 	masterID = myID();
 }
 
+/*
+ * In this design MasterSync from master and WorkSync msg from slave
+ * both carry the MasterID of the clique master.
+ * We might be the master, and so otherID (from WorkSync slave could already be the clique master.)
+ *
+ * In an alternative design (Work is separate and not piggybacked on Sync)
+ * then you can make the assertion:
+ * assert(otherID != myID());	// we can't hear our own sync
+ */
 void Clique::setOtherMastership(SystemID otherID) {
-	assert(otherID != myID());	// we can't hear our own sync
-	log("set other mastership\n");
+	log("set other master\n");
 	masterID = otherID;
 }
 
