@@ -5,9 +5,16 @@
 
 #include "../globals.h"
 #include "syncWorkSlot.h"
+#include "syncSlotSchedule.h"
 
 #include "../logMessage.h"
 
+
+namespace {
+
+SyncSlotSchedule slotSchedule;
+
+} // namespace
 
 
 
@@ -33,7 +40,7 @@ bool SyncWorkSlot::doListenHalfSyncWorkSlot(OSTime (*timeoutFunc)()) {
 void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 	// not assert self is Master
 
-	(void) doListenHalfSyncWorkSlot(clique.schedule.deltaToThisSyncSlotMiddleSubslot);
+	(void) doListenHalfSyncWorkSlot(slotSchedule.deltaToThisSyncSlotMiddleSubslot);
 	assert(radio->isDisabledState());
 	assert(radio->isPowerOn());
 
@@ -58,7 +65,7 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 	 *
 	 * Result doesn't matter, slot is over and we proceed regardless whether we heard sync keeping msg.
 	 */
-	(void) doListenHalfSyncWorkSlot(clique.schedule.deltaToThisSyncSlotEnd);
+	(void) doListenHalfSyncWorkSlot(slotSchedule.deltaToThisSyncSlotEnd);
 
 	// assert radio on or off
 }
@@ -80,9 +87,12 @@ void SyncWorkSlot::doSlaveSyncWorkSlot() {
 	// This assertion is time sensitive, can't stay in production code
 	assert(!radio->isDisabledState()); // listening for other's sync
 
+	// Log delay from sync point to actual start listening.
+	logInt(clique.schedule.deltaPastSyncPointToNow()); log("<delta SP to sync listen.\n");
+
 	(void) syncSleeper.sleepUntilMsgAcceptedOrTimeout(
 				this,
-				clique.schedule.deltaToThisSyncSlotEnd);
+				slotSchedule.deltaToThisSyncSlotEnd);
 	/*
 	 * Not using result:  all message handlers return false i.e. keep looking.
 	 * Assert we timed out and now is end of slot.
@@ -93,15 +103,12 @@ void SyncWorkSlot::doSlaveSyncWorkSlot() {
 
 /*
  * Transmit any sync in middle of slot.
- *
- *
- * !!! The offset must be about half the slot length, back to start of SyncPeriod
  */
 void SyncWorkSlot::doMasterSyncWorkSlot() {
 
 	bool heardSyncKeepingSync;
 
-	heardSyncKeepingSync = doListenHalfSyncWorkSlot(clique.schedule.deltaToThisSyncSlotMiddleSubslot);
+	heardSyncKeepingSync = doListenHalfSyncWorkSlot(slotSchedule.deltaToThisSyncSlotMiddleSubslot);
 	assert(radio->isDisabledState());
 
 	/*
@@ -117,7 +124,7 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 
 	// Keep listening for other better Masters and work.
 	// Result doesn't matter, slot is over and we proceed whether we heard sync keeping sync or not.
-	(void) doListenHalfSyncWorkSlot(clique.schedule.deltaToThisSyncSlotEnd);
+	(void) doListenHalfSyncWorkSlot(slotSchedule.deltaToThisSyncSlotEnd);
 
 	// assert radio on or off
 }
@@ -190,7 +197,10 @@ bool SyncWorkSlot::doWorkMsg(SyncMessage* msg){
  */
 
 void SyncWorkSlot::perform() {
+	logInt(clique.schedule.deltaPastSyncPointToNow()); log("<delta SP to start slot.\n");
+
 	prepareRadioToTransmitOrReceive();
+
 
 	// Call shouldTransmitSync every time, since it needs calls sideeffect reset itself
 	bool needXmitSync = syncBehaviour.shouldTransmitSync();

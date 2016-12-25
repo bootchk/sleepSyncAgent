@@ -252,26 +252,13 @@ DeltaTime  Schedule::deltaPastSyncPointToNow() {
 	return result;
 }
 
-DeltaTime Schedule::deltaToThisSyncSlotMiddleSubslot(){
-	return TimeMath::clampedTimeDifferenceFromNow(timeOfThisSyncSlotMiddleSubslot());
-}
-DeltaTime Schedule::deltaToThisSyncSlotEnd(){
-	return TimeMath::clampedTimeDifferenceFromNow(timeOfThisSyncSlotEnd());
-}
-
-// We don't need WorkSlot start
-DeltaTime Schedule::deltaToThisWorkSlotMiddle(){
-	return TimeMath::clampedTimeDifferenceFromNow(timeOfThisWorkSlotMiddle());
-}
-DeltaTime Schedule::deltaToThisWorkSlotEnd(){
-	return TimeMath::clampedTimeDifferenceFromNow(timeOfThisWorkSlotEnd());
-}
 
 
 
-DeltaTime Schedule::deltaToThisMergeStart(MergeOffset offset){
-	return TimeMath::clampedTimeDifferenceFromNow(timeOfThisMergeStart(offset.get()));
-}
+
+
+
+
 
 
 DeltaTime Schedule::rampupDelay() {
@@ -283,14 +270,7 @@ DeltaTime Schedule::rampupDelay() {
 	return 4;
 #endif
 }
-/*
- * The offset a Work message would hold (if offset were not used otherwise)
- * Used to mangle a Work message to be equivalent to a Sync.
- * A Work message is sent 1-1/2 slots from SyncPoint.
- */
-DeltaTime Schedule::deltaFromWorkMiddleToEndSyncPeriod(){
-	return ScheduleParameters::NormalSyncPeriodDuration - ScheduleParameters::SlotDuration - halfSlotDuration();
-}
+
 
 
 /*
@@ -311,23 +291,6 @@ LongTime Schedule::timeOfNextSyncPoint() {
 	return _endTimeOfSyncPeriod;
 }
 
-/*
- * Start of period and start of SyncSlot coincide.
- * FUTURE: Choice of sync slot at start of period is arbitrary, allow it to be anywhere in period?
- */
-
-LongTime Schedule::timeOfThisSyncSlotMiddleSubslot() {
-	return startTimeOfSyncPeriod() + halfSlotDuration() - rampupDelay() ;
-}
-
-
-LongTime Schedule::timeOfThisSyncSlotEnd() { return startTimeOfSyncPeriod() + ScheduleParameters::SlotDuration; }
-
-// WorkSlot immediately after SyncSlot
-LongTime Schedule::timeOfThisWorkSlotMiddle() { return startTimeOfSyncPeriod() + ScheduleParameters::SlotDuration + halfSlotDuration(); }
-LongTime Schedule::timeOfThisWorkSlotEnd() { return startTimeOfSyncPeriod() + 2 * ScheduleParameters::SlotDuration; }
-
-
 
 
 
@@ -345,6 +308,11 @@ LongTime Schedule::timeOfThisMergeStart(DeltaTime offset) {
 	return result;
 }
 
+DeltaTime Schedule::deltaToThisMergeStart(MergeOffset offset){
+	return TimeMath::clampedTimeDifferenceFromNow(timeOfThisMergeStart(offset.get()));
+}
+
+
 
 void Schedule::recordMsgArrivalTime() {
 	messageTOA = longClock->nowTime();
@@ -355,6 +323,30 @@ LongTime Schedule::getMsgArrivalTime() {
 }
 
 #ifdef OBSOLETE
+
+/*
+ * The offset a Work message would hold (if offset were not used otherwise)
+ * Used to mangle a Work message to be equivalent to a Sync.
+ * A Work message is sent 1-1/2 slots from SyncPoint.
+ */
+DeltaTime Schedule::deltaFromWorkMiddleToEndSyncPeriod(){
+	return ScheduleParameters::NormalSyncPeriodDuration - ScheduleParameters::SlotDuration - halfSlotDuration();
+}
+
+
+// WorkSlot immediately after SyncSlot
+LongTime Schedule::timeOfThisWorkSlotMiddle() { return startTimeOfSyncPeriod() + ScheduleParameters::SlotDuration + halfSlotDuration(); }
+LongTime Schedule::timeOfThisWorkSlotEnd() { return startTimeOfSyncPeriod() + 2 * ScheduleParameters::SlotDuration; }
+
+// We don't need WorkSlot start
+DeltaTime Schedule::deltaToThisWorkSlotMiddle(){
+	return TimeMath::clampedTimeDifferenceFromNow(timeOfThisWorkSlotMiddle());
+}
+DeltaTime Schedule::deltaToThisWorkSlotEnd(){
+	return TimeMath::clampedTimeDifferenceFromNow(timeOfThisWorkSlotEnd());
+}
+
+
 
 //LongTime Schedule::timeOfNextSyncSlotStart() { return timeOfNextSyncPeriodStart(); }
 

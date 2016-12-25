@@ -5,7 +5,9 @@
 #include "slot.h"
 
 
-
+/*
+ * If radio not already powered on, make it so.
+ */
 void Slot::prepareRadioToTransmitOrReceive() {
 	if (!radio->isPowerOn()) {
 			radio->powerOnAndConfigure();
@@ -17,6 +19,7 @@ void Slot::prepareRadioToTransmitOrReceive() {
 }
 
 void Slot::startReceiving() {
+	// Note radio might already be ready, but this ensure it.
 	prepareRadioToTransmitOrReceive();
 	syncSleeper.clearReasonForWake();
 	radio->receiveStatic();

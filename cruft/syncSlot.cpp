@@ -1,160 +1,207 @@
-#ifdef OLDDESIGN
 
-void SyncAgent::doSyncSlot() {
-	// Here, we xmit sync at beginning of slot
-	startSyncSlot();
-	xmitRoleAproposSync();
-	// even a Master listens for remainder of sync slot
-	radio->receiveStatic(); // DYNAMIC (receiveBuffer, Radio::MaxMsgLength);
-	// race to sleep
+/*
+ * THE sync slot of my schedule.
+ *
+ * Each Clique is on a Schedule that includes a sync slot.
+ * See general notes in Schedule.
+ *
+ * a) A clique's Master xmits sync FROM its sync slot.
+ *
+ * b) A Merger xmits sync FROM a sleeping slot INTO another clique's sync slot.
+ *
+ * c) One clique's sleeping slot may coincidentally be near in time to another clique's sleeping slot, or drift into each other.
+ *
+ * Contention (two syncs in same interval of a sync slot):
+ * - situation c:
+ *   two cliques may unwittingly be in sync (two MASTERS xmitting in same interval)
+ * - situation b:
+ *   merging: a Merger of a better clique may be xmitting sync FROM its sleeping slot to merge this clique into an offset syncSlot
+ */
 
-	assert(!radio->isDisabled()); // listening for other's sync
-	dispatchMsgUntil(
-			dispatchMsgReceivedInSyncSlot,
-			clique.schedule.deltaToThisSyncSlotEnd);
-	endSyncSlot();
+#include <cassert>
+
+#include "../globals.h"
+#include "syncSlot.h"
+
+
+
+
+// Private
+
+
+bool SyncSlot::doMasterListenHalfSyncSlot(OSTime (*timeoutFunc)()) {
+	startReceiving();
+	bool result = syncSleeper.sleepUntilMsgAcceptedOrTimeout(
+					this, //dispatchMsgReceived,
+					timeoutFunc
+					);
+
+	// assert radio is on or off
+	return result;
 }
 
-#endif
+// Sleep with radio off for remainder of sync slot
+void SyncSlot::doIdleSlotRemainder() {
+	assert(!radio->isPowerOn());
+	syncSleeper.sleepUntilTimeout(clique.schedule.deltaToThisSyncSlotEnd);
+}
 
-#ifdef OBS
-void SyncAgent::startSyncing() {
 
-	assert(! isSyncing);
-	// Assert never had sync, or lost sync
+void SyncSlot::doSlaveSyncSlot() {
+	// listen for sync the whole period
+	startReceiving();
+	// This assertion is time sensitive, can't stay in production code
+	assert(!radio->isDisabledState()); // listening for other's sync
+	// TODO not using result?
+	(void) syncSleeper.sleepUntilMsgAcceptedOrTimeout(
+				this,
+				clique.schedule.deltaToThisSyncSlotEnd);
+	// TODO Low priority, obsolete. If we heard sync-keeping msg, now is not the end of the slot.  Idle?
+}
 
-	// Alternative: try recovering lost sync
-	// Here, brute force: start my own clique
+/*
+ * Transmit any sync in middle of slot.
+ * Some literature refers to "guards" around the sync.
+ * Syncing in middle has higher probability of being heard by drifted/skewed others.
+ *
+ * !!! The offset must be half the slot length, back to start of SyncPeriod
+ */
+void SyncSlot::doMasterSyncSlot() {
 
-	clique.reset();
+	bool heardSyncKeepingSync = doMasterListenHalfSyncSlot(clique.schedule.deltaToThisSyncSlotMiddleSubslot);
+	assert(radio->isDisabledState());
+
+	if (heardSyncKeepingSync) {
+		// I was Master, but just relinquished it.
+		// I heard sync so powerOff'd radio.
+		assert(!clique.isSelfMaster());
+		assert(!radio->isPowerOn());
+		assert(radio->isDisabledState());	// not receiving
+		doIdleSlotRemainder();
+	}
+	else {
+		// Might have heard a sync from a worse clique
+		syncSender.sendMasterSync();
+		// Keep listening for other better Masters.
+		// Result doesn't matter, slot is over and we proceed whether we heard sync keeping sync or not.
+		(void) doMasterListenHalfSyncSlot(clique.schedule.deltaToThisSyncSlotEnd);
+
+		// assert radio on or off
+	}
+}
+
+
+
+
+/*
+ * Sync handling is agnostic of role.isMaster or role.isSlave
+ *
+ * MasterSync and MergeSync handled the same.
+ *
+ * FUTURE discard multiple sync messages if they are queued
+ */
+
+bool SyncSlot::doMasterSyncMsg(SyncMessage* msg) { return syncBehaviour.doSyncMsg(msg); }
+
+bool SyncSlot::doMergeSyncMsg(SyncMessage* msg) { return syncBehaviour.doSyncMsg(msg); }
+
+bool SyncSlot::doAbandonMastershipMsg(SyncMessage* msg){
+	/*
+	 * My clique is still in sync, but master is dropout.
+	 *
+	 * Naive design: all units that hear master abandon assume mastership.
+	 * FUTURE: keep historyOfMasters, and better slaves assume mastership.
+	 */
+	(void) msg;  // FUTURE use msg to record history
+
+	clique.setSelfMastership();
 	assert(clique.isSelfMaster());
-	// clique schedule starts now, at time of this call.
-	// clique is not in sync with others, except by chance.
-
-	// OBS scheduleSyncWake();
-
-	// OBS calling app can sleep, wake event onSynchWake()
+	return false;	// keep listening
 }
 
 
-void SyncAgent::resumeAfterPowerRestored() {
+bool SyncSlot::doWorkMsg(SyncMessage* msg){
+	// Received in wrong slot, from out-of-sync clique
+
 	/*
-	 * Not reset clique.  Resume previous role and schedule.
-	 * If little time has passed since lost power, might still be in sync.
-	 * Otherwise self has drifted, and will experience masterDropout.
+	 * Design decision:
+	 * Work is done even out of sync with others.
+	 * Alternatively, don't do work that is out of sync.  Change this to ignore the msg if from inferior clique.
 	 */
-	assert(isPaused);
-	isPaused = false;
-	clique.schedule.resumeAfterPowerRestored();
-	scheduleSyncWake();
-}
-#endif
+	syncAgent.relayWorkToApp(msg->getWorkPayload());
 
-
-#ifdef OBS
-
-Old design
-
-void SyncAgent::onSyncWake() {
-	// sync slot starts
-	if ( !powerMgr->isPowerForRadio() ) {
-		pauseSyncing();
-		// assert App has a scheduled event; SyncAgent has no events scheduled
+	/*
+	 * Design: (see "duality" in WorkSlot)
+	 * My SyncSlot aligns with other's WorkSlot => other's SyncSlot aligns with my last SleepingSlot.
+	 * So eventually I would fish in my lastSleepingSlot and find other clique.
+	 * But merger comes sooner if we don't waste info we just found.
+	 *
+	 * I might need to schedule a fish for it in my last Sleeping slot.
+	 */
+	if (clique.isOtherCliqueBetter(msg->masterID)) {
+		/*
+		 * Self is inferior.
+		 * Join other clique.
+		 * Other members of my clique should (and with high probably, will) do the same.
+		 *
+		 * Don't become a Merger and merge my old clique into superior clique,
+		 * because that requires sending MergeSync at a displaced time in my new Schedule's SyncSlot.
+		 * Any such merging would also contend with superior other's work slot.
+		 */
+		syncAgent.mangleWorkMsg(msg);
+		clique.updateBySyncMessage(msg);
 	}
 	else {
-		startSyncSlot();
-		// assert receiver on and endSyncSlotTask is scheduled
+		/*
+		 * Self is superior.
+		 * Other clique will continue to send work in my SyncSlot.
+		 * But other should hear my master's MasterSync in its work slot, and join my clique.
+		 */
+		// FUTURE schedule to fish in my last sleeping slot, so I can become a merger.
+		// But many of my cohort may also do this.
+		// Only the master should do this.
 	}
-
-	// ensure endSyncSlotTask is scheduled or App wakingTask is scheduled
-	// sleep
-}
-
-// Scheduling
-
-
-void SyncAgent::scheduleNextSyncRelatedTask() {
-	// assert in syncSlot
-	if (role.isMerger()) {
-		// avoid collision
-		if (cliqueMerger.shouldScheduleMerge()) {
-			scheduleMergeWake();
-		}
-		else { scheduleSyncWake(); }
-	}
-	else {
-		// Fish every period
-		scheduleFishWake();
-	}
-	// assert some task scheduled
-	// onSyncWake: start of next period
-	// onMergeWake or onFishWake: in a normally-sleeping slot of this period
-}
-
-
-void SyncAgent::scheduleSyncWake() {
-	// assert in work or fish or merge slot
-	clique.schedule.scheduleStartSyncSlotTask(onSyncWake);
+	return false;	// keep looking
 }
 
 
 
-void SyncAgent::scheduleFishWake(){
-	// assert in workSlot
+
+/*
+ * Transmit any sync in middle of slot.
+ * Some literature refers to "guards" around the sync.
+ * Syncing in middle has higher probability of being heard by drifted/skewed others.
+ *
+ * !!! The offset must be half the slot length, back to start of SyncPeriod
+ */
+
+void SyncSlot::perform() {
+	prepareRadioToTransmitOrReceive();
+	if (syncBehaviour.shouldTransmitSync())
+		doMasterSyncSlot();
+	else
+		// isSlave or (isMaster and not xmitting (coin flip))
+		doSlaveSyncSlot();
+
 	/*
-	 * Schedule for random sleeping slot.
-	 * Not to avoid collision of xmits, since fishing is receiving.
-	 * Random to better cover time.
-	 */
-	clique.schedule.scheduleStartFishSlotTask(onFishWake);
-}
-
-void SyncAgent::scheduleMergeWake(){
-	// Knows how to schedule mergeSlot at some time in current period
-	// assert we have decided to send a mergeSync
-	assert(cliqueMerger.isActive);
-	clique.schedule.scheduleStartMergeSlotTask(onMergeWake, cliqueMerger.offsetToMergee);
-}
-
-void SyncAgent::startSyncSlot() {
-	// Start of sync slot coincident with start of period.
-	clique.schedule.startPeriod();
-
-	xmitRoleAproposSync();
-
-	// even a Master listens for remainder of sync slot
-	turnReceiverOnWithCallback(onMsgReceivedInSyncSlot);
-	clique.schedule.scheduleEndSyncSlotTask(onSyncSlotEnd);
-    // assert radio on
-	// will wake on onMsgReceivedInSyncSlot or onSyncSlotEnd
-	// sleep
-
-
-
-void SyncAgent::onSyncSlotEnd() {
-	/*
-	 * This may be late, when message receive thread this delays this.
+	 * This may be late, when message receive thread delays this.
 	 * Also, there could be a race to deliver message with this event.
 	 * FUTURE check for those cases.
 	 * Scheduling of subsequent events does not depend on timely this event.
 	 */
 
-	// FUTURE we could do this elsewhere, e.g. start of sync slot
-	if (dropoutMonitor.check()) {
-		dropoutMonitor.heardSync();	// reset
-		clique.onMasterDropout();
-	}
+	// Radio is on or off.  If on, we timeout'd while receiving
+	stopReceiving();
+	// Radio on or off
+	// Turn radio off, workSlot may not need it on
+	shutdownRadio();
 
-	scheduleNextSyncRelatedTask();
-	// workSlot follows syncSlot.  Fall into it.
-	startWorkSlot();
-	/*
-	 * Assert onWorkSlotEnd scheduled
-	 * AND some sync-related task is scheduled.
-	 *
-	 * assert radio on for work msgs
-	 */
-	// sleep
+	// FUTURE we could do this elsewhere, e.g. start of sync slot so this doesn't delay the start of work slot
+	if (!clique.isSelfMaster())
+		clique.checkMasterDroppedOut();
+
+	assert(!radio->isPowerOn());	// ensure
 }
 
-#endif
+
+
