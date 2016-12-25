@@ -1,5 +1,6 @@
 
 #include <cassert>
+#include "../../config.h"
 #include "clique.h"
 
 #include "../globals.h"  // fishPolicy
@@ -82,11 +83,20 @@ bool Clique::shouldXmitSync() {
 bool Clique::isMsgFromMyClique(SystemID otherMasterID){ return masterID == otherMasterID; }
 
 /*
- * All units use same comparison.  The direction is arbitrary.  For testing, it may help to swap it.
+ * All units use same comparison.  The direction is arbitrary.
+ * For testing, it may help to swap it.
  * No need for equality, no unit can hear itself.
  * my > other means: clique/unit with least numerical ID is better clique
  */
-bool Clique::isOtherCliqueBetter(SystemID otherMasterID){ return masterID > otherMasterID; }
+bool Clique::isOtherCliqueBetter(SystemID otherMasterID){
+
+#ifdef LEAST_ID_IS_BETTER_CLIQUE
+	return masterID > otherMasterID;
+#else
+	return masterID < otherMasterID;
+#endif
+
+}
 
 
 

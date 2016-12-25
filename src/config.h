@@ -115,4 +115,12 @@
 #define RECEIVE_IS_SYNCHRONOUS 1
 
 
+/*
+ * Comment this out if you want a unit with a large ID to be master of units with smaller IDs.
+ *
+ * Thus if only one of your units is a DK (with debugging capability)
+ * configure this back and forth
+ * to test both master and slave side of a clique.
+ */
+//#define LEAST_ID_IS_BETTER_CLIQUE 1
 
