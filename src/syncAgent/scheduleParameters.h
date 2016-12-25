@@ -10,6 +10,8 @@
  * Other params of algorithm at DropoutMonitor.h
  */
 
+
+
 class ScheduleParameters {
 public:	// for assertions
 
@@ -135,6 +137,33 @@ static const DeltaTime MsgOverTheAirTimeInTicks = 2;
  */
 static const DeltaTime SenderLatency = 4;
 
+
+/*
+ * After radio is powered on, delay until radio is enableable (DISABLED state).
+ * This is mainly time for HFXO clock to stabilize.
+ * Software is involved in making this transition.
+ *
+ * The constant is experimentally measured,
+ * plus an allowance for variance (expected worst deviation from experiments.)
+ * If enough allowance is not made,
+ * there will be dead gaps in listening/fishing.
+ * This is used to overlap real slots.
+ *
+ * !!! Should not be more than SlotDuration, else the last FishSlot will lap into SyncSlot
+ */
+static const DeltaTime PowerOffToActiveDelay = 16;
+
+
+/*
+ * After radio is enabled, delay until radio is ready for OTA (TXIDLE or RXIDLE)
+ */
+#ifdef NRF52
+	// ramp up in fast mode is 40uSec, i.e. 1.3 ticks
+	static const DeltaTime RampupDelay = 2;
+#else // NRF51
+	// ramp up is 130 uSec i.e. 4.3 ticks
+	static const DeltaTime RampupDelay = 4;
+#endif
 
 
 

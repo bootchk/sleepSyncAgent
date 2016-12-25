@@ -113,10 +113,6 @@ public:
 
 	static DeltaTime deltaFromWorkMiddleToEndSyncPeriod();
 
-	/*
-	 * Other deltas
-	 */
-	static DeltaTime rampupDelay();
 
 	/*
 	 *  Times

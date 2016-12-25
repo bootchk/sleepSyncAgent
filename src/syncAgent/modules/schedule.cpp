@@ -207,22 +207,8 @@ LongTime Schedule::startTimeOfSyncPeriod(){
 	return _startTimeOfSyncPeriod;
 }
 
-/*
- * Deltas
- *
- * uint32 math is modulo: a delta is correct if laterTime > earlierTime
- * (even if the uint32 clock has wrapped).
- * But is incorrect if earlierTime > laterTime.
- * So if you are calculating a timeout to a future deadline time,
- * and the deadline is already in the past, simple math on uint32 is wrong.
- * Use a LongClock to avoid the issue.
- *
- * All these involve a conversion to OSTime i.e. take lower 32 bits of result.
- *
- * If zero, a sleep...(0) executes immediately without delay.
- * Thus these can safely return 0.
- */
-//DeltaTime  Schedule::deltaNowToStartNextSync() {
+
+
 
 
 DeltaTime  Schedule::deltaNowToNextSyncPoint() {
@@ -254,44 +240,10 @@ DeltaTime  Schedule::deltaPastSyncPointToNow() {
 
 
 
-
-
-
-
-
-
-
-DeltaTime Schedule::rampupDelay() {
-#ifdef NRF52
-	// ramp up in fast mode is 40uSec, i.e. 1.3 ticks
-	return 2;
-#else // NRF51
-	// ramp up is 130 uSec i.e. 4.3 ticks
-	return 4;
-#endif
-}
-
-
-
-/*
- * Times
- *
- * These return future times, as long as called at appropriate instant
- * and task processing times is smaller than slotDurations.
- * When these return past times, calculation of DeltaTime clamps to zero.
- *
- * These may be called many times during a slot (to schedule a new Timer),
- * not just at the start of a slot.
- * Thus you cannot assert they are greater than nowTime().
- */
-
-
 // Next
 LongTime Schedule::timeOfNextSyncPoint() {
 	return _endTimeOfSyncPeriod;
 }
-
-
 
 
 
@@ -311,6 +263,7 @@ LongTime Schedule::timeOfThisMergeStart(DeltaTime offset) {
 DeltaTime Schedule::deltaToThisMergeStart(MergeOffset offset){
 	return TimeMath::clampedTimeDifferenceFromNow(timeOfThisMergeStart(offset.get()));
 }
+
 
 
 

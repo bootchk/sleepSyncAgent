@@ -17,7 +17,7 @@ DeltaTime SyncSlotSchedule::deltaToThisSyncSlotEnd(){
  */
 
 LongTime SyncSlotSchedule::timeOfThisSyncSlotMiddleSubslot() {
-	return clique.schedule.startTimeOfSyncPeriod() + clique.schedule.halfSlotDuration() - clique.schedule.rampupDelay() ;
+	return clique.schedule.startTimeOfSyncPeriod() + clique.schedule.halfSlotDuration() - ScheduleParameters::RampupDelay ;
 }
 
 
