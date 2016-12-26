@@ -122,5 +122,5 @@
  * configure this back and forth
  * to test both master and slave side of a clique.
  */
-//#define LEAST_ID_IS_BETTER_CLIQUE 1
+#define LEAST_ID_IS_BETTER_CLIQUE 1
 

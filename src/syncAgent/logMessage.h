@@ -12,22 +12,27 @@ public:
 	static constexpr const char* MergeSlot = "MergeSlot\n";
 
 	// logged in dispatch messages received
-	static constexpr const char* RXMasterSync = "RX MasterSync\n";
-	static constexpr const char* RXWorseMasterSync = "RX WorseMasterSync\n";
-	static constexpr const char* RXMergeSync = "RX MergeSync\n";
-	static constexpr const char* RXAbandonMastership = "RX AbandonMastership\n";
-	static constexpr const char* RXWorkSync = "RX WorkSync\n";
-	static constexpr const char* RXUnknown = "RX unknown msg type\n";
+	static constexpr const char* RXMasterSync = "  RX Master\n";
+	static constexpr const char* RXWorseMasterSync = "  RX WorseMaster\n";
+	static constexpr const char* RXMergeSync = "  RX Merge\n";
+	static constexpr const char* RXAbandonMastership = "  RX AbandonMastership\n";
+	static constexpr const char* RXWorkSync = "  RX Work\n";
+	static constexpr const char* RXUnknown = "  RX unknown msg type\n";
 
-	static constexpr const char* FishedMasterSync = "Fished MasterSync\n";
-	static constexpr const char* FishedMergeSync = "Fished MergeSync\n";
-	static constexpr const char* FishedWorkSync = "Fished WorkSync\n";
+	static constexpr const char* FishedMasterSync = "Fished Master\n";
+	static constexpr const char* FishedMergeSync = "Fished Merge\n";
+	static constexpr const char* FishedWorkSync = "Fished Work\n";
 
 	// Sending
-	static constexpr const char* SendMasterSync = "TX MasterSync\n";
-	static constexpr const char* SendWorkSync = "TX WorkSync\n";
-	static constexpr const char* SendMergeSync = "TX MergeSync\n";
+	static constexpr const char* SendMasterSync = "TX Master\n";
+	static constexpr const char* SendWorkSync = "TX Work\n";
+	static constexpr const char* SendMergeSync = "TX Merge\n";
 	static constexpr const char* SendWork = "TX Work\n";
 	static constexpr const char* SendNone = "Listen\n";
 
+	static void logStartSyncPeriod(LongTime now) {
+		return;
+		logLongLong(now);
+		log("<Sync\n");
+	}
 };
