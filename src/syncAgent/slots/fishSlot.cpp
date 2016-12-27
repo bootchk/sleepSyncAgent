@@ -115,6 +115,8 @@ void FishSlot::perform() {
 	// Sleep ultra low-power across normally sleeping slots to start of fish slot
 	assert(!radio->isPowerOn());
 
+	preamble();
+
 	fishSchedule.init();	// Calculate start time once
 
 	sleepUntilFishSlotStart();
@@ -145,6 +147,8 @@ void FishSlot::perform() {
 	 */
 	// radio might be off already
 	shutdownRadio();
+
+	postlude();
 }
 
 

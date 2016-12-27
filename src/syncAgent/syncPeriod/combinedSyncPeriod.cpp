@@ -14,6 +14,11 @@ FishSlot fishSlot;
 MergeSlot mergeSlot;
 }
 
+
+/*
+ * Each slot needs radio and radio requires HfCrystalClock.
+ * Each slot is responsible for starting and stopping HfCrystalClock .
+ */
 void CombinedSyncPeriod::doSlotSequence() {
 
 	// Schedule.rollPeriodForward logs syncPoint

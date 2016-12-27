@@ -199,6 +199,8 @@ bool SyncWorkSlot::doWorkMsg(SyncMessage* msg){
 void SyncWorkSlot::perform() {
 	// logInt(clique.schedule.deltaPastSyncPointToNow()); log("<delta SP to start slot.\n");
 
+	preamble();
+
 	prepareRadioToTransmitOrReceive();
 
 
@@ -239,6 +241,8 @@ void SyncWorkSlot::perform() {
 	// FUTURE we could do this elsewhere, e.g. start of sync slot so this doesn't delay the start of work slot
 	if (!clique.isSelfMaster())
 		clique.checkMasterDroppedOut();
+
+	postlude();
 
 	assert(!radio->isPowerOn());	// ensure
 }

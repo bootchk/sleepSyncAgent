@@ -18,10 +18,14 @@ class Slot {
 	 * All slots use radio
 	 */
 protected:
+	// Preamble mainly starts HfCrystalClock needed by radio
+	static void preamble();
+
 	static void prepareRadioToTransmitOrReceive();
 	static void startReceiving();
 	static void stopReceiving();
 	static void shutdownRadio();
+	static void postlude();
 
 public:
 	/*
@@ -31,6 +35,8 @@ public:
 	 */
 	// virtual destructor to avoid warnings
 	virtual ~Slot() {};
+
+
 
 	virtual bool doMasterSyncMsg(SyncMessage* msg) {(void) msg; return false;};
 	virtual bool doMergeSyncMsg(SyncMessage* msg) {(void) msg; return false;};

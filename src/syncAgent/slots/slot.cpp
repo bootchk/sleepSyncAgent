@@ -5,6 +5,14 @@
 #include "slot.h"
 
 
+void Slot::preamble() {
+	radio->hfCrystalClock->startAndSleepUntilRunning();
+}
+
+void Slot::postlude() {
+	radio->hfCrystalClock->stop();
+}
+
 /*
  * If radio not already powered on, make it so.
  */

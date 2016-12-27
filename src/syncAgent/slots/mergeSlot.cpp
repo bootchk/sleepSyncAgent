@@ -36,6 +36,9 @@ void MergeSlot::perform() {
 	assert(role.isMerger());
 	// Hard sleep without listening.
 	syncSleeper.sleepUntilTimeout(timeoutUntilMerge);
+
+	preamble();
+
 	// assert time aligned with middle of a mergee sync slots (same wall time as fished sync from mergee.)
 	prepareRadioToTransmitOrReceive();
 	logLongLong(clique.schedule.nowTime()); log(":mergeSync");
@@ -50,6 +53,8 @@ void MergeSlot::perform() {
 		assert(role.isFisher());
 	}
 	// else continue in role Merger
+
+	postlude();
 
 	assert(!radio->isPowerOn());
 }
