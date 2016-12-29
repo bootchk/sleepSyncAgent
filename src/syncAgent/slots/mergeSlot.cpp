@@ -37,13 +37,13 @@ void MergeSlot::perform() {
 	// Hard sleep without listening.
 	syncSleeper.sleepUntilTimeout(timeoutUntilMerge);
 
-	preamble();
+	network.preamble();
 
 	// assert time aligned with middle of a mergee sync slots (same wall time as fished sync from mergee.)
-	prepareRadioToTransmitOrReceive();
+	network.prepareToTransmitOrReceive();
 	logLongLong(clique.schedule.nowTime()); log(":mergeSync");
 	syncSender.sendMergeSync();
-	shutdownRadio();
+	network.shutdown();
 
 	if (mergePolicy.checkCompletionOfMergerRole()){
 		mergePolicy.restart();
@@ -54,7 +54,7 @@ void MergeSlot::perform() {
 	}
 	// else continue in role Merger
 
-	postlude();
+	network.postlude();
 
 	assert(!radio->isPowerOn());
 }

@@ -1,9 +1,6 @@
 
 #pragma once
 
-#include "../slots/slot.h"
-
-
 /*
  * Understands sleeping for sync algorithm.
  *
@@ -19,6 +16,7 @@
 
 typedef void (*voidFuncPtr)();
 
+typedef bool (*DispatchFuncPtr)(SyncMessage *);
 
 
 class SyncSleeper {
@@ -33,7 +31,7 @@ public:
 	static void sleepUntilTimeout(OSTime (*func)());
 
 	static bool sleepUntilMsgAcceptedOrTimeout(
-			Slot*,
+			DispatchFuncPtr,	// Slot*,
 			OSTime (*func)());
 
 	static voidFuncPtr getMsgReceivedCallback();

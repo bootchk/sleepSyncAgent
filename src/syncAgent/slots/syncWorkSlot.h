@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "slot.h"
+#include "syncWorkSlot.h"
 
 /*
  * Combined work/sync slot.
@@ -35,31 +35,28 @@
  */
 
 
-class SyncWorkSlot: Slot {
-
-public:
-	void perform();
+class SyncWorkSlot {
+private:
+	static bool doListenHalfSyncWorkSlot(OSTime (*timeoutFunc)());
 
 	/*
 	 * Three behaviours of slot:
-	 * - Master
+	 * - Master: listen and send in middle
 	 * - Slave listening
-	 * - Master or Slave conveying work
+	 * - Master or Slave, listening and conveying work in middle
 	 * 
-	 * These are not local because they refer to superclass dispatcher i.e. this
+	 * Not local because they refer to superclass dispatcher i.e. this
 	 */
-	void doSendingWorkSyncWorkSlot();
-	void doMasterSyncWorkSlot();
-	void doSlaveSyncWorkSlot();
-
-	// Utility
-	bool doListenHalfSyncWorkSlot(OSTime (*timeoutFunc)());
+	static void doSendingWorkSyncWorkSlot();
+	static void doMasterSyncWorkSlot();
+	static void doSlaveSyncWorkSlot();
 	
 	
-	
-	// override superclass message handlers
-	bool doMasterSyncMsg(SyncMessage* msg);
-	bool doMergeSyncMsg(SyncMessage* msg);
-	bool doAbandonMastershipMsg(SyncMessage* msg);
-	bool doWorkMsg(SyncMessage* msg);
+public:
+	static void perform();
+	static bool dispatchMsgReceived(SyncMessage* msg);	// Same code as for SyncWorkSlot
+	static bool doMasterSyncMsg(SyncMessage* msg);
+	static bool doMergeSyncMsg(SyncMessage* msg);
+	static bool doAbandonMastershipMsg(SyncMessage* msg);
+	static bool doWorkMsg(SyncMessage* msg);
 };

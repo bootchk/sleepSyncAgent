@@ -37,6 +37,8 @@ extern SyncSender syncSender;
 #include "modules/syncBehaviour.h"
 extern SyncBehaviour syncBehaviour;
 
+#include "modules/network.h"
+extern Network network;
 /*
  * fishPolicy used by clique and fishSchedule
  */

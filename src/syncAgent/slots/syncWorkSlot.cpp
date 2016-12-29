@@ -18,20 +18,16 @@ SyncSlotSchedule slotSchedule;
 
 
 
-
 bool SyncWorkSlot::doListenHalfSyncWorkSlot(OSTime (*timeoutFunc)()) {
-	startReceiving();
+	network.startReceiving();
 	bool result = syncSleeper.sleepUntilMsgAcceptedOrTimeout(
-					this,
-					timeoutFunc
-					);
+			dispatchMsgReceived, //this,
+			timeoutFunc
+			);
 
 	// assert radio is on or off
 	return result;
 }
-
-
-
 
 
 /*
@@ -71,6 +67,19 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 #ifdef NOTUSED
 // Sleep with radio off for remainder of sync slot
 void SyncWorkSlot::doIdleSlotRemainder() {
@@ -83,7 +92,7 @@ void SyncWorkSlot::doIdleSlotRemainder() {
  * listen for sync the whole period.
  */
 void SyncWorkSlot::doSlaveSyncWorkSlot() {
-	startReceiving();
+	network.startReceiving();
 	// This assertion is time sensitive, can't stay in production code
 	assert(!radio->isDisabledState()); // listening for other's sync
 
@@ -91,8 +100,8 @@ void SyncWorkSlot::doSlaveSyncWorkSlot() {
 	// logInt(clique.schedule.deltaPastSyncPointToNow()); log("<delta SP to sync listen.\n");
 
 	(void) syncSleeper.sleepUntilMsgAcceptedOrTimeout(
-				this,
-				slotSchedule.deltaToThisSyncSlotEnd);
+			dispatchMsgReceived, //this,
+			slotSchedule.deltaToThisSyncSlotEnd);
 	/*
 	 * Not using result:  all message handlers return false i.e. keep looking.
 	 * Assert we timed out and now is end of slot.
@@ -187,6 +196,37 @@ bool SyncWorkSlot::doWorkMsg(SyncMessage* msg){
 
 
 
+/*
+ * Dispatch received msg to appropriate method of slot.
+ */
+bool SyncWorkSlot::dispatchMsgReceived(SyncMessage* msg){
+	bool foundDesiredMessage = false;
+
+	switch(msg->type) {
+	case MasterSync:
+		log(LogMessage::RXMasterSync);
+		foundDesiredMessage = doMasterSyncMsg(msg);
+		break;
+	case MergeSync:
+		log(LogMessage::RXMergeSync);
+		foundDesiredMessage = doMergeSyncMsg(msg);
+		break;
+	case AbandonMastership:
+		log(LogMessage::RXAbandonMastership);
+		foundDesiredMessage = doAbandonMastershipMsg(msg);
+		break;
+	case WorkSync:
+		log(LogMessage::RXWorkSync);
+		foundDesiredMessage = doWorkMsg(msg);
+		break;
+	default:
+		log(LogMessage::RXUnknown);
+	}
+
+	return foundDesiredMessage;
+}
+
+
 
 /*
  * Transmit any sync in middle of slot.
@@ -199,9 +239,9 @@ bool SyncWorkSlot::doWorkMsg(SyncMessage* msg){
 void SyncWorkSlot::perform() {
 	// logInt(clique.schedule.deltaPastSyncPointToNow()); log("<delta SP to start slot.\n");
 
-	preamble();
+	network.preamble();
 
-	prepareRadioToTransmitOrReceive();
+	network.prepareToTransmitOrReceive();
 
 
 	// Call shouldTransmitSync every time, since it needs calls sideeffect reset itself
@@ -233,16 +273,16 @@ void SyncWorkSlot::perform() {
 	 */
 
 	// Radio is on or off.  If on, we timeout'd while receiving
-	stopReceiving();
+	network.stopReceiving();
 	// Radio on or off
 	// Turn radio off, workSlot may not need it on
-	shutdownRadio();
+	network.shutdown();
 
 	// FUTURE we could do this elsewhere, e.g. start of sync slot so this doesn't delay the start of work slot
 	if (!clique.isSelfMaster())
 		clique.checkMasterDroppedOut();
 
-	postlude();
+	network.postlude();
 
 	assert(!radio->isPowerOn());	// ensure
 }

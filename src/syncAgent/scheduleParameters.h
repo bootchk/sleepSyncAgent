@@ -12,11 +12,12 @@
 
 /*
  * VirtualSlotDuration:
+ *
  * Virtual slots divide a sync period into non-overlapping segments.
  * Real slot duration is greater, and real slots overlap.
  *
  * Real slots are longer to accommodate RadioLag.
- * That is, real slots waste some time waiting for radio lag, but then listen a full VirtualSlotDuration.
+ * That is, real slots have radio dead time waiting for radio lag, but then listen a full VirtualSlotDuration.
  * Thus, a sequence of FishSlots listens to the whole sync period without gaps in listening.
  *
  * Virtual slots start on the divisions of a sync period.
@@ -89,9 +90,13 @@ public:	// for assertions
 //static const DeltaTime     SlotDuration = 40;
 //static const unsigned int  DutyCycleInverse = 100;
 
-// 50, 100
-static const DeltaTime     VirtualSlotDuration = 50;
-static const unsigned int  DutyCycleInverse = 100;
+// 40, 800
+static const DeltaTime     VirtualSlotDuration = 40;
+static const unsigned int  DutyCycleInverse = 800;
+
+
+
+
 static const DeltaTime     HalfSlotDuration = VirtualSlotDuration / 2;
 
 /*
@@ -165,11 +170,14 @@ static const DeltaTime SenderLatency = 4;
 
 /*
  * After radio is powered on, delay until radio is enableable (DISABLED state).
- * This is mainly time for HFXO clock to stabilize.
- * Software is involved in making this transition.
+ * This is one component of 'dead' time for radio.
+ *
+ * Comprises:
+ * - time for HFXO clock to stabilize (360uSec, 12 ticks)
+ * - a few ticks for other overhead (some execution time.)
+ * - an allowance for variance (expected worst deviation from experiments.)
  *
  * The constant is experimentally measured,
- * plus an allowance for variance (expected worst deviation from experiments.)
  * If enough allowance is not made,
  * there will be dead gaps in listening/fishing.
  * This is used to overlap real slots.
@@ -180,7 +188,9 @@ static const DeltaTime PowerOffToActiveDelay = 16;
 
 
 /*
- * After radio is enabled, delay until radio is ready for OTA (TXIDLE or RXIDLE)
+ * After radio is enabled, delay until radio is ready for OTA (TXIDLE or RXIDLE).
+ * This is another component of 'dead' time.
+ * !!! RampupDelay can be incurred again when switching from xmit to rcv or vice versa.
  */
 #ifdef NRF52
 	// ramp up in fast mode is 40uSec, i.e. 1.3 ticks
@@ -191,8 +201,8 @@ static const DeltaTime PowerOffToActiveDelay = 16;
 #endif
 
 /*
- * Delay from radio.powerOn() to start of xmit or rcv.
- * !!! RampupDelay can be incurred again when switching from xmit to rcv or vice versa.
+ * Delay from sleeping to radio ready (TXIDLE or RXIDLE).
+ *
  */
 static const DeltaTime RadioLag = PowerOffToActiveDelay + RampupDelay;
 

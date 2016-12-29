@@ -138,13 +138,13 @@ bool WorkSlot::doWorkMsg(SyncMessage* msg) {
  *  Receive work OR sync (similar to fishing.)
  */
 void WorkSlot::performReceivingWork(){
-	prepareRadioToTransmitOrReceive();
-	startReceiving();
+	network.prepareToTransmitOrReceive();
+	network.startReceiving();
 	syncSleeper.sleepUntilMsgAcceptedOrTimeout(
 			this, // dispatchMsgReceived,
 			clique.schedule.deltaToThisWorkSlotEnd);
 	assert(radio->isDisabledState());
-	shutdownRadio();
+	network.shutdown();
 }
 
 /*
@@ -160,9 +160,9 @@ void WorkSlot::performSendingWork(){
 	// FUTURE send work randomly in subslot of work slot, contention
 	sleepUntilWorkSendingTime();
 
-	prepareRadioToTransmitOrReceive();
+	network.prepareToTransmitOrReceive();
 	sendWorkFromAppToOtherUnits();
-	shutdownRadio();
+	network.shutdown();
 
 	sleepUntilEndWorkSlot();
 }

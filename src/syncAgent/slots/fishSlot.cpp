@@ -20,6 +20,7 @@ namespace {
 FishSchedule fishSchedule;
 
 
+
 bool doSyncMsg(SyncMessage* msg){
 	/*
 	 * MasterSync may be better or worse.
@@ -107,6 +108,36 @@ bool FishSlot::doWorkMsg(SyncMessage* msg) {
 
 
 
+/*
+ * Dispatch received msg to appropriate method of slot.
+ */
+bool FishSlot::dispatchMsgReceived(SyncMessage* msg){
+	bool foundDesiredMessage = false;
+
+	switch(msg->type) {
+	case MasterSync:
+		log(LogMessage::RXMasterSync);
+		foundDesiredMessage = doMasterSyncMsg(msg);
+		break;
+	case MergeSync:
+		log(LogMessage::RXMergeSync);
+		foundDesiredMessage = doMergeSyncMsg(msg);
+		break;
+	case AbandonMastership:
+		log(LogMessage::RXAbandonMastership);
+		foundDesiredMessage = doAbandonMastershipMsg(msg);
+		break;
+	case WorkSync:
+		log(LogMessage::RXWorkSync);
+		foundDesiredMessage = doWorkMsg(msg);
+		break;
+	default:
+		log(LogMessage::RXUnknown);
+	}
+
+	return foundDesiredMessage;
+}
+
 
 
 void FishSlot::perform() {
@@ -115,7 +146,7 @@ void FishSlot::perform() {
 	// Sleep ultra low-power across normally sleeping slots to start of fish slot
 	assert(!radio->isPowerOn());
 
-	preamble();
+	network.preamble();
 
 	fishSchedule.init();	// Calculate start time once
 
@@ -123,15 +154,15 @@ void FishSlot::perform() {
 
 	// logInt(Schedule::deltaPastSyncPointToNow()); log("fish tick\n");
 
-	prepareRadioToTransmitOrReceive();
+	network.prepareToTransmitOrReceive();
 	assert(radio->isPowerOn());
 
-	startReceiving();
+	network.startReceiving();
 	assert(!radio->isDisabledState());
 
 	// assert can receive an event that wakes imminently: race to sleep
 	syncSleeper.sleepUntilMsgAcceptedOrTimeout(
-			this,
+			dispatchMsgReceived, //this,
 			fishSchedule.deltaToSlotEnd);
 	assert(radio->isDisabledState());
 	/*
@@ -146,9 +177,9 @@ void FishSlot::perform() {
 	 * first mergeSlot will be after next syncSlot.
 	 */
 	// radio might be off already
-	shutdownRadio();
+	network.shutdown();
 
-	postlude();
+	network.postlude();
 }
 
 

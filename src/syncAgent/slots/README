@@ -1,14 +1,29 @@
 
-The public API is just perform().
+Most slots use the globals (network etc.)
+Slots use radio via Network class.
 
-Most slots use the globals.
-
-Most slots prepareRadio, dispatchUntil(), shutdownRadio().
-
-Most slots listen and/or send.
+WorkSyncSlot: listen and/or send.
+MergeSlot: send only
+FishSlot: listen only
 
 Ordering of slots is known by SyncPeriod
 
 Timing of the slots is known by <slot>Schedule.
 
 Some slots change the Schedule and Role owned by SyncAgent.
+
+In one design, Slot was superclass with virtual message handling methods,
+but that bloats the binary with dynamic dispatch of methods (precluding linker --nodefaultlibs)
+That design also required more public methods in SyncWorkSlot.
+
+In the current design, the common code for message dispatch is duplicated
+in FishSlot and WorkSync slot,
+and the common API is NOT defined by an abstract base class.
+
+Each slot has the API 
+    static void perform();
+	static bool dispatchMsgReceived(SyncMessage* msg);
+	static bool doMasterSyncMsg(SyncMessage* msg);
+	static bool doMergeSyncMsg(SyncMessage* msg);
+	static bool doAbandonMastershipMsg(SyncMessage* msg) {(void) msg; return false;};
+	static bool doWorkMsg(SyncMessage* msg);

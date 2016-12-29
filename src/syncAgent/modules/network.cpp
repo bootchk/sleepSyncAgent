@@ -2,21 +2,21 @@
 #include <cassert>
 
 #include "../globals.h"
-#include "slot.h"
+#include "network.h"
 
 
-void Slot::preamble() {
+void Network::preamble() {
 	radio->hfCrystalClock->startAndSleepUntilRunning();
 }
 
-void Slot::postlude() {
+void Network::postlude() {
 	radio->hfCrystalClock->stop();
 }
 
 /*
  * If radio not already powered on, make it so.
  */
-void Slot::prepareRadioToTransmitOrReceive() {
+void Network::prepareToTransmitOrReceive() {
 	if (!radio->isPowerOn()) {
 			radio->powerOnAndConfigure();
 			// TESTING: lower xmit power 8
@@ -26,22 +26,22 @@ void Slot::prepareRadioToTransmitOrReceive() {
 	assert(radio->isDisabledState());	// not is receiving
 }
 
-void Slot::startReceiving() {
+void Network::startReceiving() {
 	// Note radio might already be ready, but this ensure it.
-	prepareRadioToTransmitOrReceive();
+	prepareToTransmitOrReceive();
 	syncSleeper.clearReasonForWake();
 	radio->receiveStatic();
 	assert(!radio->isDisabledState());	// is receiving
 }
 
-void Slot::stopReceiving() {
+void Network::stopReceiving() {
 	if (radio->isPowerOn()) {
 		radio->stopReceive();
 	}
 	assert(radio->isDisabledState());	// not is receiving
 }
 
-void Slot::shutdownRadio() {
+void Network::shutdown() {
 	radio->powerOff();
 	assert(!radio->isPowerOn());
 }

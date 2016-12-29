@@ -17,41 +17,12 @@ static uint32_t countInvalidTypeReceives;
 static uint32_t countInvalidCRCReceives;
 
 
-/*
- * Dispatch received msg to appropriate method of slot.
- */
-bool dispatchMsgReceived(Slot* slot, SyncMessage* msg){
-	bool foundDesiredMessage = false;
-
-	switch(msg->type) {
-	case MasterSync:
-		log(LogMessage::RXMasterSync);
-		foundDesiredMessage = slot->doMasterSyncMsg(msg);
-		break;
-	case MergeSync:
-		log(LogMessage::RXMergeSync);
-		foundDesiredMessage = slot->doMergeSyncMsg(msg);
-		break;
-	case AbandonMastership:
-		log(LogMessage::RXAbandonMastership);
-		foundDesiredMessage = slot->doAbandonMastershipMsg(msg);
-		break;
-	case WorkSync:
-		log(LogMessage::RXWorkSync);
-		foundDesiredMessage = slot->doWorkMsg(msg);
-		break;
-	default:
-		log(LogMessage::RXUnknown);
-	}
-
-	return foundDesiredMessage;
-}
 
 /*
  * Filter invalid messages.
  * Return result of dispatching valid messages.
  */
-bool dispatchFilteredMsg( Slot * msgHandlingSlot) { // Slot has handlers per message type
+bool dispatchFilteredMsg( DispatchFuncPtr msgDispatcher) { // Slot has handlers per message type
 	// FUTURE while any received messages queued
 
 	bool didReceiveDesiredMsg = false;
@@ -65,7 +36,7 @@ bool dispatchFilteredMsg( Slot * msgHandlingSlot) { // Slot has handlers per mes
 
 			//ledLogger2.toggleLED(3);	// debug: LED 3 valid received
 
-			didReceiveDesiredMsg = dispatchMsgReceived(msgHandlingSlot, msg);
+			didReceiveDesiredMsg = msgDispatcher(msg);
 			if (didReceiveDesiredMsg) {
 				// Ultra low power sleep remainder of duration (radio power off)
 				assert(radio->isDisabledState());
@@ -174,8 +145,8 @@ void SyncSleeper::sleepUntilTimeout(OSTime (*timeoutFunc)()) {
  */
 
 bool SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
-		Slot * msgHandlingSlot,
-		//DispatchFuncPtr dispatchQueuedMsg, // function to dispatch a message, knows desired msg type
+		//Slot * msgHandlingSlot,
+		DispatchFuncPtr msgDispatcher,
 		OSTime (*timeoutFunc)())	// function returning remaining duration of slot
 {
 	bool didReceiveDesiredMsg = false;
@@ -212,7 +183,7 @@ bool SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 			clique.schedule.recordMsgArrivalTime();
 
 			// if timer semantics are: restartable, cancel timer here
-			didReceiveDesiredMsg = dispatchFilteredMsg(msgHandlingSlot);
+			didReceiveDesiredMsg = dispatchFilteredMsg(msgDispatcher);
 			break;	// switch
 
 		case TimerExpired:

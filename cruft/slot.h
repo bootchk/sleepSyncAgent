@@ -17,15 +17,8 @@ class Slot {
 	/*
 	 * All slots use radio
 	 */
-protected:
-	// Preamble mainly starts HfCrystalClock needed by radio
-	static void preamble();
 
-	static void prepareRadioToTransmitOrReceive();
-	static void startReceiving();
-	static void stopReceiving();
-	static void shutdownRadio();
-	static void postlude();
+
 
 public:
 	/*
@@ -33,8 +26,8 @@ public:
 	 *
 	 * Not pure virtual: subclasses must override for different behaviour.
 	 */
-	// virtual destructor to avoid warnings
-	virtual ~Slot() {};
+	// virtual destructor to avoid warnings (with , but it causes link errors using --nodefaultlibs
+	//virtual ~Slot() {};
 
 
 
