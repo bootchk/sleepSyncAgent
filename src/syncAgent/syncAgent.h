@@ -63,7 +63,7 @@ public:
 			void (*onWorkMsg)(WorkPayload),
 			void (*onSyncPoint)()
 			);
-	static void loop();
+	static void loop() __attribute__ ((noreturn));
 
 	static void startSyncing();
 	static void doSyncPeriod();
