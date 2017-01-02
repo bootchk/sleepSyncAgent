@@ -40,7 +40,7 @@ void SyncAgent::loop(){
 	ledLogger.init();	// DEBUG
 	initLogging();
 
-	log("Master ID: \n");
+	log("ID:\n");
 	logLongLong(clique.getMasterID());
 
 	assert(! isSyncingState);

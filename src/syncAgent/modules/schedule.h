@@ -8,7 +8,7 @@
  */
 #include "message.h"	// SyncMessage, DeltaSync
 #include "../../augment/timeMath.h"	// LongTime, DeltaTime
-#include "../mergeOffset.h"	// MergeOffset
+#include "mergeOffset.h"
 
 
 /*
@@ -106,7 +106,7 @@ public:
 	static DeltaTime deltaToThisWorkSlotMiddle();
 	static DeltaTime deltaToThisWorkSlotEnd();
 
-	static DeltaTime deltaToThisMergeStart(MergeOffset offset);	 // <<<<
+	static DeltaTime deltaToThisMergeStart(const MergeOffset* const offset);	 // <<<<
 
 	static DeltaTime deltaFromWorkMiddleToEndSyncPeriod();
 

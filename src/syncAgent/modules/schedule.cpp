@@ -267,8 +267,8 @@ LongTime Schedule::timeOfThisMergeStart(DeltaTime offset) {
 	return result;
 }
 
-DeltaTime Schedule::deltaToThisMergeStart(MergeOffset offset){
-	return TimeMath::clampedTimeDifferenceFromNow(timeOfThisMergeStart(offset.get()));
+DeltaTime Schedule::deltaToThisMergeStart(const MergeOffset* const offset){
+	return TimeMath::clampedTimeDifferenceFromNow(timeOfThisMergeStart(offset->get()));
 }
 
 
