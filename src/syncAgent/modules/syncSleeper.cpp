@@ -4,6 +4,7 @@
 #include "../globals.h"
 #include "syncSleeper.h"
 
+#include "../scheduleParameters.h"
 #include "../logMessage.h"
 
 namespace {

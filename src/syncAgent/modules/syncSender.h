@@ -36,13 +36,13 @@ public:
 		 * Susceptible to breakpoints: If breakpointed, nextSyncPoint is in past and forwardOffset is zero.
 		 */
 		DeltaTime rawOffset = clique.schedule.deltaNowToNextSyncPoint();
-		// Encapsulate in range checked type
-		DeltaSync forwardOffset = rawOffset;
+
+		// TODO robust code: check rawOffset in range now and return if not
 
 		// FUTURE assert we are not xmitting sync past end of syncSlot?
 		// i.e. calculations are rapid and sync slot not too short?
 
-		serializer.outwardCommonSyncMsg.makeMasterSync(forwardOffset, myID());
+		serializer.outwardCommonSyncMsg.makeMasterSync(rawOffset, myID());
 		sendPrefabricatedMessage();
 
 		// Uncomment this to experimentally determine send latency.

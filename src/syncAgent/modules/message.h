@@ -2,7 +2,7 @@
 #pragma once
 
 #include "../../platformHeaders/types.h"  // SystemID
-#include "../deltaSync.h"
+#include "deltaSync.h"
 
 
 /*
@@ -56,11 +56,11 @@ public:
 	SystemID masterID;
 	WorkPayload work;	// work always present, not always defined
 
-	SyncMessage() :type(MasterSync), deltaToNextSyncPoint(0), masterID(0), work(0) {}
+	// OLD constructor SyncMessage() :type(MasterSync), deltaToNextSyncPoint(0), masterID(0), work(0) {}
 
-	void init(MessageType aType, DeltaSync aDeltaToNextSyncPoint, SystemID aMasterID) {
+	void init(MessageType aType, DeltaTime aDeltaToNextSyncPoint, SystemID aMasterID) {
 		type = aType;
-		deltaToNextSyncPoint = aDeltaToNextSyncPoint;
+		deltaToNextSyncPoint.set(aDeltaToNextSyncPoint);	// throws assertion if out of range
 		masterID = aMasterID;
 		work = 0;
 	}
@@ -96,14 +96,14 @@ public:
 	 * Dying breath message from master which is power failing.  deltaToNextSyncPoint is moot.
 	 */
 	void makeAbandonMastership(SystemID aMasterID) {
-		init(AbandonMastership, (DeltaSync) 0, aMasterID);
+		init(AbandonMastership, 0, aMasterID);
 	}
 
 	/*
 	 * Usual sync from a unit in Master role.
 	 * DeltaToNextSyncPoint is typically small.
 	 */
-	void makeMasterSync(DeltaSync aDeltaToNextSyncPoint, SystemID aMasterID){
+	void makeMasterSync(DeltaTime aDeltaToNextSyncPoint, SystemID aMasterID){
 		init(MasterSync, aDeltaToNextSyncPoint, aMasterID);
 	}
 
@@ -111,14 +111,14 @@ public:
 	 * Sync from unit in Merger role (master or slave) requesting other clique change its sync time.
 	 * DeltaToNextSyncPoint is typically but not always large, more than one slot duration.
 	 */
-	void makeMergeSync(DeltaSync aDeltaToNextSyncPoint, SystemID aMasterID){
+	void makeMergeSync(DeltaTime aDeltaToNextSyncPoint, SystemID aMasterID){
 		init(MergeSync, aDeltaToNextSyncPoint, aMasterID);
 	}
 
 	/*
 	 * Work message, also helps to maintain sync.
 	 */
-	void makeWorkSync(DeltaSync aDeltaToNextSyncPoint, SystemID aMasterID, WorkPayload workPayload){
+	void makeWorkSync(DeltaTime aDeltaToNextSyncPoint, SystemID aMasterID, WorkPayload workPayload){
 		init(WorkSync, aDeltaToNextSyncPoint, aMasterID);
 		work = workPayload;
 	}

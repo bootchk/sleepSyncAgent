@@ -2,9 +2,8 @@
 #pragma once
 
 #include <nRF5x.h>  // logger
-#include <cassert>
+#include "../types.h"  // DeltaTime
 
-#include "scheduleParameters.h"
 
 /*
  * Type of field of SyncMessage to adjust SyncPoint.
@@ -46,29 +45,14 @@
 
 
 class DeltaSync {
-private:
-	DeltaTime _deltaSync;
-public:
-	// Need constructors else can't define instances without "error: use of deleted function"
-	DeltaSync() : _deltaSync(0) {}
-	DeltaSync(int value) : _deltaSync(value) {}
 
-	DeltaTime get() { return _deltaSync; }
+public:
+	static DeltaTime get();
 
 	// Throws assertion if out of range
-	void set(DeltaTime value){
-		assert(isValidValue(value));
-		_deltaSync = value;
-	}
+	static void set(DeltaTime value);
 
 	// Preflight check value not out of range
-	static bool isValidValue(DeltaTime value) {
-		bool result = value <= ScheduleParameters::NormalSyncPeriodDuration;
-		if (!result) {
-			logInt(value);
-			log("<<<<Invalid OTA offset\n");
-		}
-		return result;
-	}
+	static bool isValidValue(DeltaTime value);
 };
 

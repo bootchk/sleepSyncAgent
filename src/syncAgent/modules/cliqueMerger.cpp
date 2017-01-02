@@ -2,6 +2,7 @@
 #include <cassert>
 #include "cliqueMerger.h"
 #include "../../augment/timeMath.h"
+#include "../scheduleParameters.h"
 
 
 namespace {
@@ -242,9 +243,9 @@ void CliqueMerger::makeMergeSync(SyncMessage& msg){
 	 * DeltaSync calculate now.
 	 * The call here must be just before sending.
 	 */
-	DeltaSync deltaToNextSyncPoint = owningClique->schedule.deltaNowToNextSyncPoint();
+	DeltaTime rawOffset = owningClique->schedule.deltaNowToNextSyncPoint();
 
-	msg.makeMergeSync(deltaToNextSyncPoint, masterID);
+	msg.makeMergeSync(rawOffset, masterID);
 }
 
 

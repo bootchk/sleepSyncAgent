@@ -2,6 +2,7 @@
 #include <cassert>
 #include "syncAgent.h"
 #include "globals.h"	// which includes nRF5x.h
+#include "scheduleParameters.h"
 
 
 // Static data members

@@ -2,6 +2,7 @@
 #include "fishSchedule.h"
 
 #include "../globals.h"  // clique, fishPolicy
+#include "../scheduleParameters.h"
 
 // FUTURE memoize end time also???
 
