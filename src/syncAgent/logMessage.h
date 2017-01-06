@@ -19,9 +19,9 @@ public:
 	static constexpr const char* RXWorkSync = "  RX Work\n";
 	static constexpr const char* RXUnknown = "  RX unknown msg type\n";
 
-	static constexpr const char* FishedMasterSync = "Fished Master\n";
-	static constexpr const char* FishedMergeSync = "Fished Merge\n";
-	static constexpr const char* FishedWorkSync = "Fished Work\n";
+	static constexpr const char* FishedMasterSync = "Fish Master\n";
+	static constexpr const char* FishedMergeSync = "Fish Merge\n";
+	static constexpr const char* FishedWorkSync = "Fish Work\n";
 
 	// Sending
 	static constexpr const char* SendMasterSync = "TX Master\n";

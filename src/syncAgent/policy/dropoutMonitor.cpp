@@ -8,8 +8,6 @@ namespace {
 
 ScheduleCount countSyncSlotsWithoutSyncMsg;
 
-void reset() { countSyncSlotsWithoutSyncMsg = 0; }
-
 } // namespace
 
 
@@ -17,7 +15,7 @@ void reset() { countSyncSlotsWithoutSyncMsg = 0; }
  * constructor and heardSync() have same effect: reset counter
  */
 
-DropoutMonitor::DropoutMonitor() { reset(); }
+void DropoutMonitor::reset() { countSyncSlotsWithoutSyncMsg = 0; }
 
 void DropoutMonitor::heardSync() { reset(); }
 

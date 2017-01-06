@@ -12,7 +12,7 @@
 class DropoutMonitor {
 
 public:
-	DropoutMonitor();
+	static void reset();
 
 	static void heardSync();
 

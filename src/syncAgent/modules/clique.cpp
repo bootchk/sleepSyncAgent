@@ -34,6 +34,7 @@ void Clique::init(){
 	log("Clique init\n");
 
 	setSelfMastership();
+	dropoutMonitor.reset();
 	masterXmitSyncPolicy.reset();
 	schedule.startFreshAfterHWReset();
 	// assert clock is running and first period started but no tasks scheduled
