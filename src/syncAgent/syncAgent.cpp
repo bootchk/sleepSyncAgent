@@ -34,12 +34,22 @@ void SyncAgent::init(
 		void (*aOnSyncPointCallback)()
 	)
 {
-	// require radio initialized
+	// require caller initialized radio, mailbox, and LongClockTimer
 
+	// init sleeper must precede using sleeper for initial timeout
 	syncSleeper.init(
 			2* ScheduleParameters::NormalSyncPeriodDuration,
 			aLCT);
-	// FUTURE hard to know who owns clock assert(sleeper.isOSClockRunning());
+
+	/*
+	 * Initial timeout.
+	 * Sleep to allow recover boot energy
+	 * and to insure LFXO is stable (takes 0.25 seconds.)
+	 * Sleep, not spin!!!
+	 */
+	syncSleeper.sleepUntilTimeout(10000);	// TODO symbolic 0.3 seconds
+	assert(aLCT->isOSClockRunning());
+
 
 	// Copy parameters to globals
 	radio = aRadio;

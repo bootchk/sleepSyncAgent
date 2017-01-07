@@ -124,6 +124,33 @@ void SyncSleeper::sleepUntilTimeout(OSTime (*timeoutFunc)()) {
 }
 
 
+void SyncSleeper::sleepUntilTimeout(DeltaTime timeout)
+{
+	LongTime endingTime = longClockTimer->nowTime() + timeout;
+	DeltaTime remainingTimeout = timeout;
+
+	while (true) {
+
+			assert(remainingTimeout < ScheduleParameters::MaxSaneTimeout);
+
+			sleeper.sleepUntilEventWithTimeout(remainingTimeout);
+			// wakened by msg or timeout or unexpected event
+			if ( sleeper.getReasonForWake() == TimerExpired)
+				// assert time timeout has elapsed.
+				break;	// while true
+			else {
+				// reasonForWake is not TimerExpired, e.g. an unexpected reason
+				remainingTimeout = TimeMath::clampedTimeDifferenceFromNow(endingTime);
+				// continue next loop iteration
+			}
+			/*
+			 * waking events spend time, is monotonic and will eventually return 0
+			 * and sleeper.sleepUntilTimeout will return without sleeping and with reasonForWake==Timeout
+			 */
+		}
+		// assert timeout amount of time has elapsed
+}
+
 /*
  * Sleep until timeout with radio on.
  * Wake from sleep to dispatch messsages received.

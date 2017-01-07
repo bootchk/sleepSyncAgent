@@ -17,7 +17,7 @@
  * Real slot duration is greater, and real slots overlap.
  *
  * Real slots are longer to accommodate RadioLag.
- * That is, real slots have radio dead time waiting for radio lag, but then listen a full VirtualSlotDuration.
+ * That is, real slots have radio dead time for radio lag, but then listen a full VirtualSlotDuration.
  * Thus, a sequence of FishSlots listens to the whole sync period without gaps in listening.
  *
  * Virtual slots start on the divisions of a sync period.

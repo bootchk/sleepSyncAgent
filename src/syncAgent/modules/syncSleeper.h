@@ -28,8 +28,16 @@ public:
 
 	static void clearReasonForWake();
 
+	/*
+	 * Sleep a given time (a func that calculates timeout, or a constant timeout)
+	 * Expect only a timer event, but allow for unexpected waking events.
+	 */
 	static void sleepUntilTimeout(OSTime (*func)());
+	static void sleepUntilTimeout(DeltaTime);
 
+	/*
+	 * Expect either a timeout or a message event.
+	 */
 	static bool sleepUntilMsgAcceptedOrTimeout(
 			DispatchFuncPtr,	// Slot*,
 			OSTime (*func)());
