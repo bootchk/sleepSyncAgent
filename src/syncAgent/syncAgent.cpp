@@ -47,7 +47,7 @@ void SyncAgent::init(
 	 * and to insure LFXO is stable (takes 0.25 seconds.)
 	 * Sleep, not spin!!!
 	 */
-	syncSleeper.sleepUntilTimeout(10000);	// TODO symbolic 0.3 seconds
+	syncSleeper.sleepUntilTimeout(ScheduleParameters::StabilizedClockTimeout);
 	assert(aLCT->isOSClockRunning());
 
 

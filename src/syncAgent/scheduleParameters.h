@@ -227,4 +227,18 @@ static const DeltaTime DeltaToSyncSlotMiddle = HalfSlotDuration + RadioLag - Ram
 
 // Sanity.  SleepSync uses timeouts less than this, 5 seconds
 static const DeltaTime MaxSaneTimeout = 164000;
+
+
+
+/*
+ * Initial delay to recover boot energy and wait for stable, accurate clock.
+ * Depends on platform specs for startup time of 32kHz crystal oscillator.
+ * Here, nRF5x, max .25 seconds for LFXO
+ */
+
+static const DeltaTime StabilizedClockTimeout = 10000;	// 10k * 30uSec == 300kuSec == 0.3 seconds
+
+
+
 };
+
