@@ -11,12 +11,6 @@ namespace {
 Sleeper sleeper;
 LongClockTimer* longClockTimer;	// for toa
 
-// Responsibility: statistics of invalid messages
-
-static uint32_t countValidReceives;
-static uint32_t countInvalidTypeReceives;
-static uint32_t countInvalidCRCReceives;
-
 
 /*
  * Call sleeper after insuring all peripherals are off.
@@ -71,9 +65,6 @@ bool dispatchFilteredMsg( DispatchFuncPtr msgDispatcher) { // Slot has handlers 
 		SyncMessage* msg = serializer.unserialize();
 		if (msg != nullptr) {
 			// assert msg->type valid
-			countValidReceives++;
-
-			//ledLogger2.toggleLED(3);	// debug: LED 3 valid received
 
 			didReceiveDesiredMsg = msgDispatcher(msg);
 			if (didReceiveDesiredMsg) {
@@ -95,9 +86,7 @@ bool dispatchFilteredMsg( DispatchFuncPtr msgDispatcher) { // Slot has handlers 
 		}
 		else {
 			// Ignore garbled type or offset
-			log(">>>>Message garbled\n");
-			countInvalidTypeReceives++;
-			//ledLogger2.toggleLED(4);	// debug: LED 4 invalid MessageType received
+			log(LogMessage::Garbled);
 			// continuation is sleep
 		}
 
@@ -108,10 +97,7 @@ bool dispatchFilteredMsg( DispatchFuncPtr msgDispatcher) { // Slot has handlers 
 		 *
 		 * Note CRCSTATUS register remains showing invalid until another message is received.
 		 */
-
-		countInvalidCRCReceives++;
-		log(">>>>CRC\n");
-		//ledLogger2.toggleLED(4);	// debug: LED 4 invalid CRC received
+		log(LogMessage::CRC);
 		// continuation is sleep
 	}
 	return didReceiveDesiredMsg;

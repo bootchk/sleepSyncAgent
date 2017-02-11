@@ -14,12 +14,6 @@ CliqueMerger SyncAgent::cliqueMerger;
 void (*SyncAgent::onWorkMsgCallback)(WorkPayload);
 void (*SyncAgent::onSyncPointCallback)();
 
-LEDLogger SyncAgent::ledLogger;	// DEBUG
-
-uint32_t countValidReceives = 0;
-uint32_t countInvalidTypeReceives = 0;
-uint32_t countInvalidCRCReceives = 0;
-
 
 // This file only implements part of the class, see other .cpp files.
 // See syncAgentLoop.cpp for high level algorithm.
@@ -137,7 +131,7 @@ void SyncAgent::toMergerRole(SyncMessage* msg){
 	// assert I might have relinquished mastership
 	// assert I might have joined another clique
 	assert(role.isMerger());
-	ledLogger.toggleLED(3);
+	log(LogMessage::ToMerger);
 }
 
 
@@ -145,7 +139,7 @@ void SyncAgent::toFisherRole(){
 	role.setFisher();
 	// role does not know about cliqueMerger
 	cliqueMerger.deactivate();
-	ledLogger.toggleLED(3);
+	log(LogMessage::ToFisher);
 }
 
 
@@ -158,7 +152,6 @@ void SyncAgent::relayWorkToApp(WorkPayload work) {
 	 * - onWorkMsgCallback(msg);  (callback)
 	 */
 	onWorkMsgCallback(work);	// call callback
-	// ledLogger.toggleLED(1);
 }
 
 

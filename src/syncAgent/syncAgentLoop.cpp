@@ -37,9 +37,8 @@ void SyncAgent::loop(){
 	// When first enter loop, each unit is master of its own clique
 	assert(clique.isSelfMaster());
 
-	ledLogger.init();	// DEBUG
+	// DEBUG
 	initLogging();
-
 	log("ID:\n");
 	logLongLong(clique.getMasterID());
 

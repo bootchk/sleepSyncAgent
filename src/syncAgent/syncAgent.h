@@ -45,7 +45,6 @@ public:	// to SyncSlot mainly
 
 private:
 	// syncPeriod and powerManager local to syncAgentLoop.c
-	static LEDLogger ledLogger;
 
 	// Interface towards app
 	static void (*onWorkMsgCallback)(WorkPayload);

@@ -9,7 +9,7 @@
  * Formerly owned by SyncAgent.
  */
 
-#include <nRF5x.h>	// Radio, Sleeper, LEDLogger
+#include <nRF5x.h>	// Radio, Sleeper
 
 
 extern Radio* radio;
