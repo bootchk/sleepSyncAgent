@@ -11,6 +11,8 @@
  *
  * A main concern is that the platform Sleeper may wake unexpectedly on events.
  * This code guarantees that timeout has elapsed, even in face of unexpected wake.
+ *
+ * You can call init() more than once, with different maxSaneTimeout limits.
  */
 
 
@@ -22,6 +24,11 @@ typedef bool (*DispatchFuncPtr)(SyncMessage *);
 class SyncSleeper {
 
 public:
+	/*
+	 * Requires caller init() the LongClockTimer because this method does not.
+	 *
+	 * maxSaneTimeout is a limit checked on each call to sleep(), for robustness.
+	 */
 	static void init(
 			OSTime maxSaneTimeout,
 			LongClockTimer *);

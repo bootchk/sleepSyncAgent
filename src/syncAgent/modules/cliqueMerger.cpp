@@ -250,8 +250,7 @@ void CliqueMerger::makeMergeSync(SyncMessage& msg){
 
 
 
-// FUTURE this returns a copy of the instance (an aggregate) on the stack
-// not an error, but slower
-const MergeOffset* const CliqueMerger::getOffsetToMergee() {
+// Return pointer to internal data structure, that is constant to the caller
+const MergeOffset* CliqueMerger::getOffsetToMergee() {
 	return &offsetToMergee;
 }

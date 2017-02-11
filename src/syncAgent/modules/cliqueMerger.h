@@ -36,5 +36,5 @@ public:
 	 */
 	static void makeMergeSync(SyncMessage& msg);
 
-	static const MergeOffset* const getOffsetToMergee();
+	static const MergeOffset* getOffsetToMergee();
 };

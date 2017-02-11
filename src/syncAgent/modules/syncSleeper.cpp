@@ -18,6 +18,44 @@ static uint32_t countInvalidTypeReceives;
 static uint32_t countInvalidCRCReceives;
 
 
+/*
+ * Call sleeper after insuring all peripherals are off.
+ * All calls to sleeper.sleepUntilEventWithTimeout() funnel through this method.
+ *
+ * A Sleeper may wake for unexpected reasons.
+ */
+void sleepUltraLowPowerUntilTimeout(DeltaTime timeout) {
+	/*
+	 * Check all peripherals we don't use are really off.
+	 * The code is designed to power them off.
+	 *
+	 * The radio and its owned peripherals (hfClock and DCDC power supply) can be on.
+	 * The RTC and LXFO are on.
+	 */
+	// FPU
+#ifdef NRF52
+	// TODO, SleepSync does not define NRF52, this should be in platform
+	/*
+	 * Ensure nrf52 FPU is disabled.  We don't use FPU and it consumes power.
+	 * Improper build (system_nrf52.c is hacked) with target>FPU API:hard leaves FPU enabled.
+	 * ??? Not sure that enabled FPU uses power?
+	 */
+	assert(SCB->CPACR == 0);
+#endif
+	// PowerComparator??
+	// TODO GPIO's configured disconnected
+	// TODO no interrupts/events pending that would prevent sleep
+
+	// lfClock should be on, we don't check it
+
+	sleeper.sleepUntilEventWithTimeout(timeout);
+}
+
+// TODO another version for sleep with radio off
+// assert(!radio->isPowerOn());
+// TODO owned by radio assert(!hfClock.isRunning());
+// TODO owned by radio assert(!PowerSupply::isDisabledDCDCPower());
+
 
 /*
  * Filter invalid messages.
@@ -106,7 +144,7 @@ void SyncSleeper::sleepUntilTimeout(OSTime (*timeoutFunc)()) {
 
 		assert(timeout < ScheduleParameters::MaxSaneTimeout);
 
-		sleeper.sleepUntilEventWithTimeout(timeout);
+		sleepUltraLowPowerUntilTimeout(timeout);
 		// wakened by msg or timeout or unexpected event
 		if ( sleeper.getReasonForWake() == TimerExpired)
 			// assert time specified by timeoutFunc has elapsed.
@@ -133,7 +171,7 @@ void SyncSleeper::sleepUntilTimeout(DeltaTime timeout)
 
 			assert(remainingTimeout < ScheduleParameters::MaxSaneTimeout);
 
-			sleeper.sleepUntilEventWithTimeout(remainingTimeout);
+			sleepUltraLowPowerUntilTimeout(remainingTimeout);
 			// wakened by msg or timeout or unexpected event
 			if ( sleeper.getReasonForWake() == TimerExpired)
 				// assert time timeout has elapsed.
@@ -200,7 +238,7 @@ bool SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 		 * The design depends on Timer semantics: can a Timer be restarted?
 		 * Here, we assume not, and always that Timer was canceled.
 		 */
-		sleeper.sleepUntilEventWithTimeout(timeoutFunc());
+		sleepUltraLowPowerUntilTimeout(timeoutFunc());
 		// wakened by msg or timeout or unexpected event
 
 		sleeper.cancelTimeout();

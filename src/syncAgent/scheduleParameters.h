@@ -90,9 +90,14 @@ public:	// for assertions
 //static const DeltaTime     SlotDuration = 40;
 //static const unsigned int  DutyCycleInverse = 100;
 
-// 40, 800
+// 40, 800 Sync period 2 sec
+// This is the one that I did most testing with
 static const DeltaTime     VirtualSlotDuration = 40;
 static const unsigned int  DutyCycleInverse = 800;
+
+// 40, 1600 Sync period 4 sec
+//static const DeltaTime     VirtualSlotDuration = 40;
+//static const unsigned int  DutyCycleInverse = 800;
 
 
 
@@ -225,8 +230,16 @@ static const DeltaTime DeltaToSyncSlotMiddle = HalfSlotDuration + RadioLag - Ram
 
 
 
-// Sanity.  SleepSync uses timeouts less than this, 5 seconds
-static const DeltaTime MaxSaneTimeout = 164000;
+/*
+ * Sanity.
+ * SleepSync uses timeouts less than this.
+ * See LongClock::MaxTimeout of 0xFFFFFF == 16M
+ * This must be less than that.
+ */
+//static const DeltaTime MaxSaneTimeout = 164000;
+// Temporarily, for power measurements
+static const DeltaTime MaxSaneTimeout = 2000000;
+
 
 
 
@@ -236,8 +249,10 @@ static const DeltaTime MaxSaneTimeout = 164000;
  * Here, nRF5x, max .25 seconds for LFXO
  */
 
-static const DeltaTime StabilizedClockTimeout = 10000;	// 10k * 30uSec == 300kuSec == 0.3 seconds
+//static const DeltaTime StabilizedClockTimeout = 10000;	// 10k * 30uSec == 300kuSec == 0.3 seconds
+static const DeltaTime StabilizedClockTimeout = 20000;	// 0.6 seconds
 
+//static const DeltaTime StabilizedClockTimeout = 1000000;	// 1M * 30uSec == 300kuSec == 30 seconds
 
 
 };

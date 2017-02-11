@@ -25,6 +25,23 @@ uint32_t countInvalidCRCReceives = 0;
 // See syncAgentLoop.cpp for high level algorithm.
 
 
+namespace {
+
+/*
+ * Sleep (not spin!!!) to recover boot energy and to insure LFXO is stable (takes 0.25 seconds.)
+ * Necessary when power is load switched and hysteresis is low (.05V) and power storage is small capacitor.
+ */
+void waitForOSClockAndToRecoverBootEnergy(LongClockTimer * aLCT) {
+	// Init sleeper with a larger timeout limit than while syncing
+	syncSleeper.init(
+			ScheduleParameters::StabilizedClockTimeout + 1,
+			aLCT);
+
+	syncSleeper.sleepUntilTimeout(ScheduleParameters::StabilizedClockTimeout);
+}
+
+}
+
 
 void SyncAgent::init(
 		Radio * aRadio,
@@ -35,25 +52,25 @@ void SyncAgent::init(
 	)
 {
 	// require caller initialized radio, mailbox, and LongClockTimer
-
-	// init sleeper must precede using sleeper for initial timeout
-	syncSleeper.init(
-			2* ScheduleParameters::NormalSyncPeriodDuration,
-			aLCT);
-
-	/*
-	 * Initial timeout.
-	 * Sleep to allow recover boot energy
-	 * and to insure LFXO is stable (takes 0.25 seconds.)
-	 * Sleep, not spin!!!
-	 */
-	syncSleeper.sleepUntilTimeout(ScheduleParameters::StabilizedClockTimeout);
-	assert(aLCT->isOSClockRunning());
-
+	// !!! But not isOSClockRunning() yet
 
 	// Copy parameters to globals
 	radio = aRadio;
 	workOutMailbox = aMailbox;
+
+	// Radio is powered on at POR reset!!!
+	radio->powerOff();
+
+	// Temp: test power consumption when all sleep
+	// while(true) waitForOSClockAndToRecoverBootEnergy(aLCT);
+
+	waitForOSClockAndToRecoverBootEnergy(aLCT);
+
+	assert(aLCT->isOSClockRunning());
+
+	syncSleeper.init(
+			2* ScheduleParameters::NormalSyncPeriodDuration,
+			aLCT);
 
 	// Copy parameters to static data members
 	onWorkMsgCallback = aOnWorkMsgCallback;
