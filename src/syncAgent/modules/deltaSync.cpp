@@ -1,6 +1,4 @@
 
-#pragma once
-
 #include <nRF5x.h>  // logger
 #include <cassert>
 
