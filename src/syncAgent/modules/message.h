@@ -23,9 +23,11 @@
  * - MergeSync, offset has large acceleration
  * - MasterSync, offset has small acceleration
  * - AbandonMastership, offset is unused
- * - Work, work payload is initialized
+ * - WorkSync, work payload is initialized
  *
- * The Work subtype is a superset (having an extra field), helps achieve sync.
+ * The WorkSync subtype helps achieve sync, but has an extra field "work" that is not used by other subtypes.
+ * In an earlier design, the "offset" field was a union, used to carry "work".
+ * An alternative design is a distinct WorkMessage class.
  */
 
 
@@ -36,7 +38,7 @@ enum MessageType {
 	AbandonMastership = 68,
 	WorkSync = 136
 };
-// !!!! See hack for mangled Work
+
 
 
 
