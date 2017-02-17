@@ -6,6 +6,7 @@
 
 #include "../scheduleParameters.h"
 #include "../logMessage.h"
+#include "modules/powerAssertions.h"
 
 namespace {
 Sleeper sleeper;
@@ -13,42 +14,31 @@ LongClockTimer* longClockTimer;	// for toa
 
 
 /*
- * Call sleeper after insuring all peripherals are off.
- * All calls to sleeper.sleepUntilEventWithTimeout() funnel through this method.
+ * Call sleeper after asserting certain peripherals are off.
+ * All calls to sleeper.sleepUntilEventWithTimeout() funnel through these methods.
  *
  * A Sleeper may wake for unexpected reasons.
  */
-void sleepUltraLowPowerUntilTimeout(DeltaTime timeout) {
-	/*
-	 * Check all peripherals we don't use are really off.
-	 * The code is designed to power them off.
-	 *
-	 * The radio and its owned peripherals (hfClock and DCDC power supply) can be on.
-	 * The RTC and LXFO are on.
-	 */
-	// FPU
-#ifdef NRF52
-	// TODO, SleepSync does not define NRF52, this should be in platform
-	/*
-	 * Ensure nrf52 FPU is disabled.  We don't use FPU and it consumes power.
-	 * Improper build (system_nrf52.c is hacked) with target>FPU API:hard leaves FPU enabled.
-	 * ??? Not sure that enabled FPU uses power?
-	 */
-	assert(SCB->CPACR == 0);
-#endif
-	// PowerComparator??
-	// TODO GPIO's configured disconnected
-	// TODO no interrupts/events pending that would prevent sleep
 
-	// lfClock should be on, we don't check it
 
+/*
+ * radio and its owned peripherals (hfClock and DCDC power supply) OFF
+ * RTC and LXFO ON
+ */
+void sleepWithOnlyTimerPowerUntilTimeout(DeltaTime timeout) {
+	assertUltraLowPower();
 	sleeper.sleepUntilEventWithTimeout(timeout);
 }
 
-// TODO another version for sleep with radio off
-// assert(!radio->isPowerOn());
-// TODO owned by radio assert(!hfClock.isRunning());
-// TODO owned by radio assert(!PowerSupply::isDisabledDCDCPower());
+/*
+ * radio and its owned peripherals (hfClock and DCDC power supply) can be on.
+ * RTC and LXFO are on.
+ */
+void sleepWithRadioAndTimerPowerUntilTimeout(DeltaTime timeout) {
+	assertRadioPower();
+	sleeper.sleepUntilEventWithTimeout(timeout);
+}
+
 
 
 /*
@@ -130,8 +120,8 @@ void SyncSleeper::sleepUntilTimeout(OSTime (*timeoutFunc)()) {
 
 		assert(timeout < ScheduleParameters::MaxSaneTimeout);
 
-		sleepUltraLowPowerUntilTimeout(timeout);
-		// wakened by msg or timeout or unexpected event
+		sleepWithOnlyTimerPowerUntilTimeout(timeout);
+		// Expect wake by timeout, not by msg or other event
 		if ( sleeper.getReasonForWake() == TimerExpired)
 			// assert time specified by timeoutFunc has elapsed.
 			break;	// while true
@@ -147,7 +137,10 @@ void SyncSleeper::sleepUntilTimeout(OSTime (*timeoutFunc)()) {
 	// assert timeout amount of time has elapsed
 }
 
-
+/*
+ * Similar above, but overloaded: different parameter type
+ * and different implementation.
+ */
 void SyncSleeper::sleepUntilTimeout(DeltaTime timeout)
 {
 	LongTime endingTime = longClockTimer->nowTime() + timeout;
@@ -157,8 +150,8 @@ void SyncSleeper::sleepUntilTimeout(DeltaTime timeout)
 
 			assert(remainingTimeout < ScheduleParameters::MaxSaneTimeout);
 
-			sleepUltraLowPowerUntilTimeout(remainingTimeout);
-			// wakened by msg or timeout or unexpected event
+			sleepWithOnlyTimerPowerUntilTimeout(timeout);
+			// Expect wake by timeout, not by msg or other event
 			if ( sleeper.getReasonForWake() == TimerExpired)
 				// assert time timeout has elapsed.
 				break;	// while true
@@ -224,7 +217,7 @@ bool SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 		 * The design depends on Timer semantics: can a Timer be restarted?
 		 * Here, we assume not, and always that Timer was canceled.
 		 */
-		sleepUltraLowPowerUntilTimeout(timeoutFunc());
+		sleepWithRadioAndTimerPowerUntilTimeout(timeoutFunc());
 		// wakened by msg or timeout or unexpected event
 
 		sleeper.cancelTimeout();
