@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-#include "globals.h"	// PowerManager, etc.
+#include "globals.h"	// radio, etc.
 #include "syncAgent.h"
 
 #include "syncPeriod/syncPeriod.h"
@@ -25,15 +25,13 @@ SimpleSyncPeriod syncPeriod;
 #else
 CombinedSyncPeriod syncPeriod;
 #endif
-
-// FUTURE, we could check power again before each slot, namely fishing slot
-PowerManager powerManager;
-
 } // namespace
 
 
+// FUTURE, we could check power again before each slot, namely fishing slot
 
-void SyncAgent::loop(){
+
+void SyncAgent::loop(PowerManager* powerManager){
 	// When first enter loop, each unit is master of its own clique
 	assert(clique.isSelfMaster());
 
@@ -58,7 +56,7 @@ void SyncAgent::loop(){
 
 		assert(!radio->isPowerOn());	// Radio is off after every sync period
 
-		if ( powerManager.isPowerForRadio() ) {
+		if ( powerManager->isPowerForRadio() ) {
 			/*
 			 * Sync keeping: use radio
 			 */

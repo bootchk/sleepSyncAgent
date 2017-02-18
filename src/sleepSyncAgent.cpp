@@ -36,7 +36,7 @@ void SleepSyncAgent::init(
 }
 
 
-void SleepSyncAgent::loopOnEvents() {
-	syncAgent.loop();	// Never returns
+void SleepSyncAgent::loopOnEvents(PowerManager* powerManager) {
+	syncAgent.loop(powerManager);	// Never returns
 }
 

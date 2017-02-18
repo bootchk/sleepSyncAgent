@@ -44,7 +44,7 @@ public:	// to SyncSlot mainly
 	static CliqueMerger cliqueMerger;
 
 private:
-	// syncPeriod and powerManager local to syncAgentLoop.c
+	// syncPeriod local to syncAgentLoop.c
 
 	// Interface towards app
 	static void (*onWorkMsgCallback)(WorkPayload);
@@ -62,7 +62,7 @@ public:
 			void (*onWorkMsg)(WorkPayload),
 			void (*onSyncPoint)()
 			);
-	static void loop() __attribute__ ((noreturn));
+	static void loop(PowerManager*) __attribute__ ((noreturn));
 
 	static void startSyncing();
 	static void doSyncPeriod();

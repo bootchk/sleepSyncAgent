@@ -78,5 +78,5 @@ public:
 			void (*onWorkMsg)(WorkPayload),
 			void (*onSyncPoint)()
 			);
-	static void loopOnEvents() __attribute__ ((noreturn));
+	static void loopOnEvents(PowerManager*) __attribute__ ((noreturn));
 };
