@@ -6,13 +6,15 @@
 #include "../globals.h"
 #include "syncWorkSlot.h"
 #include "syncSlotSchedule.h"
+#include "../messageHandler/syncSlotMsgHandler.h"
 
-#include "../logMessage.h"
+
 
 
 namespace {
 
 SyncSlotSchedule slotSchedule;
+SyncSlotMessageHandler msgHandler;
 
 } // namespace
 
@@ -21,7 +23,7 @@ SyncSlotSchedule slotSchedule;
 bool SyncWorkSlot::doListenHalfSyncWorkSlot(OSTime (*timeoutFunc)()) {
 	network.startReceiving();
 	bool result = syncSleeper.sleepUntilMsgAcceptedOrTimeout(
-			dispatchMsgReceived, //this,
+			msgHandler.dispatchMsgReceived,
 			timeoutFunc
 			);
 
@@ -32,6 +34,7 @@ bool SyncWorkSlot::doListenHalfSyncWorkSlot(OSTime (*timeoutFunc)()) {
 
 /*
  * Transmit WorkSync in middle.
+ * App has queued work to be sent.
  */
 void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 	// not assert self is Master
@@ -50,6 +53,7 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 	 *
 	 * Even if my clique changed, need to send workSync to it.
 	 */
+	// TODO, I might have heard Work, in that case I don't need to send it again.
 
 	syncSender.sendWorkSync();
 
@@ -65,17 +69,6 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 
 	// assert radio on or off
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -100,7 +93,7 @@ void SyncWorkSlot::doSlaveSyncWorkSlot() {
 	// logInt(clique.schedule.deltaPastSyncPointToNow()); log("<delta SP to sync listen.\n");
 
 	(void) syncSleeper.sleepUntilMsgAcceptedOrTimeout(
-			dispatchMsgReceived, //this,
+			msgHandler.dispatchMsgReceived,
 			slotSchedule.deltaToThisSyncSlotEnd);
 	/*
 	 * Not using result:  all message handlers return false i.e. keep looking.
@@ -136,94 +129,6 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 	(void) doListenHalfSyncWorkSlot(slotSchedule.deltaToThisSyncSlotEnd);
 
 	// assert radio on or off
-}
-
-
-
-
-
-
-/*
- * Message handlers.
- *
- * Sync handling is agnostic of role.isMaster or role.isSlave
- *
- * MasterSync and MergeSync handled the same.
- *
- * FUTURE discard multiple sync messages if they are queued
- */
-
-bool SyncWorkSlot::doMasterSyncMsg(SyncMessage* msg) {
-	(void) syncBehaviour.doSyncMsg(msg);
-	return false;	// keep looking
-}
-
-bool SyncWorkSlot::doMergeSyncMsg(SyncMessage* msg) {
-	(void) syncBehaviour.doSyncMsg(msg);
-	return false;
-}
-
-bool SyncWorkSlot::doAbandonMastershipMsg(SyncMessage* msg){
-	/*
-	 * My clique is still in sync, but master is dropout.
-	 *
-	 * Naive design: all units that hear master abandon assume mastership.
-	 * FUTURE: keep historyOfMasters, and better slaves assume mastership.
-	 */
-	(void) msg;  // FUTURE use msg to record history
-
-	clique.setSelfMastership();
-	assert(clique.isSelfMaster());
-	return false;	// keep listening
-}
-
-
-bool SyncWorkSlot::doWorkMsg(SyncMessage* msg){
-
-	/*
-	 * Handle work aspect of message.
-	 * Doesn't matter which clique it came from, relay work.
-	 */
-	syncAgent.relayWorkToApp(msg->getWorkPayload());
-
-	/*
-	 *  Handle sync aspect of message.
-	 */
-	syncBehaviour.doSyncMsg(msg);
-
-	return false;	// keep looking
-}
-
-
-
-/*
- * Dispatch received msg to appropriate method of slot.
- */
-bool SyncWorkSlot::dispatchMsgReceived(SyncMessage* msg){
-	bool foundDesiredMessage = false;
-
-	switch(msg->type) {
-	case MasterSync:
-		log(LogMessage::RXMasterSync);
-		foundDesiredMessage = doMasterSyncMsg(msg);
-		break;
-	case MergeSync:
-		log(LogMessage::RXMergeSync);
-		foundDesiredMessage = doMergeSyncMsg(msg);
-		break;
-	case AbandonMastership:
-		log(LogMessage::RXAbandonMastership);
-		foundDesiredMessage = doAbandonMastershipMsg(msg);
-		break;
-	case WorkSync:
-		log(LogMessage::RXWorkSync);
-		foundDesiredMessage = doWorkMsg(msg);
-		break;
-	default:
-		log(LogMessage::RXUnknown);
-	}
-
-	return foundDesiredMessage;
 }
 
 

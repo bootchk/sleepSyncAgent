@@ -54,9 +54,4 @@ private:
 	
 public:
 	static void perform();
-	static bool dispatchMsgReceived(SyncMessage* msg);	// Same code as for SyncWorkSlot
-	static bool doMasterSyncMsg(SyncMessage* msg);
-	static bool doMergeSyncMsg(SyncMessage* msg);
-	static bool doAbandonMastershipMsg(SyncMessage* msg);
-	static bool doWorkMsg(SyncMessage* msg);
 };
