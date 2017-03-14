@@ -1,3 +1,4 @@
+#pragma once
 
 #include "message.h"
 #include "clique.h"
@@ -34,7 +35,7 @@ public:
 	 * Create a MergeSync message in the common message.
 	 * !!! This must be called just before sending, since the SyncOffset is calculated when called.
 	 */
-	static void makeMergeSync(SyncMessage& msg);
+	static void makeMergeSync();
 
 	static const MergeOffset* getOffsetToMergee();
 };

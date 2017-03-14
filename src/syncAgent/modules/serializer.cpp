@@ -13,31 +13,29 @@
  *
  * Message objects need not be packed.
  * This code does not take a brute force approach (one loop over data into object/struct.)
- * Instead, we loop over msg fields.
+ * Instead, we loop over message fields.
  *
- * Use common static Messages (not new'd on the heap), SyncAgent only uses one at a time.
- * Common means: shared and reused, as in Fortran.
- * Thus many methods have side effects on common Messages,
- * and return pointer to common.
+ * Use shared, resued static Messages (not on the heap), SyncAgent only uses one at a time.
+ * Thus many methods have side effects on shared Messages, and return pointer to shared.
  *
  * The count of bytes must match the constant FixedPayloadCount defined in platform/radio.h
  */
 
 
 
-// static data members
-
-
-
-// Serializer owns inward and returns reference to it
-SyncMessage Serializer::inwardCommonSyncMsg;
-// Serializer and its outward are globally visible
-SyncMessage Serializer::outwardCommonSyncMsg;
-
-
-// Local to this file
-
 namespace {
+
+/*
+ * Serializer owns message objects and returns pointers to them.
+ *
+ * There is only one of each type, be careful in reuse,
+ * i.e. don't try to send WorkSync while still accessing incoming WorkSync.
+ */
+MasterSyncMessage masterSyncMsg;
+MergeSyncMessage mergeSyncMsg;
+WorkSyncMessage workSyncMsg;
+AbandonMastershipMessage abandonMastershipMsg;
+
 
 BufferPointer radioBufferPtr;
 uint8_t radioBufferSize;
@@ -48,31 +46,31 @@ uint8_t radioBufferSize;
 #pragma GCC diagnostic ignored "-Wpointer-arith"
 
 
-void unserializeWorkIntoCommon() {
-	memcpy( (void*) &Serializer::inwardCommonSyncMsg.work,	// dest
+void unserializeWorkInto(SyncMessage* msgPtr) {
+	memcpy( (void*) &(msgPtr->work),	// dest
 			(void*) radioBufferPtr + OTAPayload::WorkIndex,	// src
 			OTAPayload::WorkLength);
 }
-void serializeWorkCommonIntoStream(SyncMessage& msg){
+void serializeWorkCommonIntoStream(SyncMessage* msgPtr){
 	memcpy( (void*) radioBufferPtr + OTAPayload::WorkIndex, 	// dest
-			(void*) &msg.work,	// src
+			(void*) &(msgPtr->work),	// src
 			OTAPayload::WorkLength);
 }
 
 // Matched pairs
-void unserializeMasterIDIntoCommon() {
-	assert(sizeof(Serializer::inwardCommonSyncMsg.masterID)>=OTAPayload::MasterIDLength);
-	Serializer::inwardCommonSyncMsg.masterID = 0; // ensure MSB two bytes are zero.
+void unserializeMasterIDInto(SyncMessage* msgPtr) {
+	assert(sizeof(msgPtr->masterID)>=OTAPayload::MasterIDLength);
+	msgPtr->masterID = 0; // ensure MSB two bytes are zero.
 	// Fill LSB 6 bytes of a 64-bit
-	memcpy( (void*) &Serializer::inwardCommonSyncMsg.masterID,	// dest
+	memcpy( (void*) &(msgPtr->masterID),	// dest
 			(void*) radioBufferPtr + OTAPayload::MasterIndex,	// src
 			OTAPayload::MasterIDLength);
 }
 
-void serializeMasterIDCommonIntoStream(SyncMessage& msg) {
+void serializeMasterIDCommonIntoStream(SyncMessage* msgPtr) {
 	// Send LSB 6 bytes of 64-bit
 	memcpy( (void*) radioBufferPtr + OTAPayload::MasterIndex, 	// dest
-			(void*) &msg.masterID,	// src
+			(void*) &(msgPtr->masterID),	// src
 			OTAPayload::MasterIDLength);
 }
 
@@ -90,29 +88,46 @@ DeltaTime unserializeOffset() {
 }
 
 
-void unserializeOffsetIntoCommon() {
+void unserializeOffsetInto(SyncMessage* msgPtr) {
 	DeltaTime otaDeltaSync = unserializeOffset();
-	Serializer::inwardCommonSyncMsg.deltaToNextSyncPoint.set(otaDeltaSync);
+	msgPtr->deltaToNextSyncPoint.set(otaDeltaSync);
 	// assert deltaToNextSyncPoint is set to a valid value
 }
 
-void serializeOffsetCommonIntoStream(SyncMessage& msg) {
+void serializeOffsetCommonIntoStream(SyncMessage* msgPtr) {
 	memcpy( (void*) radioBufferPtr + OTAPayload::OffsetIndex, 	// dest
-			(void*) &msg.deltaToNextSyncPoint,	// src
+			(void*) &(msgPtr->deltaToNextSyncPoint),	// src
 			OTAPayload::OffsetLength);
 }
 
 // End of pointer arith
 #pragma GCC diagnostic pop
 
-void unserializeIntoCommonSyncMessage() {
-	MessageType msgType = (MessageType) radioBufferPtr[0];
-	// already assert isReceivedTypeASyncType
-	Serializer::inwardCommonSyncMsg.type = msgType;
-	unserializeMasterIDIntoCommon();
-	unserializeOffsetIntoCommon();
-	unserializeWorkIntoCommon();
+
+
+void unserializeOTAFieldsIntoMessageFields(MessageType receivedMsgType, SyncMessage* msgPtr) {
+	msgPtr->type = receivedMsgType;
+	unserializeMasterIDInto(msgPtr);
+	unserializeOffsetInto(msgPtr);
+	unserializeWorkInto(msgPtr);
 }
+
+
+SyncMessage* getPointerToMessageOfOTAType(MessageType receivedMsgType) {
+	// already assert isReceivedTypeASyncType
+	SyncMessage* msgPtr = &masterSyncMsg;	// FUTURE InvalidMsgRef
+
+	switch(receivedMsgType) {
+	case MasterSync: msgPtr = &masterSyncMsg; break;
+	case MergeSync: msgPtr = &mergeSyncMsg; break;
+	case WorkSync: msgPtr = &workSyncMsg; break;
+	case AbandonMastership: msgPtr = &abandonMastershipMsg; break;
+	default:
+		;
+	}
+	return msgPtr;
+}
+
 
 // FUTURE only unserializeOffset() once
 /*
@@ -165,26 +180,30 @@ void Serializer::init(BufferPointer aRadioBuffer, uint8_t aBufferSize)
 	radioBufferSize = aBufferSize;
 }
 
+// Getters of internal shared message instances
+MasterSyncMessage* Serializer::getMasterSyncMsg() { return &masterSyncMsg; }
+MergeSyncMessage* Serializer::getMergeSyncMsg() { return &mergeSyncMsg; }
+WorkSyncMessage* Serializer::getWorkSyncMsg() { return &workSyncMsg; }
+AbandonMastershipMessage* Serializer::getAbandonMastershipMsg() { return &abandonMastershipMsg; }
+
+
+
 SyncMessage* Serializer::unserialize() {
 	// require validCRC  data in radioBuffer, of proper length
-	SyncMessage * result;
+	SyncMessage* result = &masterSyncMsg;
 
 	// Minor optimization: only access radioBufferPtr[0] once.
 	// It is volatile, which prevents compiler from optimizing repeated references.
 	if (isOTABufferAlgorithmicallyValid()) {
-		unserializeIntoCommonSyncMessage();
-		result = &inwardCommonSyncMsg;
+		MessageType receivedMsgType = (MessageType) radioBufferPtr[0];
+		result = getPointerToMessageOfOTAType(receivedMsgType);
+		unserializeOTAFieldsIntoMessageFields(receivedMsgType, result);
 	}
-	/* FUTURE when WorkMsg distinct from SyncMsg
-	else if (radioBufferPtr[0] == Work) {
-		unserializeWorkIntoCommon();
-		result = &inwardCommonWorkMsg;
-	}
-	*/
 	else {
 		//assert(false);	// TESTING
 		result = nullptr;	// PRODUCTION
 	}
+	// assert result is pointer to instance of proper SyncMessage subclass, or null
 	return result;
 }
 
@@ -196,13 +215,11 @@ bool Serializer::bufferIsSane(){
 
 
 
-
-
-void Serializer::serializeOutwardCommonSyncMessage() {
-	radioBufferPtr[0] = outwardCommonSyncMsg.type;	// 1
-	serializeMasterIDCommonIntoStream(outwardCommonSyncMsg);	// 6
-	serializeOffsetCommonIntoStream(outwardCommonSyncMsg);	// 3
-	serializeWorkCommonIntoStream(outwardCommonSyncMsg);	// 1
+void Serializer::serializeSyncMessageIntoRadioBuffer(SyncMessage* msgPtr) {
+	radioBufferPtr[0] = msgPtr->type;	// 1
+	serializeMasterIDCommonIntoStream(msgPtr);	// 6
+	serializeOffsetCommonIntoStream(msgPtr);	// 3
+	serializeWorkCommonIntoStream(msgPtr);	// 1
 
 	// Size of serialized message equals size fixed length payload of the wireless protocol
 	static_assert(Radio::FixedPayloadCount == 11, "Protocol payload length mismatch.");

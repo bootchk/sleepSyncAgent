@@ -169,7 +169,7 @@ void Clique::onMasterDropout() {
  */
 void Clique::updateBySyncMessage(SyncMessage* msg) {
 	// assert (in Sync or Fish slot)
-	assert(msg->carriesSync(msg->type));
+	assert(msg->carriesSync());
 
 	/*
 	 * !!! Update.  Not assert that msg.MasterID != self.masterID:

@@ -1,41 +1,13 @@
 
 #include <cassert>
 
-#include "../globals.h"
-#include "syncSlotMsgHandler.h"
-#include "../logMessage.h"
+#include "../globals.h"		// syncBehaviour, clique, etc.
+#include "messageHandler.h"
 
-
-HandlingResult SyncSlotMessageHandler::dispatchMsgReceived(SyncMessage* msg) {
-	HandlingResult foundDesiredMessage = false;
-
-	switch(msg->type) {
-	case MasterSync:
-		log(LogMessage::RXMasterSync);
-		foundDesiredMessage = SyncSlotMessageHandler::doMasterSyncMsg(msg);
-		break;
-	case MergeSync:
-		log(LogMessage::RXMergeSync);
-		foundDesiredMessage = SyncSlotMessageHandler::doMergeSyncMsg(msg);
-		break;
-	case AbandonMastership:
-		log(LogMessage::RXAbandonMastership);
-		foundDesiredMessage = SyncSlotMessageHandler::doAbandonMastershipMsg(msg);
-		break;
-	case WorkSync:
-		log(LogMessage::RXWorkSync);
-		foundDesiredMessage = SyncSlotMessageHandler::doWorkMsg(msg);
-		break;
-	default:
-		log(LogMessage::RXUnknown);
-	}
-
-	return foundDesiredMessage;
-}
 
 
 /*
- * Message handlers.
+ * Message handling for SyncSlot.
  *
  * Sync handling is agnostic of role.isMaster or role.isSlave
  *
@@ -45,19 +17,27 @@ HandlingResult SyncSlotMessageHandler::dispatchMsgReceived(SyncMessage* msg) {
  */
 
 
-HandlingResult SyncSlotMessageHandler::doMasterSyncMsg(SyncMessage* msg){
+HandlingResult SyncSlotMessageHandler::handleMasterSyncMessage(SyncMessage* msg){
+	/*
+	 * Discard result and keep listening since:
+	 * - two masters may be competing
+	 */
 	(void) syncBehaviour.doSyncMsg(msg);
-	return false;	// keep looking
+	return KeepListening;
 }
 
 
-HandlingResult SyncSlotMessageHandler::doMergeSyncMsg(SyncMessage* msg){
+HandlingResult SyncSlotMessageHandler::handleMergeSyncMessage(SyncMessage* msg){
+	/*
+	 * Discard result and keep listening since:
+	 * - two other cliques may be competing to merge me
+	 */
 	(void) syncBehaviour.doSyncMsg(msg);
-	return false;
+	return KeepListening;
 }
 
 
-HandlingResult SyncSlotMessageHandler::doAbandonMastershipMsg(SyncMessage* msg){
+HandlingResult SyncSlotMessageHandler::handleAbandonMastershipMessage(SyncMessage* msg){
 	/*
 	 * My clique is still in sync, but master is dropout.
 	 *
@@ -68,21 +48,29 @@ HandlingResult SyncSlotMessageHandler::doAbandonMastershipMsg(SyncMessage* msg){
 
 	clique.setSelfMastership();
 	assert(clique.isSelfMaster());
-	return false;	// keep listening
+	return KeepListening;
 }
 
 
-HandlingResult SyncSlotMessageHandler::doWorkMsg(SyncMessage* msg){
+HandlingResult SyncSlotMessageHandler::handleWorkSyncMessage(SyncMessage* msg){
 	/*
 	 * Handle work aspect of message.
 	 * Doesn't matter which clique it came from, relay work.
 	 */
-	syncAgent.relayWorkToApp(msg->getWorkPayload());
+	syncAgent.relayWorkToApp(msg->work);
 
 	/*
 	 *  Handle sync aspect of message.
 	 */
-	syncBehaviour.doSyncMsg(msg);
+	(void) syncBehaviour.doSyncMsg(msg);
 
-	return false;	// keep looking
+	/*
+	 * Ignore sync-keeping result above and keep listening:
+	 * - other masters may be competing
+	 */
+	// FUTURE if we hear many WorkSync, may relay all of them to app
+	// FUTURE if our app is scheduling work and we already heard one
+	// and work is generic (not carrying any info) we should not xmit WorkSync
+
+	return KeepListening;
 }

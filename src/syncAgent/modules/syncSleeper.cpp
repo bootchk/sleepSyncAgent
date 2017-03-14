@@ -45,10 +45,10 @@ void sleepWithRadioAndTimerPowerUntilTimeout(DeltaTime timeout) {
  * Filter invalid messages.
  * Return result of dispatching valid messages.
  */
-bool dispatchFilteredMsg( DispatchFuncPtr msgDispatcher) { // Slot has handlers per message type
+HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has handlers per message type
 	// FUTURE while any received messages queued
 
-	bool didReceiveDesiredMsg = false;
+	HandlingResult didReceiveDesiredMsg = KeepListening;
 
 	// Nested checks: physical layer CRC, then transport layer MessageType
 	if (radio->isPacketCRCValid()) {
@@ -56,7 +56,8 @@ bool dispatchFilteredMsg( DispatchFuncPtr msgDispatcher) { // Slot has handlers 
 		if (msg != nullptr) {
 			// assert msg->type valid
 
-			didReceiveDesiredMsg = msgDispatcher(msg);
+			// TODO quiet conversion to bool here
+			didReceiveDesiredMsg = msgHandler->handle(msg);
 			if (didReceiveDesiredMsg) {
 				// Ultra low power sleep remainder of duration (radio power off)
 				assert(radio->isDisabledState());
@@ -189,12 +190,11 @@ void SyncSleeper::sleepUntilTimeout(DeltaTime timeout)
  * Could be a race to empty message queue.
  */
 
-bool SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
-		//Slot * msgHandlingSlot,
-		DispatchFuncPtr msgDispatcher,
+HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
+		MessageHandler* msgHandler,
 		OSTime (*timeoutFunc)())	// function returning remaining duration of slot
 {
-	bool didReceiveDesiredMsg = false;
+	HandlingResult didReceiveDesiredMsg = KeepListening;
 	bool didTimeout = false;
 
 	/*
@@ -228,7 +228,7 @@ bool SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 			clique.schedule.recordMsgArrivalTime();
 
 			// if timer semantics are: restartable, cancel timer here
-			didReceiveDesiredMsg = dispatchFilteredMsg(msgDispatcher);
+			didReceiveDesiredMsg = dispatchFilteredMsg(msgHandler);
 			break;	// switch
 
 		case TimerExpired:
@@ -277,7 +277,7 @@ bool SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 }
 
 
-voidFuncPtr SyncSleeper::getMsgReceivedCallback() {
+msgReceivedCallback SyncSleeper::getMsgReceivedCallback() {
 	// Return callback of the owned/wrapped sleeper.
 	return sleeper.msgReceivedCallback;
 }

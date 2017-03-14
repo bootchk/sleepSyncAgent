@@ -22,12 +22,14 @@ public:
 	static constexpr const char* FishedMasterSync = "Fish Master\n";
 	static constexpr const char* FishedMergeSync = "Fish Merge\n";
 	static constexpr const char* FishedWorkSync = "Fish Work\n";
+	static constexpr const char* FishedAbandonMastershipSync = "Fish Abandon\n";
 
 	// Sending
 	static constexpr const char* SendMasterSync = "TX Master\n";
 	static constexpr const char* SendWorkSync = "TX Work\n";
 	static constexpr const char* SendMergeSync = "TX Merge\n";
 	static constexpr const char* SendWork = "TX Work\n";
+	static constexpr const char* SendAbandonMastership = "TX Abandon\n";
 	static constexpr const char* SendNone = "Listen\n";
 
 	// Role change

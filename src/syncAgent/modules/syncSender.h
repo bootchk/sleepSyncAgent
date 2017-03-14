@@ -23,12 +23,11 @@ public:
 		log(LogMessage::SendMasterSync);
 
 		/*
-		 * Make the common SyncMessage, having:
+		 * Make MasterSyncMessage, having:
 		 * - type MasterSync
 		 * - forwardOffset unsigned delta now to next SyncPoint
 		 * - self ID
-		 */
-		/*
+		 *
 		 * Since we are in sync slot near front of sync period, offset should (0, NormalSyncPeriodDuration)
 		 * Type DeltaSync ensures that.
 		 *
@@ -42,8 +41,9 @@ public:
 		// FUTURE assert we are not xmitting sync past end of syncSlot?
 		// i.e. calculations are rapid and sync slot not too short?
 
-		serializer.outwardCommonSyncMsg.makeMasterSync(rawOffset, myID());
-		sendPrefabricatedMessage();
+		MasterSyncMessage* msgPtr = serializer.getMasterSyncMsg();
+		msgPtr->init(rawOffset, myID());
+		sendMessage(msgPtr);
 
 		// Uncomment this to experimentally determine send latency.
 		//logInt(rawOffset - clique.schedule.deltaNowToNextSyncPoint()); log(":Send latency\n");
@@ -53,9 +53,10 @@ public:
 	static void sendMergeSync() {
 		log(LogMessage::SendMergeSync);
 
-		// cliqueMerger knows how to make global outwardCommonSyncMsg into a MergeSync
-		syncAgent.cliqueMerger.makeMergeSync(serializer.outwardCommonSyncMsg);
-		sendPrefabricatedMessage();
+		// cliqueMerger knows how to tell serializer to init MergeSync
+		syncAgent.cliqueMerger.makeMergeSync();
+		MergeSyncMessage* msgPtr = serializer.getMergeSyncMsg();
+		sendMessage(msgPtr);
 	}
 
 
@@ -69,7 +70,8 @@ public:
 		 */
 		log(LogMessage::SendWorkSync);
 		DeltaTime forwardOffset = clique.schedule.deltaNowToNextSyncPoint();
-		serializer.outwardCommonSyncMsg.makeWorkSync(
+		WorkSyncMessage* msgPtr = serializer.getWorkSyncMsg();
+		msgPtr->init(
 				forwardOffset,
 				/*
 				 * !!! Crux.  WorkSync identifies the clique Master,
@@ -77,18 +79,27 @@ public:
 				 */
 				clique.getMasterID(),
 				workOutMailbox->fetch());	// from app, outward
-		sendPrefabricatedMessage();
+		sendMessage(msgPtr);
+	}
+
+	static void sendAbandonMastership() {
+		log(LogMessage::SendAbandonMastership);
+		AbandonMastershipMessage* msgPtr = serializer.getAbandonMastershipMsg();
+		// my clique should show I am master
+		// TODO assert that
+		msgPtr->init( clique.getMasterID() );
+		sendMessage(msgPtr);
 	}
 
 
 	/*
-	 * Convert a prefabricated SyncMessage in global outwardCommonSyncMsg
-	 * from object/struct into a byte array, and xmit OTA.
+	 * Convert SyncMessage object into a byte array, and xmit OTA.
 	 */
-	static void sendPrefabricatedMessage() {
-		// assert sender has created message in outwardCommonSyncMsg
-		serializer.serializeOutwardCommonSyncMessage();
+	static void sendMessage(SyncMessage* msgPtr) {
+		// assert caller has initialized *msgPtr
+		serializer.serializeSyncMessageIntoRadioBuffer(msgPtr);
 		assert(serializer.bufferIsSane());
 		radio->transmitStaticSynchronously();
 	}
+
 };

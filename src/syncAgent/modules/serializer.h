@@ -27,26 +27,27 @@
 class Serializer {
 
 public:
-	// Owns Message instances, and returns address of them
-	static SyncMessage inwardCommonSyncMsg;
-	static SyncMessage outwardCommonSyncMsg;
+	// Knows reused SyncMessage instances and Radio's buffer, see anon namespace
 
-	// Also knows Radio's buffer, see anon namespace
-
-	// Methods
 	static void init(BufferPointer radioBuffer, uint8_t aBufferSize);
 
 	/*
 	 * unserialize from radio buffer into Message instance.
 	 * returns pointer to polymorphous instance, or nullptr.
-	 * nullptr when Message.type is not valid.
+	 * nullptr when OTA Message.type is not valid or offset is not sane
 	 */
 	static SyncMessage* unserialize();
 
 	/*
-	 * Serialize from Message instance into radio buffer.
+	 * Get address of internal message object instances.
 	 */
-	static void serializeOutwardCommonSyncMessage();
+	static MasterSyncMessage* getMasterSyncMsg();
+	static WorkSyncMessage* getWorkSyncMsg();
+	static MergeSyncMessage* getMergeSyncMsg();
+	static AbandonMastershipMessage* getAbandonMastershipMsg();
+
+	// Polymorphic on subclass of SyncMessage
+	static void serializeSyncMessageIntoRadioBuffer(SyncMessage* msgPtr);
 
 	// Does contents of Serializer's buffer minimally seem like a Message?
 	static bool bufferIsSane();

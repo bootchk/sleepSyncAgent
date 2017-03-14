@@ -3,6 +3,7 @@
 #include "cliqueMerger.h"
 #include "../../augment/timeMath.h"
 #include "../scheduleParameters.h"
+#include "../globals.h"
 
 
 namespace {
@@ -177,7 +178,7 @@ void CliqueMerger::initFromMsg(SyncMessage* msg){
 	 * Save design so later, at endSyncSlot, we can schedule any mergeSlot.
 	 */
 
-	assert(msg->carriesSync(msg->type));
+	assert(msg->carriesSync());
 	log("Other Master ID: \n");
 	logLongLong(msg->masterID);
 
@@ -233,8 +234,8 @@ void CliqueMerger::adjustMergerBySyncMsg(SyncMessage* msg) {
 
 
 
-void CliqueMerger::makeMergeSync(SyncMessage& msg){
-	// side effect on passed msg
+void CliqueMerger::makeMergeSync(){
+	// side effect on serializer's message templates
 	assert(isActive);
 
 	/*
@@ -245,7 +246,7 @@ void CliqueMerger::makeMergeSync(SyncMessage& msg){
 	 */
 	DeltaTime rawOffset = owningClique->schedule.deltaNowToNextSyncPoint();
 
-	msg.makeMergeSync(rawOffset, masterID);
+	serializer.getMergeSyncMsg()->init(rawOffset, masterID);
 }
 
 

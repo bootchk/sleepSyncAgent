@@ -1,6 +1,9 @@
 
 #pragma once
 
+#include "../messageHandler/messageHandler.h"
+
+
 /*
  * Understands sleeping for sync algorithm.
  *
@@ -15,10 +18,8 @@
  * You can call init() more than once, with different maxSaneTimeout limits.
  */
 
+typedef void (*msgReceivedCallback)();
 
-typedef void (*voidFuncPtr)();
-
-typedef bool (*DispatchFuncPtr)(SyncMessage *);
 
 
 class SyncSleeper {
@@ -45,9 +46,9 @@ public:
 	/*
 	 * Expect either a timeout or a message event.
 	 */
-	static bool sleepUntilMsgAcceptedOrTimeout(
-			DispatchFuncPtr,	// Slot*,
+	static HandlingResult sleepUntilMsgAcceptedOrTimeout(
+			MessageHandler*,
 			OSTime (*func)());
 
-	static voidFuncPtr getMsgReceivedCallback();
+	static msgReceivedCallback getMsgReceivedCallback();
 };

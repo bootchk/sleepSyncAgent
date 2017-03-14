@@ -8,36 +8,18 @@
 #include <cassert>
 
 
-#include "../globals.h"	// syncAgent
+#include "../globals.h"	// syncAgent etc.
 
 #include "fishSlot.h"
+
 #include "fishSchedule.h"
-#include "../logMessage.h"
+#include "../messageHandler/messageHandler.h"
 
 
 namespace {
 
 FishSchedule fishSchedule;
-
-
-
-bool doSyncMsg(SyncMessage* msg){
-	/*
-	 * MasterSync may be better or worse.
-	 * toMergerRole() handles both cases,
-	 * but always toMerger(), either merging my clique or other clique.
-	 */
-	syncAgent.toMergerRole(msg);
-	assert(role.isMerger());
-	/*
-	 * assert (schedule changed AND self is merging my former clique)
-	 * OR (schedule unchanged AND self is merging other clique)
-	 */
-	// assert my schedule might have changed
-
-	// Stop listening: self can't handle more than one, or slot is busy with another merge
-	return true;
-}
+FishSlotMessageHandler msgHandler;
 
 
 void sleepUntilFishSlotStart() {
@@ -45,98 +27,9 @@ void sleepUntilFishSlotStart() {
 	syncSleeper.sleepUntilTimeout(fishSchedule.deltaToSlotStart);
 }
 
-
 } //namespace
 
 
-
-/*
- * Intended catch: MasterSync from another clique's Master in its sync slot.
- */
-bool FishSlot::doMasterSyncMsg(SyncMessage* msg){
-	log(LogMessage::FishedMasterSync);
-	return doSyncMsg(msg); }
-
-
-/*
- * Unintended catch: Other (master or slave)
- * is already xmitting into this time thinking it is SyncSlot of some third clique.
- * Ignore except to stop fishing this slot.
- */
-bool FishSlot::doMergeSyncMsg(SyncMessage* msg){
-	log(LogMessage::FishedMergeSync);
-	(void) msg; return true; }
-
-/*
- * Intended catch: another clique's Master or Slave sending WorkSync in its sync slot.
- *
- * Implementation for combined Work/Sync slot.
- * Work carries sync, identifies master of clique and time of slot.
- *
- * Alternatively, when separate Work slot,
- * can calculate the other clique's sync slot from the Work msg.
- */
-bool FishSlot::doWorkMsg(SyncMessage* msg) {
-	log(LogMessage::FishedWorkSync);
-	return doSyncMsg(msg);
-}
-
-
-/*
- * AbandonMastership
- *
- * Unintended catch: Another clique's master is abandoning (exhausted power)
- * For now ignore. Should catch clique again later, after another member assumes mastership.
- *
- * Inherited behaviour from superclass.
- */
-
-/*
- * Work
- *
- * Alternative designs:
- * Unintended catch: Another clique's work slot.
- * - Separate work slot: Ignore. Should catch clique again later, when we fish earlier, at it's syncSlot.
- * - Separate work slot:  Since work slot is in fixed relation to syncSlot, calculate syncSlot of catch, and merge it.
- * - Combined Work/Sync slot:
- *
- * In all alternatives: if work can be done when out of sync, do work.
- * onWorkMsgCallback(msg);	// Relay to app
- *
- *	Inherited behaviour from superclass is ignore.
- */
-
-
-
-/*
- * Dispatch received msg to appropriate method of slot.
- */
-bool FishSlot::dispatchMsgReceived(SyncMessage* msg){
-	bool foundDesiredMessage = false;
-
-	switch(msg->type) {
-	case MasterSync:
-		log(LogMessage::RXMasterSync);
-		foundDesiredMessage = doMasterSyncMsg(msg);
-		break;
-	case MergeSync:
-		log(LogMessage::RXMergeSync);
-		foundDesiredMessage = doMergeSyncMsg(msg);
-		break;
-	case AbandonMastership:
-		log(LogMessage::RXAbandonMastership);
-		foundDesiredMessage = doAbandonMastershipMsg(msg);
-		break;
-	case WorkSync:
-		log(LogMessage::RXWorkSync);
-		foundDesiredMessage = doWorkMsg(msg);
-		break;
-	default:
-		log(LogMessage::RXUnknown);
-	}
-
-	return foundDesiredMessage;
-}
 
 
 
@@ -162,7 +55,7 @@ void FishSlot::perform() {
 
 	// assert can receive an event that wakes imminently: race to sleep
 	syncSleeper.sleepUntilMsgAcceptedOrTimeout(
-			dispatchMsgReceived, //this,
+			&msgHandler,
 			fishSchedule.deltaToSlotEnd);
 	assert(radio->isDisabledState());
 	/*
@@ -181,8 +74,5 @@ void FishSlot::perform() {
 
 	network.postlude();
 }
-
-
-
 
 

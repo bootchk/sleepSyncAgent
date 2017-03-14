@@ -30,7 +30,9 @@
  * An alternative design is a distinct WorkMessage class.
  */
 
-
+/*
+ * Encoding for OTA type
+ */
 enum MessageType {
 	// Subclass SyncMessage
 	MasterSync = 17,	// Don't start at 0
@@ -46,31 +48,32 @@ enum MessageType {
 /*
  *  Messages used by SyncAgent.
  *
- *  In this design, work messages are not separate, but work field is piggybacked.
+ *  Work messages are not a separate, but work field is piggybacked.
  *  Only the work field is received by app.
  *
- *  !!! Note the order of fields in struct is not necessarily order of data in serialized OTA.
+ *  !!! Note the order and packing of fields in struct is not necessarily order of data in serialized OTA.
+ *  The size of the fields is nearly the same as OTA, but e.g. a 24-bit OTA field could be stored in 32-bit field of struct.
  */
+
+
+
 class SyncMessage{
 public:
+
 	MessageType type;
 	DeltaSync deltaToNextSyncPoint;	// forward in time
 	SystemID masterID;
 	WorkPayload work;	// work always present, not always defined
 
-	// OLD constructor SyncMessage() :type(MasterSync), deltaToNextSyncPoint(0), masterID(0), work(0) {}
+	// Only to suppress effective C level warnings
+	SyncMessage() : type(MasterSync), deltaToNextSyncPoint(), masterID(0), work(0) {}
 
-	void init(MessageType aType, DeltaTime aDeltaToNextSyncPoint, SystemID aMasterID) {
-		type = aType;
-		deltaToNextSyncPoint.set(aDeltaToNextSyncPoint);	// throws assertion if out of range
-		masterID = aMasterID;
-		work = 0;
-	}
+	// Suppress warnings
+    virtual ~SyncMessage() {};
 
-
+    // Each subclass defines its own signature of init()
 
 	// Class method
-
 	// Does an OTA received byte seem like a MessageType?
 	static bool isReceivedTypeASyncType(uint8_t receivedType) {
 		return      (receivedType == MasterSync)
@@ -82,76 +85,89 @@ public:
 
 
 	/*
-	 * Should this kind of SyncMsg have:
+	 * Should this subclass have:
 	 * - non-null offset?
 	 * - non-null MasterID
 	 *
 	 * AbandonMastership may have null offset
 	 */
-	static bool carriesSync(MessageType type) {
-		return type == MasterSync
-				|| type == MergeSync
-				|| type == WorkSync;
+	virtual bool carriesSync() = 0;
+};
+
+
+/*
+ * Usual sync from a unit in Master role.
+ * DeltaToNextSyncPoint is typically small.
+ */
+class MasterSyncMessage : public SyncMessage {
+public:
+
+	~MasterSyncMessage() {};
+
+	void init(DeltaTime aDeltaToNextSyncPoint, SystemID aMasterID) {
+		type = MasterSync;
+		deltaToNextSyncPoint.set(aDeltaToNextSyncPoint);	// throws assertion if out of range
+		masterID = aMasterID;
+		work = 0;
 	}
 
-	/*
-	 * Dying breath message from master which is power failing.  deltaToNextSyncPoint is moot.
-	 */
-	void makeAbandonMastership(SystemID aMasterID) {
-		init(AbandonMastership, 0, aMasterID);
-	}
+	virtual bool carriesSync() { return true; }
+};
 
-	/*
-	 * Usual sync from a unit in Master role.
-	 * DeltaToNextSyncPoint is typically small.
-	 */
-	void makeMasterSync(DeltaTime aDeltaToNextSyncPoint, SystemID aMasterID){
-		init(MasterSync, aDeltaToNextSyncPoint, aMasterID);
-	}
 
-	/*
-	 * Sync from unit in Merger role (master or slave) requesting other clique change its sync time.
-	 * DeltaToNextSyncPoint is typically but not always large, more than one slot duration.
-	 */
-	void makeMergeSync(DeltaTime aDeltaToNextSyncPoint, SystemID aMasterID){
-		init(MergeSync, aDeltaToNextSyncPoint, aMasterID);
-	}
 
-	/*
-	 * Work message, also helps to maintain sync.
-	 */
-	void makeWorkSync(DeltaTime aDeltaToNextSyncPoint, SystemID aMasterID, WorkPayload workPayload){
-		init(WorkSync, aDeltaToNextSyncPoint, aMasterID);
+/*
+ * Sync from unit in Merger role (master or slave) requesting other clique change its sync time.
+ * DeltaToNextSyncPoint is typically but not always large, more than one slot duration.
+ */
+class MergeSyncMessage : public SyncMessage {
+public:
+	void init(DeltaTime aDeltaToNextSyncPoint, SystemID aMasterID) {
+		type = MergeSync;
+		deltaToNextSyncPoint.set(aDeltaToNextSyncPoint);	// throws assertion if out of range
+		masterID = aMasterID;
+		work = 0;
+	}
+	~MergeSyncMessage() {};
+	virtual bool carriesSync() { return true; }
+};
+
+
+/*
+ * Work message, also helps to maintain sync.
+ */
+class WorkSyncMessage : public SyncMessage {
+public:
+	void init(DeltaTime aDeltaToNextSyncPoint, SystemID aMasterID, WorkPayload workPayload) {
+		type = WorkSync;
+		deltaToNextSyncPoint.set(aDeltaToNextSyncPoint);	// throws assertion if out of range
+		masterID = aMasterID;
 		work = workPayload;
 	}
-
-	// See dual: makeWork()
-	WorkPayload getWorkPayload() {
-		return work;
-	}
+	~WorkSyncMessage() {};
+	virtual bool carriesSync() { return true; }
 };
 
 
-#ifdef FUTURE
-// Superclass
-The only thing Work and Sync messages have in common is MessageType field.
-class Message {
+
+
+/*
+ * Dying breath message from master which is power failing.  deltaToNextSyncPoint is moot.
+ */
+class AbandonMastershipMessage : public SyncMessage {
 public:
-	// provided by wireless stack??
-	// SystemID senderID;
-
-	// Our content of msg (not necessarily from wireless stack)
-	MessageType type;
+	void init(SystemID aMasterID) {
+			type = AbandonMastership;
+			deltaToNextSyncPoint.set(0);	// throws assertion if out of range
+			masterID = aMasterID;
+			work = 0;
+		}
+	~AbandonMastershipMessage() {};
+	virtual bool carriesSync() { return false; }
 };
-#endif
 
-#ifdef OBSOLETE
-	bool isOffsetSync() {
-		// i.e. used for merge sync
-		bool result = deltaToNextSyncPoint > 0;
-		return result;
-	}
-#endif
+
+
 
 #ifdef FUTURE
 Distinct class for Work????

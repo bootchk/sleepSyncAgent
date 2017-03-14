@@ -6,7 +6,7 @@
 #include "../globals.h"
 #include "syncWorkSlot.h"
 #include "syncSlotSchedule.h"
-#include "../messageHandler/syncSlotMsgHandler.h"
+#include "../messageHandler/messageHandler.h"
 
 
 
@@ -22,8 +22,8 @@ SyncSlotMessageHandler msgHandler;
 
 bool SyncWorkSlot::doListenHalfSyncWorkSlot(OSTime (*timeoutFunc)()) {
 	network.startReceiving();
-	bool result = syncSleeper.sleepUntilMsgAcceptedOrTimeout(
-			msgHandler.dispatchMsgReceived,
+	HandlingResult result = syncSleeper.sleepUntilMsgAcceptedOrTimeout(
+			&msgHandler,
 			timeoutFunc
 			);
 
@@ -93,7 +93,7 @@ void SyncWorkSlot::doSlaveSyncWorkSlot() {
 	// logInt(clique.schedule.deltaPastSyncPointToNow()); log("<delta SP to sync listen.\n");
 
 	(void) syncSleeper.sleepUntilMsgAcceptedOrTimeout(
-			msgHandler.dispatchMsgReceived,
+			&msgHandler,
 			slotSchedule.deltaToThisSyncSlotEnd);
 	/*
 	 * Not using result:  all message handlers return false i.e. keep looking.

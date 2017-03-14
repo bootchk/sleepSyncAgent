@@ -111,8 +111,7 @@ void SyncAgent::pauseSyncing() {
  * Might not be heard, in which case other units should detect DropOut.
  */
 void SyncAgent::doDyingBreath() {
-	serializer.outwardCommonSyncMsg.makeAbandonMastership(myID());
-	syncSender.sendPrefabricatedMessage();
+	syncSender.sendAbandonMastership();
 }
 
 
@@ -121,7 +120,7 @@ void SyncAgent::doDyingBreath() {
 
 void SyncAgent::toMergerRole(SyncMessage* msg){
 	// assert slot is fishSlot
-	assert(msg->carriesSync(msg->type));
+	assert(msg->carriesSync());
 	assert(msg->type != MergeSync);
 	assert(role.isFisher());
 	role.setMerger();
