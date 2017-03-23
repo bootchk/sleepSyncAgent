@@ -35,11 +35,11 @@ void MergeSlot::perform() {
 	assert(!radio->isPowerOn());
 	assert(role.isMerger());
 	// Hard sleep without listening.
+	// Pass to sleep(): function to calculate start of merge
 	syncSleeper.sleepUntilTimeout(timeoutUntilMerge);
 
-	network.preamble();
-
 	// assert time aligned with middle of a mergee sync slots (same wall time as fished sync from mergee.)
+	network.preamble();
 	network.prepareToTransmitOrReceive();
 	logLongLong(clique.schedule.nowTime()); log(":mergeSync");
 	syncSender.sendMergeSync();

@@ -23,7 +23,7 @@ FishSlotMessageHandler msgHandler;
 
 
 void sleepUntilFishSlotStart() {
-	// pass function to sleeper
+	// pass to sleeper: function to calculate start time
 	syncSleeper.sleepUntilTimeout(fishSchedule.deltaToSlotStart);
 }
 
@@ -36,17 +36,14 @@ void sleepUntilFishSlotStart() {
 void FishSlot::perform() {
 	// FUTURE: A fish slot need not be aligned with other slots, and different duration???
 
-	// Sleep ultra low-power across normally sleeping slots to start of fish slot
-	assert(!radio->isPowerOn());
-
-	network.preamble();
-
+	// Sleep ultra low-power across normally sleeping slots to start of fish slot.
+	// Note sleep might have assertions on power condition
 	fishSchedule.init();	// Calculate start time once
-
 	sleepUntilFishSlotStart();
 
 	// logInt(Schedule::deltaPastSyncPointToNow()); log("fish tick\n");
 
+	network.preamble();
 	network.prepareToTransmitOrReceive();
 	assert(radio->isPowerOn());
 

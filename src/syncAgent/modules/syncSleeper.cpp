@@ -1,12 +1,14 @@
 
 #include <cassert>
 
+#include <modules/powerAssertions.h>	// nRF5x lib
+
 #include "../globals.h"
 #include "syncSleeper.h"
 
 #include "../scheduleParameters.h"
 #include "../logMessage.h"
-#include "modules/powerAssertions.h"
+
 
 namespace {
 Sleeper sleeper;
