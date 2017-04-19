@@ -4,6 +4,7 @@
 #include "../globals.h"
 #include "network.h"
 
+//  TODO rename start and stop peripherals needed by radio
 
 void Network::preamble() {
 	radio->hfCrystalClock->startAndSleepUntilRunning();
