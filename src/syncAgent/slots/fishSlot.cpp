@@ -43,8 +43,7 @@ void FishSlot::perform() {
 
 	// logInt(Schedule::deltaPastSyncPointToNow()); log("fish tick\n");
 
-	network.preamble();
-	network.prepareToTransmitOrReceive();
+	network.startup();
 
 	network.startReceiving();
 
@@ -65,7 +64,7 @@ void FishSlot::perform() {
 	 * first mergeSlot will be after next syncSlot.
 	 */
 
-	network.postlude();
+	network.shutdown();
 }
 
 

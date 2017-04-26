@@ -7,24 +7,26 @@
  * - radio
  * - HFXTAL oscillator
  *
- * This coordinates.
+ * This understands that.  Many methods just do something with both devices.
  *
  * Note the chip powers down radio automatically when not in use,
  * and radio configuration persists through that.
+ *
+ * FUTURE make network own radio.  Currently, other code calls radio methods.
  */
 
 class Network {
 public:
 	// In order generally called
 
-	// Preamble mainly starts HfCrystalClock needed by radio
-	static void preamble();
+	// Ensure both devices ready
+	static void startup();
+	// Ensure both devices low power
+	static void shutdown();
 
-	static void prepareToTransmitOrReceive();
+	//static void prepareToTransmitOrReceive();
 	static void startReceiving();
 	static void stopReceiving();
-	//static void shutdown();
-	static void postlude();
 
 
 	// Is radio in use?

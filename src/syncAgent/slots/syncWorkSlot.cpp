@@ -144,10 +144,7 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 void SyncWorkSlot::perform() {
 	// logInt(clique.schedule.deltaPastSyncPointToNow()); log("<delta SP to start slot.\n");
 
-	network.preamble();
-
-	network.prepareToTransmitOrReceive();
-
+	network.startup();
 
 	// Call shouldTransmitSync every time, since it needs calls sideeffect reset itself
 	bool needXmitSync = syncBehaviour.shouldTransmitSync();
@@ -184,7 +181,7 @@ void SyncWorkSlot::perform() {
 	if (!clique.isSelfMaster())
 		clique.checkMasterDroppedOut();
 
-	network.postlude();
+	network.shutdown();
 
 	assert(network.isLowPower());
 }

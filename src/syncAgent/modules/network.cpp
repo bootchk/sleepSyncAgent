@@ -4,20 +4,38 @@
 #include "../globals.h"
 #include "network.h"
 
-//  TODO rename start and stop peripherals needed by radio
 
-void Network::preamble() {
-	radio->hfCrystalClock->startAndSleepUntilRunning();
+
+bool Network::isConfigured(){
+	return radio->isConfigured();
 }
 
-void Network::postlude() {
+bool Network::isLowPower() {
+	return ((!radio->isInUse()) && !radio->hfCrystalClock->isRunning());
+}
+
+bool Network::isRadioInUse() {
+	return radio->isInUse();
+}
+
+void Network::startup() {
+	radio->hfCrystalClock->startAndSleepUntilRunning();
+	// TODO superfluous
+	// prepareToTransmitOrReceive();
+	assert(radio->isConfigured());
+}
+
+void Network::shutdown() {
 	radio->hfCrystalClock->stop();
 }
 
 /*
  * If radio not already configured, make it so.
  * And insure radio is ready (state==disabled)
+ *
+ * TODO This is superfluous, the radio stays configured
  */
+/*
 void Network::prepareToTransmitOrReceive() {
 	if (!radio->isConfigured()) {
 			radio->resetAndConfigure();
@@ -26,14 +44,16 @@ void Network::prepareToTransmitOrReceive() {
 		}
 	assert(!radio->isInUse());
 }
+*/
 
 void Network::startReceiving() {
 	// Note radio might already be ready, but this ensure it.
-	prepareToTransmitOrReceive();
+	// OLD prepareToTransmitOrReceive();
 	syncSleeper.clearReasonForWake();
 	radio->receiveStatic();
 	assert(radio->isInUse());
 }
+
 
 void Network::stopReceiving() {
 	if (radio->isInUse()) {
@@ -42,9 +62,3 @@ void Network::stopReceiving() {
 	assert(!radio->isInUse());
 }
 
-/* OLD
-void Network::shutdown() {
-	radio->powerOff();
-	assert(!radio->isPowerOn());
-}
-*/
