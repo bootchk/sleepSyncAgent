@@ -41,7 +41,7 @@ void SyncAgent::loop(PowerManager* powerManager){
 	logLongLong(clique.getMasterID());
 
 	assert(! isSyncingState);
-	assert(!radio->isPowerOn());
+	assert(network.isLowPower());
 
 	/*
 	 * assert schedule already started and not too much time has elapsed
@@ -54,7 +54,7 @@ void SyncAgent::loop(PowerManager* powerManager){
 		// call back app
 		onSyncPointCallback();
 
-		assert(!radio->isPowerOn());	// Radio is off after every sync period
+		assert(network.isLowPower());	// After every sync period
 
 		if ( powerManager->isPowerForRadio() ) {
 			/*

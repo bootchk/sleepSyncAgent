@@ -15,16 +15,16 @@ void Network::postlude() {
 }
 
 /*
- * If radio not already powered on, make it so.
+ * If radio not already configured, make it so.
+ * And insure radio is ready (state==disabled)
  */
 void Network::prepareToTransmitOrReceive() {
-	if (!radio->isPowerOn()) {
-			radio->powerOnAndConfigure();
+	if (!radio->isConfigured()) {
+			radio->resetAndConfigure();
 			// TESTING: lower xmit power 8
 			// radio->configureXmitPower(8);
 		}
-	assert(radio->isPowerOn());
-	assert(radio->isDisabledState());	// not is receiving
+	assert(!radio->isInUse());
 }
 
 void Network::startReceiving() {
@@ -32,18 +32,19 @@ void Network::startReceiving() {
 	prepareToTransmitOrReceive();
 	syncSleeper.clearReasonForWake();
 	radio->receiveStatic();
-	assert(!radio->isDisabledState());	// is receiving
+	assert(radio->isInUse());
 }
 
 void Network::stopReceiving() {
-	if (radio->isPowerOn()) {
+	if (radio->isInUse()) {
 		radio->stopReceive();
 	}
-	assert(radio->isDisabledState());	// not is receiving
+	assert(!radio->isInUse());
 }
 
+/* OLD
 void Network::shutdown() {
 	radio->powerOff();
 	assert(!radio->isPowerOn());
 }
-
+*/

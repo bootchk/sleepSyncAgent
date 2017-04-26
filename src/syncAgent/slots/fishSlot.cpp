@@ -45,16 +45,14 @@ void FishSlot::perform() {
 
 	network.preamble();
 	network.prepareToTransmitOrReceive();
-	assert(radio->isPowerOn());
 
 	network.startReceiving();
-	assert(!radio->isDisabledState());
 
 	// assert can receive an event that wakes imminently: race to sleep
 	syncSleeper.sleepUntilMsgAcceptedOrTimeout(
 			&msgHandler,
 			fishSchedule.deltaToSlotEnd);
-	assert(radio->isDisabledState());
+	assert(!network.isRadioInUse());
 	/*
 	 * Conditions:
 	 * (no sync msg was heard and receiver still on)
@@ -66,8 +64,6 @@ void FishSlot::perform() {
 	 * In case we adjusted changed role to Merger,
 	 * first mergeSlot will be after next syncSlot.
 	 */
-	// radio might be off already
-	network.shutdown();
 
 	network.postlude();
 }

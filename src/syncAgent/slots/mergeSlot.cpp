@@ -32,7 +32,7 @@ MergePolicy MergeSlot::mergePolicy;
  * !!! The time to xmit is not aligned with this schedule's slots, but with middle of mergee's SyncSlot.
  */
 void MergeSlot::perform() {
-	assert(!radio->isPowerOn());
+	assert(network.isLowPower());
 	assert(role.isMerger());
 	// Hard sleep without listening.
 	// Pass to sleep(): function to calculate start of merge
@@ -42,8 +42,8 @@ void MergeSlot::perform() {
 	network.preamble();
 	network.prepareToTransmitOrReceive();
 	logLongLong(clique.schedule.nowTime()); log(":mergeSync");
-	syncSender.sendMergeSync();
-	network.shutdown();
+	syncSender.sendMergeSync();	// Synchronous
+	assert(!radio->isInUse());
 
 	if (mergePolicy.checkCompletionOfMergerRole()){
 		mergePolicy.restart();
@@ -55,7 +55,5 @@ void MergeSlot::perform() {
 	// else continue in role Merger
 
 	network.postlude();
-
-	assert(!radio->isPowerOn());
 }
 

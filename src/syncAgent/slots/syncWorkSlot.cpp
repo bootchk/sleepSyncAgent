@@ -27,7 +27,7 @@ bool SyncWorkSlot::doListenHalfSyncWorkSlot(OSTime (*timeoutFunc)()) {
 			timeoutFunc
 			);
 
-	// assert radio is on or off
+	// not assert network.isLowPower()
 	return result;
 }
 
@@ -40,8 +40,7 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 	// not assert self is Master
 
 	(void) doListenHalfSyncWorkSlot(slotSchedule.deltaToThisSyncSlotMiddleSubslot);
-	assert(radio->isDisabledState());
-	assert(radio->isPowerOn());
+	assert(!network.isRadioInUse());
 
 	/*
 	 * Even if I heard sync, need send Work.
@@ -67,7 +66,7 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 	 */
 	(void) doListenHalfSyncWorkSlot(slotSchedule.deltaToThisSyncSlotEnd);
 
-	// assert radio on or off
+	// not assert network.isLowPower()
 }
 
 
@@ -86,8 +85,9 @@ void SyncWorkSlot::doIdleSlotRemainder() {
  */
 void SyncWorkSlot::doSlaveSyncWorkSlot() {
 	network.startReceiving();
-	// This assertion is time sensitive, can't stay in production code
-	assert(!radio->isDisabledState()); // listening for other's sync
+
+	// Assert listening for other's sync.
+	// Cannot assert isRadioInUse() since receive might have succeeded already (when using debugger)
 
 	// Log delay from sync point to actual start listening.
 	// logInt(clique.schedule.deltaPastSyncPointToNow()); log("<delta SP to sync listen.\n");
@@ -111,7 +111,7 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 	bool heardSyncKeepingSync;
 
 	heardSyncKeepingSync = doListenHalfSyncWorkSlot(slotSchedule.deltaToThisSyncSlotMiddleSubslot);
-	assert(radio->isDisabledState());
+	assert(!network.isRadioInUse());
 
 	/*
 	 * Might have heard:
@@ -128,7 +128,7 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 	// Result doesn't matter, slot is over and we proceed whether we heard sync keeping sync or not.
 	(void) doListenHalfSyncWorkSlot(slotSchedule.deltaToThisSyncSlotEnd);
 
-	// assert radio on or off
+	// not assert network.isLowPower()
 }
 
 
@@ -177,11 +177,8 @@ void SyncWorkSlot::perform() {
 	 * Scheduling of subsequent events does not depend on timely this event.
 	 */
 
-	// Radio is on or off.  If on, we timeout'd while receiving
+	// Radio might be in use.  In use: we timeout'd while receiving
 	network.stopReceiving();
-	// Radio on or off
-	// Turn radio off, workSlot may not need it on
-	network.shutdown();
 
 	// FUTURE we could do this elsewhere, e.g. start of sync slot so this doesn't delay the start of work slot
 	if (!clique.isSelfMaster())
@@ -189,6 +186,6 @@ void SyncWorkSlot::perform() {
 
 	network.postlude();
 
-	assert(!radio->isPowerOn());	// ensure
+	assert(network.isLowPower());
 }
 

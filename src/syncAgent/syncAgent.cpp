@@ -45,15 +45,15 @@ void SyncAgent::init(
 		void (*aOnSyncPointCallback)()
 	)
 {
-	// require caller initialized radio, mailbox, and LongClockTimer
-	// !!! But not isOSClockRunning() yet
+	/*
+	 * require caller initialized radio, mailbox, and LongClockTimer.
+	 * !!! But not isOSClockRunning() yet.
+	 * RADIO->POWER is set at POR reset, but it means 'was reset', not 'is using power'.
+	 */
 
 	// Copy parameters to globals
 	radio = aRadio;
 	workOutMailbox = aMailbox;
-
-	// Radio is powered on at POR reset!!!
-	radio->powerOff();
 
 	// Temp: test power consumption when all sleep
 	// while(true) waitForOSClockAndToRecoverBootEnergy(aLCT);
@@ -73,6 +73,7 @@ void SyncAgent::init(
 	// Connect radio IRQ to syncSleeper so it knows reason for wake
 	radio->setMsgReceivedCallback(syncSleeper.getMsgReceivedCallback());
 	// radio not configured until after powerOn()
+	// TODO configure radio now
 
 	// Serializer reads and writes directly to radio buffer
 	serializer.init(radio->getBufferAddress(), Radio::FixedPayloadCount);
@@ -80,13 +81,11 @@ void SyncAgent::init(
 	clique.init();
 	// Assert LongClock is reset and running
 
-	// radio device may be on from prior debugging w/o hard reset
-	radio->powerOff();
-
 	// ensure initial state of SyncAgent
 	assert(role.isFisher());
 	assert(clique.isSelfMaster());
-	assert(!radio->isPowerOn());
+	assert(!network.isRadioInUse());
+	assert(network.isConfigured());
 }
 
 
@@ -96,7 +95,7 @@ void SyncAgent::pauseSyncing() {
 	 * Other units might still have power and assume mastership of my clique
 	 */
 
-	assert(!radio->isPowerOn());
+	assert(network.isLowPower());
 
 	// FUTURE if clique is probably not empty
 	if (clique.isSelfMaster()) doDyingBreath();

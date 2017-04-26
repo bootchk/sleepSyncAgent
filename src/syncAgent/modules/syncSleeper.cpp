@@ -61,9 +61,9 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 			// TODO quiet conversion to bool here
 			didReceiveDesiredMsg = msgHandler->handle(msg);
 			if (didReceiveDesiredMsg) {
-				// Ultra low power sleep remainder of duration (radio power off)
-				assert(radio->isDisabledState());
-				radio->powerOff();
+				// Remainder of duration radio not used (low power) but HFXO is still on.
+				assert(!network.isRadioInUse());
+
 				// continuation is sleep
 				// assert since radio power off, reason for wake can only be timeout and will then exit loop
 			}
@@ -208,7 +208,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 	 */
 	assert(radio->isEnabledInterruptForMsgReceived());	// will interrupt
 	// we beat the radio race, i.e. msg not already received
-	assert(!radio->isDisabledState());	// is receiving
+	assert(network.isRadioInUse());
 
 	//assert(sleeper.reasonForWakeIsCleared());	// This also checks we haven't received yet
 	// FUTURE currently, this is being cleared in sleepUntil but that suffers from races
@@ -271,8 +271,8 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 
 	}	// while(true)
 
-	assert(radio->isDisabledState());  // not receiving
-	// radio is on or off
+	assert(!network.isRadioInUse());
+	// not assert network.isLowPower()
 	// ensure message queue nearly empty
 	// ensure timeout or didReceiveDesiredMsg
 	return didReceiveDesiredMsg;
