@@ -61,7 +61,7 @@ public:
 
 
 	// TODO should calculate offset as late as possible
-	static void sendWorkSync() {
+	static void sendWorkSync(WorkPayload work) {
 		/*
 		 * The app sends work OUT only when there is enough power for self to do work,
 		 * which is more than is required to send the workSync.
@@ -78,7 +78,7 @@ public:
 				 * even if self is not the Master I.E. WorkSync could be from a Slave.
 				 */
 				clique.getMasterID(),
-				workOutMailbox->fetch());	// from app, outward
+				work);	// from app, outward
 		sendMessage(msgPtr);
 	}
 

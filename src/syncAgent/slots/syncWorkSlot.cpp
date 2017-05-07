@@ -52,9 +52,28 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 	 *
 	 * Even if my clique changed, need to send workSync to it.
 	 */
-	// TODO, I might have heard Work, in that case I don't need to send it again.
 
-	syncSender.sendWorkSync();
+	/*
+	 * Design choice: all work is equivalent: don't send if others sent.
+	 *
+	 * Also, this knows that we bounce out work back to app.
+	 */
+	// Fetch work from app
+	WorkPayload work = workOutMailbox->fetch();
+	if (! workManager.isHeardWork() ) {
+		syncSender.sendWorkSync(work);
+		// Queue back to app so it can do work locally
+		syncAgent.relayWorkToApp(work);
+	}
+	else {
+		// assert heard work is queued to app
+		/*
+		 * FUTURE: work is distinct and mailbox holds many work
+		 * send distinct work
+		 * and queue another one from app back to app
+		 */
+	}
+
 
 	/*
 	 * Keep listening for other better Masters or WorkSync.
@@ -144,6 +163,7 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 void SyncWorkSlot::perform() {
 	// logInt(clique.schedule.deltaPastSyncPointToNow()); log("<delta SP to start slot.\n");
 
+	// Sleep until network ready. Deadtime in slot.
 	network.startup();
 
 	// Call shouldTransmitSync every time, since it needs calls sideeffect reset itself
@@ -154,7 +174,7 @@ void SyncWorkSlot::perform() {
 	 * Work must be rare, lest it flood network and destroy sync
 	 * (colliding too often with MergeSync or MasterSync.)
 	 */
-	if (workOutMailbox->isMail() ) {
+	if (workManager.isNeedSendWork()) {
 		// This satisfies needXmitSync
 		doSendingWorkSyncWorkSlot();
 	}

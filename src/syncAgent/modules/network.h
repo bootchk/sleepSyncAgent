@@ -24,10 +24,13 @@ public:
 	// Ensure both devices low power
 	static void shutdown();
 
-	//static void prepareToTransmitOrReceive();
+	// Non-blocking, but lag (deadtime) for rampup until can hear
 	static void startReceiving();
+
 	static void stopReceiving();
 
+	// No startTxmitting: direct calls to radio.
+	// Additional lag before transmission on air.
 
 	// Is radio in use?
 	// If false, radio may be low power but HFXO may still be on

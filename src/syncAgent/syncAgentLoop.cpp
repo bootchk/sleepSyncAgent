@@ -53,6 +53,9 @@ void SyncAgent::loop(PowerManager* powerManager){
 	while (true){
 		// call back app
 		onSyncPointCallback();
+		// app may have queued work
+
+		workManager.resetState();
 
 		assert(network.isLowPower());	// After every sync period
 

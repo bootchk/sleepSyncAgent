@@ -2,6 +2,9 @@
 #include "../types.h"
 #include "../../augment/timeMath.h"
 
+/*
+ * Knows schedule within sync slot ie when middle and end
+ */
 class SyncSlotSchedule {
 public:
 	/*

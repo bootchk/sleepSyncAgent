@@ -40,6 +40,9 @@ extern SyncBehaviour syncBehaviour;
 #include "modules/network.h"
 extern Network network;
 
+#include "policy/workManager.h"
+extern WorkManager workManager;
+
 
 /*
  * fishPolicy used by clique and fishSchedule

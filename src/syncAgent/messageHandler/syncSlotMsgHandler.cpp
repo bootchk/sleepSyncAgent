@@ -57,6 +57,7 @@ HandlingResult SyncSlotMessageHandler::handleWorkSyncMessage(SyncMessage* msg){
 	 * Handle work aspect of message.
 	 * Doesn't matter which clique it came from, relay work.
 	 */
+	workManager.hearWork();	// keep work state for slot
 	syncAgent.relayWorkToApp(msg->work);
 
 	/*
