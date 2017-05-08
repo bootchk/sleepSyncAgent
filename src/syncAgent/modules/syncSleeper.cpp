@@ -129,7 +129,11 @@ void SyncSleeper::sleepUntilTimeout(OSTime (*timeoutFunc)()) {
 			// assert time specified by timeoutFunc has elapsed.
 			break;	// while true
 		else {
-			// reasonForWake is not TimerExpired, e.g. an unexpected reason
+			/*
+			 * reasonForWake is not TimerExpired:
+			 * - another Timer (e.g. LedTimer)
+			 * - any other unexpected event???
+			 */
 			// continue next loop iteration
 		}
 		/*
