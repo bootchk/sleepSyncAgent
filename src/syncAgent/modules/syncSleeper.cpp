@@ -1,7 +1,8 @@
 
 #include <cassert>
 
-#include <modules/powerAssertions.h>	// nRF5x lib
+#include <exceptions/powerAssertions.h>	// nRF5x lib
+#include <exceptions/resetAssertions.h>
 
 #include "../globals.h"
 #include "syncSleeper.h"
@@ -29,6 +30,7 @@ LongClockTimer* longClockTimer;	// for toa
  */
 void sleepWithOnlyTimerPowerUntilTimeout(DeltaTime timeout) {
 	assertUltraLowPower();
+	assertNoResetsOccurred();
 	sleeper.sleepUntilEventWithTimeout(timeout);
 }
 
