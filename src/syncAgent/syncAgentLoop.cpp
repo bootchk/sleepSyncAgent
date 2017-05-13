@@ -46,7 +46,6 @@ void doDyingBreath() {
  * Other units might still have power and assume mastership of my clique
  */
 void pauseSyncing() {
-	assert(network.isLowPower());
 
 	// FUTURE if clique is probably not empty
 	if (clique.isSelfMaster()) doDyingBreath();
@@ -126,3 +125,23 @@ void SyncAgent::loop(PowerManager* powerManager){
 	// never returns
 }
 
+#ifdef OLD
+namespace {
+
+/*
+ * Sleep (not spin!!!) to recover boot energy and to insure LFXO is stable (takes 0.25 seconds.)
+ * Necessary when power is load switched and hysteresis is low (.05V) and power storage is small capacitor.
+ */
+void waitForOSClockAndToRecoverBootEnergy(LongClockTimer * aLCT) {
+	// Init sleeper with a larger timeout limit than while syncing
+	syncSleeper.init(
+			ScheduleParameters::StabilizedClockTimeout + 1,
+			aLCT);
+
+	syncSleeper.sleepUntilTimeout(ScheduleParameters::StabilizedClockTimeout);
+}
+
+
+
+}
+#endif

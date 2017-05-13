@@ -19,24 +19,7 @@ void (*SyncAgent::onSyncPointCallback)();
 // See syncAgentLoop.cpp for high level algorithm.
 
 
-namespace {
 
-/*
- * Sleep (not spin!!!) to recover boot energy and to insure LFXO is stable (takes 0.25 seconds.)
- * Necessary when power is load switched and hysteresis is low (.05V) and power storage is small capacitor.
- */
-void waitForOSClockAndToRecoverBootEnergy(LongClockTimer * aLCT) {
-	// Init sleeper with a larger timeout limit than while syncing
-	syncSleeper.init(
-			ScheduleParameters::StabilizedClockTimeout + 1,
-			aLCT);
-
-	syncSleeper.sleepUntilTimeout(ScheduleParameters::StabilizedClockTimeout);
-}
-
-
-
-}
 
 
 void SyncAgent::init(
@@ -60,10 +43,6 @@ void SyncAgent::init(
 	// Temp: test power consumption when all sleep
 	// while(true) waitForOSClockAndToRecoverBootEnergy(aLCT);
 
-	// TODO this should come later
-	waitForOSClockAndToRecoverBootEnergy(aLCT);
-	assert(aLCT->isOSClockRunning());
-
 	syncSleeper.init(
 			2* ScheduleParameters::NormalSyncPeriodDuration,
 			aLCT);
@@ -81,7 +60,9 @@ void SyncAgent::init(
 	serializer.init(radio->getBufferAddress(), Radio::FixedPayloadCount);
 
 	clique.init();
-	// Assert LongClock is reset and running
+
+	// assert LongClock is reset
+	// not assert LongClock running assert(aLCT->isOSClockRunning());
 
 	// ensure initial state of SyncAgent
 	assert(role.isFisher());
