@@ -58,8 +58,8 @@ void SyncAgent::init(
 	// Temp: test power consumption when all sleep
 	// while(true) waitForOSClockAndToRecoverBootEnergy(aLCT);
 
+	// TODO this should come later
 	waitForOSClockAndToRecoverBootEnergy(aLCT);
-
 	assert(aLCT->isOSClockRunning());
 
 	syncSleeper.init(

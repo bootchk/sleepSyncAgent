@@ -38,7 +38,7 @@
 
 
 
-#include "sleepSyncAgent.h"
+#include "syncAgent/syncAgent.h"
 
 
 // callbacks
@@ -61,7 +61,7 @@ void onSyncPoint() {
 
 Radio myRadio;
 Mailbox myMailbox;
-SleepSyncAgent sleepSyncAgent;
+SyncAgent sleepSyncAgent;
 LongClockTimer longClockTimer;
 PowerManager powerManager;
 
@@ -71,6 +71,6 @@ int main() {
 	// assert embedded system startup is done and calls main.
 	// assert caller initialized radio
 	sleepSyncAgent.init(&myRadio, &myMailbox, &longClockTimer, onWorkMsg, onSyncPoint);
-	sleepSyncAgent.loopOnEvents(&powerManager);	// never returns
+	sleepSyncAgent.loop(&powerManager);	// never returns
 	return 0;
 }
