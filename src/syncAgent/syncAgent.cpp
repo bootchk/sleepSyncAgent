@@ -34,6 +34,8 @@ void waitForOSClockAndToRecoverBootEnergy(LongClockTimer * aLCT) {
 	syncSleeper.sleepUntilTimeout(ScheduleParameters::StabilizedClockTimeout);
 }
 
+
+
 }
 
 
@@ -89,29 +91,7 @@ void SyncAgent::init(
 }
 
 
-void SyncAgent::pauseSyncing() {
-	/*
-	 * Not enough power for self to continue syncing.
-	 * Other units might still have power and assume mastership of my clique
-	 */
 
-	assert(network.isLowPower());
-
-	// FUTURE if clique is probably not empty
-	if (clique.isSelfMaster()) doDyingBreath();
-	// else I am a slave, just drop out of clique, others may have enough power
-
-	// FUTURE onSyncingPausedCallback();	// Tell app
-}
-
-
-/*
- * Ask an other unit in my clique to assume mastership.
- * Might not be heard, in which case other units should detect DropOut.
- */
-void SyncAgent::doDyingBreath() {
-	syncSender.sendAbandonMastership();
-}
 
 
 

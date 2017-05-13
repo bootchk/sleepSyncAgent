@@ -25,6 +25,43 @@ SimpleSyncPeriod syncPeriod;
 #else
 CombinedSyncPeriod syncPeriod;
 #endif
+
+
+void sleepEntireSyncPeriod() {
+	syncSleeper.sleepUntilTimeout(clique.schedule.deltaNowToNextSyncPoint);
+}
+
+
+/*
+ * Ask an other unit in my clique to assume mastership.
+ * Might not be heard, in which case other units should detect DropOut.
+ */
+void doDyingBreath() {
+	syncSender.sendAbandonMastership();
+}
+
+
+/*
+ * Not enough power for self to continue syncing.
+ * Other units might still have power and assume mastership of my clique
+ */
+void pauseSyncing() {
+	assert(network.isLowPower());
+
+	// FUTURE if clique is probably not empty
+	if (clique.isSelfMaster()) doDyingBreath();
+	// else I am a slave, just drop out of clique, others may have enough power
+
+	// FUTURE onSyncingPausedCallback();	// Tell app
+}
+
+/*
+ * We were not keeping sync, but about to start tying again (using radio.)
+ */
+void resumeSyncing() {
+	// FUTURE onSyncingResumedCallback();	// Tell app
+}
+
 } // namespace
 
 
@@ -63,18 +100,24 @@ void SyncAgent::loop(PowerManager* powerManager){
 			/*
 			 * Sync keeping: use radio
 			 */
-			// FUTURE if !isSyncingState resumeSyncing  announce to app
-			isSyncingState = true;
+			if (!isSyncingState) {
+				resumeSyncing();
+				isSyncingState = true;
+			}
+
 			syncPeriod.doSlotSequence();
 		}
 		else {
 			/*
-			 * Sync maintenance: don't use radio but keep schedule by sleeping one sync period.
+			 * Sync maintenance: keep schedule by sleeping one sync period, w/o using radio
 			 */
-			if (isSyncingState) { pauseSyncing(); }
-			isSyncingState = false;
-			syncSleeper.sleepUntilTimeout(clique.schedule.deltaNowToNextSyncPoint);
-			// sleep an entire sync period, then check power again.
+			if (isSyncingState) {
+				pauseSyncing();
+				isSyncingState = false;
+			}
+
+			sleepEntireSyncPeriod();
+			// continue to check power.
 		}
 		// Sync period over, advance schedule.
 		// Keep schedule even if not enough power to xmit sync messages to maintain accuracy

@@ -64,19 +64,12 @@ public:
 			);
 	static void loop(PowerManager*) __attribute__ ((noreturn));
 
-	static void startSyncing();
-	static void doSyncPeriod();
 
-public:
+	// These  methods are called from below (friends?)
 	static void relayWorkToApp(WorkPayload work);
 
 	static void toMergerRole(SyncMessage* msg);
-	static void mangleWorkMsg(SyncMessage* msg);
 	static void toFisherRole();
-
-private:
-	static void pauseSyncing();
-	static void doDyingBreath();
 };
 
 /*
@@ -91,5 +84,6 @@ private:
  */
 
 //static void resumeAfterPowerRestored();
+// static void startSyncing();
 
 

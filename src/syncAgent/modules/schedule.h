@@ -26,7 +26,7 @@
  *
  * Implementation here is mainly about aligning with global clock.
  *
- * Knowledge (implementation) of slot sequence is found in syncAgentLoop.cpp, doSyncPeriod().
+ * Knowledge (implementation) of slot sequence is SyncPeriod.doSlotSequence.
  *
  * Power:
  * The mcu may be sleeping(low-power idle) during any slot, not just sleeping slots.
