@@ -62,11 +62,12 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 	WorkPayload work = workOutMailbox->fetch();
 	if (! workManager.isHeardWork() ) {
 		syncSender.sendWorkSync(work);
-		// Queue back to app so it can do work locally
-		syncAgent.relayWorkToApp(work);
+		/*
+		 * App sent this work.  App also queues it in to itself if app wants to work as well as tell others to work.
+		 */
 	}
 	else {
-		// assert heard work is queued to app
+		// assert heard work is relayed to app via callback
 		/*
 		 * FUTURE: work is distinct and mailbox holds many work
 		 * send distinct work
@@ -94,7 +95,7 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 #ifdef NOTUSED
 // Sleep with radio off for remainder of sync slot
 void SyncWorkSlot::doIdleSlotRemainder() {
-	assert(!radio->isPowerOn());
+	assert(!radio->isInUse());
 	syncSleeper.sleepUntilTimeout(clique.schedule.deltaToThisSyncSlotEnd);
 }
 #endif

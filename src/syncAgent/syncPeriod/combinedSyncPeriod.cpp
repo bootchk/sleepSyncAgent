@@ -12,6 +12,13 @@ namespace {
 SyncWorkSlot syncWorkSlot;
 FishSlot fishSlot;
 MergeSlot mergeSlot;
+
+
+void sleepRemainderOfSyncPeriod() {
+	syncSleeper.sleepUntilTimeout(clique.schedule.deltaNowToNextSyncPoint);
+}
+
+
 }
 
 
@@ -44,6 +51,7 @@ void CombinedSyncPeriod::doSlotSequence() {
 	}
 	assert(network.isLowPower());	// For remainder of this sync period
 
-	syncSleeper.sleepUntilTimeout(clique.schedule.deltaNowToNextSyncPoint);
+	sleepRemainderOfSyncPeriod();
+
 	// Sync period completed
 }

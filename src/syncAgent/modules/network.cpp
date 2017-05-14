@@ -35,7 +35,7 @@ void Network::shutdown() {
  *
  * TODO This is superfluous, the radio stays configured
  */
-/*
+/* OLD
 void Network::prepareToTransmitOrReceive() {
 	if (!radio->isConfigured()) {
 			radio->resetAndConfigure();

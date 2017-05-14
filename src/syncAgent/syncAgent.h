@@ -66,7 +66,7 @@ public:
 
 
 	// These  methods are called from below (friends?)
-	static void relayWorkToApp(WorkPayload work);
+	static void relayHeardWorkToApp(WorkPayload work);
 
 	static void toMergerRole(SyncMessage* msg);
 	static void toFisherRole();

@@ -80,6 +80,11 @@ void SyncAgent::loop(PowerManager* powerManager){
 	assert(network.isLowPower());
 
 	/*
+	 * Not assert that LFRC or LFXO and LongClock are running.
+	 * So the first SyncPeriod may be inaccurate and long duration until LFXO is running.
+	 */
+
+	/*
 	 * assert schedule already started and not too much time has elapsed
 	 * Note that we roll forward at the end of the loop.
 	 * If we roll forward at the beginning of the loop,

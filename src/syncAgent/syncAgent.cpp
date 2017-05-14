@@ -104,11 +104,14 @@ void SyncAgent::toFisherRole(){
 
 
 
-void SyncAgent::relayWorkToApp(WorkPayload work) {
+void SyncAgent::relayHeardWorkToApp(WorkPayload work) {
 	/*
 	 * Alternatives are:
 	 * - queue to worktask (unblock it)
 	 * - onWorkMsgCallback(msg);  (callback)
+	 *
+	 * Here we do the latter: the app maintains a In queue, not SyncAgent.
+	 * The app should do the work later, since now is at imprecise time is a slot.
 	 */
 	onWorkMsgCallback(work);	// call callback
 }
