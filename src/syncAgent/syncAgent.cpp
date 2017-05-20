@@ -136,6 +136,6 @@ void SyncAgent::mangleWorkMsg(SyncMessage* msg){
 	 * assert msg was heard anywhere in SyncSlot (not just in the middle)
 	 * but was sent from middle of sender's WorkSlot
 	 */
-	msg->deltaToNextSyncPoint = clique.schedule.deltaFromWorkMiddleToEndSyncPeriod() ;
+	msg->deltaToNextSyncPoint.set( clique.schedule.deltaFromWorkMiddleToEndSyncPeriod() ) ;
 }
 #endif

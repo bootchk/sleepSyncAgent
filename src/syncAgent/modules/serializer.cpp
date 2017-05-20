@@ -95,8 +95,11 @@ void unserializeOffsetInto(SyncMessage* msgPtr) {
 }
 
 void serializeOffsetCommonIntoStream(SyncMessage* msgPtr) {
+	DeltaTime offset = msgPtr->deltaToNextSyncPoint.get();
+	// DeltaTime is 32-bit, DeltaSync insures only 24-bit, serialize only low order 3 bytes.
+	// Not portable big endian
 	memcpy( (void*) radioBufferPtr + OTAPayload::OffsetIndex, 	// dest
-			(void*) &(msgPtr->deltaToNextSyncPoint),	// src
+			(void*) &offset,	// src
 			OTAPayload::OffsetLength);
 }
 

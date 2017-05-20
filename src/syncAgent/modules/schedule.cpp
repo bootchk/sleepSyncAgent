@@ -143,7 +143,7 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 	LongTime oldEndTimeOfSyncPeriod = _endTimeOfSyncPeriod;
 
 	// FUTURE optimization?? If adjustedEndTime is near old endTime, forego setting it?
-	_endTimeOfSyncPeriod = adjustedEndTime(msg->deltaToNextSyncPoint);
+	_endTimeOfSyncPeriod = adjustedEndTime(msg);
 
 	// assert old startTimeOfSyncPeriod < new endTimeOfSyncPeriod  < nowTime() + 2*periodDuration
 
@@ -170,7 +170,7 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 /*
  * Adjusted end time of SyncPeriod, where SyncPeriod is never shortened (at all), only lengthened.
  */
-LongTime Schedule::adjustedEndTime(DeltaSync deltaSync) {
+LongTime Schedule::adjustedEndTime(const SyncMessage* msg) {
 
 	// log time elapsed since toa, not really used
 	//DeltaTime elapsedTicksSinceTOA = TimeMath::clampedTimeDifferenceToNow(getMsgArrivalTime());
@@ -179,7 +179,7 @@ LongTime Schedule::adjustedEndTime(DeltaSync deltaSync) {
 	/*
 	 * Crux: new end time is TOA of SyncMessage + DeltaSync + various latencies
 	 */
-	DeltaTime delta = deltaSync.get();
+	DeltaTime delta = msg->deltaToNextSyncPoint.get();
 	// delta < SyncPeriodDuration
 
 	LongTime toa = getMsgArrivalTime();

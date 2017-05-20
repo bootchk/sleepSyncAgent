@@ -106,7 +106,7 @@ public:
 
 	void init(DeltaTime aDeltaToNextSyncPoint, SystemID aMasterID) {
 		type = MasterSync;
-		deltaToNextSyncPoint.set(aDeltaToNextSyncPoint);	// throws assertion if out of range
+		deltaToNextSyncPoint.set(aDeltaToNextSyncPoint);	// asserts if out of range
 		masterID = aMasterID;
 		work = 0;
 	}
