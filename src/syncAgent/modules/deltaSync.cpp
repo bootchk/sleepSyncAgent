@@ -5,14 +5,9 @@
 #include "deltaSync.h"
 #include "../scheduleParameters.h"
 
-namespace {
-
-DeltaTime _deltaSync;
-
-}	// namespace
 
 
-DeltaTime DeltaSync::get() { return _deltaSync; }
+DeltaTime DeltaSync::get() const { return _deltaSync; }
 
 // Throws assertion if out of range
 void DeltaSync::set(DeltaTime value){

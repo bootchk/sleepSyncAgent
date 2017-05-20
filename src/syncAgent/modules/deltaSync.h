@@ -42,16 +42,23 @@
  * Avoid promiscuous use of DeltaTime.
  */
 
-
+/*
+ * Each message instance has an instance,
+ * and there may be other instances,
+ * so not an all-static class.
+ */
 
 class DeltaSync {
+private:
+	DeltaTime _deltaSync;
 
 public:
-	static DeltaTime get();
+	DeltaTime get() const;
 
 	// Throws assertion if out of range
-	static void set(DeltaTime value);
+	void set(const DeltaTime value);
 
+	// class method
 	// Preflight check value not out of range
 	static bool isValidValue(DeltaTime value);
 };
