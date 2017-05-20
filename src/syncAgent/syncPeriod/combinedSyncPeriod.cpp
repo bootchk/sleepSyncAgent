@@ -18,23 +18,7 @@ void sleepRemainderOfSyncPeriod() {
 	syncSleeper.sleepUntilTimeout(clique.schedule.deltaNowToNextSyncPoint);
 }
 
-
-}
-
-
-/*
- * Each slot needs radio and radio requires HfCrystalClock.
- * Each slot is responsible for starting and stopping HfCrystalClock .
- */
-void CombinedSyncPeriod::doSlotSequence() {
-
-	// Schedule.rollPeriodForward logs syncPoint
-
-	// first, arbitrary
-	syncWorkSlot.perform();
-
-	assert(network.isLowPower());	// until next slot
-
+void fishOrMerge() {
 	// Variation: next event (if any) occurs within a large sleeping time (lots of 'slots')
 	if (role.isMerger()) {
 		// avoid collision
@@ -49,9 +33,34 @@ void CombinedSyncPeriod::doSlotSequence() {
 		fishSlot.perform();
 		// continue and sleep until end of sync period
 	}
-	assert(network.isLowPower());	// For remainder of this sync period
+}
+
+}
+
+
+/*
+ * Each slot needs radio and radio requires HfCrystalClock.
+ * Each slot is responsible for starting and stopping HfCrystalClock .
+ */
+void CombinedSyncPeriod::doSlotSequence(PowerManager* powerManager) {
+
+	// the caller, at schedule.rollPeriodForward has logged syncPoint
+
+	// assert powerManager->isPowerForRadio()
+
+
+	syncWorkSlot.perform();	// arbitrary to do sync slot first
+
+	assert(network.isLowPower());	// until next slot
+
+	// SyncSlot might have exhausted power
+	if (powerManager->isPowerForRadio()) {
+		fishOrMerge();
+	}
+
+	assert(network.isLowPower());	// For remainder of sync period
 
 	sleepRemainderOfSyncPeriod();
 
-	// Sync period completed
+	// Sync period (slot sequence) completed
 }

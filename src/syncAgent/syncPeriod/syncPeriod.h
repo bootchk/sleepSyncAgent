@@ -35,5 +35,5 @@ public:
 class CombinedSyncPeriod{
 
 public:
-	static void doSlotSequence();
+	static void doSlotSequence(PowerManager* powerManager);
 };

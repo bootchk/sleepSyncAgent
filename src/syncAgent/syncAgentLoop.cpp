@@ -92,8 +92,9 @@ void SyncAgent::loop(PowerManager* powerManager){
 	 */
 
 	while (true){
-		// call back app
-		onSyncPointCallback();
+
+		onSyncPointCallback();	// call back app
+
 		// app may have queued work
 
 		workManager.resetState();
@@ -109,7 +110,7 @@ void SyncAgent::loop(PowerManager* powerManager){
 				isSyncingState = true;
 			}
 
-			syncPeriod.doSlotSequence();
+			syncPeriod.doSlotSequence(powerManager);
 		}
 		else {
 			/*
@@ -121,7 +122,8 @@ void SyncAgent::loop(PowerManager* powerManager){
 			}
 
 			sleepEntireSyncPeriod();
-			// continue to check power.
+			// continue to check power for radio.
+			// We may exhaust it and brown outm losing sync altogether
 		}
 		// Sync period over, advance schedule.
 		// Keep schedule even if not enough power to xmit sync messages to maintain accuracy
