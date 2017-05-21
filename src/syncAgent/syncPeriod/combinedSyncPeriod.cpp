@@ -8,6 +8,8 @@
 #include "../slots/fishSlot.h"
 #include "../slots/mergeSlot.h"
 
+#include "../logMessage.h"
+
 namespace {
 SyncWorkSlot syncWorkSlot;
 FishSlot fishSlot;
@@ -42,7 +44,7 @@ void fishOrMerge() {
  * Each slot needs radio and radio requires HfCrystalClock.
  * Each slot is responsible for starting and stopping HfCrystalClock .
  */
-void CombinedSyncPeriod::doSlotSequence(PowerManager* powerManager) {
+void CombinedSyncPeriod::doSlotSequence() {
 
 	// the caller, at schedule.rollPeriodForward has logged syncPoint
 
@@ -56,6 +58,10 @@ void CombinedSyncPeriod::doSlotSequence(PowerManager* powerManager) {
 	// SyncSlot might have exhausted power
 	if (powerManager->isPowerForRadio()) {
 		fishOrMerge();
+	}
+	else {
+		// DEBUG
+		LogMessage::logExhaustedRadioPower();
 	}
 
 	assert(network.isLowPower());	// For remainder of sync period

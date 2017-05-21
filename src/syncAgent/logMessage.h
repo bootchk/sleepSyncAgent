@@ -45,4 +45,19 @@ public:
 		logLongLong(now);
 		log("<Sync\n");
 	}
+
+	// Functions to write to flash memory (when not connected to debugger hw)
+
+
+	// Exhausted power while executing slot sequence
+	static void logExhaustedRadioPower() {
+		CustomFlash::writeZeroAtIndex(ExhaustedRadioPower);
+	}
+
+	// Only a timer running but it was not the reason for wake.
+	static void logUnexpectedWakeReason() {
+		CustomFlash::writeZeroAtIndex(UnexpectedWake);
+	}
+
+
 };

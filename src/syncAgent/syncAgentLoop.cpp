@@ -67,7 +67,7 @@ void resumeSyncing() {
 // FUTURE, we could check power again before each slot, namely fishing slot
 
 
-void SyncAgent::loop(PowerManager* powerManager){
+void SyncAgent::loop(){
 	// When first enter loop, each unit is master of its own clique
 	assert(clique.isSelfMaster());
 
@@ -110,7 +110,7 @@ void SyncAgent::loop(PowerManager* powerManager){
 				isSyncingState = true;
 			}
 
-			syncPeriod.doSlotSequence(powerManager);
+			syncPeriod.doSlotSequence();
 		}
 		else {
 			/*

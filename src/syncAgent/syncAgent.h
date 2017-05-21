@@ -59,10 +59,11 @@ public:
 	static void init( Radio* radio,
 			Mailbox* mailbox,
 			LongClockTimer * aLCT,
+			PowerManager* aPowerManager,
 			void (*onWorkMsg)(WorkPayload),
 			void (*onSyncPoint)()
 			);
-	static void loop(PowerManager*) __attribute__ ((noreturn));
+	static void loop() __attribute__ ((noreturn));
 
 
 	// These  methods are called from below (friends?)

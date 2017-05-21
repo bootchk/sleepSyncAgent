@@ -26,6 +26,7 @@ void SyncAgent::init(
 		Radio * aRadio,
 		Mailbox* aMailbox,
 		LongClockTimer * aLCT,
+		PowerManager* aPowerManager,
 		void (*aOnWorkMsgCallback)(WorkPayload),
 		void (*aOnSyncPointCallback)()
 	)
@@ -39,6 +40,7 @@ void SyncAgent::init(
 	// Copy parameters to globals
 	radio = aRadio;
 	workOutMailbox = aMailbox;
+	powerManager = aPowerManager;
 
 	// Temp: test power consumption when all sleep
 	// while(true) waitForOSClockAndToRecoverBootEnergy(aLCT);

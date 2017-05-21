@@ -70,7 +70,7 @@ PowerManager powerManager;
 int main() {
 	// assert embedded system startup is done and calls main.
 	// assert caller initialized radio
-	sleepSyncAgent.init(&myRadio, &myMailbox, &longClockTimer, onWorkMsg, onSyncPoint);
-	sleepSyncAgent.loop(&powerManager);	// never returns
+	sleepSyncAgent.init(&myRadio, &myMailbox, &longClockTimer, &powerManager, onWorkMsg, onSyncPoint);
+	sleepSyncAgent.loop();	// never returns
 	return 0;
 }

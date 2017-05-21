@@ -1,6 +1,7 @@
 
 #pragma once
 
+// ??? Not used anymore, except a build configuration to test compile?
 
 /*
  * platform abstraction layer
@@ -59,26 +60,20 @@
 #else
 
 
-// Use header files from libraries in project which wedges this library.
+// Use header files from platform library
 
 // Include newlib for rand()
 #include <cstdlib>
 
 #include <nRF5x.h>
 
-#ifdef OLD
-// Arrange project CFLAGS += -I/home/bootch/git/nRF5rawProtocol/modules
-#include <radio.h>
-
-// -I/home/bootch/git/nRF5rawProtocol/platform
-#include <sleeper.h>
-#include <uniqueID.h>
-#include <osClock.h>
-#include <logger.h>
-#include <mailbox.h>
-#include <powerManager.h>
-#include <ledLogger.h>
-#endif
-
+/*
+ * Arrange project CFLAGS += -I/home/bootch/git/nRF5x
+ *
+ * Formerly nRF5rawProtocol/modules
+ *
+ * This is an old list of modules used:
+ * <radio.h><sleeper.h> <uniqueID.h><osClock.h><logger.h><mailbox.h><powerManager.h><ledLogger.h>
+ */
 
 #endif

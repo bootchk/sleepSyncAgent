@@ -67,7 +67,7 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 				assert(!network.isRadioInUse());
 
 				// continuation is sleep
-				// assert since radio power off, reason for wake can only be timeout and will then exit loop
+				// assert since radio not in use, next reason for wake can only be timeout and will then exit loop
 			}
 			else {
 				/*
@@ -136,6 +136,7 @@ void SyncSleeper::sleepUntilTimeout(OSTime (*timeoutFunc)()) {
 			 * - another Timer (e.g. LedTimer)
 			 * - any other unexpected event???
 			 */
+			LogMessage::logUnexpectedWakeReason();
 			// continue next loop iteration
 		}
 		/*
@@ -166,6 +167,7 @@ void SyncSleeper::sleepUntilTimeout(DeltaTime timeout)
 				break;	// while true
 			else {
 				// reasonForWake is not TimerExpired, e.g. an unexpected reason
+				LogMessage::logUnexpectedWakeReason();
 				remainingTimeout = TimeMath::clampedTimeDifferenceFromNow(endingTime);
 				// continue next loop iteration
 			}

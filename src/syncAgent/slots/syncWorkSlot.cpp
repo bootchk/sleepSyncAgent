@@ -21,7 +21,19 @@ SyncSlotMessageHandler msgHandler;
 
 
 bool SyncWorkSlot::doListenHalfSyncWorkSlot(OSTime (*timeoutFunc)()) {
-	network.startReceiving();
+
+	/*
+	 * This IF is mainly for debugging?
+	 * Starting the HFXO (previously) or anything else that preceded this call
+	 * is not expected to exhaust power.
+	 */
+	if (powerManager->isPowerForRadio()) {
+		network.startReceiving();
+	}
+	else {
+		LogMessage::logExhaustedRadioPower();
+	}
+
 	HandlingResult result = syncSleeper.sleepUntilMsgAcceptedOrTimeout(
 			&msgHandler,
 			timeoutFunc
