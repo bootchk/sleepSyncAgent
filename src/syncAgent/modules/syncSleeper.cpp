@@ -98,6 +98,37 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 	return didReceiveDesiredMsg;
 }
 
+
+bool dispatchReasonForWake() {
+	bool result = false;
+
+	// Expect wake by timeout, not by msg or other event
+	switch( sleeper.getReasonForWake() ) {
+	case TimerExpired:
+		result = true;
+		// assert time specified by timeoutFunc has elapsed.
+		break;
+
+
+	case TimerOverflowOrOtherTimer:
+		// Expected
+		break;
+
+
+	case MsgReceived:
+	case None:
+		/*
+		 * Unexpected, probably a bug.
+		 * Radio is not in usem can't receive
+		 * Woken by some interrupt (event?) not in the design.
+		 */
+		LogMessage::logUnexpectedWakeReason();
+		// return false, continue next loop iteration
+	}
+	return result;
+	// Returns whether timeout time has elapsed i.e. whether to stop sleeping loop
+}
+
 }	// namespace
 
 
@@ -126,20 +157,11 @@ void SyncSleeper::sleepUntilTimeout(OSTime (*timeoutFunc)()) {
 		assert(timeout < ScheduleParameters::MaxSaneTimeout);
 
 		sleepWithOnlyTimerPowerUntilTimeout(timeout);
-		// Expect wake by timeout, not by msg or other event
-		if ( sleeper.getReasonForWake() == TimerExpired)
-			// assert time specified by timeoutFunc has elapsed.
-			break;	// while true
-		else {
-			/*
-			 * reasonForWake is not TimerExpired:
-			 * - another Timer (e.g. LedTimer)
-			 * - any other unexpected event???
-			 */
-			LogMessage::logUnexpectedWakeReason();
-			// continue next loop iteration
-		}
+
+		if (dispatchReasonForWake())
+			break; // break while loop, timeout has elapsed
 		/*
+		 * else continue loop, sleep again.
 		 * timeoutFunc is monotonic and will eventually return 0
 		 * and sleeper.sleepUntilTimeout will return without sleeping and with reasonForWake==Timeout
 		 */
@@ -161,13 +183,12 @@ void SyncSleeper::sleepUntilTimeout(DeltaTime timeout)
 			assert(remainingTimeout < ScheduleParameters::MaxSaneTimeout);
 
 			sleepWithOnlyTimerPowerUntilTimeout(timeout);
-			// Expect wake by timeout, not by msg or other event
-			if ( sleeper.getReasonForWake() == TimerExpired)
-				// assert time timeout has elapsed.
-				break;	// while true
+
+			if (dispatchReasonForWake()) {
+				break;	// while true, assert time timeout has elapsed.
+			}
 			else {
-				// reasonForWake is not TimerExpired, e.g. an unexpected reason
-				LogMessage::logUnexpectedWakeReason();
+				// reasonForWake is not TimerExpired
 				remainingTimeout = TimeMath::clampedTimeDifferenceFromNow(endingTime);
 				// continue next loop iteration
 			}

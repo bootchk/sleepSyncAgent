@@ -2,6 +2,8 @@
 
 Radio* radio;
 Mailbox* workOutMailbox;
+PowerManager* powerManager;
+
 SyncSleeper syncSleeper;
 
 Clique clique;
