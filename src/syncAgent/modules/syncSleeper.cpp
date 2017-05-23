@@ -116,10 +116,16 @@ bool dispatchReasonForWake() {
 
 
 	case MsgReceived:
+		/*
+		 * Radio should be off.
+		 */
+		LogMessage::logUnexpectedMsg();
+		break;
+
 	case None:
 		/*
 		 * Unexpected, probably a bug.
-		 * Radio is not in usem can't receive
+		 * Radio is not in use can't receive
 		 * Woken by some interrupt (event?) not in the design.
 		 */
 		LogMessage::logUnexpectedWakeReason();
@@ -132,6 +138,9 @@ bool dispatchReasonForWake() {
 }	// namespace
 
 
+
+
+
 void SyncSleeper::init(
 		OSTime maxSaneTimeout,
 		LongClockTimer * aLCT)
@@ -139,6 +148,7 @@ void SyncSleeper::init(
 	sleeper.init(maxSaneTimeout, aLCT);
 	longClockTimer = aLCT;
 }
+
 
 void SyncSleeper::clearReasonForWake() { sleeper.clearReasonForWake(); }
 
@@ -273,20 +283,19 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 			break;	// switch
 			// FUTURE try handle receive in progress, see code fragment at eof
 
+		case TimerOverflowOrOtherTimer:
+			/*
+			 * Expected events not relevant to this sleep.
+			 * Sleep again.
+			 */
+			break;
+
 		case None:
-		default:
-			// Unexpected reasonForWake or no IRQ handler set the reason
-			// FUTURE put this in some Handler to see?  But I already know what handlers are called.
-			//#include "app_util_platform.h"
-			// uint32_t ipsr = __get_IPSR();
-
-			// Insert this code to know that this DOES happen
-			// assert(false);
-
-			// For now the solution is: continue in loop and sleep again.
-			// assert the timeoutFunc() will eventually return zero and not sleep with reason==TimerExpired
-			log("Unexpected wake, resume sleep.\n")
-			;
+			/*
+			 * Unexpected: No IRQ handler set reason reasonForWake.
+			 * Continue in loop and sleep again.
+			 */
+			LogMessage::logUnexpectedWakeWhileListening();
 		}
 		// If Timer semantics are restartable: timer might be canceled, but sleepUntilEventWithTimeout will restart it
 
@@ -296,7 +305,10 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 			 */
 			break;	// while(true)
 		}
-		// else continue while(true)
+		/*
+		 * else continue while(true).
+		 * assert the timeoutFunc() will eventually return zero and not sleep with reason==TimerExpired
+		 */
 
 	}	// while(true)
 
