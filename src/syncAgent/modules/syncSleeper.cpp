@@ -60,7 +60,7 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 		if (msg != nullptr) {
 			// assert msg->type valid
 
-			// TODO quiet conversion to bool here
+			// XXX quiet conversion to bool, use enums
 			didReceiveDesiredMsg = msgHandler->handle(msg);
 			if (didReceiveDesiredMsg) {
 				// Remainder of duration radio not used (low power) but HFXO is still on.

@@ -148,8 +148,8 @@ SyncMessage* getPointerToMessageOfOTAType(MessageType receivedMsgType) {
  * An invalid SystemID might change master temporarily, but algorithm should recover.
  *
  * See also bufferIsSane, for outgoing messages.
- * TODO combine them.
  */
+// XXX combine bufferIsSane w isOTA...
 bool isOTABufferAlgorithmicallyValid() {
 	bool result = true;
 	if (! SyncMessage::isReceivedTypeASyncType(radioBufferPtr[0])) {

@@ -20,8 +20,6 @@ bool Network::isRadioInUse() {
 
 void Network::startup() {
 	radio->hfCrystalClock->startAndSleepUntilRunning();
-	// TODO superfluous
-	// prepareToTransmitOrReceive();
 	assert(radio->isConfigured());
 }
 
@@ -29,22 +27,7 @@ void Network::shutdown() {
 	radio->hfCrystalClock->stop();
 }
 
-/*
- * If radio not already configured, make it so.
- * And insure radio is ready (state==disabled)
- *
- * TODO This is superfluous, the radio stays configured
- */
-/* OLD
-void Network::prepareToTransmitOrReceive() {
-	if (!radio->isConfigured()) {
-			radio->resetAndConfigure();
-			// TESTING: lower xmit power 8
-			// radio->configureXmitPower(8);
-		}
-	assert(!radio->isInUse());
-}
-*/
+
 
 void Network::startReceiving() {
 	// Note radio might already be ready, but this ensure it.

@@ -31,14 +31,14 @@ public:
 		 * Since we are in sync slot near front of sync period, offset should (0, NormalSyncPeriodDuration)
 		 * Type DeltaSync ensures that.
 		 *
-		 * TODO should it also be greater than zero?
 		 * Susceptible to breakpoints: If breakpointed, nextSyncPoint is in past and forwardOffset is zero.
 		 */
 		DeltaTime rawOffset = clique.schedule.deltaNowToNextSyncPoint();
 
-		// TODO robust code: check rawOffset in range now and return if not
+		// XXX robust code: check rawOffset in range now and return if not
+		// XXX rawOffset greater than zero except when breakpointed
 
-		// FUTURE assert we are not xmitting sync past end of syncSlot?
+		// XXX assert we are not xmitting sync past end of syncSlot?
 		// i.e. calculations are rapid and sync slot not too short?
 
 		MasterSyncMessage* msgPtr = serializer.getMasterSyncMsg();
@@ -60,7 +60,8 @@ public:
 	}
 
 
-	// TODO should calculate offset as late as possible
+	// XXX should calculate offset as late as possible
+	// XXX I assume it is only a few tens of instructions, i.e. less than one tick difference?
 	static void sendWorkSync(WorkPayload work) {
 		/*
 		 * The app sends work OUT only when there is enough power for self to do work,
@@ -85,8 +86,7 @@ public:
 	static void sendAbandonMastership() {
 		log(LogMessage::SendAbandonMastership);
 		AbandonMastershipMessage* msgPtr = serializer.getAbandonMastershipMsg();
-		// my clique should show I am master
-		// TODO assert that
+		assert( clique.isSelfMaster);	// Only master can abandon
 		msgPtr->init( clique.getMasterID() );
 		sendMessage(msgPtr);
 	}

@@ -72,7 +72,7 @@ LongTime pastSyncPointOfCatch() {
  */
 DeltaTime offsetForMergeMyClique() {
 	/*
-	TODO this might be an optimized equivalent.
+	XXX this might be an optimized equivalent.
 	owningClique->schedule.deltaNowToNextSyncPoint()
 				+ ScheduleParameters::SlotDuration;	// plus two half slots
 	*/
@@ -86,7 +86,7 @@ DeltaTime offsetForMergeMyClique() {
  */
 DeltaTime offsetForMergeOtherClique() {
 	/*
-	 * TODO this might be an optimized equivalent.
+	 * XXX this might be an optimized equivalent.
 	 * owningClique->schedule.deltaPastSyncPointToNow();
 	 */
 	DeltaTime result =  TimeMath::clampedTimeDifference(middleOfNextSyncSlotOfCatch(), nextSyncPointOfFisher())

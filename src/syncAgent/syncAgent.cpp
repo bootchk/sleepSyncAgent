@@ -32,7 +32,8 @@ void SyncAgent::init(
 	)
 {
 	/*
-	 * require caller initialized radio, mailbox, and LongClockTimer.
+	 * Require caller initialized radio, mailbox, and LongClockTimer.
+	 * Require caller configured radio for protocol.
 	 * !!! But not isOSClockRunning() yet.
 	 * RADIO->POWER is set at POR reset, but it means 'was reset', not 'is using power'.
 	 */
@@ -55,8 +56,6 @@ void SyncAgent::init(
 
 	// Connect radio IRQ to syncSleeper so it knows reason for wake
 	radio->setMsgReceivedCallback(syncSleeper.getMsgReceivedCallback());
-	// radio not configured until after powerOn()
-	// TODO configure radio now
 
 	// Serializer reads and writes directly to radio buffer
 	serializer.init(radio->getBufferAddress(), Radio::FixedPayloadCount);

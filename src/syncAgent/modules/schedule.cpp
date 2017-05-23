@@ -118,8 +118,9 @@ void Schedule::rollPeriodForwardToNow() {
  * - rarely, a MergeSync in Sync slot
  * - very rarely, a MasterSync in a Fish slot
  *
- * A sync message adds to ***end*** of period (farther into the future).
- * TODO not true for a MasterSync in SyncSlot?
+ * A sync message ADDS to ***end*** of period (farther into the future).
+ * Except for a MasterSync received in SyncSlot by unit that is lagging,
+ * when the MasterSync may SUBTRACT, i.e.  advance syncpoint closer to now.
  *
  * Otherwise, for a fish slot, the calculation of the end of the fish slot
  * (based on the start) might be beyond the end of sync period?

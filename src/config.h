@@ -4,7 +4,7 @@
  * - library build
  */
 
-//TODO rename idle near brownout
+// XXX rename idle near brownout
 /*
  * Define this if SyncAgent should conserve power
  *
