@@ -69,4 +69,11 @@ public:
 	static void logUnexpectedWakeWhileListening() {
 		CustomFlash::writeZeroAtIndex(UnexpectedWakeWhileListen);
 	}
+
+	static void logStartSync() {
+		CustomFlash::writeZeroAtIndex(StartSync);
+	}
+	static void logPauseSync() {
+			CustomFlash::writeZeroAtIndex(PauseSync);
+		}
 };

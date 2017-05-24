@@ -6,7 +6,6 @@
 
 
 // Static data members
-bool SyncAgent::isSyncingState = false;
 // DYNAMIC uint8_t SyncAgent::receiveBuffer[255];
 
 CliqueMerger SyncAgent::cliqueMerger;

@@ -35,7 +35,6 @@ class SyncAgent {
 
 // Some of data members: see also anon namespaces for other owned objects
 private:
-	static bool isSyncingState;
 	// DYNAMIC static uint8_t receiveBuffer[Radio::MaxMsgLength];
 	// FIXED: Radio owns fixed length buffer
 

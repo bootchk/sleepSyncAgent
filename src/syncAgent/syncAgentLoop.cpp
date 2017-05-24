@@ -5,6 +5,8 @@
 #include "globals.h"	// radio, etc.
 #include "syncAgent.h"
 
+#include "modules/syncState.h"
+#include "logMessage.h"
 #include "syncPeriod/syncPeriod.h"
 
 
@@ -20,6 +22,9 @@
 
 namespace {
 
+SyncState syncState;
+
+
 #ifdef SIMPLE_SYNC_PERIOD
 SimpleSyncPeriod syncPeriod;
 #else
@@ -32,34 +37,12 @@ void sleepEntireSyncPeriod() {
 }
 
 
-/*
- * Ask an other unit in my clique to assume mastership.
- * Might not be heard, in which case other units should detect DropOut.
- */
-void doDyingBreath() {
-	syncSender.sendAbandonMastership();
-}
 
 
-/*
- * Not enough power for self to continue syncing.
- * Other units might still have power and assume mastership of my clique
- */
-void pauseSyncing() {
 
-	// FUTURE if clique is probably not empty
-	if (clique.isSelfMaster()) doDyingBreath();
-	// else I am a slave, just drop out of clique, others may have enough power
 
-	// FUTURE onSyncingPausedCallback();	// Tell app
-}
 
-/*
- * We were not keeping sync, but about to start tying again (using radio.)
- */
-void resumeSyncing() {
-	// FUTURE onSyncingResumedCallback();	// Tell app
-}
+
 
 } // namespace
 
@@ -68,21 +51,21 @@ void resumeSyncing() {
 
 
 void SyncAgent::loop(){
-	// When first enter loop, each unit is master of its own clique
+	/*
+	 * Assertions on enter loop:
+	 * - self is master of its own clique
+	 * - not in sync yet
+	 * - radio not in use
+	 * - longClock is running but might not be accurate until LFXO is stable
+	 * - there was power for the radio before we called this (since may have been exhausted by cpu execution.)
+	 */
 	assert(clique.isSelfMaster());
+	assert(network.isLowPower());
 
 	// DEBUG
 	initLogging();
 	log("ID:\n");
 	logLongLong(clique.getMasterID());
-
-	assert(! isSyncingState);
-	assert(network.isLowPower());
-
-	/*
-	 * Not assert that LFRC or LFXO and LongClock are running.
-	 * So the first SyncPeriod may be inaccurate and long duration until LFXO is running.
-	 */
 
 	/*
 	 * assert schedule already started and not too much time has elapsed
@@ -105,25 +88,17 @@ void SyncAgent::loop(){
 			/*
 			 * Sync keeping: use radio
 			 */
-			if (!isSyncingState) {
-				resumeSyncing();
-				isSyncingState = true;
-			}
-
+			syncState.setActive();
 			syncPeriod.doSlotSequence();
 		}
 		else {
 			/*
 			 * Sync maintenance: keep schedule by sleeping one sync period, w/o using radio
 			 */
-			if (isSyncingState) {
-				pauseSyncing();
-				isSyncingState = false;
-			}
-
+			syncState.setPaused();	// side effects
 			sleepEntireSyncPeriod();
 			// continue to check power for radio.
-			// We may exhaust it and brown outm losing sync altogether
+			// We may exhaust it and brown out, losing sync altogether
 		}
 		// Sync period over, advance schedule.
 		// Keep schedule even if not enough power to xmit sync messages to maintain accuracy
