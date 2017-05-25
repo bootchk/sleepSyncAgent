@@ -15,8 +15,9 @@
  */
 
 class MergeSlot {
-
+private:
+	static void perform();
 public:
 	static MergePolicy mergePolicy;	// visible to SyncAgent
-	static void perform();
+	static void tryPerform();
 };

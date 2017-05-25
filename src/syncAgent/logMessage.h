@@ -54,29 +54,16 @@ public:
 	// uint32_t ipsr = __get_IPSR();
 
 	// Exhausted power while executing slot sequence
-	static void logNoPowerToFish() {
-		CustomFlash::writeZeroAtIndex(NoPowerToFish);
-	}
-	static void logNoPowerForHalfSyncSlot() {
-			CustomFlash::writeZeroAtIndex(NoPowerToHalfSyncSlot);
-		}
+	static void logNoPowerToFish() { CustomFlash::writeZeroAtIndex(NoPowerToFish); }
+	static void logNoPowerToStartSyncSlot() { CustomFlash::writeZeroAtIndex(NoPowerToStartSyncSlot); }
+	static void logNoPowerForHalfSyncSlot() { CustomFlash::writeZeroAtIndex(NoPowerToHalfSyncSlot); }
 
 	// Only a timer running but it was not the reason for wake.
-	static void logUnexpectedWakeReason() {
-		CustomFlash::writeZeroAtIndex(UnexpectedWake);
-	}
+	static void logUnexpectedWakeReason() { CustomFlash::writeZeroAtIndex(UnexpectedWake); }
 
-	static void logUnexpectedMsg() {
-		CustomFlash::writeZeroAtIndex(UnexpectedMsg);
-	}
-	static void logUnexpectedWakeWhileListening() {
-		CustomFlash::writeZeroAtIndex(UnexpectedWakeWhileListen);
-	}
+	static void logUnexpectedMsg() { CustomFlash::writeZeroAtIndex(UnexpectedMsg); }
+	static void logUnexpectedWakeWhileListening() { CustomFlash::writeZeroAtIndex(UnexpectedWakeWhileListen); }
 
-	static void logStartSync() {
-		CustomFlash::writeZeroAtIndex(StartSync);
-	}
-	static void logPauseSync() {
-			CustomFlash::writeZeroAtIndex(PauseSync);
-		}
+	static void logStartSync() { CustomFlash::writeZeroAtIndex(StartSync); }
+	static void logPauseSync() { CustomFlash::writeZeroAtIndex(PauseSync); }
 };

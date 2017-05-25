@@ -169,6 +169,18 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 	// not assert network.isLowPower()
 }
 
+// TODO try doing part of the sync slot i.e. fail after the first half.
+
+
+void SyncWorkSlot::tryPerform() {
+	if (powerManager->isPowerForRadio()) {
+		perform();
+	}
+	else {
+		LogMessage::logNoPowerToStartSyncSlot();
+	}
+}
+
 
 
 /*

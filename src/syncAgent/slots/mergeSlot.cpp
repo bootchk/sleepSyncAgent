@@ -27,6 +27,13 @@ DeltaTime timeoutUntilMerge() {
 // static data member
 MergePolicy MergeSlot::mergePolicy;
 
+
+
+void MergeSlot::tryPerform() {
+	// TODO xmitting is low power, but check power anyway
+	perform();
+}
+
 /*
  * Sleep all normally sleeping slots until time to xmit MergeSynce into mergee clique's SyncSlot.
  * !!! The time to xmit is not aligned with this schedule's slots, but with middle of mergee's SyncSlot.
@@ -35,7 +42,7 @@ void MergeSlot::perform() {
 	assert(network.isLowPower());
 	assert(role.isMerger());
 	// Hard sleep without listening.
-	// Pass to sleep(): function to calculate start of merge
+	// Pass to sleep() a function to calculate start of merge
 	syncSleeper.sleepUntilTimeout(timeoutUntilMerge);
 
 	// assert time aligned with middle of a mergee sync slots (same wall time as fished sync from mergee.)

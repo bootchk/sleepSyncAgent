@@ -51,7 +51,8 @@ private:
 	static void doMasterSyncWorkSlot();
 	static void doSlaveSyncWorkSlot();
 	
+	static void perform();
 	
 public:
-	static void perform();
+	static void tryPerform();
 };

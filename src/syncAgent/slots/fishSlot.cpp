@@ -30,16 +30,32 @@ void sleepUntilFishSlotStart() {
 } //namespace
 
 
-
-
-
-void FishSlot::perform() {
+/*
+ * If power, perform
+ */
+void FishSlot::tryPerform() {
 	// FUTURE: A fish slot need not be aligned with other slots, and different duration???
 
 	// Sleep ultra low-power across normally sleeping slots to start of fish slot.
 	// Note sleep might have assertions on power condition
 	fishSchedule.init();	// Calculate start time once
+
 	sleepUntilFishSlotStart();
+	// Power might be replenished.
+
+	if (powerManager->isPowerForRadio()) {
+		perform();
+	}
+	else {
+		LogMessage::logNoPowerToFish();
+	}
+}
+
+/*
+ * Listen up to an entire slot.
+ * Returns before end of slot if catch another clique.
+ */
+void FishSlot::perform() {
 
 	// logInt(Schedule::deltaPastSyncPointToNow()); log("fish tick\n");
 
@@ -48,9 +64,12 @@ void FishSlot::perform() {
 	network.startReceiving();
 
 	// assert can receive an event that wakes imminently: race to sleep
-	syncSleeper.sleepUntilMsgAcceptedOrTimeout(
+	(void) syncSleeper.sleepUntilMsgAcceptedOrTimeout(
 			&msgHandler,
 			fishSchedule.deltaToSlotEnd);
+
+	// Not using result, might return sooner if caught something
+
 	assert(!network.isRadioInUse());
 	/*
 	 * Conditions:

@@ -230,8 +230,7 @@ void SyncSleeper::sleepUntilTimeout(DeltaTime timeout)
  * Ensure message queue is nearly empty on return.
  * Could be a race to empty message queue.
  */
-
-HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
+HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 		MessageHandler* msgHandler,
 		OSTime (*timeoutFunc)())	// function returning remaining duration of slot
 {

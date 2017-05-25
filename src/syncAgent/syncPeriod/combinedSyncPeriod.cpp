@@ -29,14 +29,14 @@ void tryFishOrMerge() {
 	if (role.isMerger()) {
 		// avoid collision
 		if (mergeSlot.mergePolicy.shouldScheduleMerge())  {
-			mergeSlot.perform();
+			mergeSlot.tryPerform();
 			// We might have quit role Merger
 		}
 		// else continue and sleep until end of sync period
 	}
 	else {
 		// Fish every period
-		fishSlot.perform();
+		fishSlot.tryPerform();
 		// continue and sleep until end of sync period
 	}
 }
@@ -55,7 +55,7 @@ void CombinedSyncPeriod::doSlotSequence() {
 	// assert powerManager->isPowerForSync() which is higher than isPowerForRadio
 
 
-	syncWorkSlot.perform();	// arbitrary to do sync slot first
+	syncWorkSlot.tryPerform();	// arbitrary to do sync slot first
 
 	assert(network.isLowPower());	// until next slot
 
@@ -64,8 +64,6 @@ void CombinedSyncPeriod::doSlotSequence() {
 	 * As we proceed, we check power again just before we need the power.
 	 */
     tryFishOrMerge();
-
-		LogMessage::logNoPowerToFish();
 
 	assert(network.isLowPower());	// For remainder of sync period
 
