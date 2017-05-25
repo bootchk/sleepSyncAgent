@@ -54,9 +54,12 @@ public:
 	// uint32_t ipsr = __get_IPSR();
 
 	// Exhausted power while executing slot sequence
-	static void logExhaustedRadioPower() {
-		CustomFlash::writeZeroAtIndex(ExhaustedRadioPower);
+	static void logNoPowerToFish() {
+		CustomFlash::writeZeroAtIndex(NoPowerToFish);
 	}
+	static void logNoPowerForHalfSyncSlot() {
+			CustomFlash::writeZeroAtIndex(NoPowerToHalfSyncSlot);
+		}
 
 	// Only a timer running but it was not the reason for wake.
 	static void logUnexpectedWakeReason() {

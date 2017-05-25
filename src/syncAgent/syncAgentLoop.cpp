@@ -84,11 +84,12 @@ void SyncAgent::loop(){
 
 		assert(network.isLowPower());	// After every sync period
 
-		if ( powerManager->isPowerForRadio() ) {
+		if ( powerManager->isPowerForSync() ) {
 			/*
-			 * Sync keeping: use radio
+			 * Sync keeping: enough power to use radio for two slots
 			 */
 			syncState.setActive();
+			// SyncPeriod also checks power
 			syncPeriod.doSlotSequence();
 		}
 		else {
@@ -101,7 +102,7 @@ void SyncAgent::loop(){
 			// We may exhaust it and brown out, losing sync altogether
 		}
 		// Sync period over, advance schedule.
-		// Keep schedule even if not enough power to xmit sync messages to maintain accuracy
+		// Keep schedule even if not enough power to listen/send sync messages to maintain accuracy
 		clique.schedule.rollPeriodForwardToNow();
 	}
 	// never returns

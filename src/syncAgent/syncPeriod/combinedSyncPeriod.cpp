@@ -20,8 +20,12 @@ void sleepRemainderOfSyncPeriod() {
 	syncSleeper.sleepUntilTimeout(clique.schedule.deltaNowToNextSyncPoint);
 }
 
-void fishOrMerge() {
-	// Variation: next event (if any) occurs within a large sleeping time (lots of 'slots')
+void tryFishOrMerge() {
+	/*
+	 * Try means: may lack power.
+	 * Variation: next event (if any) occurs within a large sleeping time (lots of 'slots').
+	 * We don't check power here because it may recover during sleep until time to perform.
+	 */
 	if (role.isMerger()) {
 		// avoid collision
 		if (mergeSlot.mergePolicy.shouldScheduleMerge())  {
@@ -48,21 +52,20 @@ void CombinedSyncPeriod::doSlotSequence() {
 
 	// the caller, at schedule.rollPeriodForward has logged syncPoint
 
-	// assert powerManager->isPowerForRadio()
+	// assert powerManager->isPowerForSync() which is higher than isPowerForRadio
 
 
 	syncWorkSlot.perform();	// arbitrary to do sync slot first
 
 	assert(network.isLowPower());	// until next slot
 
-	// SyncSlot might have exhausted power
-	if (powerManager->isPowerForRadio()) {
-		fishOrMerge();
-	}
-	else {
-		// DEBUG
-		LogMessage::logExhaustedRadioPower();
-	}
+	/*
+	 * SyncSlot might have exhausted power.
+	 * As we proceed, we check power again just before we need the power.
+	 */
+    tryFishOrMerge();
+
+		LogMessage::logNoPowerToFish();
 
 	assert(network.isLowPower());	// For remainder of sync period
 

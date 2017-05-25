@@ -20,7 +20,7 @@ SyncSlotMessageHandler msgHandler;
 
 
 
-bool SyncWorkSlot::doListenHalfSyncWorkSlot(OSTime (*timeoutFunc)()) {
+HandlingResult SyncWorkSlot::doListenHalfSyncWorkSlot(OSTime (*timeoutFunc)()) {
 
 	/*
 	 * This IF is mainly for debugging?
@@ -31,7 +31,8 @@ bool SyncWorkSlot::doListenHalfSyncWorkSlot(OSTime (*timeoutFunc)()) {
 		network.startReceiving();
 	}
 	else {
-		LogMessage::logExhaustedRadioPower();
+		LogMessage::logNoPowerForHalfSyncSlot();
+		// Note HFXO is still running
 	}
 
 	HandlingResult result = syncSleeper.sleepUntilMsgAcceptedOrTimeout(
@@ -39,7 +40,12 @@ bool SyncWorkSlot::doListenHalfSyncWorkSlot(OSTime (*timeoutFunc)()) {
 			timeoutFunc
 			);
 
-	// not assert network.isLowPower()
+	/*
+	 *  not assert network.isLowPower():
+	 *  The radio might be in use (receiving.)
+	 *  The continuation might be send sync and listen another half.
+	 *  That continuation needs the radio.
+	 */
 	return result;
 }
 

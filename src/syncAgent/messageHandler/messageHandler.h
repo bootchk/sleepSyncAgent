@@ -18,7 +18,7 @@
  * We don't throw away information but carry what message type was heard.
  * Note quiet conversions to bool
  */
-enum HandlingResult {
+enum class HandlingResult {
 	/*
 	 * Means:
 	 * - Did not hear intended message
