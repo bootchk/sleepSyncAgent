@@ -23,7 +23,7 @@ HandlingResult SyncSlotMessageHandler::handleMasterSyncMessage(SyncMessage* msg)
 	 * - two masters may be competing
 	 */
 	(void) syncBehaviour.doSyncMsg(msg);
-	return KeepListening;
+	return HandlingResult::KeepListening;
 }
 
 
@@ -33,7 +33,7 @@ HandlingResult SyncSlotMessageHandler::handleMergeSyncMessage(SyncMessage* msg){
 	 * - two other cliques may be competing to merge me
 	 */
 	(void) syncBehaviour.doSyncMsg(msg);
-	return KeepListening;
+	return HandlingResult::KeepListening;
 }
 
 
@@ -48,7 +48,7 @@ HandlingResult SyncSlotMessageHandler::handleAbandonMastershipMessage(SyncMessag
 
 	clique.setSelfMastership();
 	assert(clique.isSelfMaster());
-	return KeepListening;
+	return HandlingResult::KeepListening;
 }
 
 
@@ -73,5 +73,5 @@ HandlingResult SyncSlotMessageHandler::handleWorkSyncMessage(SyncMessage* msg){
 	// FUTURE if our app is scheduling work and we already heard one
 	// and work is generic (not carrying any info) we should not xmit WorkSync
 
-	return KeepListening;
+	return HandlingResult::KeepListening;
 }

@@ -52,7 +52,7 @@ void sleepWithRadioAndTimerPowerUntilTimeout(DeltaTime timeout) {
 HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has handlers per message type
 	// FUTURE while any received messages queued
 
-	HandlingResult didReceiveDesiredMsg = KeepListening;
+	HandlingResult handlingResult = HandlingResult::KeepListening;
 
 	// Nested checks: physical layer CRC, then transport layer MessageType
 	if (radio->isPacketCRCValid()) {
@@ -61,8 +61,8 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 			// assert msg->type valid
 
 			// XXX quiet conversion to bool, use enums
-			didReceiveDesiredMsg = msgHandler->handle(msg);
-			if (didReceiveDesiredMsg) {
+			handlingResult = msgHandler->handle(msg);
+			if (handlingResult!=HandlingResult::KeepListening) {
 				// Remainder of duration radio not used (low power) but HFXO is still on.
 				assert(!network.isRadioInUse());
 
@@ -95,7 +95,7 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 		log(LogMessage::CRC);
 		// continuation is sleep
 	}
-	return didReceiveDesiredMsg;
+	return handlingResult;
 }
 
 
@@ -235,7 +235,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 		MessageHandler* msgHandler,
 		OSTime (*timeoutFunc)())	// function returning remaining duration of slot
 {
-	HandlingResult didReceiveDesiredMsg = KeepListening;
+	HandlingResult handlingResult = HandlingResult::KeepListening;
 	bool didTimeout = false;
 
 	/*
@@ -269,7 +269,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 			clique.schedule.recordMsgArrivalTime();
 
 			// if timer semantics are: restartable, cancel timer here
-			didReceiveDesiredMsg = dispatchFilteredMsg(msgHandler);
+			handlingResult = dispatchFilteredMsg(msgHandler);
 			break;	// switch
 
 		case TimerExpired:
@@ -299,7 +299,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 		}
 		// If Timer semantics are restartable: timer might be canceled, but sleepUntilEventWithTimeout will restart it
 
-		if (didReceiveDesiredMsg || didTimeout) {
+		if ((handlingResult != HandlingResult::KeepListening) || didTimeout) {
 			/*
 			 * assert radio off and timer cancelled.
 			 */
@@ -316,7 +316,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 	// not assert network.isLowPower()
 	// ensure message queue nearly empty
 	// ensure timeout or didReceiveDesiredMsg
-	return didReceiveDesiredMsg;
+	return handlingResult;
 }
 
 

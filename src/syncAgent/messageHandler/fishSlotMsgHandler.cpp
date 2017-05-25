@@ -36,7 +36,7 @@ HandlingResult FishSlotMessageHandler::handleMasterSyncMessage(SyncMessage* msg)
 	log(LogMessage::FishedMasterSync);
 	doFishedSyncMsg(msg);
 	// Stop listening: self can't handle more than one, or slot is busy with another merge
-	return StopListeningHeardMasterSync;
+	return HandlingResult::StopListeningHeardMasterSync;
 }
 
 /*
@@ -52,7 +52,7 @@ HandlingResult FishSlotMessageHandler::handleWorkSyncMessage(SyncMessage* msg){
 	log(LogMessage::FishedWorkSync);
 	doFishedSyncMsg(msg);
 	// Stop listening: self can't handle more than one, or slot is busy with another merge
-	return StopListeningHeardWorkSync;
+	return HandlingResult::StopListeningHeardWorkSync;
 }
 
 
@@ -64,7 +64,7 @@ HandlingResult FishSlotMessageHandler::handleWorkSyncMessage(SyncMessage* msg){
 HandlingResult FishSlotMessageHandler::handleMergeSyncMessage(SyncMessage* msg){
 	log(LogMessage::FishedMergeSync);
 	(void) msg;
-	return StopListeningHeardMergeSync;
+	return HandlingResult::StopListeningHeardMergeSync;
 }
 
 
@@ -78,7 +78,7 @@ HandlingResult FishSlotMessageHandler::handleMergeSyncMessage(SyncMessage* msg){
 HandlingResult FishSlotMessageHandler::handleAbandonMastershipMessage(SyncMessage* msg){
 	log(LogMessage::FishedAbandonMastershipSync);
 	(void) msg;
-	return KeepListening;
+	return HandlingResult::KeepListening;
 }
 
 

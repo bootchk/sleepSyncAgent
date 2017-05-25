@@ -146,9 +146,9 @@ void SyncWorkSlot::doSlaveSyncWorkSlot() {
  */
 void SyncWorkSlot::doMasterSyncWorkSlot() {
 
-	bool heardSyncKeepingSync;
+	HandlingResult handlingResult;
 
-	heardSyncKeepingSync = doListenHalfSyncWorkSlot(slotSchedule.deltaToThisSyncSlotMiddleSubslot);
+	handlingResult = doListenHalfSyncWorkSlot(slotSchedule.deltaToThisSyncSlotMiddleSubslot);
 	assert(!network.isRadioInUse());
 
 	/*
@@ -157,7 +157,7 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 	 * - OR a synch-keeping msg
 	 * Regardless, continue to listen, mainly for work.
 	 */
-	if (! heardSyncKeepingSync) {
+	if (handlingResult == HandlingResult::KeepListening) {
 		// Self is Master, send sync if didn't hear WorkSync or MergeSync
 		syncSender.sendMasterSync();
 	}

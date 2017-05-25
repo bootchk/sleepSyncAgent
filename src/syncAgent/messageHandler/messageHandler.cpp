@@ -4,31 +4,31 @@
 #include "../logMessage.h"
 
 HandlingResult MessageHandler::handle(SyncMessage* msg){
-	HandlingResult foundDesiredMessage;
+	HandlingResult handlingResult;
 
 	switch(msg->type) {
 	case MasterSync:
 		log(LogMessage::RXMasterSync);
-		foundDesiredMessage = handleMasterSyncMessage(msg);
+		handlingResult = handleMasterSyncMessage(msg);
 		break;
 	case MergeSync:
 		log(LogMessage::RXMergeSync);
-		foundDesiredMessage = handleMergeSyncMessage(msg);
+		handlingResult = handleMergeSyncMessage(msg);
 		break;
 	case AbandonMastership:
 		log(LogMessage::RXAbandonMastership);
-		foundDesiredMessage = handleAbandonMastershipMessage(msg);
+		handlingResult = handleAbandonMastershipMessage(msg);
 		break;
 	case WorkSync:
 		log(LogMessage::RXWorkSync);
-		foundDesiredMessage = handleWorkSyncMessage(msg);
+		handlingResult = handleWorkSyncMessage(msg);
 		break;
 	default:
 		log(LogMessage::RXUnknown);
-		foundDesiredMessage = KeepListening;
+		handlingResult = HandlingResult::KeepListening;
 	}
 
-	return foundDesiredMessage;
+	return handlingResult;
 }
 
 
