@@ -40,7 +40,7 @@ public:
 
 /*
  * After reset(), fans outward from current SyncSlot.
- * Attempts to quickly find a drifted Master.
+ * Try to quickly find a drifted Master.
  *
  * All units may do the same thing.
  * It does not cause contention, because fishing is receiving.

@@ -18,6 +18,9 @@ bool Network::isRadioInUse() {
 	return radio->isInUse();
 }
 
+/*
+ * Startup must be called before StartReceiving or Transmit (TODO no Transmit in NetworkAPI)
+ */
 void Network::startup() {
 	radio->hfCrystalClock->startAndSleepUntilRunning();
 	assert(radio->isConfigured());
@@ -30,8 +33,11 @@ void Network::shutdown() {
 
 
 void Network::startReceiving() {
-	// Note radio might already be ready, but this ensure it.
-	// OLD prepareToTransmitOrReceive();
+	/*
+	 * Not log to flash here, since it takes too long.
+	 */
+
+	// TODO should this be in caller?
 	syncSleeper.clearReasonForWake();
 	radio->receiveStatic();
 	assert(radio->isInUse());

@@ -28,7 +28,7 @@
  * Here I assume work is lower priority than sync.
  * Sync is higher priority because work is not hard-realtime while sync messages are timing critical.
  * Power and priority are intertwined. I assume that work takes more power than sync.
- * Attempt to maintain sync even if there is not enough power to do work.
+ * Try to maintain sync even if there is not enough power to do work.
  * You can change that, you could even implement hysteresis:
  * important to achieve sync while power is rising,
  * but important to do work while power is falling but there is sync.

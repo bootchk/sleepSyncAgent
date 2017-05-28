@@ -42,7 +42,7 @@ void SimpleSyncPeriod::doSlotSequence() {
 	workSlot.performWork();
 #endif
 
-	assert(!radio->isPowerOn());	// Low power until next slot
+	assert(!radio->isInUse());	// Low power until next slot
 
 	// Variation: next event (if any) occurs within a large sleeping time (lots of 'slots')
 	if (role.isMerger()) {
@@ -58,7 +58,7 @@ void SimpleSyncPeriod::doSlotSequence() {
 		fishSlot.perform();
 		// continue and sleep until end of sync period
 	}
-	assert(!radio->isPowerOn());	// Low power for remainder of this sync period
+	assert(!radio->isInUse());	// Low power for remainder of this sync period
 
 	syncSleeper.sleepUntilTimeout(clique.schedule.deltaNowToNextSyncPoint);
 	// Sync period completed

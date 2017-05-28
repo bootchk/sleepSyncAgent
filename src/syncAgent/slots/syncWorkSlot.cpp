@@ -28,11 +28,13 @@ HandlingResult SyncWorkSlot::doListenHalfSyncWorkSlot(OSTime (*timeoutFunc)()) {
 	 * is not expected to exhaust power.
 	 */
 	if (powerManager->isPowerForRadio()) {
+		LogMessage::logListenHalfSlot();
 		network.startReceiving();
 	}
 	else {
 		LogMessage::logNoPowerForHalfSyncSlot();
 		// Note HFXO is still running
+		// Continue to sleep for half a slot: we may yet xmit sync, and/or listen for second half.
 	}
 
 	HandlingResult result = syncSleeper.sleepUntilMsgAcceptedOrTimeout(
@@ -122,6 +124,7 @@ void SyncWorkSlot::doIdleSlotRemainder() {
  * listen for sync the whole period.
  */
 void SyncWorkSlot::doSlaveSyncWorkSlot() {
+	LogMessage::logListenFullSlot();
 	network.startReceiving();
 
 	// Assert listening for other's sync.
@@ -172,6 +175,10 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 // TODO try doing part of the sync slot i.e. fail after the first half.
 
 
+/*
+ * Since SyncSlot is first and we already checked isPowerForSync(),
+ * the check isPowerForRadio should always succeed.
+ */
 void SyncWorkSlot::tryPerform() {
 	if (powerManager->isPowerForRadio()) {
 		perform();

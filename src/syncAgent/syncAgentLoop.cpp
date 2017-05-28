@@ -17,7 +17,7 @@
  * Sync periods are active if enough power.
  * In inactive sync periods, schedule advances.
  * After enough inactive sync periods, schedule is much drifted.
- * After inactive sync periods, we attempt to resume drifted schedule.
+ * After inactive sync periods, we try to resume drifted schedule.
 */
 
 namespace {
@@ -58,6 +58,8 @@ void SyncAgent::loop(){
 	 * - radio not in use
 	 * - longClock is running but might not be accurate until LFXO is stable
 	 * - there was power for the radio before we called this (since may have been exhausted by cpu execution.)
+	 *
+	 * Note not necessary to have PowerForSync before call, this will sleep until there is.
 	 */
 	assert(clique.isSelfMaster());
 	assert(network.isLowPower());

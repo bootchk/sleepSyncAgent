@@ -44,6 +44,7 @@ void FishSlot::tryPerform() {
 	// Power might be replenished.
 
 	if (powerManager->isPowerForRadio()) {
+		LogMessage::logFished();
 		perform();
 	}
 	else {

@@ -66,4 +66,9 @@ public:
 
 	static void logStartSync() { CustomFlash::writeZeroAtIndex(StartSync); }
 	static void logPauseSync() { CustomFlash::writeZeroAtIndex(PauseSync); }
+
+	static void logListenHalfSlot() { CustomFlash::writeZeroAtIndex(ListenHalf); }
+	static void logListenFullSlot() { CustomFlash::writeZeroAtIndex(ListenFull); }
+	static void logFished() { CustomFlash::writeZeroAtIndex(LogFished); }
+
 };

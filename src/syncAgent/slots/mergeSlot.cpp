@@ -41,8 +41,9 @@ void MergeSlot::tryPerform() {
 void MergeSlot::perform() {
 	assert(network.isLowPower());
 	assert(role.isMerger());
-	// Hard sleep without listening.
-	// Pass to sleep() a function to calculate start of merge
+
+	// Hard sleep without listening until merge time
+	// Pass to SyncSleeper a function to calculate merge time
 	syncSleeper.sleepUntilTimeout(timeoutUntilMerge);
 
 	// assert time aligned with middle of a mergee sync slots (same wall time as fished sync from mergee.)

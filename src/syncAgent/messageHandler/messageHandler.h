@@ -41,7 +41,7 @@ enum class HandlingResult {
 
 /*
  * Super class having dispatcher on code in message.
- * I had much trouble attempting to use polymorphic dispatch on SyncMessage*
+ * I had much trouble using polymorphic dispatch on SyncMessage*
  */
 class MessageHandler {
 public:

@@ -25,7 +25,7 @@ LongClockTimer* longClockTimer;	// for toa
 
 
 /*
- * radio and its owned peripherals (hfClock and DCDC power supply) OFF
+ * radio ensemble (HFXO and DCDC) OFF
  * RTC and LXFO ON
  */
 void sleepWithOnlyTimerPowerUntilTimeout(DeltaTime timeout) {
@@ -60,7 +60,6 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 		if (msg != nullptr) {
 			// assert msg->type valid
 
-			// XXX quiet conversion to bool, use enums
 			handlingResult = msgHandler->handle(msg);
 			if (handlingResult!=HandlingResult::KeepListening) {
 				// Remainder of duration radio not used (low power) but HFXO is still on.
@@ -75,7 +74,7 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 				 * restart receive, remain in loop, sleep until next message
 				 */
 				radio->receiveStatic();
-				// continuation is sleep
+				// continuation is sleep with radio on
 			}
 			// assert msg queue is empty (since we received and didn't restart receiver)
 		}
@@ -83,6 +82,7 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 			// Ignore garbled type or offset
 			log(LogMessage::Garbled);
 			// continuation is sleep
+			// TODO with radio off?
 		}
 
 		// No memory managment for messages
@@ -94,12 +94,18 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 		 */
 		log(LogMessage::CRC);
 		// continuation is sleep
+		// TODO with radio off?
 	}
 	return handlingResult;
 }
 
 
-bool dispatchReasonForWake() {
+bool isWakeForTimerExpired() {
+	/*
+	 * assert waken from sleep
+	 * not assert that timer went off: it may yet set a new reason at any moment.
+	 * We don't clear reasonForWake exactly because an IRQ could set it at any moment.
+	 */
 	bool result = false;
 
 	// Expect wake by timeout, not by msg or other event
@@ -111,25 +117,29 @@ bool dispatchReasonForWake() {
 
 
 	case TimerOverflowOrOtherTimer:
-		// Expected
+		/*
+		 * Normal
+		 * But do not end sleep.
+		 */
 		break;
 
 
 	case MsgReceived:
 		/*
-		 * Radio should be off.
+		 * Abnormal: Radio should be off.
+		 * But do not end sleep.
 		 */
 		LogMessage::logUnexpectedMsg();
 		break;
 
-	case None:
+	case NotSetByIRQ:
 		/*
 		 * Unexpected, probably a bug.
 		 * Radio is not in use can't receive
 		 * Woken by some interrupt (event?) not in the design.
+		 * But do not end sleep.
 		 */
 		LogMessage::logUnexpectedWakeReason();
-		// return false, continue next loop iteration
 	}
 	return result;
 	// Returns whether timeout time has elapsed i.e. whether to stop sleeping loop
@@ -157,7 +167,7 @@ void SyncSleeper::clearReasonForWake() { sleeper.clearReasonForWake(); }
  * Sleep until timeout, ensuring that timeout time has elapsed:
  * - ignoring any unexpected events
  *
- * Receiver is off, so no messages can be received.
+ * Receiver is off => no messages should be received.
  */
 void SyncSleeper::sleepUntilTimeout(OSTime (*timeoutFunc)()) {
 	while (true) {
@@ -168,7 +178,7 @@ void SyncSleeper::sleepUntilTimeout(OSTime (*timeoutFunc)()) {
 
 		sleepWithOnlyTimerPowerUntilTimeout(timeout);
 
-		if (dispatchReasonForWake())
+		if (isWakeForTimerExpired())
 			break; // break while loop, timeout has elapsed
 		/*
 		 * else continue loop, sleep again.
@@ -194,7 +204,7 @@ void SyncSleeper::sleepUntilTimeout(DeltaTime timeout)
 
 			sleepWithOnlyTimerPowerUntilTimeout(timeout);
 
-			if (dispatchReasonForWake()) {
+			if (isWakeForTimerExpired()) {
 				break;	// while true, assert time timeout has elapsed.
 			}
 			else {
@@ -262,6 +272,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 
 		sleeper.cancelTimeout();
 
+		// Switch on reasons, not on HandlingResult)
 		switch (sleeper.getReasonForWake()) {
 		case MsgReceived:
 			// Record TOA as soon as possible
@@ -287,20 +298,23 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 			 * Expected events not relevant to this sleep.
 			 * Sleep again.
 			 */
+			// assert network->isInUse()
 			break;
 
-		case None:
+		case NotSetByIRQ:
 			/*
 			 * Unexpected: No IRQ handler set reason reasonForWake.
 			 * Continue in loop and sleep again.
 			 */
 			LogMessage::logUnexpectedWakeWhileListening();
+			// assert network->isInUse()
 		}
 		// If Timer semantics are restartable: timer might be canceled, but sleepUntilEventWithTimeout will restart it
 
 		if ((handlingResult != HandlingResult::KeepListening) || didTimeout) {
 			/*
-			 * assert radio off and timer cancelled.
+			 * assert ! network->isInUse()
+			 * assert timer cancelled
 			 */
 			break;	// while(true)
 		}
@@ -308,11 +322,11 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 		 * else continue while(true).
 		 * assert the timeoutFunc() will eventually return zero and not sleep with reason==TimerExpired
 		 */
-
+		// assert network->isInUse()
 	}	// while(true)
 
 	assert(!network.isRadioInUse());
-	// not assert network.isLowPower()
+	// not assert network.isLowPower(), HFXO is still on
 	// ensure message queue nearly empty
 	// ensure timeout or didReceiveDesiredMsg
 	return handlingResult;

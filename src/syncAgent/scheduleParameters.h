@@ -232,12 +232,13 @@ static const DeltaTime DeltaToSyncSlotMiddle = HalfSlotDuration + RadioLag - Ram
 /*
  * Sanity.
  * SleepSync uses timeouts less than this.
- * See LongClock::MaxTimeout of 0xFFFFFF == 16M
- * This must be less than that.
+ *
+ * This absolutely must be less than LongClock::MaxTimeout of 0xFFFFFF == 16M
+ * Should not schedule anything longer than 2 SyncPeriods of say 2000 * 50 ticks
  */
-//static const DeltaTime MaxSaneTimeout = 164000;
-// Temporarily, for power measurements
-static const DeltaTime MaxSaneTimeout = 2000000;
+static const DeltaTime MaxSaneTimeout = 164000;
+// For power measurements
+//static const DeltaTime MaxSaneTimeout = 2000000;
 
 
 

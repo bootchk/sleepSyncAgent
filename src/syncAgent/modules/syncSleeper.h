@@ -28,7 +28,7 @@ public:
 	/*
 	 * Requires caller init() the LongClockTimer because this method does not.
 	 *
-	 * maxSaneTimeout is a limit checked on each call to sleep(), for robustness.
+	 * maxSaneTimeout is a limit checked on each call to sleepFoo(), for robustness.
 	 */
 	static void init(
 			OSTime maxSaneTimeout,
