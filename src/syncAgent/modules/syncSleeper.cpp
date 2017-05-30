@@ -63,6 +63,7 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 			handlingResult = msgHandler->handle(msg);
 			if (handlingResult!=HandlingResult::KeepListening) {
 				// Remainder of duration radio not used (low power) but HFXO is still on.
+				// TODO this assertion should be at beginning of routine
 				assert(!network.isRadioInUse());
 
 				// continuation is sleep
@@ -110,13 +111,13 @@ bool isWakeForTimerExpired() {
 
 	// Expect wake by timeout, not by msg or other event
 	switch( sleeper.getReasonForWake() ) {
-	case TimerExpired:
+	case SleepTimerExpired:
 		result = true;
 		// assert time specified by timeoutFunc has elapsed.
 		break;
 
 
-	case TimerOverflowOrOtherTimer:
+	case CounterOverflowOrOtherTimerExpired:
 		/*
 		 * Normal
 		 * But do not end sleep.
@@ -282,7 +283,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 			handlingResult = dispatchFilteredMsg(msgHandler);
 			break;	// switch
 
-		case TimerExpired:
+		case SleepTimerExpired:
 			// Timeout could be interrupting a receive.
 			// Better to handle message and delay next slot: fewer missed syncs.
 
@@ -293,7 +294,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 			break;	// switch
 			// FUTURE try handle receive in progress, see code fragment at eof
 
-		case TimerOverflowOrOtherTimer:
+		case CounterOverflowOrOtherTimerExpired:
 			/*
 			 * Expected events not relevant to this sleep.
 			 * Sleep again.
