@@ -22,10 +22,7 @@ class Clique {
 public:
 	static Schedule schedule;
 
-	// Newly created Clique instance
-	static void init();
-
-
+	static void init(LongClockTimer* aLongClockTimer);
 
 	/*
 	 * Methods related to mastership and ID of clique.

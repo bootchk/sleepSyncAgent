@@ -61,6 +61,7 @@ void SyncAgent::initSyncObjects(
 		Radio * aRadio,
 		Mailbox* aMailbox,
 		PowerManager* aPowerManager,
+		LongClockTimer* aLongClockTimer,
 		void (*aOnWorkMsgCallback)(WorkPayload),
 		void (*aOnSyncPointCallback)()
 	)
@@ -90,7 +91,8 @@ void SyncAgent::initSyncObjects(
 	// Serializer reads and writes directly to radio buffer
 	serializer.init(radio->getBufferAddress(), Radio::FixedPayloadCount);
 
-	clique.init();
+	// Clique's Schedule needs LongClock
+	clique.init(aLongClockTimer);
 
 	// assert LongClock is reset
 	// not assert LongClock running assert(aLCT->isOSClockRunning());

@@ -30,13 +30,16 @@ Schedule Clique::schedule;
 /*
  * Init is called only after a hw, power on reset POR
  */
-void Clique::init(){
+void Clique::init(LongClockTimer* aLongClockTimer){
 	log("Clique init\n");
 
 	setSelfMastership();
 	dropoutMonitor.reset();
 	masterXmitSyncPolicy.reset();
-	schedule.startFreshAfterHWReset();
+
+	// Schedule uses LongClockTimer
+	schedule.init(aLongClockTimer);
+
 	// assert clock is running and first period started but no tasks scheduled
 	// assert dropoutMonitor is initialized
 	// assert xmitPolicy is initialized

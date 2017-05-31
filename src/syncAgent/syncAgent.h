@@ -60,6 +60,7 @@ public:
 	static void initSyncObjects( Radio* radio,
 			Mailbox* mailbox,
 			PowerManager* aPowerManager,
+			LongClockTimer* aLongClockTimer,
 			void (*onWorkMsg)(WorkPayload),
 			void (*onSyncPoint)()
 			);

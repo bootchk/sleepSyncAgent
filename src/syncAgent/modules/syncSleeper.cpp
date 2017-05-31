@@ -13,10 +13,7 @@
 
 namespace {
 
-// Uses but does not own
-LongClockTimer* longClockTimer;	// for toa
-
-// Uses global sleeper
+// Uses global Sleeper
 
 
 /*
@@ -164,6 +161,10 @@ void SyncSleeper::clearReasonForWake() { sleeper.clearReasonForWake(); }
  * Receiver is off => no messages should be received.
  */
 void SyncSleeper::sleepUntilTimeout(OSTime (*timeoutFunc)()) {
+
+	// Debug:  assertion on lapsed time
+	// LongTime now = clique.schedule.nowTime();
+
 	while (true) {
 		// Calculate remaining timeout on each loop iteration
 		OSTime timeout = timeoutFunc();
@@ -183,6 +184,7 @@ void SyncSleeper::sleepUntilTimeout(OSTime (*timeoutFunc)()) {
 	// assert timeout amount of time has elapsed
 }
 
+#ifdef OLD
 /*
  * Similar above, but overloaded: different parameter type
  * and different implementation.
@@ -213,6 +215,7 @@ void SyncSleeper::sleepUntilTimeout(DeltaTime timeout)
 		}
 		// assert timeout amount of time has elapsed
 }
+#endif
 
 /*
  * Sleep until timeout with radio on.

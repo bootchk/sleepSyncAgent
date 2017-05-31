@@ -33,7 +33,7 @@ public:
 	 * Expect only a timer event, but allow for unexpected waking events.
 	 */
 	static void sleepUntilTimeout(OSTime (*func)());
-	static void sleepUntilTimeout(DeltaTime);
+	// OLD static void sleepUntilTimeout(DeltaTime);
 
 	/*
 	 * Expect either a timeout or a message event.

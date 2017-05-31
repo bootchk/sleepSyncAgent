@@ -72,6 +72,7 @@ void FishSlot::perform() {
 	// Not using result, might return sooner if caught something
 
 	assert(!network.isRadioInUse());
+	network.shutdown();
 	/*
 	 * Conditions:
 	 * (no sync msg was heard and receiver still on)
@@ -83,8 +84,6 @@ void FishSlot::perform() {
 	 * In case we adjusted changed role to Merger,
 	 * first mergeSlot will be after next syncSlot.
 	 */
-
-	network.shutdown();
 }
 
 

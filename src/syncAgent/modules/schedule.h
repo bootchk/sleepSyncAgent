@@ -70,15 +70,14 @@
  * In other words, there is a deep unstated connection between LongClock and Timer.
  */
 class Schedule {
+private:
 
 public:
 	/*
-	 * aka init().
 	 * Set start of sync period to now, essentially a random time in relation to all other units.
-	 * This should only be called once:  after that, whatever schedule we are on
-	 * is the best estimate of other unit's schedule.
+	 * Called at POR.  After that, the schedule can become adjusted to other unit's schedule.
 	 */
-	static void startFreshAfterHWReset();
+	static void init(LongClockTimer*);
 
 	// FUTURE static void resumeAfterPowerRestored();
 

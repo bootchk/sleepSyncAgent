@@ -70,5 +70,6 @@ public:
 	static void logListenHalfSlot() { CustomFlash::writeZeroAtIndex(ListenHalf); }
 	static void logListenFullSlot() { CustomFlash::writeZeroAtIndex(ListenFull); }
 	static void logFished() { CustomFlash::writeZeroAtIndex(LogFished); }
+	static void logMerge() { CustomFlash::writeZeroAtIndex(LogMerge); }
 
 };

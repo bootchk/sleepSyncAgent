@@ -42,6 +42,8 @@ void MergeSlot::perform() {
 	assert(network.isLowPower());
 	assert(role.isMerger());
 
+	LogMessage::logMerge();
+
 	// Hard sleep without listening until merge time
 	// Pass to SyncSleeper a function to calculate merge time
 	syncSleeper.sleepUntilTimeout(timeoutUntilMerge);
@@ -51,6 +53,7 @@ void MergeSlot::perform() {
 	logLongLong(clique.schedule.nowTime()); log(":mergeSync");
 	syncSender.sendMergeSync();	// Synchronous
 	assert(!network.isRadioInUse());
+	network.shutdown();
 
 	if (mergePolicy.checkCompletionOfMergerRole()){
 		mergePolicy.restart();
@@ -60,7 +63,5 @@ void MergeSlot::perform() {
 		assert(role.isFisher());
 	}
 	// else continue in role Merger
-
-	network.shutdown();
 }
 
