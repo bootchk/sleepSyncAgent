@@ -55,13 +55,18 @@ private:
 
 // methods
 public:
-	static void init( Radio* radio,
+	static void initSleepers(PowerManager*, LongClockTimer*);
+
+	static void initSyncObjects( Radio* radio,
 			Mailbox* mailbox,
-			LongClockTimer * aLCT,
 			PowerManager* aPowerManager,
 			void (*onWorkMsg)(WorkPayload),
 			void (*onSyncPoint)()
 			);
+
+	// Sleep until enough power to start syncing
+	static void sleepUntilSyncPower();
+
 	static void loop() __attribute__ ((noreturn));
 
 

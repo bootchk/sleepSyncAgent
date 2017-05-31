@@ -3,6 +3,20 @@
 #include "syncAgent.h"
 #include "globals.h"	// which includes nRF5x.h
 #include "scheduleParameters.h"
+#include "syncPowerSleeper.h"
+
+
+namespace {
+
+// SyncAgent owns
+SyncPowerSleeper syncPowerSleeper;
+// SyncSleeper, Sleeper is global
+
+// SyncAgent uses
+LongClockTimer* longClockTimer;
+}
+
+
 
 
 // Static data members
@@ -19,12 +33,33 @@ void (*SyncAgent::onSyncPointCallback)();
 
 
 
+void SyncAgent::initSleepers(PowerManager* aPowerManager, LongClockTimer* aLongClockTimer) {
+
+	// assert longClockTimer was init
+	// assert counter is perpetually running
+	// assert counter interrupt enabled for overflow
+	// assert RTC0_IRQ is enabled (for Counter overflow and any Timers)
+
+	// retain reference
+	longClockTimer = aLongClockTimer;
+
+	sleeper.init(aLongClockTimer);
+	sleeper.setSaneTimeout(ScheduleParameters::MaxSaneTimeoutSyncPowerSleeper);
+
+	powerManager = aPowerManager;	// global
+
+	// SyncSleeper, syncPowerSleeper is global, needs no init
+}
 
 
-void SyncAgent::init(
+void SyncAgent::sleepUntilSyncPower(){
+	syncPowerSleeper.sleepUntilSyncPower();
+}
+
+
+void SyncAgent::initSyncObjects(
 		Radio * aRadio,
 		Mailbox* aMailbox,
-		LongClockTimer * aLCT,
 		PowerManager* aPowerManager,
 		void (*aOnWorkMsgCallback)(WorkPayload),
 		void (*aOnSyncPointCallback)()
@@ -44,10 +79,6 @@ void SyncAgent::init(
 
 	// Temp: test power consumption when all sleep
 	// while(true) waitForOSClockAndToRecoverBootEnergy(aLCT);
-
-	syncSleeper.init(
-			2* ScheduleParameters::NormalSyncPeriodDuration,
-			aLCT);
 
 	// Copy parameters to static data members
 	onWorkMsgCallback = aOnWorkMsgCallback;

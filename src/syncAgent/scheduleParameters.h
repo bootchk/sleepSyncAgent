@@ -255,5 +255,18 @@ static const DeltaTime StabilizedClockTimeout = 20000;	// 0.6 seconds
 //static const DeltaTime StabilizedClockTimeout = 1000000;	// 1M * 30uSec == 300kuSec == 30 seconds
 
 
-};
 
+/*
+ * How long we should sleep for SyncPower
+ * Units ticks of 30uSeconds
+ * 40k == 1.2seconds
+ */
+static const DeltaTime MaxSaneTimeoutSyncPowerSleeper = 40000;
+
+
+/*
+ * Max timeout used by SyncSleeper
+ */
+static const DeltaTime MaxSaneTimeoutSyncSleeper = 2* NormalSyncPeriodDuration;
+
+};

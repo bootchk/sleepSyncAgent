@@ -12,8 +12,11 @@
 
 
 namespace {
-Sleeper sleeper;
+
+// Uses but does not own
 LongClockTimer* longClockTimer;	// for toa
+
+// Uses global sleeper
 
 
 /*
@@ -22,7 +25,6 @@ LongClockTimer* longClockTimer;	// for toa
  *
  * A Sleeper may wake for unexpected reasons.
  */
-
 
 /*
  * radio ensemble (HFXO and DCDC) OFF
@@ -150,15 +152,6 @@ bool isWakeForTimerExpired() {
 
 
 
-
-
-void SyncSleeper::init(
-		OSTime maxSaneTimeout,
-		LongClockTimer * aLCT)
-{
-	sleeper.init(maxSaneTimeout, aLCT);
-	longClockTimer = aLCT;
-}
 
 
 void SyncSleeper::clearReasonForWake() { sleeper.clearReasonForWake(); }

@@ -17,6 +17,7 @@ extern Mailbox* workOutMailbox;
 extern PowerManager* powerManager;
 
 
+extern Sleeper sleeper;
 
 #include "syncAgent.h"
 extern SyncAgent syncAgent;

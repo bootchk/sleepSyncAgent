@@ -4,6 +4,7 @@
 
 #include "globals.h"	// radio, etc.
 #include "syncAgent.h"
+#include "scheduleParameters.h"
 
 #include "modules/syncState.h"
 #include "logMessage.h"
@@ -37,14 +38,10 @@ void sleepEntireSyncPeriod() {
 }
 
 
-
-
-
-
-
-
-
 } // namespace
+
+
+
 
 
 // FUTURE, we could check power again before each slot, namely fishing slot
@@ -68,6 +65,9 @@ void SyncAgent::loop(){
 	initLogging();
 	log("ID:\n");
 	logLongLong(clique.getMasterID());
+
+	// Set sane timeout for SyncPeriod calculations, different from that used by SyncPowerSleeper
+	sleeper.setSaneTimeout( ScheduleParameters::MaxSaneTimeoutSyncSleeper );
 
 	/*
 	 * assert schedule already started and not too much time has elapsed
