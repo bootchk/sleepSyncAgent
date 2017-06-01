@@ -69,7 +69,9 @@ public:
 
 	static void logListenHalfSlot() { CustomFlash::writeZeroAtIndex(ListenHalf); }
 	static void logListenFullSlot() { CustomFlash::writeZeroAtIndex(ListenFull); }
-	static void logFished() { CustomFlash::writeZeroAtIndex(LogFished); }
-	static void logMerge() { CustomFlash::writeZeroAtIndex(LogMerge); }
+	static void logFished() { CustomFlash::writeZeroAtIndex(Fished); }
+	static void logMerge() { CustomFlash::writeZeroAtIndex(Merge); }
+	static void logSleepRemainder() { CustomFlash::writeZeroAtIndex(SleepRemainder); }
+	static void logEndSyncPeriod() { CustomFlash::writeZeroAtIndex(EndSyncPeriod); }
 
 };
