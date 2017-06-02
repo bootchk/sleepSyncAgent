@@ -86,7 +86,7 @@ void SyncAgent::loop(){
 
 		assert(network.isLowPower());	// After every sync period
 
-		if ( powerManager->isPowerForSync() ) {
+		if ( syncPowerManager->isPowerForSync() ) {
 			/*
 			 * Sync keeping: enough power to use radio for two slots
 			 */

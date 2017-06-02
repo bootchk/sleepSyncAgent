@@ -14,8 +14,10 @@
 // Owned by calling app, implemented by lib nRF5x
 extern Radio* radio;
 extern Mailbox* workOutMailbox;
-extern PowerManager* powerManager;
 
+// Owned by calling app
+#include "modules/syncPowerManager.h"
+extern SyncPowerManager* syncPowerManager;
 
 extern Sleeper sleeper;
 

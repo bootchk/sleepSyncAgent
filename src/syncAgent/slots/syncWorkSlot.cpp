@@ -27,7 +27,7 @@ HandlingResult SyncWorkSlot::doListenHalfSyncWorkSlot(OSTime (*timeoutFunc)()) {
 	 * Starting the HFXO (previously) or anything else that preceded this call
 	 * is not expected to exhaust power.
 	 */
-	if (powerManager->isPowerForRadio()) {
+	if (syncPowerManager->isPowerForRadio()) {
 		LogMessage::logListenHalfSlot();
 		network.startReceiving();
 	}
@@ -180,7 +180,7 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
  * the check isPowerForRadio should always succeed.
  */
 void SyncWorkSlot::tryPerform() {
-	if (powerManager->isPowerForRadio()) {
+	if (syncPowerManager->isPowerForRadio()) {
 		perform();
 	}
 	else {

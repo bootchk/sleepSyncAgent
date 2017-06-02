@@ -21,7 +21,7 @@
  * Sleeper uses a callback which also sets ReasonForWake, but we ignore that.
  */
 void SyncPowerSleeper::sleepUntilSyncPower(){
-	while (!powerManager->isPowerForSync()){
+	while (!syncPowerManager->isPowerForSync()){
 
 		// not assertUltraLowPower() but it should be
 		sleeper.sleepUntilEventWithTimeout(ScheduleParameters::MaxSaneTimeoutSyncPowerSleeper);

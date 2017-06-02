@@ -2,7 +2,7 @@
 
 Radio* radio;
 Mailbox* workOutMailbox;
-PowerManager* powerManager;
+SyncPowerManager* syncPowerManager;
 
 SyncSleeper syncSleeper;
 

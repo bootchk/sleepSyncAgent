@@ -43,7 +43,7 @@ void FishSlot::tryPerform() {
 	sleepUntilFishSlotStart();
 	// Power might be replenished.
 
-	if (powerManager->isPowerForRadio()) {
+	if (syncPowerManager->isPowerForRadio()) {
 		LogMessage::logFished();
 		perform();
 	}

@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include "modules/syncPowerManager.h"
 #include "modules/message.h"
 #include "modules/cliqueMerger.h"
 
@@ -55,11 +56,11 @@ private:
 
 // methods
 public:
-	static void initSleepers(PowerManager*, LongClockTimer*);
+	static void initSleepers(SyncPowerManager*, LongClockTimer*);
 
 	static void initSyncObjects( Radio* radio,
 			Mailbox* mailbox,
-			PowerManager* aPowerManager,
+			SyncPowerManager* aSyncPowerManager,
 			LongClockTimer* aLongClockTimer,
 			void (*onWorkMsg)(WorkPayload),
 			void (*onSyncPoint)()
