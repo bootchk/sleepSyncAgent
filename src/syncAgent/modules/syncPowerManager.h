@@ -15,6 +15,14 @@
  * - sync maintenance: mcu
  * The base is the RTC of 1.5uA, which always runs to burst the mcu, etc.
  * If there is not enough power to maintain Vmin for the mcu, brownout and reset occurs.
+ *
+ * Boot requires a small reserve.
+ * Radio requires about 0.2V on capacitor.
+ * Radio and work must not brownout mcu.
+ * Work requires > 0.2V on capacitor.
+ * Radio is required to keep sync.
+ * Sync is maintained but drifts if no power for radio.
+ * Work may temporarily take Vcc below needed for radio.
  */
 #include <nRF5x.h>	// PowerManager
 
@@ -29,6 +37,7 @@ public:
 	// Init owned generic PowerManager
 	static void init() { powerManager.init(); }
 
+	static void enableBrownoutDetection() { powerManager.enableBrownoutDetection(); }
 	/*
 	 * Levels
 	 */

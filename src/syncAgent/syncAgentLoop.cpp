@@ -69,6 +69,10 @@ void SyncAgent::loop(){
 	// Set sane timeout for SyncPeriod calculations, different from that used by SyncPowerSleeper
 	sleeper.setSaneTimeout( ScheduleParameters::MaxSaneTimeoutSyncSleeper );
 
+	// We expect not to brownout henceforth
+	syncPowerManager->enableBrownoutDetection();
+
+
 	/*
 	 * assert schedule already started and not too much time has elapsed
 	 * Note that we roll forward at the end of the loop.
