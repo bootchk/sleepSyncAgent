@@ -37,7 +37,7 @@ public:
 	// Init owned generic PowerManager
 	static void init() { powerManager.init(); }
 
-	static void enableBrownoutDetection() { powerManager.enableBrownoutDetection(); }
+	static void enableBrownoutDetectMode() { powerManager.enableBrownoutDetectMode(); }
 	/*
 	 * Levels
 	 */

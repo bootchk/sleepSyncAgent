@@ -70,7 +70,8 @@ void SyncAgent::loop(){
 	sleeper.setSaneTimeout( ScheduleParameters::MaxSaneTimeoutSyncSleeper );
 
 	// We expect not to brownout henceforth
-	syncPowerManager->enableBrownoutDetection();
+	syncPowerManager->enableBrownoutDetectMode();
+	// Detection not in force until first call to measure power
 
 
 	/*
