@@ -124,3 +124,9 @@
  */
 #define LEAST_ID_IS_BETTER_CLIQUE 1
 
+
+
+/*
+ * See also nRF5x powerMonitor.h where voltage threshold of brownout is defined.
+ *
+ */

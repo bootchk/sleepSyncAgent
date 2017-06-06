@@ -45,7 +45,8 @@ enum class HandlingResult {
  */
 class MessageHandler {
 public:
-	virtual ~MessageHandler() {};	// Avoid warning about non-virtual destructor
+	// Avoid warning about non-virtual destructor but requires stdlib
+	// virtual ~MessageHandler() {};
 
 	// Dispatcher
 	// Can't be static

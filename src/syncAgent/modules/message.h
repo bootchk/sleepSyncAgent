@@ -68,8 +68,8 @@ public:
 	// Only to suppress effective C level warnings
 	SyncMessage() : type(MasterSync), deltaToNextSyncPoint(), masterID(0), work(0) {}
 
-	// Suppress warnings
-    virtual ~SyncMessage() {};
+	// Suppress warnings but requires stdlib
+    //virtual ~SyncMessage() {};
 
     // Each subclass defines its own signature of init()
 
