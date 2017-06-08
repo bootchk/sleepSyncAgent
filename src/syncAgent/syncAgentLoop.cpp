@@ -6,7 +6,7 @@
 #include "syncAgent.h"
 #include "scheduleParameters.h"
 
-#include "modules/syncState.h"
+#include "state/syncState.h"
 #include "logMessage.h"
 #include "syncPeriod/syncPeriod.h"
 

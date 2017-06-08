@@ -151,6 +151,7 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 
 	HandlingResult handlingResult;
 
+	phase = Phase::SyncListenFirstHalf;
 	handlingResult = doListenHalfSyncWorkSlot(slotSchedule.deltaToThisSyncSlotMiddleSubslot);
 	assert(!network.isRadioInUse());
 

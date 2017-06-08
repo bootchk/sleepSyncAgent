@@ -63,6 +63,7 @@ void SyncAgent::initSyncObjects(
 		Mailbox* aMailbox,
 		SyncPowerManager* aSyncPowerManager,
 		LongClockTimer* aLongClockTimer,
+		BrownoutManager* aBrownoutManager,
 		void (*aOnWorkMsgCallback)(WorkPayload),
 		void (*aOnSyncPointCallback)()
 	)
@@ -94,6 +95,9 @@ void SyncAgent::initSyncObjects(
 
 	// Clique's Schedule needs LongClock
 	clique.init(aLongClockTimer);
+
+	// Register a callback that return my phase
+	aBrownoutManager->registerCallback(getPhase);
 
 	// assert LongClock is reset
 	// not assert LongClock running assert(aLCT->isOSClockRunning());
@@ -149,6 +153,11 @@ void SyncAgent::relayHeardWorkToApp(WorkPayload work) {
 	 */
 	onWorkMsgCallback(work);	// call callback
 }
+
+
+uint32_t SyncAgent::getPhase() { return (uint32_t) phase; }
+
+
 
 
 #ifdef OBSOLETE

@@ -62,6 +62,7 @@ public:
 			Mailbox* mailbox,
 			SyncPowerManager* aSyncPowerManager,
 			LongClockTimer* aLongClockTimer,
+			BrownoutManager* aBrownoutManager,
 			void (*onWorkMsg)(WorkPayload),
 			void (*onSyncPoint)()
 			);
@@ -77,6 +78,8 @@ public:
 
 	static void toMergerRole(SyncMessage* msg);
 	static void toFisherRole();
+
+	static uint32_t getPhase();
 };
 
 /*

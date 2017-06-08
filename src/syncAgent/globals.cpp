@@ -13,3 +13,4 @@ Serializer serializer;
 //SimpleFishPolicy fishPolicy;
 SyncRecoveryFishPolicy fishPolicy;
 
+Phase phase = Phase::Preamble;
