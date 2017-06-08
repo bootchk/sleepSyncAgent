@@ -18,7 +18,7 @@
  * You can call init() more than once, with different maxSaneTimeout limits.
  */
 
-typedef void (*msgReceivedCallback)();
+typedef void (*MsgReceivedCallback)();
 
 
 
@@ -42,5 +42,5 @@ public:
 			MessageHandler*,
 			OSTime (*func)());
 
-	static msgReceivedCallback getMsgReceivedCallback();
+	static MsgReceivedCallback getMsgReceivedCallback();
 };

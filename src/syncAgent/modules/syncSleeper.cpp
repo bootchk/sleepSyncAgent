@@ -330,7 +330,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 }
 
 
-msgReceivedCallback SyncSleeper::getMsgReceivedCallback() {
+MsgReceivedCallback SyncSleeper::getMsgReceivedCallback() {
 	// Return callback of the owned/wrapped sleeper.
 	return sleeper.msgReceivedCallback;
 }
