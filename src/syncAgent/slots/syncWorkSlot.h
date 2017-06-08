@@ -37,7 +37,7 @@
 
 class SyncWorkSlot {
 private:
-	static HandlingResult doListenHalfSyncWorkSlot(OSTime (*timeoutFunc)());
+	static HandlingResult doListenHalfSyncWorkSlot(TimeoutFunc timeoutFunc);
 
 	/*
 	 * Three behaviours of slot:

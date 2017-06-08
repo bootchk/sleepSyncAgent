@@ -20,7 +20,7 @@ SyncSlotMessageHandler msgHandler;
 
 
 
-HandlingResult SyncWorkSlot::doListenHalfSyncWorkSlot(OSTime (*timeoutFunc)()) {
+HandlingResult SyncWorkSlot::doListenHalfSyncWorkSlot(TimeoutFunc timeoutFunc) {
 
 	/*
 	 * This IF is mainly for debugging?

@@ -19,6 +19,7 @@
  */
 
 typedef void (*MsgReceivedCallback)();
+typedef OSTime (*TimeoutFunc)();
 
 
 
@@ -32,7 +33,7 @@ public:
 	 * Sleep a given time (a func that calculates timeout, or a constant timeout)
 	 * Expect only a timer event, but allow for unexpected waking events.
 	 */
-	static void sleepUntilTimeout(OSTime (*func)());
+	static void sleepUntilTimeout(TimeoutFunc);
 	// OLD static void sleepUntilTimeout(DeltaTime);
 
 	/*
@@ -40,7 +41,7 @@ public:
 	 */
 	static HandlingResult sleepUntilMsgAcceptedOrTimeout(
 			MessageHandler*,
-			OSTime (*func)());
+			TimeoutFunc);
 
 	static MsgReceivedCallback getMsgReceivedCallback();
 };

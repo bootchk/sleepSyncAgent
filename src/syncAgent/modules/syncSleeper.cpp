@@ -160,7 +160,7 @@ void SyncSleeper::clearReasonForWake() { sleeper.clearReasonForWake(); }
  *
  * Receiver is off => no messages should be received.
  */
-void SyncSleeper::sleepUntilTimeout(OSTime (*timeoutFunc)()) {
+void SyncSleeper::sleepUntilTimeout(TimeoutFunc timeoutFunc) {
 
 	// Debug:  assertion on lapsed time
 	// LongTime now = clique.schedule.nowTime();
@@ -239,7 +239,7 @@ void SyncSleeper::sleepUntilTimeout(DeltaTime timeout)
  */
 HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 		MessageHandler* msgHandler,
-		OSTime (*timeoutFunc)())	// function returning remaining duration of slot
+		TimeoutFunc timeoutFunc)	// function returning remaining duration of slot
 {
 	HandlingResult handlingResult = HandlingResult::KeepListening;
 	bool didTimeout = false;
