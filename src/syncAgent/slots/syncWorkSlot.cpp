@@ -28,7 +28,7 @@ HandlingResult SyncWorkSlot::doListenHalfSyncWorkSlot(OSTime (*timeoutFunc)()) {
 	 * is not expected to exhaust power.
 	 */
 	if (syncPowerManager->isPowerForRadio()) {
-		LogMessage::logListenHalfSlot();
+		//LogMessage::logListenHalfSlot();
 		network.startReceiving();
 	}
 	else {
@@ -59,6 +59,7 @@ HandlingResult SyncWorkSlot::doListenHalfSyncWorkSlot(OSTime (*timeoutFunc)()) {
 void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 	// not assert self is Master
 
+	phase = Phase::SyncListenFirstHalf;
 	(void) doListenHalfSyncWorkSlot(slotSchedule.deltaToThisSyncSlotMiddleSubslot);
 	assert(!network.isRadioInUse());
 
@@ -81,6 +82,7 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 	// Fetch work from app
 	WorkPayload work = workOutMailbox->fetch();
 	if (! workManager.isHeardWork() ) {
+		phase = Phase::SyncXmitWorkSync;
 		syncSender.sendWorkSync(work);
 		/*
 		 * App sent this work.  App also queues it in to itself if app wants to work as well as tell others to work.
@@ -104,6 +106,7 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 	 *
 	 * Result doesn't matter, slot is over and we proceed regardless whether we heard sync keeping msg.
 	 */
+	phase = Phase::SyncListenSecondHalf;
 	(void) doListenHalfSyncWorkSlot(slotSchedule.deltaToThisSyncSlotEnd);
 
 	// not assert network.isLowPower()
@@ -124,7 +127,9 @@ void SyncWorkSlot::doIdleSlotRemainder() {
  * listen for sync the whole period.
  */
 void SyncWorkSlot::doSlaveSyncWorkSlot() {
-	LogMessage::logListenFullSlot();
+	phase = Phase::SyncSlaveListen;
+
+	//LogMessage::logListenFullSlot();
 	network.startReceiving();
 
 	// Assert listening for other's sync.
@@ -163,17 +168,19 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 	 */
 	if (handlingResult == HandlingResult::KeepListening) {
 		// Self is Master, send sync if didn't hear WorkSync or MergeSync
+		phase = Phase::SyncXmit;
 		syncSender.sendMasterSync();
 	}
 
 	// Keep listening for other better Masters and work.
 	// Result doesn't matter, slot is over and we proceed whether we heard sync keeping sync or not.
+	phase = Phase::SyncListenSecondHalf;
 	(void) doListenHalfSyncWorkSlot(slotSchedule.deltaToThisSyncSlotEnd);
 
 	// not assert network.isLowPower()
 }
 
-// TODO try doing part of the sync slot i.e. fail after the first half.
+// XXX try doing part of the sync slot i.e. fail after the first half.
 
 
 /*

@@ -11,8 +11,41 @@
  */
 
 enum class Phase {
+
+	// Before loop
 	Preamble,
+
+	// Callback to app
+	SyncPointCallback,
+
+	// Maintain sync w/o radio power
+	SleepEntireSyncPeriod,
+	// Brief xmit to clique when pausing
+	AbandonMastership,
+
+	// Regular SyncPeriod, establish sync using radio
+
+	// Sync slot Master
+	// 4-8
 	SyncListenFirstHalf,
 	SyncXmit,
-	SyncListenSecondHalf
+	SyncXmitWorkSync,
+	SyncListenSecondHalf,
+	// Sync slot Slave
+	SyncSlaveListen,
+
+	// Fish slot
+	// 9, 10
+	SleepTilFish,
+	Fish,
+
+	// Merge slot
+	// 11, 12
+	SleepTilMerge,
+	Merge,
+
+	// Sleep remainder of SyncPeriod
+	// 13
+	SleepRemainder
+
 };

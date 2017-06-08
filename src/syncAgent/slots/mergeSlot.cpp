@@ -30,7 +30,7 @@ MergePolicy MergeSlot::mergePolicy;
 
 
 void MergeSlot::tryPerform() {
-	// TODO xmitting is low power, but check power anyway
+	// XXX xmitting is low power, but check power anyway
 	perform();
 }
 
@@ -42,7 +42,8 @@ void MergeSlot::perform() {
 	assert(network.isLowPower());
 	assert(role.isMerger());
 
-	LogMessage::logMerge();
+	phase = Phase::SleepTilMerge;
+	//LogMessage::logMerge();
 
 	// Hard sleep without listening until merge time
 	// Pass to SyncSleeper a function to calculate merge time
@@ -51,6 +52,7 @@ void MergeSlot::perform() {
 	// assert time aligned with middle of a mergee sync slots (same wall time as fished sync from mergee.)
 	network.startup();
 	logLongLong(clique.schedule.nowTime()); log(":mergeSync");
+	phase = Phase::Merge;
 	syncSender.sendMergeSync();	// Synchronous
 	assert(!network.isRadioInUse());
 	network.shutdown();

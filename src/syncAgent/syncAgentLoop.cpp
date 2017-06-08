@@ -83,7 +83,8 @@ void SyncAgent::loop(){
 
 	while (true){
 
-		onSyncPointCallback();	// call back app
+		phase = Phase::SyncPointCallback;
+		onSyncPointCallback();	// call back app, which must return quickly
 
 		// app may have queued work
 
@@ -104,6 +105,7 @@ void SyncAgent::loop(){
 			 * Sync maintenance: keep schedule by sleeping one sync period, w/o using radio
 			 */
 			syncState.setPaused();	// side effects
+			phase = Phase::SleepEntireSyncPeriod;
 			sleepEntireSyncPeriod();
 			// continue to check power for radio.
 			// We may exhaust it and brown out, losing sync altogether

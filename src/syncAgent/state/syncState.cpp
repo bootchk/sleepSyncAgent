@@ -21,6 +21,7 @@ bool isSyncing = false;
  */
 void doDyingBreath() {
 	// TODO this should be in the middle of the SyncSlot
+	phase = Phase::AbandonMastership;
 	syncSender.sendAbandonMastership();
 }
 
@@ -58,7 +59,7 @@ void SyncState::setActive() {
 	if ( ! isSyncing ){
 		// Change state
 		isSyncing = true;
-		LogMessage::logStartSync();	// Log that we tried to listen/send sync again.
+		// LogMessage::logStartSync();	// Log that we tried to listen/send sync again.
 		resumeSyncing();
 	}
 	// else we are still syncing, might be master or slave
@@ -68,7 +69,7 @@ void SyncState::setPaused() {
 	if ( isSyncing ){
 		// Change state
 		isSyncing = false;
-		LogMessage::logPauseSync();	// Log that we fell out
+		// LogMessage::logPauseSync();	// Log that we fell out
 		pauseSyncing();
 	}
 }

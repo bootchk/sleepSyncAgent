@@ -40,11 +40,13 @@ void FishSlot::tryPerform() {
 	// Note sleep might have assertions on power condition
 	fishSchedule.init();	// Calculate start time once
 
+	phase = Phase::SleepTilFish;
 	sleepUntilFishSlotStart();
 	// Power might be replenished.
 
 	if (syncPowerManager->isPowerForRadio()) {
-		LogMessage::logFished();
+		phase = Phase::Fish;
+		//LogMessage::logFished();
 		perform();
 	}
 	else {
