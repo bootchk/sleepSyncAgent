@@ -33,7 +33,7 @@
 /*
  * Encoding for OTA type
  */
-enum MessageType {
+enum class MessageType {
 	// Subclass SyncMessage
 	MasterSync = 17,	// Don't start at 0
 	MergeSync = 34,
@@ -66,7 +66,7 @@ public:
 	WorkPayload work;	// work always present, not always defined
 
 	// Only to suppress effective C level warnings
-	SyncMessage() : type(MasterSync), deltaToNextSyncPoint(), masterID(0), work(0) {}
+	SyncMessage() : type(MessageType::MasterSync), deltaToNextSyncPoint(), masterID(0), work(0) {}
 
 	// Suppress warnings but requires stdlib
     //virtual ~SyncMessage() {};
@@ -76,10 +76,11 @@ public:
 	// Class method
 	// Does an OTA received byte seem like a MessageType?
 	static bool isReceivedTypeASyncType(uint8_t receivedType) {
-		return      (receivedType == MasterSync)
-				|| (receivedType == MergeSync)
-				|| (receivedType == AbandonMastership)
-				|| (receivedType == WorkSync)	// FUTURE Work msg a distinct class of message
+		// Fast and loose with casting
+		return      (receivedType == (uint8_t) MessageType::MasterSync)
+				|| (receivedType == (uint8_t) MessageType::MergeSync)
+				|| (receivedType == (uint8_t) MessageType::AbandonMastership)
+				|| (receivedType == (uint8_t) MessageType::WorkSync)	// FUTURE Work msg a distinct class of message
 				;
 	}
 
@@ -105,7 +106,7 @@ public:
 	~MasterSyncMessage() {};
 
 	void init(DeltaTime aDeltaToNextSyncPoint, SystemID aMasterID) {
-		type = MasterSync;
+		type = MessageType::MasterSync;
 		deltaToNextSyncPoint.set(aDeltaToNextSyncPoint);	// asserts if out of range
 		masterID = aMasterID;
 		work = 0;
@@ -123,7 +124,7 @@ public:
 class MergeSyncMessage : public SyncMessage {
 public:
 	void init(DeltaTime aDeltaToNextSyncPoint, SystemID aMasterID) {
-		type = MergeSync;
+		type = MessageType::MergeSync;
 		deltaToNextSyncPoint.set(aDeltaToNextSyncPoint);	// throws assertion if out of range
 		masterID = aMasterID;
 		work = 0;
@@ -139,7 +140,7 @@ public:
 class WorkSyncMessage : public SyncMessage {
 public:
 	void init(DeltaTime aDeltaToNextSyncPoint, SystemID aMasterID, WorkPayload workPayload) {
-		type = WorkSync;
+		type = MessageType::WorkSync;
 		deltaToNextSyncPoint.set(aDeltaToNextSyncPoint);	// throws assertion if out of range
 		masterID = aMasterID;
 		work = workPayload;
@@ -157,7 +158,7 @@ public:
 class AbandonMastershipMessage : public SyncMessage {
 public:
 	void init(SystemID aMasterID) {
-			type = AbandonMastership;
+			type = MessageType::AbandonMastership;
 			deltaToNextSyncPoint.set(0);	// throws assertion if out of range
 			masterID = aMasterID;
 			work = 0;

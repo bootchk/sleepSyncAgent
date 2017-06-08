@@ -3,29 +3,29 @@
 
 #include "../logMessage.h"
 
+/*
+ * Dispatcher common to all subclasses of MessageHandler
+ */
 HandlingResult MessageHandler::handle(SyncMessage* msg){
 	HandlingResult handlingResult;
 
 	switch(msg->type) {
-	case MasterSync:
+	case MessageType::MasterSync:
 		log(LogMessage::RXMasterSync);
 		handlingResult = handleMasterSyncMessage(msg);
 		break;
-	case MergeSync:
+	case MessageType::MergeSync:
 		log(LogMessage::RXMergeSync);
 		handlingResult = handleMergeSyncMessage(msg);
 		break;
-	case AbandonMastership:
+	case MessageType::AbandonMastership:
 		log(LogMessage::RXAbandonMastership);
 		handlingResult = handleAbandonMastershipMessage(msg);
 		break;
-	case WorkSync:
+	case MessageType::WorkSync:
 		log(LogMessage::RXWorkSync);
 		handlingResult = handleWorkSyncMessage(msg);
 		break;
-	default:
-		log(LogMessage::RXUnknown);
-		handlingResult = HandlingResult::KeepListening;
 	}
 
 	return handlingResult;

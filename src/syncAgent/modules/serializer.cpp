@@ -121,12 +121,10 @@ SyncMessage* getPointerToMessageOfOTAType(MessageType receivedMsgType) {
 	SyncMessage* msgPtr = &masterSyncMsg;	// FUTURE InvalidMsgRef
 
 	switch(receivedMsgType) {
-	case MasterSync: msgPtr = &masterSyncMsg; break;
-	case MergeSync: msgPtr = &mergeSyncMsg; break;
-	case WorkSync: msgPtr = &workSyncMsg; break;
-	case AbandonMastership: msgPtr = &abandonMastershipMsg; break;
-	default:
-		;
+	case MessageType::MasterSync: msgPtr = &masterSyncMsg; break;
+	case MessageType::MergeSync: msgPtr = &mergeSyncMsg; break;
+	case MessageType::WorkSync: msgPtr = &workSyncMsg; break;
+	case MessageType::AbandonMastership: msgPtr = &abandonMastershipMsg; break;
 	}
 	return msgPtr;
 }
@@ -219,7 +217,7 @@ bool Serializer::bufferIsSane(){
 
 
 void Serializer::serializeSyncMessageIntoRadioBuffer(SyncMessage* msgPtr) {
-	radioBufferPtr[0] = msgPtr->type;	// 1
+	radioBufferPtr[0] = (uint8_t) msgPtr->type;	// 1
 	serializeMasterIDCommonIntoStream(msgPtr);	// 6
 	serializeOffsetCommonIntoStream(msgPtr);	// 3
 	serializeWorkCommonIntoStream(msgPtr);	// 1

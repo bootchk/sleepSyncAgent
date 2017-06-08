@@ -119,7 +119,7 @@ void SyncAgent::initSyncObjects(
 void SyncAgent::toMergerRole(SyncMessage* msg){
 	// assert slot is fishSlot
 	assert(msg->carriesSync());
-	assert(msg->type != MergeSync);
+	assert(msg->type != MessageType::MergeSync);
 	assert(role.isFisher());
 	role.setMerger();
 	cliqueMerger.initFromMsg(msg);
