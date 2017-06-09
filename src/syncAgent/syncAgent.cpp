@@ -97,7 +97,7 @@ void SyncAgent::initSyncObjects(
 	clique.init(aLongClockTimer);
 
 	// Register a callback that return my phase
-	aBrownoutManager->registerCallback(getPhase);
+	aBrownoutManager->registerCallbacks(getPhase, getReasonForWake);
 
 	// assert LongClock is reset
 	// not assert LongClock running assert(aLCT->isOSClockRunning());
@@ -156,6 +156,7 @@ void SyncAgent::relayHeardWorkToApp(WorkPayload work) {
 
 
 uint32_t SyncAgent::getPhase() { return (uint32_t) phase; }
+uint32_t SyncAgent::getReasonForWake() { return (uint32_t) sleeper.getReasonForWake; }
 
 
 

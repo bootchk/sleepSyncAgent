@@ -80,6 +80,7 @@ public:
 	static void toFisherRole();
 
 	static uint32_t getPhase();
+	static uint32_t getReasonForWake();
 };
 
 /*

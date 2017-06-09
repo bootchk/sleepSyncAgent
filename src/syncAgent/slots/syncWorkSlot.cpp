@@ -28,7 +28,6 @@ HandlingResult SyncWorkSlot::doListenHalfSyncWorkSlot(TimeoutFunc timeoutFunc) {
 	 * is not expected to exhaust power.
 	 */
 	if (syncPowerManager->isPowerForRadio()) {
-		//LogMessage::logListenHalfSlot();
 		network.startReceiving();
 	}
 	else {
