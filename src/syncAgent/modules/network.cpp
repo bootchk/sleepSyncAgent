@@ -22,12 +22,20 @@ bool Network::isRadioInUse() {
  * Startup must be called before StartReceiving or Transmit (TODO no Transmit in NetworkAPI)
  */
 void Network::startup() {
+
+	// enable this first so it has time to ramp up
+	// assert enough power for radio => >2.1V required by DCDCPowerSupply
+	radio->dcdcPowerSupply->enable();
+
 	radio->hfCrystalClock->startAndSleepUntilRunning();
 	assert(radio->isConfigured());
 }
 
 void Network::shutdown() {
 	radio->hfCrystalClock->stop();
+
+	// disable because Vcc may be below what DCDCPowerSupply requires
+	radio->dcdcPowerSupply->disable();
 }
 
 
