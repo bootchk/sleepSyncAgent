@@ -44,4 +44,7 @@ public:
 			TimeoutFunc);
 
 	static MsgReceivedCallback getMsgReceivedCallback();
+
+	// For debugging
+	static uint32_t timeSinceLastStartSleep();
 };

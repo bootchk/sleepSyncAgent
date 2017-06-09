@@ -15,6 +15,8 @@ namespace {
 
 // Uses global Sleeper
 
+LongTime sleepStartTime;
+
 
 /*
  * Call sleeper after asserting certain peripherals are off.
@@ -164,8 +166,7 @@ void SyncSleeper::clearReasonForWake() { sleeper.clearReasonForWake(); }
  */
 void SyncSleeper::sleepUntilTimeout(TimeoutFunc timeoutFunc) {
 
-	// Debug:  assertion on lapsed time
-	// LongTime now = clique.schedule.nowTime();
+	sleepStartTime = clique.schedule.nowTime();
 
 	while (true) {
 		// Calculate remaining timeout on each loop iteration
@@ -260,7 +261,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 	//assert(sleeper.reasonForWakeIsCleared());	// This also checks we haven't received yet
 	// FUTURE currently, this is being cleared in sleepUntil but that suffers from races
 
-	LongTime startTime = clique.schedule.nowTime();
+	sleepStartTime = clique.schedule.nowTime();
 
 	while (true) {
 
@@ -331,7 +332,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 		 * Robustness:ensure not sleep too long with radio powered.
 		 * Probably a fixable bug.  Possibly hardware flaws that can't be fixed.
 		 */
-		if ( (clique.schedule.nowTime() - startTime) > ScheduleParameters::RealSlotDuration ) {
+		if ( timeSinceLastStartSleep() > ScheduleParameters::RealSlotDuration ) {
 			// Record and try avoid brownout
             LogMessage::logOverslept();
             network.stopReceiving();
@@ -349,6 +350,9 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 	return handlingResult;
 }
 
+DeltaTime SyncSleeper::timeSinceLastStartSleep() {
+	return (clique.schedule.nowTime() - sleepStartTime ) ;
+}
 
 MsgReceivedCallback SyncSleeper::getMsgReceivedCallback() {
 	// Return callback of the owned/wrapped sleeper.
