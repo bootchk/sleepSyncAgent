@@ -96,8 +96,11 @@ void SyncAgent::initSyncObjects(
 	// Clique's Schedule needs LongClock
 	clique.init(aLongClockTimer);
 
-	// Register a callback that return my phase
-	aBrownoutManager->registerCallbacks(getPhase, getReasonForWake);
+	// Register callbacks that return debug info
+	aBrownoutManager->registerCallbacks(
+			getPhase,
+			getReasonForWake,
+			syncSleeper.timeSinceLastStartSleep);
 
 	// assert LongClock is reset
 	// not assert LongClock running assert(aLCT->isOSClockRunning());
