@@ -258,6 +258,8 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 	//assert(sleeper.reasonForWakeIsCleared());	// This also checks we haven't received yet
 	// FUTURE currently, this is being cleared in sleepUntil but that suffers from races
 
+	LongTime startTime = clique.schedule.nowTime();
+
 	while (true) {
 
 		/*
@@ -319,6 +321,18 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 		 * else continue while(true).
 		 * assert the timeoutFunc() will eventually return zero and not sleep with reason==TimerExpired
 		 */
+		/*
+		 * Robustness:ensure not sleep too long with radio powered.
+		 * Probably a fixable bug.  Possibly hardware flaws that can't be fixed.
+		 */
+		if ( (clique.schedule.nowTime() - startTime) > ScheduleParameters::RealSlotDuration ) {
+			// Record and try avoid brownout
+            LogMessage::logOverslept();
+            network.stopReceiving();
+            // handlingResult is invalid
+            break;
+		}
+
 		// assert network->isInUse()
 	}	// while(true)
 

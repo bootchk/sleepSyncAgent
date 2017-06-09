@@ -67,9 +67,8 @@ void CombinedSyncPeriod::doSlotSequence() {
 
 	assert(network.isLowPower());	// For remainder of sync period
 
-	LogMessage::logSleepRemainder();
+	phase = Phase::SleepRemainder;
 	sleepRemainderOfSyncPeriod();
 
-	LogMessage::logEndSyncPeriod();
 	// Sync period (slot sequence) completed
 }

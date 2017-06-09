@@ -31,6 +31,7 @@
  * Thus there are some dead gaps: a short time at the beginning of the first fishing slot (when the radio is lagging)
  * and the tail end of the last virtual slot (which is not fished at all.)
  *
+ * FUTURE sync period w/o deadtime gaps
  * e.g. that keeps the radio hot after the sync slot, when the second virtual slot (the first fish slot) is to be fished.
  * And some way of fishing closer to the sync point in the last virtual slot.
  */

@@ -57,6 +57,7 @@ public:
 	static void logNoPowerToFish() { CustomFlash::writeZeroAtIndex(NoPowerToFish); }
 	static void logNoPowerToStartSyncSlot() { CustomFlash::writeZeroAtIndex(NoPowerToStartSyncSlot); }
 	static void logNoPowerForHalfSyncSlot() { CustomFlash::writeZeroAtIndex(NoPowerToHalfSyncSlot); }
+	static void logOverslept() { CustomFlash::writeZeroAtIndex(OverSlept); }
 
 	// Only a timer running but it was not the reason for wake.
 	static void logUnexpectedWakeReason() { CustomFlash::writeZeroAtIndex(UnexpectedWake); }
@@ -64,14 +65,5 @@ public:
 	static void logUnexpectedMsg() { CustomFlash::writeZeroAtIndex(UnexpectedMsg); }
 	static void logUnexpectedWakeWhileListening() { CustomFlash::writeZeroAtIndex(UnexpectedWakeWhileListen); }
 
-	static void logStartSync() { CustomFlash::writeZeroAtIndex(StartSync); }
 	static void logPauseSync() { CustomFlash::writeZeroAtIndex(PauseSync); }
-
-	static void logListenHalfSlot() { CustomFlash::writeZeroAtIndex(ListenHalf); }
-	static void logListenFullSlot() { CustomFlash::writeZeroAtIndex(ListenFull); }
-	static void logFished() { CustomFlash::writeZeroAtIndex(Fished); }
-	static void logMerge() { CustomFlash::writeZeroAtIndex(Merge); }
-	static void logSleepRemainder() { CustomFlash::writeZeroAtIndex(SleepRemainder); }
-	static void logEndSyncPeriod() { CustomFlash::writeZeroAtIndex(EndSyncPeriod); }
-
 };

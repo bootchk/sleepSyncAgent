@@ -196,6 +196,7 @@ SyncMessage* Serializer::unserialize() {
 	// Minor optimization: only access radioBufferPtr[0] once.
 	// It is volatile, which prevents compiler from optimizing repeated references.
 	if (isOTABufferAlgorithmicallyValid()) {
+		// Fast and loose cast
 		MessageType receivedMsgType = (MessageType) radioBufferPtr[0];
 		result = getPointerToMessageOfOTAType(receivedMsgType);
 		unserializeOTAFieldsIntoMessageFields(receivedMsgType, result);
@@ -204,7 +205,7 @@ SyncMessage* Serializer::unserialize() {
 		//assert(false);	// TESTING
 		result = nullptr;	// PRODUCTION
 	}
-	// assert result is pointer to instance of proper SyncMessage subclass, or null
+	// assert result is pointer to instance of proper SyncMessage subclass, or nullptr
 	return result;
 }
 
