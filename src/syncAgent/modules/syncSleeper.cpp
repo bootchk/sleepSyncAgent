@@ -115,14 +115,12 @@ bool isWakeForTimerExpired() {
 		// assert time specified by timeoutFunc has elapsed.
 		break;
 
-
 	case CounterOverflowOrOtherTimerExpired:
 		/*
 		 * Normal
 		 * But do not end sleep.
 		 */
 		break;
-
 
 	case MsgReceived:
 		/*
@@ -132,7 +130,7 @@ bool isWakeForTimerExpired() {
 		LogMessage::logUnexpectedMsg();
 		break;
 
-	case NotSetByIRQ:
+	case Unknown:
 		/*
 		 * Unexpected, probably a bug.
 		 * Radio is not in use can't receive
@@ -140,6 +138,10 @@ bool isWakeForTimerExpired() {
 		 * But do not end sleep.
 		 */
 		LogMessage::logUnexpectedWakeReason();
+		break;
+	case Cleared:
+		// Impossible, Timer must have expired
+		assert(false);
 	}
 	return result;
 	// Returns whether timeout time has elapsed i.e. whether to stop sleeping loop
@@ -300,13 +302,17 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 			// assert network->isInUse()
 			break;
 
-		case NotSetByIRQ:
+		case Unknown:
 			/*
 			 * Unexpected: No IRQ handler set reason reasonForWake.
 			 * Continue in loop and sleep again.
 			 */
 			LogMessage::logUnexpectedWakeWhileListening();
 			// assert network->isInUse()
+			break;
+		case Cleared:
+			// Impossible, Sleeper will not return without reason
+			assert(false);
 		}
 		// If Timer semantics are restartable: timer might be canceled, but sleepUntilEventWithTimeout will restart it
 
