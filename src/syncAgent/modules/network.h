@@ -52,8 +52,10 @@ public:
 	// No startTxmitting: direct calls to radio.
 	// Additional lag before transmission on air.
 
-	// Is radio in use?
-	// If false, radio may be low power but HFXO may still be on
+	/*
+	 * Illegal to call when network is shutdown (power off.)
+	 * If false, radio may be low power but HFXO may still be on
+	 */
 	static bool isRadioInUse();
 
 	// Are ensemble devices in low power state?

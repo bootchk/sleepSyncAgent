@@ -11,7 +11,7 @@ bool Network::isConfigured(){
 }
 
 bool Network::isLowPower() {
-	return ((!radio->isInUse()) && !radio->hfCrystalClock->isRunning());
+	return ((!radio->isPowerOn()) && !radio->hfCrystalClock->isRunning());
 }
 
 bool Network::isRadioInUse() {
@@ -27,12 +27,18 @@ void Network::startup() {
 	// assert enough power for radio => >2.1V required by DCDCPowerSupply
 	radio->dcdcPowerSupply->enable();
 
+	radio->powerOn();
+	// Some platforms require config after powerOn()
+	radio->configurePhysicalProtocol();
+
 	radio->hfCrystalClock->startAndSleepUntilRunning();
 	assert(radio->isConfigured());
 }
 
 void Network::shutdown() {
 	radio->hfCrystalClock->stop();
+
+	radio->powerOff();
 
 	// disable because Vcc may be below what DCDCPowerSupply requires
 	radio->dcdcPowerSupply->disable();

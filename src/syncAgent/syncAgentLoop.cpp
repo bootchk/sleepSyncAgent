@@ -52,6 +52,7 @@ void SyncAgent::loop(){
 	 * Assertions on enter loop:
 	 * - self is master of its own clique
 	 * - not in sync yet
+	 * - radio power on
 	 * - radio not in use
 	 * - longClock is running but might not be accurate until LFXO is stable
 	 * - there was power for the radio before we called this (since may have been exhausted by cpu execution.)
@@ -59,7 +60,7 @@ void SyncAgent::loop(){
 	 * Note not necessary to have PowerForSync before call, this will sleep until there is.
 	 */
 	assert(clique.isSelfMaster());
-	assert(network.isLowPower());
+	assert(!network.isRadioInUse());
 
 	// DEBUG
 	initLogging();
@@ -90,8 +91,6 @@ void SyncAgent::loop(){
 
 		workManager.resetState();
 
-		assert(network.isLowPower());	// After every sync period
-
 		if ( syncPowerManager->isPowerForSync() ) {
 			/*
 			 * Sync keeping: enough power to use radio for two slots
@@ -113,6 +112,8 @@ void SyncAgent::loop(){
 		// Sync period over, advance schedule.
 		// Keep schedule even if not enough power to listen/send sync messages to maintain accuracy
 		clique.schedule.rollPeriodForwardToNow();
+
+		assert(network.isLowPower());	// After every sync period
 	}
 	// never returns
 }
