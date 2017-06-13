@@ -355,7 +355,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 }
 
 DeltaTime SyncSleeper::timeSinceLastStartSleep() {
-	return (TimeMath::clampedTimeDifferenceFromNow(sleepStartTime ));
+	return (TimeMath::clampedTimeDifferenceToNow(sleepStartTime ));
 }
 
 MsgReceivedCallback SyncSleeper::getMsgReceivedCallback() {
