@@ -75,7 +75,9 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 				 * Dispatched message was not of desired type (but we could have done work, or other state changes.)
 				 * restart receive, remain in loop, sleep until next message
 				 */
-				radio->receiveStatic();
+				network.startReceiving();	// clears reasonForWake
+				// OLD radio->receiveStatic();
+
 				// continuation is sleep with radio on
 			}
 			// assert msg queue is empty (since we received and didn't restart receiver)
@@ -282,6 +284,8 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 
 			// if timer semantics are: restartable, cancel timer here
 			handlingResult = dispatchFilteredMsg(msgHandler);
+			// Handler may ignore message and startReceiving again
+
 			break;	// switch
 
 		case SleepTimerExpired:
@@ -351,7 +355,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 }
 
 DeltaTime SyncSleeper::timeSinceLastStartSleep() {
-	return (clique.schedule.nowTime() - sleepStartTime ) ;
+	return (TimeMath::clampedTimeDifferenceFromNow(sleepStartTime ));
 }
 
 MsgReceivedCallback SyncSleeper::getMsgReceivedCallback() {

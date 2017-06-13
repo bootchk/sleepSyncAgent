@@ -1,3 +1,4 @@
+#pragma once
 
 /*
  * Knows how to fabricate and transmit/broadcast a Sync msg.
@@ -11,10 +12,11 @@
  * or in the middle of a sync period (omit listening in the fishSlot)?
  */
 
-#include <nRF5x.h>  // myID()
+#include <nRF5x.h>  // myID
 
 #include "../logMessage.h"
 
+// Network previously defined global
 
 class SyncSender {
 public:
@@ -99,7 +101,7 @@ public:
 		// assert caller has initialized *msgPtr
 		serializer.serializeSyncMessageIntoRadioBuffer(msgPtr);
 		assert(serializer.bufferIsSane());
-		radio->transmitStaticSynchronously();
+		network.transmitStaticSynchronously();
 	}
 
 };

@@ -38,28 +38,41 @@ class Network {
 public:
 	// In order generally called
 
-	// Ensure ensemble devices ready
+	// Ensure ensemble devices ready and configured
 	static void startup();
 
 	// Ensure ensemble devices low power
 	static void shutdown();
+
+	// Are ensemble devices in low power state? i.e. network is shutdown
+	static bool isLowPower();
+
+
 
 	// Non-blocking, but lag (deadtime) for rampup until can hear
 	static void startReceiving();
 
 	static void stopReceiving();
 
-	// No startTxmitting: direct calls to radio.
-	// Additional lag before transmission on air.
 
 	/*
+	 * Requires buffer valid.
+	 * Additional lag before transmission on air.
+	 * Blocks (spins.)
+	 */
+	static void transmitStaticSynchronously();
+
+	/*
+	 * Is a xmit or rcv in progress?
 	 * Illegal to call when network is shutdown (power off.)
 	 * If false, radio may be low power but HFXO may still be on
 	 */
 	static bool isRadioInUse();
 
-	// Are ensemble devices in low power state?
-	static bool isLowPower();
 
+	/*
+	 * For robustness.
+	 * startup() ensures this
+	 */
 	static bool isConfigured();
 };

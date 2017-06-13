@@ -50,9 +50,12 @@ void Network::startReceiving() {
 	/*
 	 * Not log to flash here, since it takes too long.
 	 */
+	// Invalid to read/write radio registers when off
+	assert(radio->isPowerOn());
 
 	// TODO should this be in caller?
 	syncSleeper.clearReasonForWake();
+
 	radio->receiveStatic();
 	assert(radio->isInUse());
 }
@@ -65,3 +68,9 @@ void Network::stopReceiving() {
 	assert(!radio->isInUse());
 }
 
+
+void Network::transmitStaticSynchronously() {
+	assert(radio->isPowerOn());
+	assert(!radio->isInUse());
+	radio->transmitStaticSynchronously();
+}
