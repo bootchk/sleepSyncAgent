@@ -364,7 +364,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 }
 
 DeltaTime SyncSleeper::timeSinceLastStartSleep() {
-	return (clique.schedule.nowTime() - sleepStartTime ) ;
+	return (TimeMath::clampedTimeDifferenceToNow(sleepStartTime) ) ;
 }
 
 MsgReceivedCallback SyncSleeper::getMsgReceivedCallback() {
