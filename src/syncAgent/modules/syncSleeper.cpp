@@ -112,19 +112,19 @@ bool isWakeForTimerExpired() {
 
 	// Expect wake by timeout, not by msg or other event
 	switch( sleeper.getReasonForWake() ) {
-	case SleepTimerExpired:
+	case ReasonForWake::SleepTimerExpired:
 		result = true;
 		// assert time specified by timeoutFunc has elapsed.
 		break;
 
-	case CounterOverflowOrOtherTimerExpired:
+	case ReasonForWake::CounterOverflowOrOtherTimerExpired:
 		/*
 		 * Normal
 		 * But do not end sleep.
 		 */
 		break;
 
-	case MsgReceived:
+	case ReasonForWake::MsgReceived:
 		/*
 		 * Abnormal: Radio should be off.
 		 * But do not end sleep.
@@ -132,7 +132,7 @@ bool isWakeForTimerExpired() {
 		LogMessage::logUnexpectedMsg();
 		break;
 
-	case Unknown:
+	case ReasonForWake::Unknown:
 		/*
 		 * Unexpected, probably a bug.
 		 * Radio is not in use can't receive
@@ -141,9 +141,16 @@ bool isWakeForTimerExpired() {
 		 */
 		LogMessage::logUnexpectedWakeReason();
 		break;
-	case Cleared:
+	case ReasonForWake::Cleared:
 		// Impossible, Timer must have expired
 		assert(false);
+		break;
+	case ReasonForWake::HFClockStarted:
+		// Impossible, not starting clock now
+		assert(false);
+		break;
+	case ReasonForWake::BrownoutWarning:
+		break;
 	}
 	return result;
 	// Returns whether timeout time has elapsed i.e. whether to stop sleeping loop
@@ -276,7 +283,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 
 		// Switch on reasons, not on HandlingResult)
 		switch (sleeper.getReasonForWake()) {
-		case MsgReceived:
+		case ReasonForWake::MsgReceived:
 			// Record TOA as soon as possible
 			clique.schedule.recordMsgArrivalTime();
 
@@ -284,7 +291,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 			handlingResult = dispatchFilteredMsg(msgHandler);
 			break;	// switch
 
-		case SleepTimerExpired:
+		case ReasonForWake::SleepTimerExpired:
 			// Timeout could be interrupting a receive.
 			// Better to handle message and delay next slot: fewer missed syncs.
 
@@ -295,7 +302,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 			break;	// switch
 			// FUTURE try handle receive in progress, see code fragment at eof
 
-		case CounterOverflowOrOtherTimerExpired:
+		case ReasonForWake::CounterOverflowOrOtherTimerExpired:
 			/*
 			 * Expected events not relevant to this sleep.
 			 * Sleep again.
@@ -303,7 +310,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 			// assert network->isInUse()
 			break;
 
-		case Unknown:
+		case ReasonForWake::Unknown:
 			/*
 			 * Unexpected: No IRQ handler set reason reasonForWake.
 			 * Continue in loop and sleep again.
@@ -311,8 +318,14 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 			LogMessage::logUnexpectedWakeWhileListening();
 			// assert network->isInUse()
 			break;
-		case Cleared:
+		case ReasonForWake::BrownoutWarning:
+			// already logged by brownout handler
+			// TODO we should stop listening more gracefully
+			break;
+		case ReasonForWake::Cleared:
+		case ReasonForWake::HFClockStarted:
 			// Impossible, Sleeper will not return without reason
+			// Impossible, HFClock started earlier
 			assert(false);
 		}
 		// If Timer semantics are restartable: timer might be canceled, but sleepUntilEventWithTimeout will restart it
