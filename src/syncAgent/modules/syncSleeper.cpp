@@ -16,6 +16,7 @@ namespace {
 // Uses global Sleeper
 
 LongTime sleepStartTime;
+LongTime timeSince;
 
 
 /*
@@ -102,59 +103,6 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 }
 
 
-bool isWakeForTimerExpired() {
-	/*
-	 * assert waken from sleep
-	 * not assert that timer went off: it may yet set a new reason at any moment.
-	 * We don't clear reasonForWake exactly because an IRQ could set it at any moment.
-	 */
-	bool result = false;
-
-	// Expect wake by timeout, not by msg or other event
-	switch( sleeper.getReasonForWake() ) {
-	case ReasonForWake::SleepTimerExpired:
-		result = true;
-		// assert time specified by timeoutFunc has elapsed.
-		break;
-
-	case ReasonForWake::CounterOverflowOrOtherTimerExpired:
-		/*
-		 * Normal
-		 * But do not end sleep.
-		 */
-		break;
-
-	case ReasonForWake::MsgReceived:
-		/*
-		 * Abnormal: Radio should be off.
-		 * But do not end sleep.
-		 */
-		LogMessage::logUnexpectedMsg();
-		break;
-
-	case ReasonForWake::Unknown:
-		/*
-		 * Unexpected, probably a bug.
-		 * Radio is not in use can't receive
-		 * Woken by some interrupt (event?) not in the design.
-		 * But do not end sleep.
-		 */
-		LogMessage::logUnexpectedWakeReason();
-		break;
-	case ReasonForWake::Cleared:
-		// Impossible, Timer must have expired
-		assert(false);
-		break;
-	case ReasonForWake::HFClockStarted:
-		// Impossible, not starting clock now
-		assert(false);
-		break;
-	case ReasonForWake::BrownoutWarning:
-		break;
-	}
-	return result;
-	// Returns whether timeout time has elapsed i.e. whether to stop sleeping loop
-}
 
 }	// namespace
 
@@ -176,14 +124,21 @@ void SyncSleeper::sleepUntilTimeout(TimeoutFunc timeoutFunc) {
 	sleepStartTime = clique.schedule.nowTime();
 
 	while (true) {
-		// Calculate remaining timeout on each loop iteration
+		// Calculate remaining timeout on each loop iteration.  Must be monotonic.
 		OSTime timeout = timeoutFunc();
 
 		assert(timeout < ScheduleParameters::MaxSaneTimeout);
 
 		sleepWithOnlyTimerPowerUntilTimeout(timeout);
+		// an event, or we did not sleep at all (timeout small)
 
-		if (isWakeForTimerExpired())
+		/*
+		 * If a higher priority event occurs between the time that sleeper set reasonForWake to SleepTimerExpired
+		 * (because the timeout was small)
+		 * and the following check, then we will loop another time.
+		 * Eventually, the call to the sleeper with small timout will set reasonForWake to SleepTimerExpired.
+		 */
+		if (sleeper.isWakeForTimerExpired())
 			break; // break while loop, timeout has elapsed
 		/*
 		 * else continue loop, sleep again.
@@ -192,6 +147,10 @@ void SyncSleeper::sleepUntilTimeout(TimeoutFunc timeoutFunc) {
 		 */
 	}
 	// assert timeout amount of time has elapsed
+
+	// Test
+	DeltaTime foo = timeSinceLastStartSleep();
+	timeSince = foo;
 }
 
 #ifdef OLD
@@ -277,7 +236,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 		 * Here, we assume not, and always that Timer was canceled.
 		 */
 		sleepWithRadioAndTimerPowerUntilTimeout(timeoutFunc());
-		// wakened by msg or timeout or unexpected event
+		// wakened by msg or timeout or unexpected event or did not sleep at all (timeout small)
 
 		sleeper.cancelTimeout();
 
