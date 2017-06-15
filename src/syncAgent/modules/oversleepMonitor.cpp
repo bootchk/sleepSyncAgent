@@ -2,7 +2,7 @@
 #include "oversleepMonitor.h"
 
 
-#include "../globals.h"	// Clique
+#include "../globals.h"	// Clique, CustomFlash
 #include "../scheduleParameters.h"
 
 
@@ -17,10 +17,17 @@ DeltaTime intendedSleepDuration;
 
 
 void OverSleepMonitor::markStartSleep(TimeoutFunc timeoutFunc){
-	sleepStartTime = clique.schedule.nowTime();
+	// Require called at start of sleep.
+
 	/*
-	 * This was called at start of sleep.
-	 * Record initial value of timeoutFunc() monotonic sequence.
+	 *  Record time sleep started, more or less.
+	 *  Clock may advance by say one before sleep actually starts.
+	 */
+	sleepStartTime = clique.schedule.nowTime();
+
+	/*
+	 * Record initial value of timeoutFunc() monotonic sequence, more or less.
+	 * Sleeping will call timeoutFunc again, and that result might decrease by say one in the meantime.
 	 */
 	intendedSleepDuration = timeoutFunc();
 
@@ -31,8 +38,26 @@ void OverSleepMonitor::markStartSleep(TimeoutFunc timeoutFunc){
 
 bool OverSleepMonitor::checkOverslept(){
 	bool result = false;
-	if ( timeSinceLastStartSleep() > intendedSleepDuration ) {
+
+	/*
+	 * Record sleep duration.
+	 * Clock might have advanced by say one since sleep actually stopped (+1).
+	 * startTimeOfSleep may be -1 or more.
+	 * So this result may be +2 or more.
+	 */
+	DeltaTime actualSleepDuration = timeSinceLastStartSleep() ;
+
+	/*
+	 * 2 is the adjustment for imprecise timekeeping
+	 */
+	if ( actualSleepDuration > intendedSleepDuration + 2 ) {
+		// Write global sync phase we were sleeping in, if not already written by brownout
+		CustomFlash::tryWriteIntAtIndex(PhaseIndex, syncAgent.getPhase());
+
+		CustomFlash::tryWriteIntAtIndex(OversleptDurationIndex, actualSleepDuration);
+
 		LogMessage::logOverslept();
+
 		result = true;
 	}
 	return result;
