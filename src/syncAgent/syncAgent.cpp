@@ -5,6 +5,9 @@
 #include "scheduleParameters.h"
 #include "syncPowerSleeper.h"
 #include "modules/syncPowerManager.h"
+#include "modules/oversleepMonitor.h"
+
+
 
 
 namespace {
@@ -100,7 +103,7 @@ void SyncAgent::initSyncObjects(
 	aBrownoutManager->registerCallbacks(
 			getPhase,
 			getReasonForWake,
-			syncSleeper.timeSinceLastStartSleep);
+			OverSleepMonitor::timeSinceLastStartSleep);
 
 	// assert LongClock is reset
 	// not assert LongClock running assert(aLCT->isOSClockRunning());

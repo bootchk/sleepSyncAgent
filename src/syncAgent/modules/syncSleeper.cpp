@@ -7,16 +7,15 @@
 #include "../globals.h"
 #include "syncSleeper.h"
 
-#include "../scheduleParameters.h"
 #include "../logMessage.h"
+#include "oversleepMonitor.h"
 
 
 namespace {
 
 // Uses global Sleeper
 
-LongTime sleepStartTime;
-LongTime timeSince;
+OverSleepMonitor oversleepMonitor;
 
 
 /*
@@ -110,7 +109,7 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 
 
 
-void SyncSleeper::clearReasonForWake() { sleeper.clearReasonForWake(); }
+// OLD void SyncSleeper::clearReasonForWake() { sleeper.clearReasonForWake(); }
 
 
 /*
@@ -121,13 +120,11 @@ void SyncSleeper::clearReasonForWake() { sleeper.clearReasonForWake(); }
  */
 void SyncSleeper::sleepUntilTimeout(TimeoutFunc timeoutFunc) {
 
-	sleepStartTime = clique.schedule.nowTime();
+	oversleepMonitor.markStartSleep(timeoutFunc);
 
 	while (true) {
 		// Calculate remaining timeout on each loop iteration.  Must be monotonic.
 		OSTime timeout = timeoutFunc();
-
-		assert(timeout < ScheduleParameters::MaxSaneTimeout);
 
 		sleepWithOnlyTimerPowerUntilTimeout(timeout);
 		// an event, or we did not sleep at all (timeout small)
@@ -146,11 +143,9 @@ void SyncSleeper::sleepUntilTimeout(TimeoutFunc timeoutFunc) {
 		 * and sleeper.sleepUntilTimeout will return without sleeping and with reasonForWake==Timeout
 		 */
 	}
-	// assert timeout amount of time has elapsed
 
-	// Test
-	DeltaTime foo = timeSinceLastStartSleep();
-	timeSince = foo;
+	(void) oversleepMonitor.checkOverslept();
+
 }
 
 #ifdef OLD
@@ -227,7 +222,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 	//assert(sleeper.reasonForWakeIsCleared());	// This also checks we haven't received yet
 	// FUTURE currently, this is being cleared in sleepUntil but that suffers from races
 
-	sleepStartTime = clique.schedule.nowTime();
+	oversleepMonitor.markStartSleep(timeoutFunc);
 
 	while (true) {
 
@@ -304,9 +299,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 		 * Robustness:ensure not sleep too long with radio powered.
 		 * Probably a fixable bug.  Possibly hardware flaws that can't be fixed.
 		 */
-		if ( timeSinceLastStartSleep() > ScheduleParameters::RealSlotDuration ) {
-			// Record and try avoid brownout
-            LogMessage::logOverslept();
+		if (oversleepMonitor.checkOverslept()) {
             network.stopReceiving();
             // handlingResult is invalid
             break;
@@ -315,6 +308,8 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 		// assert network->isInUse()
 	}	// while(true)
 
+	(void) oversleepMonitor.checkOverslept();
+
 	assert(!network.isRadioInUse());
 	// not assert network.isLowPower(), HFXO is still on
 	// ensure message queue nearly empty
@@ -322,9 +317,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 	return handlingResult;
 }
 
-DeltaTime SyncSleeper::timeSinceLastStartSleep() {
-	return (TimeMath::clampedTimeDifferenceToNow(sleepStartTime) ) ;
-}
+
 
 MsgReceivedCallback SyncSleeper::getMsgReceivedCallback() {
 	// Return callback of the owned/wrapped sleeper.

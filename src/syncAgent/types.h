@@ -39,3 +39,10 @@ typedef uint16_t ScheduleCount;
 static const uint16_t MaximumScheduleCount = 32767;	// !!! Same as std C RAND_MAX
 
 
+/*
+ * Returns a timeout calculated from Schedule.
+ * Monotonic: result from consecutive calls is decreasing function down to zero.
+ * A function will restart when the schedule advances to another slot or syncperiod.
+ */
+// ??? Was OSTime defined by nRF5x
+typedef DeltaTime (*TimeoutFunc)();

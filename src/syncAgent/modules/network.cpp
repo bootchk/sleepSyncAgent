@@ -52,9 +52,18 @@ void Network::startReceiving() {
 	 */
 
 	// TODO should this be in caller?
-	syncSleeper.clearReasonForWake();
+	// OLD syncSleeper.clearReasonForWake();
 	radio->receiveStatic();
 	assert(radio->isInUse());
+
+	/*
+	 * SyncSleeper will clearReasonForWake().
+	 * Thus there is a low probablity race here.
+	 * Any message that arrives before SyncSleeper clears reason might be lost.
+	 * But it is low probability since there is a rampup time (40-140 uSec, i.e. 700-2100 instruction cycles) for the radio
+	 * to go from disabled to active.
+	 * We almost always will sleep before the radio is able to receive.
+	 */
 }
 
 
