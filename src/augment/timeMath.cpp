@@ -23,14 +23,16 @@
  */
 DeltaTime TimeMath::clampedTimeDifference(LongTime laterTime, LongTime earlierTime) {
 	//
-	LongTime longTimeResult;
+	DeltaTime result;
+
 	if (earlierTime > laterTime)
-		longTimeResult = 0;
+		result = 0;
 	else {
-		longTimeResult = laterTime - earlierTime;
+		// convert with sanity testing (<24bits)
+		result = convertLongTimeToOSTime(laterTime - earlierTime);
 	}
 
-	return convertLongTimeToOSTime(longTimeResult);
+	return result;
 	// Any stronger assertions, i.e. sanity re schedule must be done by caller
 }
 
