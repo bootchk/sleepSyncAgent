@@ -70,9 +70,7 @@ DeltaTime TimeMath::timeDifferenceFromNow(LongTime givenTime) {
 }
 
 
-/*
- * Convert LongTime to OSTime, asserting no loss of data
- */
+
 DeltaTime TimeMath::convertLongTimeToOSTime(LongTime aTime) {
 	// !!! Coerce to 32-bit, with possible loss
 	assert(aTime < UINT32_MAX);
@@ -81,3 +79,15 @@ DeltaTime TimeMath::convertLongTimeToOSTime(LongTime aTime) {
 	assert(result < LongClockTimer::MaxTimeout);
 	return result;
 }
+
+DeltaTime TimeMath::clampedSubtraction(DeltaTime lhs, DeltaTime rhs){
+	DeltaTime result;
+
+	// DeltaTime is unsigned
+	if (lhs > rhs)   result = 0;
+	else             result = lhs - rhs;
+	return result;
+}
+
+
+

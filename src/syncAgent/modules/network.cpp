@@ -31,6 +31,7 @@ void Network::startup() {
 	// Some platforms require config after powerOn()
 	radio->configurePhysicalProtocol();
 
+	// TIMING: 360uSec
 	radio->hfCrystalClock->startAndSleepUntilRunning();
 	assert(radio->isConfigured());
 }

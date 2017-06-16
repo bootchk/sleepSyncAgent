@@ -10,6 +10,8 @@
 #include "../logMessage.h"
 #include "oversleepMonitor.h"
 
+#include "../scheduleParameters.h"
+
 
 namespace {
 
@@ -101,6 +103,14 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 	return handlingResult;
 }
 
+/*
+ * Calculate timeout:
+ * - using a TimeoutFunc
+ * - adjusting for overhead
+ */
+DeltaTime calculateTimeout(TimeoutFunc timeoutFunc) {
+	return TimeMath::clampedSubtraction(timeoutFunc(), ScheduleParameters::CodesSleepOverhead);
+}
 
 
 }	// namespace
@@ -124,7 +134,7 @@ void SyncSleeper::sleepUntilTimeout(TimeoutFunc timeoutFunc) {
 
 	while (true) {
 		// Calculate remaining timeout on each loop iteration.  Must be monotonic.
-		OSTime timeout = timeoutFunc();
+		OSTime timeout = calculateTimeout(timeoutFunc);
 
 		sleepWithOnlyTimerPowerUntilTimeout(timeout);
 		// an event, or we did not sleep at all (timeout small)
@@ -230,7 +240,10 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 		 * The design depends on Timer semantics: can a Timer be restarted?
 		 * Here, we assume not, and always that Timer was canceled.
 		 */
-		sleepWithRadioAndTimerPowerUntilTimeout(timeoutFunc());
+
+		OSTime timeout = calculateTimeout(timeoutFunc);
+
+		sleepWithRadioAndTimerPowerUntilTimeout(timeout);
 		// wakened by msg or timeout or unexpected event or did not sleep at all (timeout small)
 
 		sleeper.cancelTimeout();

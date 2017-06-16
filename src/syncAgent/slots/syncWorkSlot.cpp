@@ -208,10 +208,13 @@ void SyncWorkSlot::tryPerform() {
 void SyncWorkSlot::perform() {
 	// logInt(clique.schedule.deltaPastSyncPointToNow()); log("<delta SP to start slot.\n");
 
-	// Sleep until network ready. Deadtime in slot.
+	// Sleeps until network ready. Deadtime in slot.
+	// TIMING: > 360uSec
+	//LongTime startTime = clique.schedule.nowTime();
 	network.startup();
+	//LongTime endTime = clique.schedule.nowTime();
 
-	// Call shouldTransmitSync every time, since it needs calls sideeffect reset itself
+	// Call shouldTransmitSync every time, since it needs calls side effect reset itself
 	bool needXmitSync = syncBehaviour.shouldTransmitSync();
 
 	/*
