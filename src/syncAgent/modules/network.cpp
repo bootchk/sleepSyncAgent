@@ -54,6 +54,8 @@ void Network::startReceiving() {
 
 	// TODO should this be in caller?
 	// OLD syncSleeper.clearReasonForWake();
+
+	assert(radio->isPowerOn());
 	radio->receiveStatic();
 	assert(radio->isInUse());
 
@@ -73,5 +75,13 @@ void Network::stopReceiving() {
 		radio->stopReceive();
 	}
 	assert(!radio->isInUse());
+}
+
+
+void Network::transmitStaticSynchronously(){
+	assert(radio->isPowerOn());
+	// also must be configured
+
+	radio->transmitStaticSynchronously();
 }
 

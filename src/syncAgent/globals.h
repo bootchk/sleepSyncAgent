@@ -40,14 +40,15 @@ extern Serializer serializer;
 #include "modules/syncSleeper.h"
 extern SyncSleeper syncSleeper;
 
-#include "modules/syncSender.h"
-extern SyncSender syncSender;
-
 #include "modules/syncBehaviour.h"
 extern SyncBehaviour syncBehaviour;
 
 #include "modules/network.h"
 extern Network network;
+
+// Must follow network
+#include "modules/syncSender.h"
+extern SyncSender syncSender;
 
 #include "policy/workManager.h"
 extern WorkManager workManager;

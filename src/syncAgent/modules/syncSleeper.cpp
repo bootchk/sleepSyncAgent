@@ -104,7 +104,7 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 }
 
 /*
- * Calculate timeout:
+ * Calculate timeout scalar:
  * - using a TimeoutFunc
  * - adjusting for overhead
  */

@@ -49,8 +49,8 @@ public:
 
 	static void stopReceiving();
 
-	// No startTxmitting: direct calls to radio.
-	// Additional lag before transmission on air.
+	// Blocks.  Lag before OTA.
+	static void transmitStaticSynchronously();
 
 	/*
 	 * Illegal to call when network is shutdown (power off.)

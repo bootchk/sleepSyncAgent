@@ -14,6 +14,7 @@
 #include <nRF5x.h>  // myID()
 
 #include "../logMessage.h"
+#include "network.h"
 
 
 class SyncSender {
@@ -99,7 +100,7 @@ public:
 		// assert caller has initialized *msgPtr
 		serializer.serializeSyncMessageIntoRadioBuffer(msgPtr);
 		assert(serializer.bufferIsSane());
-		radio->transmitStaticSynchronously();
+		network.transmitStaticSynchronously();
 	}
 
 };
