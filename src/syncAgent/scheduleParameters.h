@@ -274,10 +274,6 @@ static const DeltaTime MaxSaneTimeoutSyncPowerSleeper = 40000;
  */
 static const DeltaTime MaxSaneTimeoutSyncSleeper = 2* NormalSyncPeriodDuration;
 
-/* Latitude when checking for oversleep.
- * Allows for clock jitter.
- */
-static const DeltaTime OversleepMargin = 2;
 
 /* Ticks the code takes to get to sleep and wake from sleep.
  *
@@ -288,4 +284,13 @@ static const DeltaTime OversleepMargin = 2;
  * ??? That seems excessive
  */
 static const DeltaTime CodesSleepOverhead = 5;
+
+/* Latitude when checking for oversleep.
+ * Allows for:
+ * - clock jitter (+1 + -(-1) == 2)
+ * - + code overhead == 5
+ * Anyway, when intendedSleep is 0, measured oversleep is 5.
+ */
+static const DeltaTime OversleepMargin = CodesSleepOverhead;
+
 };

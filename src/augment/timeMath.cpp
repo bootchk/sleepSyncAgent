@@ -80,11 +80,13 @@ DeltaTime TimeMath::convertLongTimeToOSTime(LongTime aTime) {
 	return result;
 }
 
+
+
 DeltaTime TimeMath::clampedSubtraction(DeltaTime lhs, DeltaTime rhs){
 	DeltaTime result;
 
 	// DeltaTime is unsigned
-	if (lhs > rhs)   result = 0;
+	if (rhs >= lhs)   result = 0;
 	else             result = lhs - rhs;
 	return result;
 }
