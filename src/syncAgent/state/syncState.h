@@ -11,4 +11,6 @@ class SyncState {
 public:
 	static void setActive();
 	static void setPaused();
+
+	static bool shouldAbandonMastership();
 };

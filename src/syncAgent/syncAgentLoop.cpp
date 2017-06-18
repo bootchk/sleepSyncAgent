@@ -101,11 +101,28 @@ void SyncAgent::loop(){
 		}
 		else {
 			/*
-			 * Sync maintenance: keep schedule by sleeping one sync period, w/o using radio
+			 * Paused state:
+			 * Approximate sync schedule by marking sync periods, w/o using radio.
+			 *
+			 * Especially when starting up, and depending on how power levels are configured,
+			 * and how much energy is harvested:
+			 * Might be in this state for just one or two sync periods,
+			 * and even in active sync keeping, we don't xmit sync every period anyway.
 			 */
-			syncState.setPaused();	// side effects
 			phase = Phase::SleepEntireSyncPeriod;
-			sleepEntireSyncPeriod();
+			syncState.setPaused();	// side effects limited to syncingState
+
+			/*
+			 * Are we paused for long time and are we master?
+			 */
+
+			if ( SyncState::shouldAbandonMastership() ) {
+				// doAbandonMastershipSyncPeriod
+				// For now, no abandon mastership
+			}
+			else {
+				sleepEntireSyncPeriod();
+			}
 			// continue to check power for radio.
 			// We may exhaust it and brown out, losing sync altogether
 		}
