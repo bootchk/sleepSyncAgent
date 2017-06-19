@@ -46,7 +46,7 @@ public:
 	// In sync and can work
 	static bool isPowerForWork() { return powerManager.isPowerAboveHigh(); }	// > 2.7
 	// Enough to start a SyncPeriod
-	static bool isPowerForSync()  { return powerManager.isPowerAboveHigh(); }	// > 2.7
+	static bool isPowerForSync()  { return powerManager.isPowerAboveUltraHigh(); }	// > 3.2
 	// Enough to continue a SyncPeriod
 	static bool isPowerForRadio()  { return powerManager.isPowerAboveMedium(); } // > 2.5
 	// Only enough to count out SyncPeriods, not use radio
