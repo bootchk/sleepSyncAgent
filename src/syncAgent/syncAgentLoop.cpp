@@ -60,7 +60,7 @@ void SyncAgent::loop(){
 	 * Note not necessary to have PowerForSync before call, this will sleep until there is.
 	 */
 	assert(clique.isSelfMaster());
-	assert(!network.isRadioInUse());
+	assert(!Ensemble::isRadioInUse());
 
 	// DEBUG
 	initLogging();
@@ -130,7 +130,7 @@ void SyncAgent::loop(){
 		// Keep schedule even if not enough power to listen/send sync messages to maintain accuracy
 		clique.schedule.rollPeriodForwardToNow();
 
-		assert(network.isLowPower());	// After every sync period
+		assert(Ensemble::isLowPower());	// After every sync period
 	}
 	// never returns
 }

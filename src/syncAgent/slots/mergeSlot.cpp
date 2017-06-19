@@ -4,6 +4,8 @@
 #include "../globals.h"
 #include "mergeSlot.h"
 
+#include "../modules/syncSender.h"
+
 
 
 namespace {
@@ -39,7 +41,7 @@ void MergeSlot::tryPerform() {
  * !!! The time to xmit is not aligned with this schedule's slots, but with middle of mergee's SyncSlot.
  */
 void MergeSlot::perform() {
-	assert(network.isLowPower());
+	assert(Ensemble::isLowPower());
 	assert(role.isMerger());
 
 	phase = Phase::SleepTilMerge;
@@ -50,12 +52,12 @@ void MergeSlot::perform() {
 	syncSleeper.sleepUntilTimeout(timeoutUntilMerge);
 
 	// assert time aligned with middle of a mergee sync slots (same wall time as fished sync from mergee.)
-	network.startup();
+	Ensemble::startup();
 	logLongLong(clique.schedule.nowTime()); log(":mergeSync");
 	phase = Phase::Merge;
-	syncSender.sendMergeSync();	// Synchronous
-	assert(!network.isRadioInUse());
-	network.shutdown();
+	SyncSender::sendMergeSync();	// Synchronous
+	assert(!Ensemble::isRadioInUse());
+	Ensemble::shutdown();
 
 	if (mergePolicy.checkCompletionOfMergerRole()){
 		mergePolicy.restart();

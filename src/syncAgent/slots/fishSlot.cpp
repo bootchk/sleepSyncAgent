@@ -62,9 +62,9 @@ void FishSlot::perform() {
 
 	// logInt(Schedule::deltaPastSyncPointToNow()); log("fish tick\n");
 
-	network.startup();
+	Ensemble::startup();
 
-	network.startReceiving();
+	Ensemble::startReceiving();
 
 	// assert can receive an event that wakes imminently: race to sleep
 	(void) syncSleeper.sleepUntilMsgAcceptedOrTimeout(
@@ -73,8 +73,8 @@ void FishSlot::perform() {
 
 	// Not using result, might return sooner if caught something
 
-	assert(!network.isRadioInUse());
-	network.shutdown();
+	assert(!Ensemble::isRadioInUse());
+	Ensemble::shutdown();
 	/*
 	 * Conditions:
 	 * (no sync msg was heard and receiver still on)

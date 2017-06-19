@@ -57,7 +57,7 @@ void CombinedSyncPeriod::doSlotSequence() {
 
 	syncWorkSlot.tryPerform();	// arbitrary to do sync slot first
 
-	assert(network.isLowPower());	// until next slot
+	assert(Ensemble::isLowPower());	// until next slot
 
 	/*
 	 * SyncSlot might have exhausted power.
@@ -65,7 +65,7 @@ void CombinedSyncPeriod::doSlotSequence() {
 	 */
     tryFishOrMerge();
 
-	assert(network.isLowPower());	// For remainder of sync period
+	assert(Ensemble::isLowPower());	// For remainder of sync period
 
 	phase = Phase::SleepRemainder;
 	sleepRemainderOfSyncPeriod();

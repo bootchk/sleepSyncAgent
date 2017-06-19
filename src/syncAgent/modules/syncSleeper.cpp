@@ -67,7 +67,7 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 			if (handlingResult!=HandlingResult::KeepListening) {
 				// Remainder of duration radio not used (low power) but HFXO is still on.
 				// TODO this assertion should be at beginning of routine
-				assert(!network.isRadioInUse());
+				assert(!Ensemble::isRadioInUse());
 
 				// continuation is sleep
 				// assert since radio not in use, next reason for wake can only be timeout and will then exit loop
@@ -227,7 +227,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 	 */
 	assert(radio->isEnabledInterruptForMsgReceived());	// will interrupt
 	// we beat the radio race, i.e. msg not already received
-	assert(network.isRadioInUse());
+	assert(Ensemble::isRadioInUse());
 
 	//assert(sleeper.reasonForWakeIsCleared());	// This also checks we haven't received yet
 	// FUTURE currently, this is being cleared in sleepUntil but that suffers from races
@@ -274,7 +274,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 			 * Expected events not relevant to this sleep.
 			 * Sleep again.
 			 */
-			// assert network->isInUse()
+			// assert Ensemble::isRadioInUse()
 			break;
 
 		case ReasonForWake::Unknown:
@@ -283,7 +283,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 			 * Continue in loop and sleep again.
 			 */
 			LogMessage::logUnexpectedWakeWhileListening();
-			// assert network->isInUse()
+			// assert Ensemble::isRadioInUse()
 			break;
 		case ReasonForWake::BrownoutWarning:
 			// already logged by brownout handler
@@ -299,7 +299,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 
 		if ((handlingResult != HandlingResult::KeepListening) || didTimeout) {
 			/*
-			 * assert ! network->isInUse()
+			 * assert ! Ensemble::isRadioInUse()
 			 * assert timer cancelled
 			 */
 			break;	// while(true)
@@ -313,18 +313,18 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 		 * Probably a fixable bug.  Possibly hardware flaws that can't be fixed.
 		 */
 		if (oversleepMonitor.checkOverslept()) {
-            network.stopReceiving();
+            Ensemble::stopReceiving();
             // handlingResult is invalid
             break;
 		}
 
-		// assert network->isInUse()
+		// assert Ensemble::isRadioInUse()
 	}	// while(true)
 
 	(void) oversleepMonitor.checkOverslept();
 
-	assert(!network.isRadioInUse());
-	// not assert network.isLowPower(), HFXO is still on
+	assert(!Ensemble::isRadioInUse());
+	// not assert Ensemble::isLowPower(), HFXO is still on
 	// ensure message queue nearly empty
 	// ensure timeout or didReceiveDesiredMsg
 	return handlingResult;

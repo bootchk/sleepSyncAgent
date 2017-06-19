@@ -90,6 +90,8 @@ void SyncAgent::initSyncObjects(
 	onWorkMsgCallback = aOnWorkMsgCallback;
 	onSyncPointCallback = aOnSyncPointCallback;
 
+	Ensemble::init();
+
 	// Connect radio IRQ to syncSleeper so it knows reason for wake
 	radio->setMsgReceivedCallback(syncSleeper.getMsgReceivedCallback());
 
@@ -111,8 +113,8 @@ void SyncAgent::initSyncObjects(
 	// ensure initial state of SyncAgent
 	assert(role.isFisher());
 	assert(clique.isSelfMaster());
-	assert(!network.isRadioInUse());
-	assert(network.isConfigured());
+	assert(!Ensemble::isRadioInUse());
+	assert(Ensemble::isConfigured());
 }
 
 

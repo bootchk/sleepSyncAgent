@@ -4,6 +4,7 @@
 #include <cassert>
 
 #include "../globals.h"
+#include "../modules/syncSender.h"
 #include "syncWorkSlot.h"
 #include "syncSlotSchedule.h"
 #include "../messageHandler/messageHandler.h"
@@ -28,7 +29,7 @@ HandlingResult SyncWorkSlot::doListenHalfSyncWorkSlot(TimeoutFunc timeoutFunc) {
 	 * is not expected to exhaust power.
 	 */
 	if (syncPowerManager->isPowerForRadio()) {
-		network.startReceiving();
+		Ensemble::startReceiving();
 	}
 	else {
 		LogMessage::logNoPowerForHalfSyncSlot();
@@ -42,7 +43,7 @@ HandlingResult SyncWorkSlot::doListenHalfSyncWorkSlot(TimeoutFunc timeoutFunc) {
 			);
 
 	/*
-	 *  not assert network.isLowPower():
+	 *  not assert Ensemble::isLowPower():
 	 *  The radio might be in use (receiving.)
 	 *  The continuation might be send sync and listen another half.
 	 *  That continuation needs the radio.
@@ -60,7 +61,7 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 
 	phase = Phase::SyncListenFirstHalf;
 	(void) doListenHalfSyncWorkSlot(slotSchedule.deltaToThisSyncSlotMiddleSubslot);
-	assert(!network.isRadioInUse());
+	assert(!Ensemble::isRadioInUse());
 
 	/*
 	 * Even if I heard sync, need send Work.
@@ -82,7 +83,7 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 	WorkPayload work = workOutMailbox->fetch();
 	if (! workManager.isHeardWork() ) {
 		phase = Phase::SyncXmitWorkSync;
-		syncSender.sendWorkSync(work);
+		SyncSender::sendWorkSync(work);
 		/*
 		 * App sent this work.  App also queues it in to itself if app wants to work as well as tell others to work.
 		 */
@@ -108,7 +109,7 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 	phase = Phase::SyncListenSecondHalf;
 	(void) doListenHalfSyncWorkSlot(slotSchedule.deltaToThisSyncSlotEnd);
 
-	// not assert network.isLowPower()
+	// not assert Ensemble::isLowPower()
 }
 
 
@@ -129,7 +130,7 @@ void SyncWorkSlot::doSlaveSyncWorkSlot() {
 	phase = Phase::SyncSlaveListen;
 
 	//LogMessage::logListenFullSlot();
-	network.startReceiving();
+	Ensemble::startReceiving();
 
 	// Assert listening for other's sync.
 	// Cannot assert isRadioInUse() since receive might have succeeded already (when using debugger)
@@ -157,7 +158,7 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 
 	phase = Phase::SyncListenFirstHalf;
 	handlingResult = doListenHalfSyncWorkSlot(slotSchedule.deltaToThisSyncSlotMiddleSubslot);
-	assert(!network.isRadioInUse());
+	assert(!Ensemble::isRadioInUse());
 
 	/*
 	 * Might have heard:
@@ -168,7 +169,7 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 	if (handlingResult == HandlingResult::KeepListening) {
 		// Self is Master, send sync if didn't hear WorkSync or MergeSync
 		phase = Phase::SyncXmit;
-		syncSender.sendMasterSync();
+		SyncSender::sendMasterSync();
 	}
 
 	// Keep listening for other better Masters and work.
@@ -176,7 +177,7 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 	phase = Phase::SyncListenSecondHalf;
 	(void) doListenHalfSyncWorkSlot(slotSchedule.deltaToThisSyncSlotEnd);
 
-	// not assert network.isLowPower()
+	// not assert Ensemble::isLowPower()
 }
 
 // XXX try doing part of the sync slot i.e. fail after the first half.
@@ -208,10 +209,10 @@ void SyncWorkSlot::tryPerform() {
 void SyncWorkSlot::perform() {
 	// logInt(clique.schedule.deltaPastSyncPointToNow()); log("<delta SP to start slot.\n");
 
-	// Sleeps until network ready. Deadtime in slot.
+	// Sleeps until ensemble ready. Deadtime in slot.
 	// TIMING: > 360uSec
 	//LongTime startTime = clique.schedule.nowTime();
-	network.startup();
+	Ensemble::startup();
 	//LongTime endTime = clique.schedule.nowTime();
 
 	// Call shouldTransmitSync every time, since it needs calls side effect reset itself
@@ -219,7 +220,7 @@ void SyncWorkSlot::perform() {
 
 	/*
 	 * Work is higher priority than ordinary sync.
-	 * Work must be rare, lest it flood network and destroy sync
+	 * Work must be rare, lest it flood airwaves and destroy sync
 	 * (colliding too often with MergeSync or MasterSync.)
 	 */
 	if (workManager.isNeedSendWork()) {
@@ -243,14 +244,14 @@ void SyncWorkSlot::perform() {
 	 */
 
 	// Radio might be in use.  In use: we timeout'd while receiving
-	network.stopReceiving();
+	Ensemble::stopReceiving();
 
 	// FUTURE we could do this elsewhere, e.g. start of sync slot so this doesn't delay the start of work slot
 	if (!clique.isSelfMaster())
 		clique.checkMasterDroppedOut();
 
-	network.shutdown();
+	Ensemble::shutdown();
 
-	assert(network.isLowPower());
+	assert(Ensemble::isLowPower());
 }
 
