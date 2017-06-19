@@ -62,7 +62,6 @@ void SyncAgent::sleepUntilSyncPower(){
 
 
 void SyncAgent::initSyncObjects(
-		Radio * aRadio,
 		Mailbox* aMailbox,
 		SyncPowerManager* aSyncPowerManager,
 		LongClockTimer* aLongClockTimer,
@@ -79,7 +78,6 @@ void SyncAgent::initSyncObjects(
 	 */
 
 	// Copy parameters to globals
-	radio = aRadio;
 	workOutMailbox = aMailbox;
 	syncPowerManager = aSyncPowerManager;
 
@@ -90,13 +88,11 @@ void SyncAgent::initSyncObjects(
 	onWorkMsgCallback = aOnWorkMsgCallback;
 	onSyncPointCallback = aOnSyncPointCallback;
 
-	Ensemble::init();
-
 	// Connect radio IRQ to syncSleeper so it knows reason for wake
-	radio->setMsgReceivedCallback(syncSleeper.getMsgReceivedCallback());
+	Ensemble::init(syncSleeper.getMsgReceivedCallback());
 
 	// Serializer reads and writes directly to radio buffer
-	serializer.init(radio->getBufferAddress(), Radio::FixedPayloadCount);
+	serializer.init(Ensemble::getBufferAddress(), Radio::FixedPayloadCount);
 
 	// Clique's Schedule needs LongClock
 	clique.init(aLongClockTimer);

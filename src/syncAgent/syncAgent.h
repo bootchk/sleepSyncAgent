@@ -58,7 +58,7 @@ private:
 public:
 	static void initSleepers(SyncPowerManager*, LongClockTimer*);
 
-	static void initSyncObjects( Radio* radio,
+	static void initSyncObjects(
 			Mailbox* mailbox,
 			SyncPowerManager* aSyncPowerManager,
 			LongClockTimer* aLongClockTimer,

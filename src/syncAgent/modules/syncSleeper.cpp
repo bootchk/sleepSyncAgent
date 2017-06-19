@@ -58,7 +58,7 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 	HandlingResult handlingResult = HandlingResult::KeepListening;
 
 	// Nested checks: physical layer CRC, then transport layer MessageType
-	if (radio->isPacketCRCValid()) {
+	if (Ensemble::isPacketCRCValid()) {
 		SyncMessage* msg = serializer.unserialize();
 		if (msg != nullptr) {
 			// assert msg->type valid
@@ -77,7 +77,7 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 				 * Dispatched message was not of desired type (but we could have done work, or other state changes.)
 				 * restart receive, remain in loop, sleep until next message
 				 */
-				radio->receiveStatic();
+				Ensemble::startReceiving();
 				// continuation is sleep with radio on
 			}
 			// assert msg queue is empty (since we received and didn't restart receiver)
@@ -225,7 +225,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 	 * A receive must not complete before these assertions and the sleep,
 	 * otherwise we will receive a message but sleep until timeout.
 	 */
-	assert(radio->isEnabledInterruptForMsgReceived());	// will interrupt
+	//assert(radio->isEnabledInterruptForMsgReceived());	// will interrupt
 	// we beat the radio race, i.e. msg not already received
 	assert(Ensemble::isRadioInUse());
 
@@ -262,7 +262,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 			// Timeout could be interrupting a receive.
 			// Better to handle message and delay next slot: fewer missed syncs.
 
-			radio->stopReceive();
+			Ensemble::stopReceiving();
 			// assert msg queue empty, except for race between timeout and receiver
 			// Slot done.
 			didTimeout = true;

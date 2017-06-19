@@ -12,7 +12,6 @@
 #include <nRF5x.h>	// Radio, Sleeper
 
 // Owned by calling app, implemented by lib nRF5x
-extern Radio* radio;
 extern Mailbox* workOutMailbox;
 
 // Owned by calling app
