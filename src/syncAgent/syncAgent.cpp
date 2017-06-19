@@ -41,7 +41,6 @@ void SyncAgent::initSleepers(SyncPowerManager* aSyncPowerManager) {
 	// assert counter interrupt enabled for overflow
 	// assert RTC0_IRQ is enabled (for Counter overflow and any Timers)
 
-	sleeper.init();
 	sleeper.setSaneTimeout(ScheduleParameters::MaxSaneTimeoutSyncPowerSleeper);
 
 	syncPowerManager = aSyncPowerManager;	// global
