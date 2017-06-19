@@ -1,8 +1,12 @@
 
+#include <cassert>
+
 #include "oversleepMonitor.h"
 
 
-#include "../globals.h"	// Clique, CustomFlash
+// TODO reduce these dependencies
+#include "../globals.h"	// syncAgent
+#include "nRF5x.h"	// LongTime, CustomFlash
 #include "../scheduleParameters.h"
 
 
@@ -23,7 +27,7 @@ void OverSleepMonitor::markStartSleep(TimeoutFunc timeoutFunc){
 	 *  Record time sleep started, more or less.
 	 *  Clock may advance by say one before sleep actually starts.
 	 */
-	sleepStartTime = clique.schedule.nowTime();
+	sleepStartTime = LongClockTimer::nowTime();
 
 	/*
 	 * Record initial value of timeoutFunc() monotonic sequence, more or less.

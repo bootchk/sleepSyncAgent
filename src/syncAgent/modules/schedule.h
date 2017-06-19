@@ -77,7 +77,7 @@ public:
 	 * Set start of sync period to now, essentially a random time in relation to all other units.
 	 * Called at POR.  After that, the schedule can become adjusted to other unit's schedule.
 	 */
-	static void init(LongClockTimer*);
+	static void init();
 
 	// FUTURE static void resumeAfterPowerRestored();
 
@@ -109,8 +109,6 @@ public:
 
 	static DeltaTime deltaFromWorkMiddleToEndSyncPeriod();
 
-
-	static LongTime nowTime();
 	static LongTime timeOfNextSyncPoint();
 
 	// slot times

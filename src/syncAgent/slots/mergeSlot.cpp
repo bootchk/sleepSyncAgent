@@ -53,7 +53,7 @@ void MergeSlot::perform() {
 
 	// assert time aligned with middle of a mergee sync slots (same wall time as fished sync from mergee.)
 	Ensemble::startup();
-	logLongLong(clique.schedule.nowTime()); log(":mergeSync");
+	logLongLong(LongClockTimer::nowTime()); log(":mergeSync");
 	phase = Phase::Merge;
 	SyncSender::sendMergeSync();	// Synchronous
 	assert(!Ensemble::isRadioInUse());

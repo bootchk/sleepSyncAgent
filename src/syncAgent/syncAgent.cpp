@@ -15,9 +15,6 @@ namespace {
 // SyncAgent owns
 SyncPowerSleeper syncPowerSleeper;
 // SyncSleeper, Sleeper is global
-
-// SyncAgent uses
-LongClockTimer* longClockTimer;
 }
 
 
@@ -37,17 +34,14 @@ void (*SyncAgent::onSyncPointCallback)();
 
 
 
-void SyncAgent::initSleepers(SyncPowerManager* aSyncPowerManager, LongClockTimer* aLongClockTimer) {
+void SyncAgent::initSleepers(SyncPowerManager* aSyncPowerManager) {
 
 	// assert longClockTimer was init
 	// assert counter is perpetually running
 	// assert counter interrupt enabled for overflow
 	// assert RTC0_IRQ is enabled (for Counter overflow and any Timers)
 
-	// retain reference
-	longClockTimer = aLongClockTimer;
-
-	sleeper.init(aLongClockTimer);
+	sleeper.init();
 	sleeper.setSaneTimeout(ScheduleParameters::MaxSaneTimeoutSyncPowerSleeper);
 
 	syncPowerManager = aSyncPowerManager;	// global
@@ -64,7 +58,6 @@ void SyncAgent::sleepUntilSyncPower(){
 void SyncAgent::initSyncObjects(
 		Mailbox* aMailbox,
 		SyncPowerManager* aSyncPowerManager,
-		LongClockTimer* aLongClockTimer,
 		BrownoutManager* aBrownoutManager,
 		void (*aOnWorkMsgCallback)(WorkPayload),
 		void (*aOnSyncPointCallback)()
@@ -94,8 +87,7 @@ void SyncAgent::initSyncObjects(
 	// Serializer reads and writes directly to radio buffer
 	serializer.init(Ensemble::getBufferAddress(), Radio::FixedPayloadCount);
 
-	// Clique's Schedule needs LongClock
-	clique.init(aLongClockTimer);
+	clique.init();
 
 	// Register callbacks that return debug info
 	aBrownoutManager->registerCallbacks(
