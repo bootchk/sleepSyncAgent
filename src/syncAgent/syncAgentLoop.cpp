@@ -68,10 +68,10 @@ void SyncAgent::loop(){
 	logLongLong(clique.getMasterID());
 
 	// Set sane timeout for SyncPeriod calculations, different from that used by SyncPowerSleeper
-	sleeper.setSaneTimeout( ScheduleParameters::MaxSaneTimeoutSyncSleeper );
+	Sleeper::setSaneTimeout( ScheduleParameters::MaxSaneTimeoutSyncSleeper );
 
 	// We expect not to brownout henceforth
-	syncPowerManager->enableBrownoutDetectMode();
+	SyncPowerManager::enterBrownoutDetectMode();
 	// Detection not in force until first call to measure power
 
 
@@ -91,7 +91,7 @@ void SyncAgent::loop(){
 
 		workManager.resetState();
 
-		if ( syncPowerManager->isPowerForSync() ) {
+		if ( SyncPowerManager::isPowerForSync() ) {
 			/*
 			 * Sync keeping: enough power to use radio for two slots
 			 */

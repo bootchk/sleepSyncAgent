@@ -15,10 +15,6 @@
 extern Mailbox* workOutMailbox;
 
 // Owned by calling app
-#include "modules/syncPowerManager.h"
-extern SyncPowerManager* syncPowerManager;
-
-extern Sleeper sleeper;
 
 #include "syncAgent.h"
 extern SyncAgent syncAgent;

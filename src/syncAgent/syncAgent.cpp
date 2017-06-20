@@ -4,20 +4,11 @@
 #include "globals.h"	// which includes nRF5x.h
 #include "scheduleParameters.h"
 #include "syncPowerSleeper.h"
-#include "modules/syncPowerManager.h"
+//#include "modules/syncPowerManager.h"
 #include "modules/oversleepMonitor.h"
 
 
-
-
-namespace {
-
-// SyncAgent owns
-SyncPowerSleeper syncPowerSleeper;
-// SyncSleeper, Sleeper is global
-}
-
-
+// SyncSleeper, Sleeper pure classes
 
 
 // Static data members
@@ -34,30 +25,26 @@ void (*SyncAgent::onSyncPointCallback)();
 
 
 
-void SyncAgent::initSleepers(SyncPowerManager* aSyncPowerManager) {
+void SyncAgent::initSleepers() {
 
 	// assert longClockTimer was init
 	// assert counter is perpetually running
 	// assert counter interrupt enabled for overflow
 	// assert RTC0_IRQ is enabled (for Counter overflow and any Timers)
 
-	sleeper.setSaneTimeout(ScheduleParameters::MaxSaneTimeoutSyncPowerSleeper);
-
-	syncPowerManager = aSyncPowerManager;	// global
+	Sleeper::setSaneTimeout(ScheduleParameters::MaxSaneTimeoutSyncPowerSleeper);
 
 	// SyncSleeper, syncPowerSleeper is global, needs no init
 }
 
 
 void SyncAgent::sleepUntilSyncPower(){
-	syncPowerSleeper.sleepUntilSyncPower();
+	SyncPowerSleeper::sleepUntilSyncPower();
 }
 
 
 void SyncAgent::initSyncObjects(
 		Mailbox* aMailbox,
-		SyncPowerManager* aSyncPowerManager,
-		BrownoutManager* aBrownoutManager,
 		void (*aOnWorkMsgCallback)(WorkPayload),
 		void (*aOnSyncPointCallback)()
 	)
@@ -71,7 +58,6 @@ void SyncAgent::initSyncObjects(
 
 	// Copy parameters to globals
 	workOutMailbox = aMailbox;
-	syncPowerManager = aSyncPowerManager;
 
 	// Temp: test power consumption when all sleep
 	// while(true) waitForOSClockAndToRecoverBootEnergy(aLCT);
@@ -89,7 +75,7 @@ void SyncAgent::initSyncObjects(
 	clique.init();
 
 	// Register callbacks that return debug info
-	aBrownoutManager->registerCallbacks(
+	BrownoutRecorder::registerCallbacks(
 			getPhase,
 			getReasonForWake,
 			OverSleepMonitor::timeSinceLastStartSleep);
@@ -154,7 +140,7 @@ void SyncAgent::relayHeardWorkToApp(WorkPayload work) {
  * Callbacks from BrownoutManager for debugging.
  */
 uint32_t SyncAgent::getPhase() { return (uint32_t) phase; }
-uint32_t SyncAgent::getReasonForWake() { return (uint32_t) sleeper.getReasonForWake(); }
+uint32_t SyncAgent::getReasonForWake() { return (uint32_t) Sleeper::getReasonForWake(); }
 
 
 

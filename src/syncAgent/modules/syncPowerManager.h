@@ -26,34 +26,33 @@
  */
 #include <nRF5x.h>	// PowerManager
 
-namespace {
-	// Owns generic PowerManager
-	PowerManager powerManager;
-}
+/*
+ * Pure class
+ */
 
 class SyncPowerManager {
 
 public:
-	// Init owned generic PowerManager
-	static void init() { powerManager.init(); }
+	// Init generic PowerManager
+	static void init() { PowerManager::init(); }
 
-	static void enableBrownoutDetectMode() { powerManager.enableBrownoutDetectMode(); }
+	static void enterBrownoutDetectMode() { PowerManager::enterBrownoutDetectMode(); }
 	/*
 	 * Levels
 	 */
 	// Above Vmax of chip 3.6V
-	static bool isPowerExcess() { return powerManager.isPowerExcess(); }
+	static bool isPowerExcess() { return PowerManager::isPowerExcess(); }
 	// In sync and can work
-	static bool isPowerForWork() { return powerManager.isPowerAboveHigh(); }	// > 2.7
+	static bool isPowerForWork() { return PowerManager::isPowerAboveHigh(); }	// > 2.7
 	// Enough to start a SyncPeriod
-	static bool isPowerForSync()  { return powerManager.isPowerAboveUltraHigh(); }	// > 3.2
+	static bool isPowerForSync()  { return PowerManager::isPowerAboveUltraHigh(); }	// > 3.2
 	// Enough to continue a SyncPeriod
-	static bool isPowerForRadio()  { return powerManager.isPowerAboveMedium(); } // > 2.5
+	static bool isPowerForRadio()  { return PowerManager::isPowerAboveMedium(); } // > 2.5
 	// Only enough to count out SyncPeriods, not use radio
-	static bool isPowerForIdle()  { return powerManager.isPowerAboveLow(); }	// > 2.3
+	static bool isPowerForIdle()  { return PowerManager::isPowerAboveLow(); }	// > 2.3
 
 	/*
 	 * Ranges
 	 */
-	static VoltageRange getVoltageRange() { return powerManager.getVoltageRange(); }
+	static VoltageRange getVoltageRange() { return PowerManager::getVoltageRange(); }
 };

@@ -44,7 +44,7 @@ void FishSlot::tryPerform() {
 	sleepUntilFishSlotStart();
 	// Power might be replenished.
 
-	if (syncPowerManager->isPowerForRadio()) {
+	if (SyncPowerManager::isPowerForRadio()) {
 		phase = Phase::Fish;
 		//LogMessage::logFished();
 		perform();

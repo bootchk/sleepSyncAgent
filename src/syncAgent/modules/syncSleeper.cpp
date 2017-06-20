@@ -4,7 +4,7 @@
 #include <exceptions/powerAssertions.h>	// nRF5x lib
 #include <exceptions/resetAssertions.h>
 
-#include "../globals.h"
+#include "../globals.h"	// many
 #include "syncSleeper.h"
 
 #include "../logMessage.h"
@@ -22,7 +22,7 @@ OverSleepMonitor oversleepMonitor;
 
 /*
  * Call sleeper after asserting certain peripherals are off.
- * All calls to sleeper.sleepUntilEventWithTimeout() funnel through these methods.
+ * All calls to Sleeper::sleepUntilEventWithTimeout() funnel through these methods.
  *
  * A Sleeper may wake for unexpected reasons.
  */
@@ -34,7 +34,7 @@ OverSleepMonitor oversleepMonitor;
 void sleepWithOnlyTimerPowerUntilTimeout(DeltaTime timeout) {
 	assertUltraLowPower();
 	assertNoResetsOccurred();
-	sleeper.sleepUntilEventWithTimeout(timeout);
+	Sleeper::sleepUntilEventWithTimeout(timeout);
 }
 
 /*
@@ -43,7 +43,7 @@ void sleepWithOnlyTimerPowerUntilTimeout(DeltaTime timeout) {
  */
 void sleepWithRadioAndTimerPowerUntilTimeout(DeltaTime timeout) {
 	assertRadioPower();
-	sleeper.sleepUntilEventWithTimeout(timeout);
+	Sleeper::sleepUntilEventWithTimeout(timeout);
 }
 
 
@@ -119,7 +119,7 @@ DeltaTime calculateTimeout(TimeoutFunc timeoutFunc) {
 
 
 
-// OLD void SyncSleeper::clearReasonForWake() { sleeper.clearReasonForWake(); }
+// OLD void SyncSleeper::clearReasonForWake() { Sleeper::clearReasonForWake(); }
 
 
 /*
@@ -145,12 +145,12 @@ void SyncSleeper::sleepUntilTimeout(TimeoutFunc timeoutFunc) {
 		 * and the following check, then we will loop another time.
 		 * Eventually, the call to the sleeper with small timout will set reasonForWake to SleepTimerExpired.
 		 */
-		if (sleeper.isWakeForTimerExpired())
+		if (Sleeper::isWakeForTimerExpired())
 			break; // break while loop, timeout has elapsed
 		/*
 		 * else continue loop, sleep again.
 		 * timeoutFunc is monotonic and will eventually return 0
-		 * and sleeper.sleepUntilTimeout will return without sleeping and with reasonForWake==Timeout
+		 * and Sleeper::sleepUntilTimeout will return without sleeping and with reasonForWake==Timeout
 		 */
 	}
 
@@ -184,7 +184,7 @@ void SyncSleeper::sleepUntilTimeout(DeltaTime timeout)
 			}
 			/*
 			 * waking events spend time, is monotonic and will eventually return 0
-			 * and sleeper.sleepUntilTimeout will return without sleeping and with reasonForWake==Timeout
+			 * and Sleeper::sleepUntilTimeout will return without sleeping and with reasonForWake==Timeout
 			 */
 		}
 		// assert timeout amount of time has elapsed
@@ -229,7 +229,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 	// we beat the radio race, i.e. msg not already received
 	assert(Ensemble::isRadioInUse());
 
-	//assert(sleeper.reasonForWakeIsCleared());	// This also checks we haven't received yet
+	//assert(Sleeper::reasonForWakeIsCleared());	// This also checks we haven't received yet
 	// FUTURE currently, this is being cleared in sleepUntil but that suffers from races
 
 	oversleepMonitor.markStartSleep(timeoutFunc);
@@ -246,10 +246,10 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 		sleepWithRadioAndTimerPowerUntilTimeout(timeout);
 		// wakened by msg or timeout or unexpected event or did not sleep at all (timeout small)
 
-		sleeper.cancelTimeout();
+		Sleeper::cancelTimeout();
 
 		// Switch on reasons, not on HandlingResult)
-		switch (sleeper.getReasonForWake()) {
+		switch (Sleeper::getReasonForWake()) {
 		case ReasonForWake::MsgReceived:
 			// Record TOA as soon as possible
 			clique.schedule.recordMsgArrivalTime();
@@ -333,8 +333,8 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 
 
 MsgReceivedCallback SyncSleeper::getMsgReceivedCallback() {
-	// Return callback of the owned/wrapped sleeper.
-	return sleeper.msgReceivedCallback;
+	// Return callback of the owned/wrapped Sleeper::
+	return Sleeper::msgReceivedCallback;
 }
 
 

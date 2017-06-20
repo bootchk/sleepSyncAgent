@@ -1,7 +1,9 @@
 
 #include "syncPowerSleeper.h"
-#include "globals.h"	// powerManager, sleeper
+
 #include "scheduleParameters.h"
+
+#include "modules/syncPowerManager.h"
 
 
 /*
@@ -21,10 +23,10 @@
  * Sleeper uses a callback which also sets ReasonForWake, but we ignore that.
  */
 void SyncPowerSleeper::sleepUntilSyncPower(){
-	while (!syncPowerManager->isPowerForSync()){
+	while (!SyncPowerManager::isPowerForSync()){
 
 		// not assertUltraLowPower() but it should be
-		sleeper.sleepUntilEventWithTimeout(ScheduleParameters::MaxSaneTimeoutSyncPowerSleeper);
+		Sleeper::sleepUntilEventWithTimeout(ScheduleParameters::MaxSaneTimeoutSyncPowerSleeper);
 		// May wake for CounterOverflow and unexpected events.
 	}
 

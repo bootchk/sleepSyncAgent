@@ -56,12 +56,10 @@ private:
 
 // methods
 public:
-	static void initSleepers(SyncPowerManager*);
+	static void initSleepers();
 
 	static void initSyncObjects(
 			Mailbox* mailbox,
-			SyncPowerManager* aSyncPowerManager,
-			BrownoutManager* aBrownoutManager,
 			void (*onWorkMsg)(WorkPayload),
 			void (*onSyncPoint)()
 			);
