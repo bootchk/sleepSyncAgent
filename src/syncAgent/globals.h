@@ -12,14 +12,9 @@
 #include <nRF5x.h>	// Radio, Sleeper
 
 // Owned by calling app, implemented by lib nRF5x
-extern Radio* radio;
 extern Mailbox* workOutMailbox;
 
 // Owned by calling app
-#include "modules/syncPowerManager.h"
-extern SyncPowerManager* syncPowerManager;
-
-extern Sleeper sleeper;
 
 #include "syncAgent.h"
 extern SyncAgent syncAgent;
@@ -43,8 +38,6 @@ extern SyncSleeper syncSleeper;
 #include "modules/syncBehaviour.h"
 extern SyncBehaviour syncBehaviour;
 
-#include "modules/network.h"
-extern Network network;
 
 // Must follow network.h which it depends on
 #include "modules/syncSender.h"

@@ -31,10 +31,11 @@ SystemID masterID;
 /*
  * Allow for future changes and more robustness.
  * For now, assert little time has passed executing code since message arrived, so nowTime() is close enough.
- * FUTURE: record TOA when message arrives.
+ * FUTURE: record TOA when message arrives.  See elsewhere, already recorded?
  */
 LongTime messageTimeOfArrival() {
-	return owningClique->schedule.nowTime();
+	// WAS return owningClique->schedule.nowTime();
+	return LongClockTimer::nowTime();
 }
 
 LongTime middleOfNextSyncSlotOfFisher() {

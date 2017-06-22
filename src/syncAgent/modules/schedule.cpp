@@ -8,7 +8,6 @@
 
 namespace {
 
-LongClockTimer* schedulesClockRef;
 LongTime messageTOA;
 
 
@@ -43,22 +42,15 @@ LongTime _endTimeOfSyncPeriod;
 
 
 
-
-LongTime Schedule::nowTime() {
-	return schedulesClockRef->nowTime();
-}
-
-void Schedule::init(LongClockTimer* aLongClockTimer){
+void Schedule::init(){
 	log("Schedule reset\n");
-	// retain reference
-	schedulesClockRef = aLongClockTimer;
 
 	/*
-	 * Not necessary: schedulesClockRef->resetToNearZero();
+	 * Not necessary: LongClockTimer::resetToNearZero();
 	 * This is near POR, the LongClock is still near zero in relation to its near infinite length.
 	 */
 
-	_startTimeOfSyncPeriod = nowTime();	// Must do this to avoid assertion in rollPeriodForwardToNow
+	_startTimeOfSyncPeriod = LongClockTimer::nowTime();	// Must do this to avoid assertion in rollPeriodForwardToNow
 	rollPeriodForwardToNow();
 	// Out of sync with other cliques
 }
@@ -93,7 +85,7 @@ void Schedule::rollPeriodForwardToNow() {
 
 	//LongTime startOfPreviousSyncPeriod = startTimeOfSyncPeriod;
 
-	LongTime now = nowTime();
+	LongTime now = LongClockTimer::nowTime();
 
 	LogMessage::logStartSyncPeriod(now);
 
@@ -283,7 +275,7 @@ DeltaTime Schedule::deltaToThisMergeStart(const MergeOffset* const offset){
 
 
 void Schedule::recordMsgArrivalTime() {
-	messageTOA = schedulesClockRef->nowTime();
+	messageTOA = LongClockTimer::nowTime();
 }
 
 LongTime Schedule::getMsgArrivalTime() {

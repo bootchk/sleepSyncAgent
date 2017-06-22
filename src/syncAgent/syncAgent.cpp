@@ -4,20 +4,11 @@
 #include "globals.h"	// which includes nRF5x.h
 #include "scheduleParameters.h"
 #include "syncPowerSleeper.h"
-#include "modules/syncPowerManager.h"
+//#include "modules/syncPowerManager.h"
+#include "modules/oversleepMonitor.h"
 
 
-namespace {
-
-// SyncAgent owns
-SyncPowerSleeper syncPowerSleeper;
-// SyncSleeper, Sleeper is global
-
-// SyncAgent uses
-LongClockTimer* longClockTimer;
-}
-
-
+// SyncSleeper, Sleeper pure classes
 
 
 // Static data members
@@ -34,36 +25,26 @@ void (*SyncAgent::onSyncPointCallback)();
 
 
 
-void SyncAgent::initSleepers(SyncPowerManager* aSyncPowerManager, LongClockTimer* aLongClockTimer) {
+void SyncAgent::initSleepers() {
 
 	// assert longClockTimer was init
 	// assert counter is perpetually running
 	// assert counter interrupt enabled for overflow
 	// assert RTC0_IRQ is enabled (for Counter overflow and any Timers)
 
-	// retain reference
-	longClockTimer = aLongClockTimer;
-
-	sleeper.init(aLongClockTimer);
-	sleeper.setSaneTimeout(ScheduleParameters::MaxSaneTimeoutSyncPowerSleeper);
-
-	syncPowerManager = aSyncPowerManager;	// global
+	Sleeper::setSaneTimeout(ScheduleParameters::MaxSaneTimeoutSyncPowerSleeper);
 
 	// SyncSleeper, syncPowerSleeper is global, needs no init
 }
 
 
 void SyncAgent::sleepUntilSyncPower(){
-	syncPowerSleeper.sleepUntilSyncPower();
+	SyncPowerSleeper::sleepUntilSyncPower();
 }
 
 
 void SyncAgent::initSyncObjects(
-		Radio * aRadio,
 		Mailbox* aMailbox,
-		SyncPowerManager* aSyncPowerManager,
-		LongClockTimer* aLongClockTimer,
-		BrownoutManager* aBrownoutManager,
 		void (*aOnWorkMsgCallback)(WorkPayload),
 		void (*aOnSyncPointCallback)()
 	)
@@ -76,9 +57,7 @@ void SyncAgent::initSyncObjects(
 	 */
 
 	// Copy parameters to globals
-	radio = aRadio;
 	workOutMailbox = aMailbox;
-	syncPowerManager = aSyncPowerManager;
 
 	// Temp: test power consumption when all sleep
 	// while(true) waitForOSClockAndToRecoverBootEnergy(aLCT);
@@ -88,19 +67,18 @@ void SyncAgent::initSyncObjects(
 	onSyncPointCallback = aOnSyncPointCallback;
 
 	// Connect radio IRQ to syncSleeper so it knows reason for wake
-	radio->setMsgReceivedCallback(syncSleeper.getMsgReceivedCallback());
+	Ensemble::init(syncSleeper.getMsgReceivedCallback());
 
 	// Serializer reads and writes directly to radio buffer
-	serializer.init(radio->getBufferAddress(), Radio::FixedPayloadCount);
+	serializer.init(Ensemble::getBufferAddress(), Radio::FixedPayloadCount);
 
-	// Clique's Schedule needs LongClock
-	clique.init(aLongClockTimer);
+	clique.init();
 
 	// Register callbacks that return debug info
-	aBrownoutManager->registerCallbacks(
+	BrownoutRecorder::registerCallbacks(
 			getPhase,
 			getReasonForWake,
-			syncSleeper.timeSinceLastStartSleep);
+			OverSleepMonitor::timeSinceLastStartSleep);
 
 	// assert LongClock is reset
 	// not assert LongClock running assert(aLCT->isOSClockRunning());
@@ -108,8 +86,8 @@ void SyncAgent::initSyncObjects(
 	// ensure initial state of SyncAgent
 	assert(role.isFisher());
 	assert(clique.isSelfMaster());
-	assert(!network.isRadioInUse());
-	assert(network.isConfigured());
+	assert(!Ensemble::isRadioInUse());
+	assert(Ensemble::isConfigured());
 }
 
 
@@ -162,7 +140,7 @@ void SyncAgent::relayHeardWorkToApp(WorkPayload work) {
  * Callbacks from BrownoutManager for debugging.
  */
 uint32_t SyncAgent::getPhase() { return (uint32_t) phase; }
-uint32_t SyncAgent::getReasonForWake() { return (uint32_t) sleeper.getReasonForWake(); }
+uint32_t SyncAgent::getReasonForWake() { return (uint32_t) Sleeper::getReasonForWake(); }
 
 
 

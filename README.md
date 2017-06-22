@@ -2,14 +2,16 @@ A sleep synchronization algorithm for ultra low power radio networks
 
 [See also the project wiki](../../wiki)
 
-Work in progress. 
+Work in progress.
+
+TL;DR  nanopower radios sleep mostly; the fundamental task is to synchronize sleep.  After that, you can worry about what you might to communicate.
 
 Status:
 
 	- algorithm seems to achieve sync (for three units)
 	- algorithm conveys data (work) piggybacked in sync message format
 	- built as a static library
-	- target platform Nordic nrf52, without OS, using raw protocol (see my other GitHub repository)
+	- target platform Nordic nrf52, without OS, using a raw protocol (see my other GitHub repository)
 
 
 Todo:

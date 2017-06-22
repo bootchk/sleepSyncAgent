@@ -4,23 +4,25 @@
 #include <exceptions/powerAssertions.h>	// nRF5x lib
 #include <exceptions/resetAssertions.h>
 
-#include "../globals.h"
+#include "../globals.h"	// many
 #include "syncSleeper.h"
 
-#include "../scheduleParameters.h"
 #include "../logMessage.h"
+#include "oversleepMonitor.h"
+
+#include "../scheduleParameters.h"
 
 
 namespace {
 
 // Uses global Sleeper
 
-LongTime sleepStartTime;
+OverSleepMonitor oversleepMonitor;
 
 
 /*
  * Call sleeper after asserting certain peripherals are off.
- * All calls to sleeper.sleepUntilEventWithTimeout() funnel through these methods.
+ * All calls to Sleeper::sleepUntilEventWithTimeout() funnel through these methods.
  *
  * A Sleeper may wake for unexpected reasons.
  */
@@ -32,7 +34,7 @@ LongTime sleepStartTime;
 void sleepWithOnlyTimerPowerUntilTimeout(DeltaTime timeout) {
 	assertUltraLowPower();
 	assertNoResetsOccurred();
-	sleeper.sleepUntilEventWithTimeout(timeout);
+	Sleeper::sleepUntilEventWithTimeout(timeout);
 }
 
 /*
@@ -41,7 +43,7 @@ void sleepWithOnlyTimerPowerUntilTimeout(DeltaTime timeout) {
  */
 void sleepWithRadioAndTimerPowerUntilTimeout(DeltaTime timeout) {
 	assertRadioPower();
-	sleeper.sleepUntilEventWithTimeout(timeout);
+	Sleeper::sleepUntilEventWithTimeout(timeout);
 }
 
 
@@ -56,7 +58,7 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 	HandlingResult handlingResult = HandlingResult::KeepListening;
 
 	// Nested checks: physical layer CRC, then transport layer MessageType
-	if (radio->isPacketCRCValid()) {
+	if (Ensemble::isPacketCRCValid()) {
 		SyncMessage* msg = serializer.unserialize();
 		if (msg != nullptr) {
 			// assert msg->type valid
@@ -65,7 +67,7 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 			if (handlingResult!=HandlingResult::KeepListening) {
 				// Remainder of duration radio not used (low power) but HFXO is still on.
 				// TODO this assertion should be at beginning of routine
-				assert(!network.isRadioInUse());
+				assert(!Ensemble::isRadioInUse());
 
 				// continuation is sleep
 				// assert since radio not in use, next reason for wake can only be timeout and will then exit loop
@@ -75,9 +77,7 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 				 * Dispatched message was not of desired type (but we could have done work, or other state changes.)
 				 * restart receive, remain in loop, sleep until next message
 				 */
-				network.startReceiving();	// clears reasonForWake
-				// OLD radio->receiveStatic();
-
+				Ensemble::startReceiving();
 				// continuation is sleep with radio on
 			}
 			// assert msg queue is empty (since we received and didn't restart receiver)
@@ -103,53 +103,15 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 	return handlingResult;
 }
 
-
-bool isWakeForTimerExpired() {
-	/*
-	 * assert waken from sleep
-	 * not assert that timer went off: it may yet set a new reason at any moment.
-	 * We don't clear reasonForWake exactly because an IRQ could set it at any moment.
-	 */
-	bool result = false;
-
-	// Expect wake by timeout, not by msg or other event
-	switch( sleeper.getReasonForWake() ) {
-	case SleepTimerExpired:
-		result = true;
-		// assert time specified by timeoutFunc has elapsed.
-		break;
-
-	case CounterOverflowOrOtherTimerExpired:
-		/*
-		 * Normal
-		 * But do not end sleep.
-		 */
-		break;
-
-	case MsgReceived:
-		/*
-		 * Abnormal: Radio should be off.
-		 * But do not end sleep.
-		 */
-		LogMessage::logUnexpectedMsg();
-		break;
-
-	case Unknown:
-		/*
-		 * Unexpected, probably a bug.
-		 * Radio is not in use can't receive
-		 * Woken by some interrupt (event?) not in the design.
-		 * But do not end sleep.
-		 */
-		LogMessage::logUnexpectedWakeReason();
-		break;
-	case Cleared:
-		// Impossible, Timer must have expired
-		assert(false);
-	}
-	return result;
-	// Returns whether timeout time has elapsed i.e. whether to stop sleeping loop
+/*
+ * Calculate timeout scalar:
+ * - using a TimeoutFunc
+ * - adjusting for overhead
+ */
+DeltaTime calculateTimeout(TimeoutFunc timeoutFunc) {
+	return TimeMath::clampedSubtraction(timeoutFunc(), ScheduleParameters::CodesSleepOverhead);
 }
+
 
 }	// namespace
 
@@ -157,7 +119,7 @@ bool isWakeForTimerExpired() {
 
 
 
-void SyncSleeper::clearReasonForWake() { sleeper.clearReasonForWake(); }
+// OLD void SyncSleeper::clearReasonForWake() { Sleeper::clearReasonForWake(); }
 
 
 /*
@@ -168,25 +130,32 @@ void SyncSleeper::clearReasonForWake() { sleeper.clearReasonForWake(); }
  */
 void SyncSleeper::sleepUntilTimeout(TimeoutFunc timeoutFunc) {
 
-	sleepStartTime = clique.schedule.nowTime();
+	oversleepMonitor.markStartSleep(timeoutFunc);
 
 	while (true) {
-		// Calculate remaining timeout on each loop iteration
-		OSTime timeout = timeoutFunc();
-
-		assert(timeout < ScheduleParameters::MaxSaneTimeout);
+		// Calculate remaining timeout on each loop iteration.  Must be monotonic.
+		OSTime timeout = calculateTimeout(timeoutFunc);
 
 		sleepWithOnlyTimerPowerUntilTimeout(timeout);
+		// an event, or we did not sleep at all (timeout small)
 
-		if (isWakeForTimerExpired())
+		/*
+		 * If a higher priority event occurs between the time that sleeper set reasonForWake to SleepTimerExpired
+		 * (because the timeout was small)
+		 * and the following check, then we will loop another time.
+		 * Eventually, the call to the sleeper with small timout will set reasonForWake to SleepTimerExpired.
+		 */
+		if (Sleeper::isWakeForTimerExpired())
 			break; // break while loop, timeout has elapsed
 		/*
 		 * else continue loop, sleep again.
 		 * timeoutFunc is monotonic and will eventually return 0
-		 * and sleeper.sleepUntilTimeout will return without sleeping and with reasonForWake==Timeout
+		 * and Sleeper::sleepUntilTimeout will return without sleeping and with reasonForWake==Timeout
 		 */
 	}
-	// assert timeout amount of time has elapsed
+
+	(void) oversleepMonitor.checkOverslept();
+
 }
 
 #ifdef OLD
@@ -215,7 +184,7 @@ void SyncSleeper::sleepUntilTimeout(DeltaTime timeout)
 			}
 			/*
 			 * waking events spend time, is monotonic and will eventually return 0
-			 * and sleeper.sleepUntilTimeout will return without sleeping and with reasonForWake==Timeout
+			 * and Sleeper::sleepUntilTimeout will return without sleeping and with reasonForWake==Timeout
 			 */
 		}
 		// assert timeout amount of time has elapsed
@@ -256,14 +225,14 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 	 * A receive must not complete before these assertions and the sleep,
 	 * otherwise we will receive a message but sleep until timeout.
 	 */
-	assert(radio->isEnabledInterruptForMsgReceived());	// will interrupt
+	//assert(radio->isEnabledInterruptForMsgReceived());	// will interrupt
 	// we beat the radio race, i.e. msg not already received
-	assert(network.isRadioInUse());
+	assert(Ensemble::isRadioInUse());
 
-	//assert(sleeper.reasonForWakeIsCleared());	// This also checks we haven't received yet
+	//assert(Sleeper::reasonForWakeIsCleared());	// This also checks we haven't received yet
 	// FUTURE currently, this is being cleared in sleepUntil but that suffers from races
 
-	sleepStartTime = clique.schedule.nowTime();
+	oversleepMonitor.markStartSleep(timeoutFunc);
 
 	while (true) {
 
@@ -271,14 +240,17 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 		 * The design depends on Timer semantics: can a Timer be restarted?
 		 * Here, we assume not, and always that Timer was canceled.
 		 */
-		sleepWithRadioAndTimerPowerUntilTimeout(timeoutFunc());
-		// wakened by msg or timeout or unexpected event
 
-		sleeper.cancelTimeout();
+		OSTime timeout = calculateTimeout(timeoutFunc);
+
+		sleepWithRadioAndTimerPowerUntilTimeout(timeout);
+		// wakened by msg or timeout or unexpected event or did not sleep at all (timeout small)
+
+		Sleeper::cancelTimeout();
 
 		// Switch on reasons, not on HandlingResult)
-		switch (sleeper.getReasonForWake()) {
-		case MsgReceived:
+		switch (Sleeper::getReasonForWake()) {
+		case ReasonForWake::MsgReceived:
 			// Record TOA as soon as possible
 			clique.schedule.recordMsgArrivalTime();
 
@@ -288,42 +260,48 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 
 			break;	// switch
 
-		case SleepTimerExpired:
+		case ReasonForWake::SleepTimerExpired:
 			// Timeout could be interrupting a receive.
 			// Better to handle message and delay next slot: fewer missed syncs.
 
-			radio->stopReceive();
+			Ensemble::stopReceiving();
 			// assert msg queue empty, except for race between timeout and receiver
 			// Slot done.
 			didTimeout = true;
 			break;	// switch
 			// FUTURE try handle receive in progress, see code fragment at eof
 
-		case CounterOverflowOrOtherTimerExpired:
+		case ReasonForWake::CounterOverflowOrOtherTimerExpired:
 			/*
 			 * Expected events not relevant to this sleep.
 			 * Sleep again.
 			 */
-			// assert network->isInUse()
+			// assert Ensemble::isRadioInUse()
 			break;
 
-		case Unknown:
+		case ReasonForWake::Unknown:
 			/*
 			 * Unexpected: No IRQ handler set reason reasonForWake.
 			 * Continue in loop and sleep again.
 			 */
 			LogMessage::logUnexpectedWakeWhileListening();
-			// assert network->isInUse()
+			// assert Ensemble::isRadioInUse()
 			break;
-		case Cleared:
+		case ReasonForWake::BrownoutWarning:
+			// already logged by brownout handler
+			// TODO we should stop listening more gracefully
+			break;
+		case ReasonForWake::Cleared:
+		case ReasonForWake::HFClockStarted:
 			// Impossible, Sleeper will not return without reason
+			// Impossible, HFClock started earlier
 			assert(false);
 		}
 		// If Timer semantics are restartable: timer might be canceled, but sleepUntilEventWithTimeout will restart it
 
 		if ((handlingResult != HandlingResult::KeepListening) || didTimeout) {
 			/*
-			 * assert ! network->isInUse()
+			 * assert ! Ensemble::isRadioInUse()
 			 * assert timer cancelled
 			 */
 			break;	// while(true)
@@ -336,31 +314,29 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 		 * Robustness:ensure not sleep too long with radio powered.
 		 * Probably a fixable bug.  Possibly hardware flaws that can't be fixed.
 		 */
-		if ( timeSinceLastStartSleep() > ScheduleParameters::RealSlotDuration ) {
-			// Record and try avoid brownout
-            LogMessage::logOverslept();
-            network.stopReceiving();
+		if (oversleepMonitor.checkOverslept()) {
+            Ensemble::stopReceiving();
             // handlingResult is invalid
             break;
 		}
 
-		// assert network->isInUse()
+		// assert Ensemble::isRadioInUse()
 	}	// while(true)
 
-	assert(!network.isRadioInUse());
-	// not assert network.isLowPower(), HFXO is still on
+	(void) oversleepMonitor.checkOverslept();
+
+	assert(!Ensemble::isRadioInUse());
+	// not assert Ensemble::isLowPower(), HFXO is still on
 	// ensure message queue nearly empty
 	// ensure timeout or didReceiveDesiredMsg
 	return handlingResult;
 }
 
-DeltaTime SyncSleeper::timeSinceLastStartSleep() {
-	return (TimeMath::clampedTimeDifferenceToNow(sleepStartTime ));
-}
+
 
 MsgReceivedCallback SyncSleeper::getMsgReceivedCallback() {
-	// Return callback of the owned/wrapped sleeper.
-	return sleeper.msgReceivedCallback;
+	// Return callback of the owned/wrapped Sleeper::
+	return Sleeper::msgReceivedCallback;
 }
 
 

@@ -46,5 +46,10 @@ public:
 	static DeltaTime clampedTimeDifferenceFromNow(const LongTime laterTime);
 	static DeltaTime clampedTimeDifferenceToNow(LongTime earlierTime);
 	static DeltaTime timeDifferenceFromNow(LongTime givenTime);
+
+	// Convert LongTime (typically result of difference) to OSTime, asserting no loss of data
 	static DeltaTime convertLongTimeToOSTime(LongTime givenTime);
+
+	// Subtraction of two DeltaTimes (unsigned) clamped to zero
+	static DeltaTime clampedSubtraction(DeltaTime lhs, DeltaTime rhs);
 };

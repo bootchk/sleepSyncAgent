@@ -178,19 +178,21 @@ static const DeltaTime SenderLatency = 4;
  * This is one component of 'dead' time for radio.
  *
  * Comprises:
- * - time for HFXO clock to stabilize (360uSec, 12 ticks)
+ * - time for HFXO clock to stabilize (1200uSec, 40 ticks)
  * - a few ticks for other overhead (some execution time.)
  * - an allowance for variance (expected worst deviation from experiments.)
  *
- * The constant is experimentally measured,
- * If enough allowance is not made,
- * there will be dead gaps in listening/fishing.
+ * The constant is experimentally measured, for specific HF crystals.
+ * If enough allowance is not made,  there will be dead gaps in listening/fishing.
  * This is used to overlap real slots.
  *
  * !!! Should not be more than SlotDuration, else the last FishSlot will lap into SyncSlot
  */
-static const DeltaTime PowerOffToActiveDelay = 16;
-
+static const DeltaTime PowerOffToActiveDelay = 41;
+// TODO check these constants at runtime
+#if PowerOffToActiveDelay > VirtualSlotDuration
+#error "delay too long"
+#endif
 
 /*
  * After radio is enabled, delay until radio is ready for OTA (TXIDLE or RXIDLE).
@@ -271,5 +273,24 @@ static const DeltaTime MaxSaneTimeoutSyncPowerSleeper = 40000;
  * Max timeout used by SyncSleeper
  */
 static const DeltaTime MaxSaneTimeoutSyncSleeper = 2* NormalSyncPeriodDuration;
+
+
+/* Ticks the code takes to get to sleep and wake from sleep.
+ *
+ * This is measured.
+ * Depends on the target, assertions, and optimization.
+ *
+ * 5 ticks == 150uSec, @16Mhz is about 2500 instruction cycles.
+ * ??? That seems excessive
+ */
+static const DeltaTime CodesSleepOverhead = 5;
+
+/* Latitude when checking for oversleep.
+ * Allows for:
+ * - clock jitter (+1 + -(-1) == 2)
+ * - + code overhead == 5
+ * Anyway, when intendedSleep is 0, measured oversleep is 5.
+ */
+static const DeltaTime OversleepMargin = CodesSleepOverhead;
 
 };

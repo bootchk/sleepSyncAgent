@@ -60,7 +60,7 @@ void SyncAgent::loop(){
 	 * Note not necessary to have PowerForSync before call, this will sleep until there is.
 	 */
 	assert(clique.isSelfMaster());
-	assert(!network.isRadioInUse());
+	assert(!Ensemble::isRadioInUse());
 
 	// DEBUG
 	initLogging();
@@ -68,10 +68,10 @@ void SyncAgent::loop(){
 	logLongLong(clique.getMasterID());
 
 	// Set sane timeout for SyncPeriod calculations, different from that used by SyncPowerSleeper
-	sleeper.setSaneTimeout( ScheduleParameters::MaxSaneTimeoutSyncSleeper );
+	Sleeper::setSaneTimeout( ScheduleParameters::MaxSaneTimeoutSyncSleeper );
 
 	// We expect not to brownout henceforth
-	syncPowerManager->enableBrownoutDetectMode();
+	SyncPowerManager::enterBrownoutDetectMode();
 	// Detection not in force until first call to measure power
 
 
@@ -91,7 +91,7 @@ void SyncAgent::loop(){
 
 		workManager.resetState();
 
-		if ( syncPowerManager->isPowerForSync() ) {
+		if ( SyncPowerManager::isPowerForSync() ) {
 			/*
 			 * Sync keeping: enough power to use radio for two slots
 			 */
@@ -101,11 +101,28 @@ void SyncAgent::loop(){
 		}
 		else {
 			/*
-			 * Sync maintenance: keep schedule by sleeping one sync period, w/o using radio
+			 * Paused state:
+			 * Approximate sync schedule by marking sync periods, w/o using radio.
+			 *
+			 * Especially when starting up, and depending on how power levels are configured,
+			 * and how much energy is harvested:
+			 * Might be in this state for just one or two sync periods,
+			 * and even in active sync keeping, we don't xmit sync every period anyway.
 			 */
-			syncState.setPaused();	// side effects
 			phase = Phase::SleepEntireSyncPeriod;
-			sleepEntireSyncPeriod();
+			syncState.setPaused();	// side effects limited to syncingState
+
+			/*
+			 * Are we paused for long time and are we master?
+			 */
+
+			if ( SyncState::shouldAbandonMastership() ) {
+				// doAbandonMastershipSyncPeriod
+				// For now, no abandon mastership
+			}
+			else {
+				sleepEntireSyncPeriod();
+			}
 			// continue to check power for radio.
 			// We may exhaust it and brown out, losing sync altogether
 		}
@@ -113,7 +130,7 @@ void SyncAgent::loop(){
 		// Keep schedule even if not enough power to listen/send sync messages to maintain accuracy
 		clique.schedule.rollPeriodForwardToNow();
 
-		assert(network.isLowPower());	// After every sync period
+		assert(Ensemble::isLowPower());	// After every sync period
 	}
 	// never returns
 }

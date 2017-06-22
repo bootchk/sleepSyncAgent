@@ -1,6 +1,7 @@
 
 #include "syncState.h"
 #include "../globals.h"
+// #include "../modules/syncSender.h"
 
 
 namespace {
@@ -12,19 +13,6 @@ bool isSyncing = false;
  * Things to do on state changes.
  */
 
-/*
- * Not enough power to use radio for full sync slot.
- * Ask an other unit in my clique to assume mastership.
- * Might not be heard, in which case other units should detect DropOut.
- *
- * Takes minimal power, for a short transmittal.
- */
-void doDyingBreath() {
-	// TODO this should be in the middle of the SyncSlot
-	phase = Phase::AbandonMastership;
-	syncSender.sendAbandonMastership();
-}
-
 
 /*
  * We were not keeping sync, but about to start tying again (using radio.)
@@ -34,24 +22,23 @@ void resumeSyncing() {
 }
 
 /*
- * Not enough power for self to continue syncing.
+ * Not enough power for self to do a normal SyncPeriod (SyncSlot and Fish/MergeSlot)
+ * TODO And xmit?  And fish?
+ * TODO if can listen but not fish, should do that.
+ * TODO if c
+ *
+ * Trigger a state machine that might eventually abandon mastership.
  * Other units might still have power and assume mastership of my clique
  */
 void pauseSyncing() {
-
-	// FUTURE if clique is probably not empty
-	if (clique.isSelfMaster()) {
-		doDyingBreath();
-		// TODO am I still master?
-	}
-	// else I am a slave, just drop out of clique, others may have enough power
+	// TODO count the consecutive times this has happened.
 
 	// FUTURE onSyncingPausedCallback();	// Tell app
 }
 
 
 
-}
+} // namespace
 
 
 
@@ -72,5 +59,22 @@ void SyncState::setPaused() {
 		// LogMessage::logPauseSync();	// Log that we fell out
 		pauseSyncing();
 	}
+}
+
+
+bool SyncState::shouldAbandonMastership() {
+	// TODO abandon
+	return false;
+	/*
+	 if (clique.isSelfMaster()) {
+	     result = true;
+			doDyingBreath();
+			// TODO am I still master?
+		}
+		// else I am a slave, just drop out of clique, others may have enough power
+		*/
+	// When it is more than a few, and there is enough power to xmit,
+
+		// FUTURE if clique is probably not empty
 }
 

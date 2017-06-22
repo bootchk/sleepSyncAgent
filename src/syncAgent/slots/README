@@ -1,6 +1,6 @@
 
-Most slots use the globals (network etc.)
-Slots use radio via Network class.
+Most slots use the (etc.)
+Slots use radio via Ensemble class.
 
 WorkSyncSlot: listen and/or send.
 MergeSlot: send only

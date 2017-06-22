@@ -19,7 +19,6 @@
  */
 
 typedef void (*MsgReceivedCallback)();
-typedef OSTime (*TimeoutFunc)();
 
 
 
@@ -27,7 +26,7 @@ class SyncSleeper {
 
 public:
 
-	static void clearReasonForWake();
+	// OLD static void clearReasonForWake();
 
 	/*
 	 * Sleep a given time (a func that calculates timeout, or a constant timeout)
@@ -44,7 +43,4 @@ public:
 			TimeoutFunc);
 
 	static MsgReceivedCallback getMsgReceivedCallback();
-
-	// For debugging
-	static uint32_t timeSinceLastStartSleep();
 };
