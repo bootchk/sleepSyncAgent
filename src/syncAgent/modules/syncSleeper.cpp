@@ -165,7 +165,7 @@ void SyncSleeper::sleepUntilTimeout(TimeoutFunc timeoutFunc) {
  */
 void SyncSleeper::sleepUntilTimeout(DeltaTime timeout)
 {
-	LongTime endingTime = longClockTimer->nowTime() + timeout;
+	LongTime endingTime = longClock->nowTime() + timeout;
 	DeltaTime remainingTimeout = timeout;
 
 	while (true) {

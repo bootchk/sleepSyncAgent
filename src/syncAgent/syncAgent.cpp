@@ -27,7 +27,7 @@ void (*SyncAgent::onSyncPointCallback)();
 
 void SyncAgent::initSleepers() {
 
-	// assert longClockTimer was init
+	// assert longClock was init
 	// assert counter is perpetually running
 	// assert counter interrupt enabled for overflow
 	// assert RTC0_IRQ is enabled (for Counter overflow and any Timers)
@@ -50,7 +50,7 @@ void SyncAgent::initSyncObjects(
 	)
 {
 	/*
-	 * Require caller initialized radio, mailbox, and LongClockTimer.
+	 * Require caller initialized radio, mailbox, and LongClock.
 	 * Require caller configured radio for protocol.
 	 * !!! But not isOSClockRunning() yet.
 	 * RADIO->POWER is set at POR reset, but it means 'was reset', not 'is using power'.

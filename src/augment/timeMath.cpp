@@ -10,7 +10,7 @@
  *
  * use -Wconversion to get warnings about coercions with loss
  *
- * A bit hacky: uses LongClockTimer static methods.  LongClockTimer instance must be initialized first.
+ * A bit hacky: uses LongClock static methods.  LongClock instance must be initialized first.
  */
 
 /*
@@ -41,12 +41,12 @@ DeltaTime TimeMath::clampedTimeDifference(LongTime laterTime, LongTime earlierTi
  * Requires futureTime less than MaxDeltaTime from now
  */
 DeltaTime TimeMath::clampedTimeDifferenceFromNow(LongTime futureTime) {
-	DeltaTime result = clampedTimeDifference(futureTime, LongClockTimer::nowTime()); // Coerced to 32-bit with possible loss
+	DeltaTime result = clampedTimeDifference(futureTime, LongClock::nowTime()); // Coerced to 32-bit with possible loss
 	// Already asserted: assert(result < MaxDeltaTime);
 	return result;
 }
 DeltaTime TimeMath::clampedTimeDifferenceToNow(LongTime pastTime) {
-	DeltaTime result = clampedTimeDifference(LongClockTimer::nowTime(), pastTime); // Coerced to 32-bit with possible loss
+	DeltaTime result = clampedTimeDifference(LongClock::nowTime(), pastTime); // Coerced to 32-bit with possible loss
 	// Already asserted: assert(result < MaxDeltaTime);
 	return result;
 }
@@ -57,7 +57,7 @@ DeltaTime TimeMath::clampedTimeDifferenceToNow(LongTime pastTime) {
  * - givenTime is less than MAX_DELTA_TIME from now.
  */
 DeltaTime TimeMath::timeDifferenceFromNow(LongTime givenTime) {
-	LongTime now = LongClockTimer::nowTime();
+	LongTime now = LongClock::nowTime();
 	LongTime result;
 
 	// Subtract past time from larger future time, else modulo math gives a large result

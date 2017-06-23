@@ -35,7 +35,7 @@ SystemID masterID;
  */
 LongTime messageTimeOfArrival() {
 	// WAS return owningClique->schedule.nowTime();
-	return LongClockTimer::nowTime();
+	return LongClock::nowTime();
 }
 
 LongTime middleOfNextSyncSlotOfFisher() {

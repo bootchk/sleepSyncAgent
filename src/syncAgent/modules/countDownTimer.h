@@ -1,6 +1,6 @@
 #pragma once
 
-#include <nRF5x.h>	// LongClockTimer
+#include <nRF5x.h>	// LongClock
 
 #include "../types.h"
 
@@ -27,7 +27,7 @@
 
 class CountdownTimer {
 public:
-	static void init(LongClockTimer*);
+	static void init(LongClock*);
 
 	/*
 	 * Take now time as starting time and countdown until now+expiration

@@ -1,19 +1,21 @@
 
+#include <cassert>
+
 #include "countDownTimer.h"
 
-#include "../globals.h"	// longClockTimer
+#include "../../augment/timeMath.h"
 
 namespace {
 LongTime _endingTime;
 DeltaTime _previousRemaining;
 
 // Uses but does not own
-LongClockTimer* _longClockTimer;
+LongClock* _longClock;
 }
 
 
-void CountdownTimer::init(LongClockTimer* aLongClockTimer) {
-	_longClockTimer = aLongClockTimer;
+void CountdownTimer::init(LongClock* aLongClock) {
+	_longClock = aLongClock;
 	_previousRemaining = 0;
 }
 
@@ -21,7 +23,7 @@ void CountdownTimer::init(LongClockTimer* aLongClockTimer) {
 void CountdownTimer::setExpiration(DeltaTime expiration){
 	assert(expiration > 0);
 
-	LongTime _endingTime = _longClockTimer->nowTime() + expiration;
+	LongTime _endingTime = _longClock->nowTime() + expiration;
 	_previousRemaining = expiration;
 }
 

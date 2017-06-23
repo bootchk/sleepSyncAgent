@@ -62,7 +62,6 @@ void onSyncPoint() {
 Radio myRadio;
 Mailbox myMailbox;
 SyncAgent sleepSyncAgent;
-LongClockTimer longClockTimer;
 PowerManager powerManager;
 
 
@@ -70,7 +69,7 @@ PowerManager powerManager;
 int main() {
 	// assert embedded system startup is done and calls main.
 	// assert caller initialized radio
-	sleepSyncAgent.init(&myRadio, &myMailbox, &longClockTimer, &powerManager, onWorkMsg, onSyncPoint);
+	sleepSyncAgent.init(&myRadio, &myMailbox, &longClock, &powerManager, onWorkMsg, onSyncPoint);
 	sleepSyncAgent.loop();	// never returns
 	return 0;
 }

@@ -27,7 +27,7 @@ void OverSleepMonitor::markStartSleep(TimeoutFunc timeoutFunc){
 	 *  Record time sleep started, more or less.
 	 *  Clock may advance by say one before sleep actually starts.
 	 */
-	sleepStartTime = LongClockTimer::nowTime();
+	sleepStartTime = LongClock::nowTime();
 
 	/*
 	 * Record initial value of timeoutFunc() monotonic sequence, more or less.
