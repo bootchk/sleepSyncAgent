@@ -76,7 +76,7 @@ DeltaTime TimeMath::convertLongTimeToOSTime(LongTime aTime) {
 	assert(aTime < UINT32_MAX);
 	DeltaTime result = (DeltaTime) aTime;
 	// Even stronger assertion that result is less than OSTime, which may be 24-bit
-	assert(result < LongClockTimer::MaxTimeout);
+	assert(result < Timer::MaxTimeout);
 	return result;
 }
 
