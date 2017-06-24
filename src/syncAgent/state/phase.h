@@ -46,6 +46,7 @@ enum class Phase {
 
 	// Sleep remainder of SyncPeriod
 	// 13
-	SleepRemainder
+	SleepRemainder,
+	StartSlotSequence
 
 };

@@ -127,7 +127,7 @@ void SyncWorkSlot::doIdleSlotRemainder() {
  * listen for sync the whole period.
  */
 void SyncWorkSlot::doSlaveSyncWorkSlot() {
-	phase = Phase::SyncSlaveListen;
+
 
 	//LogMessage::logListenFullSlot();
 	Ensemble::startReceiving();
@@ -138,6 +138,7 @@ void SyncWorkSlot::doSlaveSyncWorkSlot() {
 	// Log delay from sync point to actual start listening.
 	// logInt(clique.schedule.deltaPastSyncPointToNow()); log("<delta SP to sync listen.\n");
 
+	phase = Phase::SyncSlaveListen;
 	(void) syncSleeper.sleepUntilMsgAcceptedOrTimeout(
 			&msgHandler,
 			slotSchedule.deltaToThisSyncSlotEnd);
