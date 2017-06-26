@@ -34,7 +34,9 @@ enum class HandlingResult {
 	 */
 	StopListeningHeardMasterSync,
 	StopListeningHeardWorkSync,
-	StopListeningHeardMergeSync
+	StopListeningHeardMergeSync,
+
+	TimedOut
 
 };
 
