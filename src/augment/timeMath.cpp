@@ -45,12 +45,23 @@ DeltaTime TimeMath::clampedTimeDifferenceFromNow(LongTime futureTime) {
 	// Already asserted: assert(result < MaxDeltaTime);
 	return result;
 }
+
+#ifdef NOT_USED
+/*
+ * Note require pastTime earlier than now.
+ * Returns zero if pastTime earlier than now.
+ *
+ * Don't use this when pastTime should be asserted to be an earlier time.
+ */
 DeltaTime TimeMath::clampedTimeDifferenceToNow(LongTime pastTime) {
 	DeltaTime result = clampedTimeDifference(LongClock::nowTime(), pastTime); // Coerced to 32-bit with possible loss
 	// Already asserted: assert(result < MaxDeltaTime);
 	return result;
 }
+#endif
 
+
+// TODO this is same as above
 /*
  * Smallest difference of givenTime from now, where:
  * - givenTime may be in the past
@@ -72,11 +83,17 @@ DeltaTime TimeMath::timeDifferenceFromNow(LongTime givenTime) {
 
 
 DeltaTime TimeMath::convertLongTimeToOSTime(LongTime aTime) {
+	/*
+	 * Assertion must be first, before the conversion that might lose data.
+	 * Assert result is an OSTime, which may be 24-bit.
+	 * Comparison is less than OR equal to max value of the type DeltaTime.
+	 * The coerce is only to 32-bit type.
+	 */
+	assert(aTime <= Timer::MaxTimeout);
+
 	// !!! Coerce to 32-bit, with possible loss
-	assert(aTime < UINT32_MAX);
 	DeltaTime result = (DeltaTime) aTime;
-	// Even stronger assertion that result is less than OSTime, which may be 24-bit
-	assert(result < Timer::MaxTimeout);
+
 	return result;
 }
 
@@ -92,4 +109,14 @@ DeltaTime TimeMath::clampedSubtraction(DeltaTime lhs, DeltaTime rhs){
 }
 
 
+DeltaTime TimeMath::elapsed(LongTime earlierTime) {
+	LongTime now = LongClock::nowTime();
 
+	// Require earlier time to left on practically infinite linear timeline
+	assert(now >= earlierTime);
+
+	LongTime diff = now - earlierTime;
+
+	// Will assert if overflows DeltaTime
+	return convertLongTimeToOSTime(diff);
+}

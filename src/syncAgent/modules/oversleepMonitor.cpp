@@ -49,7 +49,7 @@ bool OverSleepMonitor::checkOverslept(){
 	 * startTimeOfSleep may be -1 or more.
 	 * So this result may be +2 or more.
 	 */
-	DeltaTime actualSleepDuration = timeSinceLastStartSleep() ;
+	DeltaTime actualSleepDuration = timeElapsedSinceLastStartSleep() ;
 
 	/*
 	 * 2 is the adjustment for imprecise timekeeping
@@ -58,7 +58,8 @@ bool OverSleepMonitor::checkOverslept(){
 		// Write global sync phase we were sleeping in, if not already written by brownout
 		CustomFlash::tryWriteIntAtIndex(PhaseIndex, syncAgent.getPhase());
 
-		CustomFlash::tryWriteIntAtIndex(OversleptDurationIndex, actualSleepDuration);
+		CustomFlash::tryWriteIntAtIndex(IntendedSleepDuration, intendedSleepDuration);
+		CustomFlash::tryWriteIntAtIndex(OversleptDuration, actualSleepDuration);
 
 		LogMessage::logOverslept();
 
@@ -68,8 +69,8 @@ bool OverSleepMonitor::checkOverslept(){
 }
 
 
-DeltaTime OverSleepMonitor::timeSinceLastStartSleep() {
-	return (TimeMath::clampedTimeDifferenceToNow(sleepStartTime) ) ;
+DeltaTime OverSleepMonitor::timeElapsedSinceLastStartSleep() {
+	return (TimeMath::elapsed(sleepStartTime) ) ;
 }
 /*
  * TODO also check sanity versus passed in max sane timeout

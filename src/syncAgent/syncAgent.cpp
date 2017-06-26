@@ -78,7 +78,7 @@ void SyncAgent::initSyncObjects(
 	BrownoutRecorder::registerCallbacks(
 			getPhase,
 			getReasonForWake,
-			OverSleepMonitor::timeSinceLastStartSleep);
+			OverSleepMonitor::timeElapsedSinceLastStartSleep);
 
 	// assert LongClock is reset
 	// not assert LongClock running assert(aLCT->isOSClockRunning());

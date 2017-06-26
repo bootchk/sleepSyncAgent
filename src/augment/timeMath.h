@@ -44,12 +44,29 @@ public:
 
 	static DeltaTime clampedTimeDifference(LongTime laterTime, LongTime earlierTime);
 	static DeltaTime clampedTimeDifferenceFromNow(const LongTime laterTime);
-	static DeltaTime clampedTimeDifferenceToNow(LongTime earlierTime);
+	//static DeltaTime clampedTimeDifferenceToNow(LongTime earlierTime);
 	static DeltaTime timeDifferenceFromNow(LongTime givenTime);
 
-	// Convert LongTime (typically result of difference) to OSTime, asserting no loss of data
+	/*
+	 * Difference of DeltaTimes.
+	 * Clamped to zero if rhs is larger than leftHandSize
+	 */
+	static DeltaTime clampedSubtraction(DeltaTime lhs, DeltaTime rhs);
+
+	/*
+	 * Elapsed DeltaTime since earlierTime, referenced to now.
+	 * Asserts if earlierTime is after now.
+	 * Asserts if difference between earlierTime and now is larger than max DeltaTime.
+	 *
+	 * Use this when LongTime was simply recorded in the past (not the result of math.)
+	 */
+	static DeltaTime elapsed(LongTime earlierTime);
+
+private:
+	/*
+	 * Convert LongTime (typically result of difference) to OSTime, asserting no loss of data
+	 */
 	static DeltaTime convertLongTimeToOSTime(LongTime givenTime);
 
-	// Subtraction of two DeltaTimes (unsigned) clamped to zero
-	static DeltaTime clampedSubtraction(DeltaTime lhs, DeltaTime rhs);
+
 };

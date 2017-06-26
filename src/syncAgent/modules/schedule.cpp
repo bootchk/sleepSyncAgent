@@ -225,15 +225,19 @@ DeltaTime  Schedule::deltaNowToNextSyncPoint() {
 	 * If we are already past it, will whack sync.
 	 * It could happen if we fish in the last slot and code delays us past nextSyncPoint.
 	 */
+#ifndef NDEBUG
+	// Code for testing only
 	if (result == 0) {
 		// Calculate magnitude in past, how late are we?
-		DeltaTime wrongDelta = TimeMath::clampedTimeDifferenceToNow(timeOfNextSyncPoint());
+		DeltaTime wrongDelta = TimeMath::elapsed(timeOfNextSyncPoint());
 		logInt(wrongDelta);
 		log(">>> zero or neg delta to next SyncPoint\n");
 	}
+#endif
 	return result;
 }
 
+#ifdef NOT_USED
 // Different: backwards from others: from past time to now
 DeltaTime  Schedule::deltaPastSyncPointToNow() {
 	DeltaTime result = TimeMath::clampedTimeDifferenceToNow(startTimeOfSyncPeriod());
@@ -244,6 +248,7 @@ DeltaTime  Schedule::deltaPastSyncPointToNow() {
 	assert(result <= ScheduleParameters::NormalSyncPeriodDuration);
 	return result;
 }
+#endif
 
 
 

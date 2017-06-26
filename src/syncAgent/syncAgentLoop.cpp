@@ -34,6 +34,7 @@ CombinedSyncPeriod syncPeriod;
 
 
 void sleepEntireSyncPeriod() {
+	phase = Phase::SleepEntireSyncPeriod;
 	syncSleeper.sleepUntilTimeout(clique.schedule.deltaNowToNextSyncPoint);
 }
 
@@ -109,7 +110,7 @@ void SyncAgent::loop(){
 			 * Might be in this state for just one or two sync periods,
 			 * and even in active sync keeping, we don't xmit sync every period anyway.
 			 */
-			phase = Phase::SleepEntireSyncPeriod;
+
 			syncState.setPaused();	// side effects limited to syncingState
 
 			/*
@@ -118,7 +119,8 @@ void SyncAgent::loop(){
 
 			if ( SyncState::shouldAbandonMastership() ) {
 				// doAbandonMastershipSyncPeriod
-				// For now, no abandon mastership
+				// For now, no abandon mastership i.e. we never get here
+				assert(false);
 			}
 			else {
 				sleepEntireSyncPeriod();
@@ -126,8 +128,13 @@ void SyncAgent::loop(){
 			// continue to check power for radio.
 			// We may exhaust it and brown out, losing sync altogether
 		}
-		// Sync period over, advance schedule.
-		// Keep schedule even if not enough power to listen/send sync messages to maintain accuracy
+
+		/*
+		 * Sync period over,
+		 * Assert now == timeAtStartOfSyncPeriod + syncPeriodDuration
+		 * i.e. we must have slept the proper duration.
+		 * Advance schedule, even if not enough power to listen/send sync messages to maintain accuracy.
+		 */
 		clique.schedule.rollPeriodForwardToNow();
 
 		assert(Ensemble::isLowPower());	// After every sync period

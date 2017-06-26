@@ -8,6 +8,8 @@
 #include "syncSleeper.h"
 
 #include "../logMessage.h"
+
+// Uses pure class
 #include "oversleepMonitor.h"
 
 #include "../scheduleParameters.h"
