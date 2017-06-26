@@ -1,26 +1,25 @@
 
 #include <cassert>
 
-#include <exceptions/powerAssertions.h>	// nRF5x lib
-#include <exceptions/resetAssertions.h>
-
-#include "../globals.h"	// many
 #include "syncSleeper.h"
+
+// nRF5x lib
+#include <clock/sleeper.h>	// pure class Sleeper
+#include <exceptions/powerAssertions.h>
+#include <exceptions/resetAssertions.h>
 
 #include "../logMessage.h"
 
-// Uses pure class
+// Uses pure classes
 #include "oversleepMonitor.h"
+#include "../../augment/timeMath.h"
+#include "serializer.h"
+#include "schedule.h"
 
 #include "../scheduleParameters.h"
 
 
 namespace {
-
-// Uses global Sleeper
-
-OverSleepMonitor oversleepMonitor;
-
 
 /*
  * Call sleeper after asserting certain peripherals are off.
@@ -61,7 +60,7 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 
 	// Nested checks: physical layer CRC, then transport layer MessageType
 	if (Ensemble::isPacketCRCValid()) {
-		SyncMessage* msg = serializer.unserialize();
+		SyncMessage* msg = Serializer::unserialize();
 		if (msg != nullptr) {
 			// assert msg->type valid
 
@@ -132,7 +131,7 @@ DeltaTime calculateTimeout(TimeoutFunc timeoutFunc) {
  */
 void SyncSleeper::sleepUntilTimeout(TimeoutFunc timeoutFunc) {
 
-	oversleepMonitor.markStartSleep(timeoutFunc);
+	OverSleepMonitor::markStartSleep(timeoutFunc);
 
 	while (true) {
 		// Calculate remaining timeout on each loop iteration.  Must be monotonic.
@@ -156,7 +155,7 @@ void SyncSleeper::sleepUntilTimeout(TimeoutFunc timeoutFunc) {
 		 */
 	}
 
-	(void) oversleepMonitor.checkOverslept();
+	(void) OverSleepMonitor::checkOverslept();
 
 }
 
@@ -234,7 +233,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 	//assert(Sleeper::reasonForWakeIsCleared());	// This also checks we haven't received yet
 	// FUTURE currently, this is being cleared in sleepUntil but that suffers from races
 
-	oversleepMonitor.markStartSleep(timeoutFunc);
+	OverSleepMonitor::markStartSleep(timeoutFunc);
 
 	while (true) {
 
@@ -254,7 +253,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 		switch (Sleeper::getReasonForWake()) {
 		case ReasonForWake::MsgReceived:
 			// Record TOA as soon as possible
-			clique.schedule.recordMsgArrivalTime();
+			Schedule::recordMsgArrivalTime();
 
 			// if timer semantics are: restartable, cancel timer here
 			handlingResult = dispatchFilteredMsg(msgHandler);
@@ -316,7 +315,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 		 * Robustness:ensure not sleep too long with radio powered.
 		 * Probably a fixable bug.  Possibly hardware flaws that can't be fixed.
 		 */
-		if (oversleepMonitor.checkOverslept()) {
+		if (OverSleepMonitor::checkOverslept()) {
             Ensemble::stopReceiving();
             // handlingResult is invalid
             break;
@@ -325,7 +324,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 		// assert Ensemble::isRadioInUse()
 	}	// while(true)
 
-	(void) oversleepMonitor.checkOverslept();
+	(void) OverSleepMonitor::checkOverslept();
 
 	assert(!Ensemble::isRadioInUse());
 	// not assert Ensemble::isLowPower(), HFXO is still on
