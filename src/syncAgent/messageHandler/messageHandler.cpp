@@ -4,6 +4,9 @@
 
 #include "../logMessage.h"
 
+#ifdef OLD
+Now this is copied into subclasses
+
 /*
  * Dispatcher common to all subclasses of MessageHandler
  */
@@ -36,6 +39,7 @@ HandlingResult MessageHandler::handle(SyncMessage* msg){
 
 	return handlingResult;
 }
+#endif
 
 
 

@@ -57,7 +57,7 @@ void sleepWithRadioAndTimerPowerUntilTimeout(DeltaTime timeout) {
  * Filter invalid messages.
  * Return result of dispatching valid messages.
  */
-HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has handlers per message type
+HandlingResult dispatchFilteredMsg( MessageHandler msgHandler) { // Slot has handlers per message type
 	// FUTURE while any received messages queued
 
 	HandlingResult handlingResult = HandlingResult::KeepListening;
@@ -68,7 +68,7 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 		if (msg != nullptr) {
 			// assert msg->type valid
 
-			handlingResult = msgHandler->handle(msg);
+			handlingResult = msgHandler(msg);
 			if (handlingResult!=HandlingResult::KeepListening) {
 				// Remainder of duration radio not used (low power) but HFXO is still on.
 				// TODO this assertion should be at beginning of routine
@@ -110,7 +110,7 @@ HandlingResult dispatchFilteredMsg( MessageHandler* msgHandler) { // Slot has ha
 
 
 
-HandlingResult determineHandlingResult(MessageHandler* msgHandler) {
+HandlingResult determineHandlingResult(MessageHandler msgHandler) {
 	/*
 	 * We were wakened.
 	 * Switch on reasonForWake
@@ -262,7 +262,7 @@ void SyncSleeper::sleepUntilTimeout(TimeoutFunc timeoutFunc) {
  * Here, we assume not, and always that Timer was canceled.
  */
 HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
-		MessageHandler* msgHandler,
+		MessageHandler msgHandler,
 		TimeoutFunc timeoutFunc)	// function returning remaining duration of slot
 {
 	HandlingResult handlingResult = HandlingResult::KeepListening;

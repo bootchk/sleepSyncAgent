@@ -39,7 +39,7 @@ public:
 	 * Expect either a timeout or a message event.
 	 */
 	static HandlingResult sleepUntilMsgAcceptedOrTimeout(
-			MessageHandler*,
+			MessageHandler,
 			TimeoutFunc);
 
 	static MsgReceivedCallback getMsgReceivedCallback();

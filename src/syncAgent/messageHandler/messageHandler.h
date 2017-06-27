@@ -43,10 +43,46 @@ enum class HandlingResult {
 };
 
 
+
+/*
+ * Pointer to function taking pointer to SyncMessage and returning HandlingResult.
+ */
+typedef HandlingResult (*MessageHandler)(SyncMessage* msg);
+
+
+
+/*
+ * Identical interface, different implementations, but static.
+ */
+class SyncSlotMessageHandler{
+public:
+	static HandlingResult handle(SyncMessage* msg);
+private:
+	static HandlingResult handleMasterSyncMessage(SyncMessage* msg) ;
+	static HandlingResult handleMergeSyncMessage(SyncMessage* msg);
+	static HandlingResult handleWorkSyncMessage(SyncMessage* msg);
+	static HandlingResult handleAbandonMastershipMessage(SyncMessage* msg);
+};
+
+
+class FishSlotMessageHandler {
+public:
+	static HandlingResult handle(SyncMessage* msg);
+private:
+	static HandlingResult handleMasterSyncMessage(SyncMessage* msg) ;
+	static HandlingResult handleMergeSyncMessage(SyncMessage* msg);
+	static HandlingResult handleWorkSyncMessage(SyncMessage* msg);
+	static HandlingResult handleAbandonMastershipMessage(SyncMessage* msg);
+};
+
+
+#ifdef OLD
 /*
  * Super class having dispatcher on code in message.
  * I had much trouble using polymorphic dispatch on SyncMessage*
  */
+
+
 class MessageHandler {
 public:
 	// Avoid warning about non-virtual destructor but requires stdlib
@@ -70,7 +106,7 @@ public:
  */
 
 
-class SyncSlotMessageHandler : public MessageHandler {
+class SyncSlotMessageHandler: public MessageHandler {
 public:
 	~SyncSlotMessageHandler() {};
 
@@ -90,3 +126,4 @@ public:
 	HandlingResult handleWorkSyncMessage(SyncMessage* msg);
 	HandlingResult handleAbandonMastershipMessage(SyncMessage* msg);
 };
+#endif

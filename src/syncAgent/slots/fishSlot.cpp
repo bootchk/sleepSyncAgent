@@ -18,13 +18,9 @@
 
 namespace {
 
-FishSchedule fishSchedule;
-FishSlotMessageHandler msgHandler;
-
-
 void sleepUntilFishSlotStart() {
 	// pass to sleeper: function to calculate start time
-	syncSleeper.sleepUntilTimeout(fishSchedule.deltaToSlotStart);
+	syncSleeper.sleepUntilTimeout(FishSchedule::deltaToSlotStart);
 }
 
 } //namespace
@@ -38,7 +34,7 @@ void FishSlot::tryPerform() {
 
 	// Sleep ultra low-power across normally sleeping slots to start of fish slot.
 	// Note sleep might have assertions on power condition
-	fishSchedule.init();	// Calculate start time once
+	FishSchedule::init();	// Calculate start time once
 
 	phase = Phase::SleepTilFish;
 	sleepUntilFishSlotStart();
@@ -69,8 +65,8 @@ void FishSlot::perform() {
 
 	// assert can receive an event that wakes imminently: race to sleep
 	(void) syncSleeper.sleepUntilMsgAcceptedOrTimeout(
-			&msgHandler,
-			fishSchedule.deltaToSlotEnd);
+			FishSlotMessageHandler::handle,
+			FishSchedule::deltaToSlotEnd);
 
 	// Not using result, might return sooner if caught something
 

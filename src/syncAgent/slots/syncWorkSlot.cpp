@@ -12,15 +12,6 @@
 
 
 
-namespace {
-
-SyncSlotSchedule slotSchedule;
-SyncSlotMessageHandler msgHandler;
-
-} // namespace
-
-
-
 HandlingResult SyncWorkSlot::doListenHalfSyncWorkSlot(TimeoutFunc timeoutFunc) {
 
 	/*
@@ -38,7 +29,7 @@ HandlingResult SyncWorkSlot::doListenHalfSyncWorkSlot(TimeoutFunc timeoutFunc) {
 	}
 
 	HandlingResult result = syncSleeper.sleepUntilMsgAcceptedOrTimeout(
-			&msgHandler,
+			SyncSlotMessageHandler::handle,
 			timeoutFunc
 			);
 
@@ -60,7 +51,7 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 	// not assert self is Master
 
 	phase = Phase::SyncListenFirstHalf;
-	(void) doListenHalfSyncWorkSlot(slotSchedule.deltaToThisSyncSlotMiddleSubslot);
+	(void) doListenHalfSyncWorkSlot(SyncSlotSchedule::deltaToThisSyncSlotMiddleSubslot);
 	assert(!Ensemble::isRadioInUse());
 
 	/*
@@ -107,7 +98,7 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 	 * Result doesn't matter, slot is over and we proceed regardless whether we heard sync keeping msg.
 	 */
 	phase = Phase::SyncListenSecondHalf;
-	(void) doListenHalfSyncWorkSlot(slotSchedule.deltaToThisSyncSlotEnd);
+	(void) doListenHalfSyncWorkSlot(SyncSlotSchedule::deltaToThisSyncSlotEnd);
 
 	// not assert Ensemble::isLowPower()
 }
@@ -119,7 +110,7 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 // Sleep with network shutdown for remainder of sync slot
 void SyncWorkSlot::sleepSlotRemainder() {
 	//assert(!netork->isInUse());
-	syncSleeper.sleepUntilTimeout(slotSchedule.deltaToThisSyncSlotEnd);
+	syncSleeper.sleepUntilTimeout(SyncSlotSchedule::deltaToThisSyncSlotEnd);
 }
 
 
@@ -140,8 +131,8 @@ void SyncWorkSlot::doSlaveSyncWorkSlot() {
 
 	phase = Phase::SyncSlaveListen;
 	(void) syncSleeper.sleepUntilMsgAcceptedOrTimeout(
-			&msgHandler,
-			slotSchedule.deltaToThisSyncSlotEnd);
+			SyncSlotMessageHandler::handle,
+			SyncSlotSchedule::deltaToThisSyncSlotEnd);
 	/*
 	 * Not using result:  all message handlers return false i.e. keep looking.
 	 * Assert we timed out and now is end of slot.
@@ -158,7 +149,7 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 	HandlingResult handlingResult;
 
 	phase = Phase::SyncListenFirstHalf;
-	handlingResult = doListenHalfSyncWorkSlot(slotSchedule.deltaToThisSyncSlotMiddleSubslot);
+	handlingResult = doListenHalfSyncWorkSlot(SyncSlotSchedule::deltaToThisSyncSlotMiddleSubslot);
 	assert(!Ensemble::isRadioInUse());
 
 	/*
@@ -176,7 +167,7 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 	// Keep listening for other better Masters and work.
 	// Result doesn't matter, slot is over and we proceed whether we heard sync keeping sync or not.
 	phase = Phase::SyncListenSecondHalf;
-	(void) doListenHalfSyncWorkSlot(slotSchedule.deltaToThisSyncSlotEnd);
+	(void) doListenHalfSyncWorkSlot(SyncSlotSchedule::deltaToThisSyncSlotEnd);
 
 	// not assert Ensemble::isLowPower()
 }
