@@ -15,15 +15,14 @@
 /*
  * Whether to continue listening in the slot.
  *
- * We don't throw away information but carry what message type was heard.
- * Note quiet conversions to bool
+ * We don't throw away information: HandlingResult carries info: what message type was heard, if any.
  */
 enum class HandlingResult {
 	/*
 	 * Means:
 	 * - Did not hear intended message
 	 * - OR heard intended message but can still hear more
-	 * - OR timed out without hearing any messages
+	 *
 	 * In other words, heard intended message is false.
 	 */
 	KeepListening,
@@ -36,6 +35,9 @@ enum class HandlingResult {
 	StopListeningHeardWorkSync,
 	StopListeningHeardMergeSync,
 
+	/*
+	 * Timed out without hearing any messages
+	 */
 	TimedOut
 
 };

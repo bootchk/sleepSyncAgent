@@ -25,12 +25,16 @@ enum class Phase {
 
 	// Regular SyncPeriod, establish sync using radio
 
+	// Sync slot preamble
+	SyncChooseKind,
+	SyncSkipSlot,
+
 	// Sync slot Master
-	// 4-8
 	SyncListenFirstHalf,
 	SyncXmit,
 	SyncXmitWorkSync,
 	SyncListenSecondHalf,
+
 	// Sync slot Slave
 	SyncSlaveListen,
 

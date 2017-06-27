@@ -19,4 +19,6 @@ public:
 
 	// Call at any time, but most useful after a sleep and before sleep ended.
 	static unsigned int timeElapsedSinceLastStartSleep();
+
+	static unsigned int getPhaseAndReason();
 };

@@ -45,6 +45,7 @@ void FishSlot::tryPerform() {
 	// Power might be replenished.
 
 	if (SyncPowerManager::isPowerForRadio()) {
+		// XXX network.start, then test power again
 		phase = Phase::Fish;
 		//LogMessage::logFished();
 		perform();

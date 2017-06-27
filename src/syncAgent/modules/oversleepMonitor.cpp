@@ -3,16 +3,15 @@
 
 #include "oversleepMonitor.h"
 
-
-// TODO reduce these dependencies
-#include "../globals.h"	// syncAgent
 #include "nRF5x.h"	// LongTime, CustomFlash
-#include "../scheduleParameters.h"
 
+#include "../scheduleParameters.h"
+#include "../syncAgent.h"
+#include "../logMessage.h"
+
+#include "syncSleeper.h"
 
 namespace {
-
-// Uses global Sleeper
 
 LongTime sleepStartTime;
 DeltaTime intendedSleepDuration;
@@ -56,7 +55,7 @@ bool OverSleepMonitor::checkOverslept(){
 	 */
 	if ( actualSleepDuration > intendedSleepDuration + ScheduleParameters::OversleepMargin ) {
 		// Write global sync phase we were sleeping in, if not already written by brownout
-		CustomFlash::tryWriteIntAtIndex(PhaseIndex, syncAgent.getPhase());
+		CustomFlash::tryWriteIntAtIndex(PhaseIndex, SyncAgent::getPhase());
 
 		CustomFlash::tryWriteIntAtIndex(IntendedSleepDuration, intendedSleepDuration);
 		CustomFlash::tryWriteIntAtIndex(OversleptDuration, actualSleepDuration);
@@ -80,3 +79,18 @@ if ( timeSinceLastStartSleep() > ScheduleParameters::RealSlotDuration ) {
 			// Record and try avoid brownout
             LogMessage::logOverslept();
             */
+
+
+union PhaseReason {
+	unsigned int i;
+	short unsigned int shorts[2];
+};
+
+unsigned int OverSleepMonitor::getPhaseAndReason() {
+	PhaseReason result;
+
+	// pack two short values into a 32-bit int
+	result.shorts[0] = (short unsigned int) SyncAgent::getPhase();
+	result.shorts[1] = (short unsigned int) SyncSleeper::getPriorReasonForWake();
+	return result.i;
+}

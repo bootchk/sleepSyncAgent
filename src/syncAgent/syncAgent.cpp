@@ -81,7 +81,8 @@ void SyncAgent::initSyncObjects(
 	BrownoutRecorder::registerCallbacks(
 			//getPhase,
 			SyncSleeper::getCountSleeps,
-			SyncSleeper::getPriorReasonForWake,
+			//SyncSleeper::getPriorReasonForWake,
+			OverSleepMonitor::getPhaseAndReason,
 			OverSleepMonitor::timeElapsedSinceLastStartSleep);
 
 	// assert LongClock is reset

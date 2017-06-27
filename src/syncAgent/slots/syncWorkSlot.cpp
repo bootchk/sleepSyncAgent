@@ -200,10 +200,13 @@ void SyncWorkSlot::tryPerform() {
 	Ensemble::startup();
 	//LongTime endTime = clique.schedule.nowTime();
 
+	// Starting network might have exhausted power.  Unlikely
 	if (SyncPowerManager::isPowerForRadio()) {
+		phase = Phase::SyncChooseKind;
 		perform();
 	}
 	else {
+		phase = Phase::SyncSkipSlot;
 		LogMessage::logNoPowerToStartSyncSlot();
 
 		// Busted SyncSlot, no listen, no send sync
