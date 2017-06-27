@@ -21,6 +21,10 @@
 
 namespace {
 
+// debugging
+unsigned int countSleeps = 0;	// inner calls to Sleeper, could be a few but not more than tens
+ReasonForWake priorReasonForWake;	// reason for previous wake (before we cleared it, slept, and browned out.)
+
 /*
  * Call sleeper after asserting certain peripherals are off.
  * All calls to Sleeper::sleepUntilEventWithTimeout() funnel through these methods.
@@ -201,8 +205,13 @@ DeltaTime calculateTimeout(TimeoutFunc timeoutFunc) {
 void SyncSleeper::sleepUntilTimeout(TimeoutFunc timeoutFunc) {
 
 	OverSleepMonitor::markStartSleep(timeoutFunc);
+	countSleeps = 0;
 
 	do {
+		// debugging
+		countSleeps++;
+		priorReasonForWake = Sleeper::getReasonForWake();
+
 		// Calculate remaining timeout on each loop iteration.  Must be monotonic.
 		OSTime timeout = calculateTimeout(timeoutFunc);
 
@@ -273,10 +282,14 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 	// FUTURE currently, this is being cleared in sleepUntil but that suffers from races
 
 	OverSleepMonitor::markStartSleep(timeoutFunc);
+	countSleeps = 0;
 
 	do {
 		// loop invariant: Ensemble::isRadioInUse() && Timer::isCanceled
 
+		// debugging
+		countSleeps++;
+		priorReasonForWake = Sleeper::getReasonForWake();
 
 		OSTime timeout = calculateTimeout(timeoutFunc);
 
@@ -330,6 +343,9 @@ MsgReceivedCallback SyncSleeper::getMsgReceivedCallback() {
 	// Return callback of the owned/wrapped Sleeper::
 	return Sleeper::msgReceivedCallback;
 }
+
+unsigned int SyncSleeper::getCountSleeps() { return countSleeps; }
+unsigned int SyncSleeper::getPriorReasonForWake() { return (unsigned int) priorReasonForWake; }
 
 
 

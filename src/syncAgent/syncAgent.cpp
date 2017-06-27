@@ -75,9 +75,13 @@ void SyncAgent::initSyncObjects(
 	clique.init();
 
 	// Register callbacks that return debug info
+	/*
+	 * BrownoutRecorder will also record phase if not already written by prior oversleep.
+	 */
 	BrownoutRecorder::registerCallbacks(
-			getPhase,
-			getReasonForWake,
+			//getPhase,
+			SyncSleeper::getCountSleeps,
+			SyncSleeper::getPriorReasonForWake,
 			OverSleepMonitor::timeElapsedSinceLastStartSleep);
 
 	// assert LongClock is reset

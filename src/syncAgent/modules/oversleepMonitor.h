@@ -18,5 +18,5 @@ public:
 	static bool checkOverslept();
 
 	// Call at any time, but most useful after a sleep and before sleep ended.
-	static DeltaTime timeElapsedSinceLastStartSleep();
+	static unsigned int timeElapsedSinceLastStartSleep();
 };

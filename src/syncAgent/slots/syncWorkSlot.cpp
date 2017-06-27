@@ -115,13 +115,13 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 
 
 
-#ifdef NOTUSED
-// Sleep with radio off for remainder of sync slot
-void SyncWorkSlot::doIdleSlotRemainder() {
-	assert(!radio->isInUse());
-	syncSleeper.sleepUntilTimeout(clique.schedule.deltaToThisSyncSlotEnd);
+
+// Sleep with network shutdown for remainder of sync slot
+void SyncWorkSlot::sleepSlotRemainder() {
+	//assert(!netork->isInUse());
+	syncSleeper.sleepUntilTimeout(slotSchedule.deltaToThisSyncSlotEnd);
 }
-#endif
+
 
 /*
  * listen for sync the whole period.
@@ -185,15 +185,33 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 
 
 /*
- * Since SyncSlot is first and we already checked isPowerForSync(),
- * the check isPowerForRadio should always succeed.
+ * SyncSlot is first.
+ * Assert already checked isPowerForSync(),
  */
 void SyncWorkSlot::tryPerform() {
+
+	/*
+	 * Start network before deciding what kind of sync slot to perform.
+	 */
+	// Sleeps until ensemble ready. Deadtime in slot.
+	// TIMING: > 360uSec, as much as 1.2mSec
+	// Current:
+	//LongTime startTime = clique.schedule.nowTime();
+	Ensemble::startup();
+	//LongTime endTime = clique.schedule.nowTime();
+
 	if (SyncPowerManager::isPowerForRadio()) {
 		perform();
 	}
 	else {
 		LogMessage::logNoPowerToStartSyncSlot();
+
+		// Busted SyncSlot, no listen, no send sync
+		sleepSlotRemainder();
+
+		// Continuation will be sleep to FishSlot
+
+		// Maybe HFXO will start faster on second iterations?
 	}
 }
 
@@ -210,11 +228,7 @@ void SyncWorkSlot::tryPerform() {
 void SyncWorkSlot::perform() {
 	// logInt(clique.schedule.deltaPastSyncPointToNow()); log("<delta SP to start slot.\n");
 
-	// Sleeps until ensemble ready. Deadtime in slot.
-	// TIMING: > 360uSec
-	//LongTime startTime = clique.schedule.nowTime();
-	Ensemble::startup();
-	//LongTime endTime = clique.schedule.nowTime();
+	// assert network is started
 
 	// Call shouldTransmitSync every time, since it needs calls side effect reset itself
 	bool needXmitSync = syncBehaviour.shouldTransmitSync();

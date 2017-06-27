@@ -53,6 +53,8 @@ private:
 	
 	static void perform();
 	
+	static void sleepSlotRemainder();
+
 public:
 	static void tryPerform();
 };

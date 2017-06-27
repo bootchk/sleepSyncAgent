@@ -68,9 +68,11 @@ bool OverSleepMonitor::checkOverslept(){
 	return result;
 }
 
-
-DeltaTime OverSleepMonitor::timeElapsedSinceLastStartSleep() {
-	return (TimeMath::elapsed(sleepStartTime) ) ;
+/*
+ * Coerce to unsigned int
+ */
+unsigned int OverSleepMonitor::timeElapsedSinceLastStartSleep() {
+	return ((unsigned int) TimeMath::elapsed(sleepStartTime) ) ;
 }
 /*
  * TODO also check sanity versus passed in max sane timeout

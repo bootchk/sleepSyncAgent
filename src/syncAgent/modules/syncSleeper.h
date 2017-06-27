@@ -43,4 +43,8 @@ public:
 			TimeoutFunc);
 
 	static MsgReceivedCallback getMsgReceivedCallback();
+
+	// debugging
+	static unsigned int getCountSleeps();
+	static unsigned int getPriorReasonForWake();
 };
