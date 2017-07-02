@@ -17,7 +17,7 @@ MergeSlot mergeSlot;
 
 
 void sleepRemainderOfSyncPeriod() {
-	syncSleeper.sleepUntilTimeout(clique.schedule.deltaNowToNextSyncPoint);
+	SyncSleeper::sleepUntilTimeout(clique.schedule.deltaNowToNextSyncPoint);
 }
 
 void tryFishOrMerge() {

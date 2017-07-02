@@ -4,7 +4,7 @@ Radio* radio;
 Mailbox* workOutMailbox;
 SyncPowerManager* syncPowerManager;
 
-SyncSleeper syncSleeper;
+//SyncSleeper syncSleeper;
 
 Clique clique;
 SyncAgent syncAgent;

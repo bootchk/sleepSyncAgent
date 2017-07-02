@@ -1,10 +1,14 @@
 
 #include <cassert>
 
+//TODO no globals
 #include "../globals.h"
 #include "mergeSlot.h"
 
 #include "../modules/syncSender.h"
+#include "../modules/syncSleeper.h"
+#include "../state/phase.h"
+#include "../syncAgent.h"
 
 
 
@@ -19,7 +23,7 @@ namespace {
 DeltaTime timeoutUntilMerge() {
 	// TODO minor adjustment to account for ramp up of radio
 	return clique.schedule.deltaToThisMergeStart(
-			syncAgent.cliqueMerger.getOffsetToMergee());
+			SyncAgent::cliqueMerger.getOffsetToMergee());
 }
 
 } // namespace
@@ -49,7 +53,7 @@ void MergeSlot::perform() {
 
 	// Hard sleep without listening until merge time
 	// Pass to SyncSleeper a function to calculate merge time
-	syncSleeper.sleepUntilTimeout(timeoutUntilMerge);
+	SyncSleeper::sleepUntilTimeout(timeoutUntilMerge);
 
 	// assert time aligned with middle of a mergee sync slots (same wall time as fished sync from mergee.)
 	Ensemble::startup();

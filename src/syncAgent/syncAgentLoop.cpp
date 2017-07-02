@@ -9,6 +9,7 @@
 #include "state/syncState.h"
 #include "logMessage.h"
 #include "syncPeriod/syncPeriod.h"
+#include "modules/syncSleeper.h"
 
 
 
@@ -35,7 +36,7 @@ CombinedSyncPeriod syncPeriod;
 
 void sleepEntireSyncPeriod() {
 	Phase::set(PhaseEnum::SleepEntireSyncPeriod);
-	syncSleeper.sleepUntilTimeout(clique.schedule.deltaNowToNextSyncPoint);
+	SyncSleeper::sleepUntilTimeout(clique.schedule.deltaNowToNextSyncPoint);
 }
 
 

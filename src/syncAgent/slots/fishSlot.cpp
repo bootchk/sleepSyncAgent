@@ -7,20 +7,20 @@
 
 #include <cassert>
 
-
-#include "../globals.h"	// syncAgent etc.
-
 #include "fishSlot.h"
 
 #include "fishSchedule.h"
 #include "../messageHandler/messageHandler.h"
+#include "../modules/syncSleeper.h"
+#include "../modules/syncPowerManager.h"
+#include "../state/phase.h"
 
 
 namespace {
 
 void sleepUntilFishSlotStart() {
 	// pass to sleeper: function to calculate start time
-	syncSleeper.sleepUntilTimeout(FishSchedule::deltaToSlotStart);
+	SyncSleeper::sleepUntilTimeout(FishSchedule::deltaToSlotStart);
 }
 
 } //namespace
@@ -63,7 +63,7 @@ void FishSlot::perform() {
 	Ensemble::startReceiving();
 
 	// assert can receive an event that wakes imminently: race to sleep
-	(void) syncSleeper.sleepUntilMsgAcceptedOrTimeout(
+	(void) SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 			FishSlotMessageHandler::handle,
 			FishSchedule::deltaToSlotEnd);
 

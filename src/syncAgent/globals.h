@@ -32,9 +32,6 @@ extern Phase phase;
 #include "modules/serializer.h"
 extern Serializer serializer;
 
-#include "modules/syncSleeper.h"
-extern SyncSleeper syncSleeper;
-
 #include "modules/syncBehaviour.h"
 extern SyncBehaviour syncBehaviour;
 

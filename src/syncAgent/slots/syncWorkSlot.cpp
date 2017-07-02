@@ -28,7 +28,7 @@ HandlingResult SyncWorkSlot::doListenHalfSyncWorkSlot(TimeoutFunc timeoutFunc) {
 		// Continue to sleep for half a slot: we may yet xmit sync, and/or listen for second half.
 	}
 
-	HandlingResult result = syncSleeper.sleepUntilMsgAcceptedOrTimeout(
+	HandlingResult result = SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 			SyncSlotMessageHandler::handle,
 			timeoutFunc
 			);
@@ -110,7 +110,7 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 // Sleep with network shutdown for remainder of sync slot
 void SyncWorkSlot::sleepSlotRemainder() {
 	//assert(!netork->isInUse());
-	syncSleeper.sleepUntilTimeout(SyncSlotSchedule::deltaToThisSyncSlotEnd);
+	SyncSleeper::sleepUntilTimeout(SyncSlotSchedule::deltaToThisSyncSlotEnd);
 }
 
 
@@ -130,7 +130,7 @@ void SyncWorkSlot::doSlaveSyncWorkSlot() {
 	// logInt(clique.schedule.deltaPastSyncPointToNow()); log("<delta SP to sync listen.\n");
 
 	Phase::set(PhaseEnum::SyncSlaveListen);
-	(void) syncSleeper.sleepUntilMsgAcceptedOrTimeout(
+	(void) SyncSleeper::sleepUntilMsgAcceptedOrTimeout(
 			SyncSlotMessageHandler::handle,
 			SyncSlotSchedule::deltaToThisSyncSlotEnd);
 	/*

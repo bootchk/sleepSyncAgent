@@ -4,6 +4,7 @@
 #include "globals.h"	// which includes nRF5x.h
 #include "scheduleParameters.h"
 #include "syncPowerSleeper.h"
+#include "modules/syncSleeper.h"
 //#include "modules/syncPowerManager.h"
 #include "modules/oversleepMonitor.h"
 
@@ -67,7 +68,7 @@ void SyncAgent::initSyncObjects(
 	onSyncPointCallback = aOnSyncPointCallback;
 
 	// Connect radio IRQ to syncSleeper so it knows reason for wake
-	Ensemble::init(syncSleeper.getMsgReceivedCallback());
+	Ensemble::init(SyncSleeper::getMsgReceivedCallback());
 
 	// Serializer reads and writes directly to radio buffer
 	serializer.init(Ensemble::getBufferAddress(), Radio::FixedPayloadCount);
