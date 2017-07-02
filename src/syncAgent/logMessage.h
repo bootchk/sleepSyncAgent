@@ -1,5 +1,9 @@
 #pragma once
 
+#include "flashIndex.h"
+
+
+
 /*
  * Holds log messages.
  */

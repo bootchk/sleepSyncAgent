@@ -1,6 +1,10 @@
 
 #pragma once
 
+#include "../flashIndex.h"
+
+
+
 /*
  * Simple enumeration of phase and subphases of a SyncPeriod.
  *
