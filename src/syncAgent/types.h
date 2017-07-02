@@ -63,8 +63,10 @@ enum AppFlagsIndex {
 	//ExitFaultIndex,
 	//LineNumberIndex, 				// line no of assert
 
-	// Normal algorithm stepping is captured in Phase and written to flash on a fault or brownout warning
-	PhaseIndex = 3,						// phase of algorithm when fault or brownout occurred
+	// Normal algorithm step (Phase) written to flash on a fault or brownout warning
+	PhaseBOIndex = 3,						// phase of algorithm when fault or brownout occurred
+	// Bits per phase written first time phase is done
+	PhasesDoneIndex,
 	//
 	/*
 	 *  Flags for exceptions discovered in the code, for robustness.

@@ -64,6 +64,8 @@ class Phase {
 public:
 	static void set(PhaseEnum phase) {
 		_phase = phase;
+		// Debugging: write zero bit to Phase flag of UICR
+		CustomFlash::writeBitAtIndex(PhasesDoneIndex, (unsigned int) phase);
 	}
 	static PhaseEnum get() { return _phase; }
 };

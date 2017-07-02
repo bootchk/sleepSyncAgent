@@ -55,7 +55,7 @@ bool OverSleepMonitor::checkOverslept(){
 	 */
 	if ( actualSleepDuration > intendedSleepDuration + ScheduleParameters::OversleepMargin ) {
 		// Write global sync phase we were sleeping in, if not already written by brownout
-		CustomFlash::tryWriteIntAtIndex(PhaseIndex, SyncAgent::getPhase());
+		CustomFlash::tryWriteIntAtIndex(PhaseBOIndex, SyncAgent::getPhase());
 
 		CustomFlash::tryWriteIntAtIndex(IntendedSleepDuration, intendedSleepDuration);
 		CustomFlash::tryWriteIntAtIndex(OversleptDuration, actualSleepDuration);
