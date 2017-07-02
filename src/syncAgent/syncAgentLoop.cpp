@@ -34,7 +34,7 @@ CombinedSyncPeriod syncPeriod;
 
 
 void sleepEntireSyncPeriod() {
-	phase = Phase::SleepEntireSyncPeriod;
+	Phase::set(PhaseEnum::SleepEntireSyncPeriod);
 	syncSleeper.sleepUntilTimeout(clique.schedule.deltaNowToNextSyncPoint);
 }
 
@@ -85,7 +85,7 @@ void SyncAgent::loop(){
 
 	while (true){
 
-		phase = Phase::SyncPointCallback;
+		Phase::set(PhaseEnum::SyncPointCallback);
 		onSyncPointCallback();	// call back app, which must return quickly
 
 		// app may have queued work

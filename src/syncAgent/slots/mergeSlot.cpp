@@ -44,7 +44,7 @@ void MergeSlot::perform() {
 	assert(Ensemble::isLowPower());
 	assert(role.isMerger());
 
-	phase = Phase::SleepTilMerge;
+	Phase::set(PhaseEnum::SleepTilMerge);
 	//LogMessage::logMerge();
 
 	// Hard sleep without listening until merge time
@@ -54,7 +54,7 @@ void MergeSlot::perform() {
 	// assert time aligned with middle of a mergee sync slots (same wall time as fished sync from mergee.)
 	Ensemble::startup();
 	logLongLong(LongClock::nowTime()); log(":mergeSync");
-	phase = Phase::Merge;
+	Phase::set(PhaseEnum::Merge);
 	SyncSender::sendMergeSync();	// Synchronous
 	assert(!Ensemble::isRadioInUse());
 	Ensemble::shutdown();

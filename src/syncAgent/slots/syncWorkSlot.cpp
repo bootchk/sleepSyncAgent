@@ -50,7 +50,7 @@ HandlingResult SyncWorkSlot::doListenHalfSyncWorkSlot(TimeoutFunc timeoutFunc) {
 void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 	// not assert self is Master
 
-	phase = Phase::SyncListenFirstHalf;
+	Phase::set(PhaseEnum::SyncListenFirstHalf);
 	(void) doListenHalfSyncWorkSlot(SyncSlotSchedule::deltaToThisSyncSlotMiddleSubslot);
 	assert(!Ensemble::isRadioInUse());
 
@@ -73,7 +73,7 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 	// Fetch work from app
 	WorkPayload work = workOutMailbox->fetch();
 	if (! workManager.isHeardWork() ) {
-		phase = Phase::SyncXmitWorkSync;
+		Phase::set(PhaseEnum::SyncXmitWorkSync);
 		SyncSender::sendWorkSync(work);
 		/*
 		 * App sent this work.  App also queues it in to itself if app wants to work as well as tell others to work.
@@ -97,7 +97,7 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 	 *
 	 * Result doesn't matter, slot is over and we proceed regardless whether we heard sync keeping msg.
 	 */
-	phase = Phase::SyncListenSecondHalf;
+	Phase::set(PhaseEnum::SyncListenSecondHalf);
 	(void) doListenHalfSyncWorkSlot(SyncSlotSchedule::deltaToThisSyncSlotEnd);
 
 	// not assert Ensemble::isLowPower()
@@ -129,7 +129,7 @@ void SyncWorkSlot::doSlaveSyncWorkSlot() {
 	// Log delay from sync point to actual start listening.
 	// logInt(clique.schedule.deltaPastSyncPointToNow()); log("<delta SP to sync listen.\n");
 
-	phase = Phase::SyncSlaveListen;
+	Phase::set(PhaseEnum::SyncSlaveListen);
 	(void) syncSleeper.sleepUntilMsgAcceptedOrTimeout(
 			SyncSlotMessageHandler::handle,
 			SyncSlotSchedule::deltaToThisSyncSlotEnd);
@@ -148,7 +148,7 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 
 	HandlingResult handlingResult;
 
-	phase = Phase::SyncListenFirstHalf;
+	Phase::set(PhaseEnum::SyncListenFirstHalf);
 	handlingResult = doListenHalfSyncWorkSlot(SyncSlotSchedule::deltaToThisSyncSlotMiddleSubslot);
 	assert(!Ensemble::isRadioInUse());
 
@@ -160,13 +160,13 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 	 */
 	if (handlingResult == HandlingResult::KeepListening) {
 		// Self is Master, send sync if didn't hear WorkSync or MergeSync
-		phase = Phase::SyncXmit;
+		Phase::set(PhaseEnum::SyncXmit);
 		SyncSender::sendMasterSync();
 	}
 
 	// Keep listening for other better Masters and work.
 	// Result doesn't matter, slot is over and we proceed whether we heard sync keeping sync or not.
-	phase = Phase::SyncListenSecondHalf;
+	Phase::set(PhaseEnum::SyncListenSecondHalf);
 	(void) doListenHalfSyncWorkSlot(SyncSlotSchedule::deltaToThisSyncSlotEnd);
 
 	// not assert Ensemble::isLowPower()
@@ -193,11 +193,11 @@ void SyncWorkSlot::tryPerform() {
 
 	// Starting network might have exhausted power.  Unlikely
 	if (SyncPowerManager::isPowerForRadio()) {
-		phase = Phase::SyncChooseKind;
+		Phase::set(PhaseEnum::SyncChooseKind);
 		perform();
 	}
 	else {
-		phase = Phase::SyncSkipSlot;
+		Phase::set(PhaseEnum::SyncSkipSlot);
 		LogMessage::logNoPowerToStartSyncSlot();
 
 		// Busted SyncSlot, no listen, no send sync

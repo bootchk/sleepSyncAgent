@@ -36,18 +36,17 @@ void FishSlot::tryPerform() {
 	// Note sleep might have assertions on power condition
 	FishSchedule::init();	// Calculate start time once
 
-	phase = Phase::SleepTilFish;
+	Phase::set(PhaseEnum::SleepTilFish);
 	sleepUntilFishSlotStart();
 	// Power might be replenished.
 
 	if (SyncPowerManager::isPowerForRadio()) {
 		// XXX network.start, then test power again
-		phase = Phase::Fish;
-		//LogMessage::logFished();
+		Phase::set(PhaseEnum::Fish);
 		perform();
 	}
 	else {
-		LogMessage::logNoPowerToFish();
+		Phase::set(PhaseEnum::NoPowerToFish);
 	}
 }
 

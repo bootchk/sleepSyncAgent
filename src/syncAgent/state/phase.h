@@ -10,7 +10,7 @@
  * Generally the name is <slot><subslot>
  */
 
-enum class Phase {
+enum class PhaseEnum {
 
 	// Before loop
 	Preamble,
@@ -39,18 +39,31 @@ enum class Phase {
 	SyncSlaveListen,
 
 	// Fish slot
-	// 9, 10
+	// 9
 	SleepTilFish,
 	Fish,
+	NoPowerToFish,
 
 	// Merge slot
-	// 11, 12
+	// 12
 	SleepTilMerge,
 	Merge,
 
 	// Sleep remainder of SyncPeriod
-	// 13
+	// 14
 	SleepRemainder,
 	StartSlotSequence
 
+};
+
+namespace {
+	PhaseEnum _phase;
+}
+
+class Phase {
+public:
+	static void set(PhaseEnum phase) {
+		_phase = phase;
+	}
+	static PhaseEnum get() { return _phase; }
 };

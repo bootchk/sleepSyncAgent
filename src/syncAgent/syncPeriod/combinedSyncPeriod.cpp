@@ -54,7 +54,7 @@ void CombinedSyncPeriod::doSlotSequence() {
 
 	// assert powerManager->isPowerForSync() which is higher than isPowerForRadio
 
-	phase = Phase::StartSlotSequence;
+	Phase::set(PhaseEnum::StartSlotSequence);
 	syncWorkSlot.tryPerform();	// arbitrary to do sync slot first
 
 	assert(Ensemble::isLowPower());	// until next slot
@@ -67,7 +67,7 @@ void CombinedSyncPeriod::doSlotSequence() {
 
 	assert(Ensemble::isLowPower());	// For remainder of sync period
 
-	phase = Phase::SleepRemainder;
+	Phase::set(PhaseEnum::SleepRemainder);
 	sleepRemainderOfSyncPeriod();
 
 	// Sync period (slot sequence) completed

@@ -144,7 +144,7 @@ void SyncAgent::relayHeardWorkToApp(WorkPayload work) {
 /*
  * Callbacks from BrownoutManager for debugging.
  */
-uint32_t SyncAgent::getPhase() { return (uint32_t) phase; }
+uint32_t SyncAgent::getPhase() { return (uint32_t) Phase::get(); }
 uint32_t SyncAgent::getReasonForWake() { return (uint32_t) Sleeper::getReasonForWake(); }
 
 
