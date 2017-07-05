@@ -13,7 +13,7 @@
 // Uses pure classes
 #include "oversleepMonitor.h"
 #include "../../augment/timeMath.h"
-#include "serializer.h"
+#include "../message/serializer.h"
 #include "schedule.h"
 
 #include "../scheduleParameters.h"

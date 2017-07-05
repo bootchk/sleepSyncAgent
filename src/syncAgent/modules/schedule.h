@@ -6,7 +6,7 @@
  * Crux types are DeltaSync and MergeOffset.
  * LongTime and DeltaTime are important but conventional.
  */
-#include "message.h"	// SyncMessage, DeltaSync
+#include "../message/message.h"	// SyncMessage, DeltaSync
 #include "../../augment/timeMath.h"	// LongTime, DeltaTime
 #include "mergeOffset.h"
 

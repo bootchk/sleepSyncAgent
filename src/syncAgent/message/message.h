@@ -2,7 +2,7 @@
 #pragma once
 
 #include "../../platformHeaders/types.h"  // SystemID
-#include "deltaSync.h"
+#include "../modules/deltaSync.h"
 
 
 /*

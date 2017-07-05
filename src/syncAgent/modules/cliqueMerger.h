@@ -1,8 +1,9 @@
 #pragma once
 
-#include "message.h"
+
 #include "clique.h"
 #include "mergeOffset.h"
+#include "../message/message.h"
 
 /*
  * Record of a Clique merging into a better Clique.

@@ -25,8 +25,8 @@
 void SyncPowerSleeper::sleepUntilSyncPower(){
 	while (!SyncPowerManager::isPowerForSync()){
 
-		// not assertUltraLowPower() but it should be
-		Sleeper::sleepUntilEventWithTimeout(ScheduleParameters::MaxSaneTimeoutSyncPowerSleeper);
+		assertUltraLowPower();
+		Sleeper::sleepUntilEventWithTimeout(ScheduleParameters::TimeoutWaitingForSyncPowerSleeper);
 		// May wake for CounterOverflow and unexpected events.
 	}
 

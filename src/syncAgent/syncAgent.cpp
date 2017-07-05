@@ -33,7 +33,7 @@ void SyncAgent::initSleepers() {
 	// assert counter interrupt enabled for overflow
 	// assert RTC0_IRQ is enabled (for Counter overflow and any Timers)
 
-	Sleeper::setSaneTimeout(ScheduleParameters::MaxSaneTimeoutSyncPowerSleeper);
+	Sleeper::setSaneTimeout(ScheduleParameters::TimeoutWaitingForSyncPowerSleeper);
 
 	// SyncSleeper, syncPowerSleeper is global, needs no init
 }

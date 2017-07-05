@@ -29,7 +29,7 @@ extern MergerFisherRole role;
 #include "state/phase.h"
 extern Phase phase;
 
-#include "modules/serializer.h"
+#include "message/serializer.h"
 extern Serializer serializer;
 
 #include "modules/syncBehaviour.h"

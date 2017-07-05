@@ -237,7 +237,7 @@ static const DeltaTime DeltaToSyncSlotMiddle = HalfSlotDuration + RadioLag - Ram
  * Sanity.
  * SleepSync uses timeouts less than this.
  *
- * This absolutely must be less than LongClock::MaxTimeout of 0xFFFFFF == 16M
+ * This absolutely must be less than LongClock::MaxTimeout of 0xFFFFFF == 16M == 503 seconds == 8 minutes
  * Should not schedule anything longer than 2 SyncPeriods of say 2000 * 50 ticks
  */
 static const DeltaTime MaxSaneTimeout = 164000;
@@ -264,9 +264,16 @@ static const DeltaTime StabilizedClockTimeout = 20000;	// 0.6 seconds
 /*
  * How long we should sleep for SyncPower
  * Units ticks of 30uSeconds
- * 40k == 1.2seconds
+ * 40k == 1.2 seconds
+ * 160k == 4.4 seconds
+ *
+ * !!! Keep it long.
+ * This delay is only incurred on startup.
+ * If the hysteresis of the voltage monitor is small (say 0.2V)
+ * and the storage capacitor is small, then delaying too short
+ * means when we wake, we may not have recovered boot energy and we will brownout.
  */
-static const DeltaTime MaxSaneTimeoutSyncPowerSleeper = 40000;
+static const DeltaTime TimeoutWaitingForSyncPowerSleeper = 160000;
 
 
 /*
