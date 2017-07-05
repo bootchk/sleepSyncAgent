@@ -1,3 +1,4 @@
+#include <cassert>
 
 #include "syncPowerSleeper.h"
 
@@ -23,11 +24,22 @@
  * Sleeper uses a callback which also sets ReasonForWake, but we ignore that.
  */
 void SyncPowerSleeper::sleepUntilSyncPower(){
-	while (!SyncPowerManager::isPowerForSync()){
-
-		assertUltraLowPower();
+	/*
+	 * Design discussion:
+	 * Could be a while()do{} instead.
+	 * But safer to always sleep some first: it more often guarantees more power.
+	 * Especially if you tighten power levels or if PowerManager is inaccurate.
+	 */
+	do {
+		// assertUltraLowPower();	// Even this assert may consume more power than we have?
 		Sleeper::sleepUntilEventWithTimeout(ScheduleParameters::TimeoutWaitingForSyncPowerSleeper);
-		// May wake for CounterOverflow and unexpected events.
+
+		/*
+		 * Not expected to wake for CounterOverflow and unexpected events.
+		 * Check that we slept full timeout.
+		 */
+		assert(Sleeper::getReasonForWake()==ReasonForWake::SleepTimerExpired);
 	}
+	while (!SyncPowerManager::isPowerForSync());
 
 }
