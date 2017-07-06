@@ -6,7 +6,7 @@
 #include "mergeSlot.h"
 
 #include "../modules/syncSender.h"
-#include "../modules/syncSleeper.h"
+#include "../sleepers/syncSleeper.h"
 #include "../state/phase.h"
 #include "../syncAgent.h"
 

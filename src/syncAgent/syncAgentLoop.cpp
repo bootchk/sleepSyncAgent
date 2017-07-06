@@ -9,7 +9,7 @@
 #include "state/syncState.h"
 #include "logMessage.h"
 #include "syncPeriod/syncPeriod.h"
-#include "modules/syncSleeper.h"
+#include "sleepers/syncSleeper.h"
 
 
 

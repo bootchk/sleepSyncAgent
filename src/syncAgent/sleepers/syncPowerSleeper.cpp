@@ -2,9 +2,9 @@
 
 #include "syncPowerSleeper.h"
 
-#include "scheduleParameters.h"
-
-#include "modules/syncPowerManager.h"
+#include "syncSleeper.h"
+#include "../scheduleParameters.h"
+#include "../modules/syncPowerManager.h"
 
 
 /*
@@ -32,13 +32,20 @@ void SyncPowerSleeper::sleepUntilSyncPower(){
 	 */
 	do {
 		// assertUltraLowPower();	// Even this assert may consume more power than we have?
+
+		/*
+		 * !!! Sleeper is not guaranteed to sleep unless event is clear.
+		 * SyncSleeper is guaranteed to sleep.
+		 */
+		MCU::clearEventRegister();
 		Sleeper::sleepUntilEventWithTimeout(ScheduleParameters::TimeoutWaitingForSyncPowerSleeper);
 
 		/*
 		 * Not expected to wake for CounterOverflow and unexpected events.
 		 * Check that we slept full timeout.
 		 */
-		assert(Sleeper::getReasonForWake()==ReasonForWake::SleepTimerExpired);
+		ReasonForWake reason = Sleeper::getReasonForWake();
+		assert(reason==ReasonForWake::SleepTimerExpired);
 	}
 	while (!SyncPowerManager::isPowerForSync());
 

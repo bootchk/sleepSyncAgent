@@ -3,10 +3,11 @@
 #include "syncAgent.h"
 #include "globals.h"	// which includes nRF5x.h
 #include "scheduleParameters.h"
-#include "syncPowerSleeper.h"
-#include "modules/syncSleeper.h"
+#include "sleepers/syncPowerSleeper.h"
+#include "sleepers/syncSleeper.h"
+#include "sleepers/oversleepMonitor.h"
 //#include "modules/syncPowerManager.h"
-#include "modules/oversleepMonitor.h"
+
 
 
 // SyncSleeper, Sleeper pure classes

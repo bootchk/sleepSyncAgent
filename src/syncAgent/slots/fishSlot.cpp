@@ -11,7 +11,7 @@
 
 #include "fishSchedule.h"
 #include "../messageHandler/messageHandler.h"
-#include "../modules/syncSleeper.h"
+#include "../sleepers/syncSleeper.h"
 #include "../modules/syncPowerManager.h"
 #include "../state/phase.h"
 

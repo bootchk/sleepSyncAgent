@@ -14,7 +14,7 @@
 #include "oversleepMonitor.h"
 #include "../../augment/timeMath.h"
 #include "../message/serializer.h"
-#include "schedule.h"
+#include "../modules/schedule.h"
 
 #include "../scheduleParameters.h"
 

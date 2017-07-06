@@ -16,7 +16,7 @@
 
 enum class PhaseEnum {
 
-	// after boot and initial sleep
+	sleepAfterBoot,
 	firstSyncPower,
 
 	// Before loop
