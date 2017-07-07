@@ -349,23 +349,27 @@ unsigned int SyncSleeper::getPriorReasonForWake() { return (unsigned int) priorR
 
 
 
-#ifdef OLD
+
 /*
  * Similar above, but overloaded: different parameter type
  * and different implementation.
  */
 void SyncSleeper::sleepUntilTimeout(DeltaTime timeout)
 {
-	LongTime endingTime = longClock->nowTime() + timeout;
+	LongTime endingTime = LongClock::nowTime() + timeout;
 	DeltaTime remainingTimeout = timeout;
 
 	while (true) {
 
 			assert(remainingTimeout < ScheduleParameters::MaxSaneTimeout);
 
-			sleepWithOnlyTimerPowerUntilTimeout(timeout);
+			/*
+			 * !!! Just sleep, with no assertions on power.
+			 */
+			Sleeper::sleepUntilEventWithTimeout(timeout);
+			// sleepWithOnlyTimerPowerUntilTimeout(timeout);
 
-			if (isWakeForTimerExpired()) {
+			if (Sleeper::isWakeForTimerExpired()) {
 				break;	// while true, assert time timeout has elapsed.
 			}
 			else {
@@ -380,7 +384,7 @@ void SyncSleeper::sleepUntilTimeout(DeltaTime timeout)
 		}
 		// assert timeout amount of time has elapsed
 }
-#endif
+
 
 #ifdef FUTURE
 			//This experiment doesn't work see my post in DevZone

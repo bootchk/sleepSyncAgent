@@ -37,8 +37,9 @@ void SyncPowerSleeper::sleepUntilSyncPower(){
 		 * !!! Sleeper is not guaranteed to sleep unless event is clear.
 		 * SyncSleeper is guaranteed to sleep.
 		 */
-		MCU::clearEventRegister();
-		Sleeper::sleepUntilEventWithTimeout(ScheduleParameters::TimeoutWaitingForSyncPowerSleeper);
+		//MCU::clearEventRegister();
+		//Sleeper::sleepUntilEventWithTimeout
+		SyncSleeper::sleepUntilTimeout(ScheduleParameters::TimeoutWaitingForSyncPowerSleeper);
 
 		/*
 		 * Not expected to wake for CounterOverflow and unexpected events.
