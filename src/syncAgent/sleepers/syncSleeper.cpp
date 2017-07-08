@@ -366,7 +366,7 @@ void SyncSleeper::sleepUntilTimeout(DeltaTime timeout)
 			/*
 			 * !!! Just sleep, with no assertions on power.
 			 */
-			Sleeper::sleepUntilEventWithTimeout(timeout);
+			Sleeper::sleepUntilEventWithTimeout(remainingTimeout);
 			// sleepWithOnlyTimerPowerUntilTimeout(timeout);
 
 			if (Sleeper::isWakeForTimerExpired()) {
