@@ -90,8 +90,8 @@ HandlingResult dispatchFilteredMsg( MessageHandler msgHandler) { // Slot has han
 		else {
 			// Ignore garbled type or offset
 			log(LogMessage::Garbled);
-			// continuation is sleep
-			// TODO with radio off?
+			// continuation is wait for another message
+			Ensemble::startReceiving();
 		}
 
 		// No memory managment for messages
@@ -102,9 +102,18 @@ HandlingResult dispatchFilteredMsg( MessageHandler msgHandler) { // Slot has han
 		 * Note CRCSTATUS register remains showing invalid until another message is received.
 		 */
 		log(LogMessage::CRC);
-		// continuation is sleep
-		// TODO with radio off?
+		// continuation is wait for another message
+		Ensemble::startReceiving();
+
 	}
+
+	/*
+	 * result "keep listening" implies we restarted the radio
+	 * handlingResult==KeepListening=>Ensemble::isRadioInUse
+	 * Logical implication P=>Q is equivalent to not P OR Q
+	 * handlingResult!=KeepListening OR ensemble::isRadioInUse
+	 * TODO add those assertions, for now, there is a downstream assertion
+	 */
 	return handlingResult;
 }
 
@@ -118,13 +127,15 @@ HandlingResult determineHandlingResult(MessageHandler msgHandler) {
 	HandlingResult handlingResult = HandlingResult::KeepListening;
 
 	switch (Sleeper::getReasonForWake()) {
+
+	// TODO, its a packet not a msg, could be invalid
 	case ReasonForWake::MsgReceived:
 		// Record TOA as soon as possible
 		Schedule::recordMsgArrivalTime();
 
 		// if timer semantics are: restartable, cancel timer here
 		handlingResult = dispatchFilteredMsg(msgHandler);
-		// Handler may ignore message and startReceiving again
+		// Handler may ignore packet and startReceiving again
 
 		break;	// switch
 
@@ -167,8 +178,9 @@ HandlingResult determineHandlingResult(MessageHandler msgHandler) {
 
 	case ReasonForWake::Cleared:
 	case ReasonForWake::HFClockStarted:
+	case ReasonForWake::LFClockStarted:
 		// Impossible, Sleeper will not return without reason
-		// Impossible, HFClock started earlier
+		// Impossible, LFClock and HFClock started earlier
 		assert(false);
 	}
 
@@ -284,8 +296,12 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 	OverSleepMonitor::markStartSleep(timeoutFunc);
 	countSleeps = 0;
 
+	// loop invariant ??
+
 	do {
-		// loop invariant: Ensemble::isRadioInUse() && Timer::isCanceled
+		// We only loop to listen: assert radio on
+		assert(Ensemble::isRadioInUse());
+		//  TODO && (! Timer::isStarted()));
 
 		// debugging
 		countSleeps++;
@@ -294,7 +310,10 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 		OSTime timeout = calculateTimeout(timeoutFunc);
 
 		sleepWithRadioAndTimerPowerUntilTimeout(timeout);
-		// wakened by msg or timeout or unexpected event or did not sleep at all (timeout small)
+		/*
+		 * wakened by msg or timeout or unexpected event or did not sleep at all (timeout small)
+		 * When msg received (even if CRC bad or msg garbled) the receiver is off.
+		 */
 
 		Sleeper::cancelTimeout();
 
