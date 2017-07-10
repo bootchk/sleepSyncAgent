@@ -68,7 +68,10 @@ void SyncAgent::initSyncObjects(
 	onWorkMsgCallback = aOnWorkMsgCallback;
 	onSyncPointCallback = aOnSyncPointCallback;
 
-	// Connect radio IRQ to syncSleeper so it knows reason for wake
+	/*
+	 * Initialize members (Radio, HfClock, DCDC) of ensemble.
+	 * Connect radio IRQ to syncSleeper so it knows reason for wake
+	 */
 	Ensemble::init(SyncSleeper::getMsgReceivedCallback());
 
 	// Serializer reads and writes directly to radio buffer
