@@ -23,6 +23,13 @@
  * Radio is required to keep sync.
  * Sync is maintained but drifts if no power for radio.
  * Work may temporarily take Vcc below needed for radio.
+ *
+ * Practically, during development, you can change the levels here,
+ * but only using pre-defined levels defined by PowerManager.
+ * You can also change the pre-defined levels in the PowerManager.
+ * Also, you can change behaviour by changing where these are referenced.
+ * Finally, these might depend on the platform, where on the nRF52 more levels are pre-defined.
+ * Some of the comments may be stale, don't trust them.
  */
 #include <nRF5x.h>	// PowerManager
 
@@ -44,9 +51,15 @@ public:
 	static bool isPowerExcess() { return PowerManager::isPowerExcess(); }
 	// In sync and can work
 	static bool isPowerForWork() { return PowerManager::isPowerAboveHigh(); }	// > 2.7
-	// Enough to start a SyncPeriod
-	static bool isPowerForSync()  { return PowerManager::isPowerAboveUltraHigh(); }	// > 3.2
-	// Enough to continue a SyncPeriod
+	/*
+	 * Enough to:
+	 * - begin the sync loop
+	 * - start a SyncPeriod
+	 */
+	// For some debugging: static bool isPowerForSync()  { return PowerManager::isPowerAboveUltraHigh(); }	// > 3.2
+	static bool isPowerForSync()  { return PowerManager::isPowerAboveHigh(); }	// > 2.7
+
+	// Enough to continue a SyncPeriod that has been started
 	static bool isPowerForRadio()  { return PowerManager::isPowerAboveMedium(); } // > 2.5
 	// Only enough to count out SyncPeriods, not use radio
 	static bool isPowerForIdle()  { return PowerManager::isPowerAboveLow(); }	// > 2.3
