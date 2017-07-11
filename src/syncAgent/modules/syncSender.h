@@ -46,8 +46,7 @@ public:
 		// XXX assert we are not xmitting sync past end of syncSlot?
 		// i.e. calculations are rapid and sync slot not too short?
 
-		MasterSyncMessage* msgPtr = serializer.getMasterSyncMsg();
-		msgPtr->init(rawOffset, myID());
+		SyncMessage* msgPtr = MessageFactory::initMasterSyncMessage(rawOffset, myID());
 		sendMessage(msgPtr);
 
 		// Uncomment this to experimentally determine send latency.
@@ -58,9 +57,8 @@ public:
 	static void sendMergeSync() {
 		log(LogMessage::SendMergeSync);
 
-		// cliqueMerger knows how to tell serializer to init MergeSync
-		syncAgent.cliqueMerger.makeMergeSync();
-		MergeSyncMessage* msgPtr = serializer.getMergeSyncMsg();
+		// cliqueMerger knows how to create SyncMessage of type MergeSync
+		SyncMessage* msgPtr = syncAgent.cliqueMerger.makeMergeSync();
 		sendMessage(msgPtr);
 	}
 
@@ -76,8 +74,7 @@ public:
 		 */
 		log(LogMessage::SendWorkSync);
 		DeltaTime forwardOffset = clique.schedule.deltaNowToNextSyncPoint();
-		WorkSyncMessage* msgPtr = serializer.getWorkSyncMsg();
-		msgPtr->init(
+		SyncMessage* msgPtr = MessageFactory::initWorkSyncMessage(
 				forwardOffset,
 				/*
 				 * !!! Crux.  WorkSync identifies the clique Master,
@@ -90,9 +87,8 @@ public:
 
 	static void sendAbandonMastership() {
 		log(LogMessage::SendAbandonMastership);
-		AbandonMastershipMessage* msgPtr = serializer.getAbandonMastershipMsg();
 		assert( clique.isSelfMaster);	// Only master can abandon
-		msgPtr->init( clique.getMasterID() );
+		SyncMessage* msgPtr = MessageFactory::initAbandonMastershipMessage( clique.getMasterID() );
 		sendMessage(msgPtr);
 	}
 

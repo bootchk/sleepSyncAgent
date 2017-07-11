@@ -6,8 +6,13 @@
 
 
 /*
- * !!! Message is not a singleton class.
- * Serializer owns static instances.
+ * !!! Message IS a singleton class.
+ * Only one message at a time is handled.
+ * The receiver is never active until the current received message is handled.
+ * The transmitter is never active until we are done with the received message.
+ *
+ * MessageFactory owns one instance.
+ *
  * FUTURE: many heap instances, queued.
 
  * SyncAgent level message, carried as payload in radio messages
@@ -43,18 +48,40 @@ enum class MessageType {
 
 
 
-
-
 /*
- *  Messages used by SyncAgent.
+ *  Message data.  Just a struct, no methods.
  *
- *  Work messages are not a separate, but work field is piggybacked.
- *  Only the work field is received by app.
+ *  The implementation does NOT have subclasses by message type.
+ *  All knowledge about the validity and interpretation of the fields is in MessageFactory class
+ *  and spread through the design.
+ *  The design choice to not use classes for message types is simpler and avoid overhead for virtual methods, etc.
  *
  *  !!! Note the order and packing of fields in struct is not necessarily order of data in serialized OTA.
  *  The size of the fields is nearly the same as OTA, but e.g. a 24-bit OTA field could be stored in 32-bit field of struct.
+ *
+ * MasterSync
+ * Usual sync from a unit in Master role.
+ * DeltaToNextSyncPoint is typically small.
+ *
+ *
+ * MergeSync
+ * Sync from unit in Merger role (master or slave) requesting other clique change its sync time.
+ * DeltaToNextSyncPoint is typically but not always large, more than one slot duration.
+ *
+ *
+ * WorkMessage
+ * Carries a unit of work.
+ * Also helps to maintain sync.
+ * I.E. a work field is piggybacked onto a sync carrying message.
+ * Only the work field is received by app.
+ * When a slave sends WorkSync, it sends its own sync offset (not from the master)
+ * and thus may send the clique drift in a new direction
+ * (especially if the master doesn't hear it?  TO BE EXPLORED.)
+ *
+ *
+ * AbandonMastershipMessage
+ * Dying breath message from master which is power failing.  deltaToNextSyncPoint is moot.
  */
-
 
 
 class SyncMessage{
@@ -63,126 +90,7 @@ public:
 	MessageType type;
 	DeltaSync deltaToNextSyncPoint;	// forward in time
 	SystemID masterID;
-	WorkPayload work;	// work always present, not always defined
+	WorkPayload work;	// work always allocated/transmitted, but often empty/null
 
-	// Only to suppress effective C level warnings
-	SyncMessage() : type(MessageType::MasterSync), deltaToNextSyncPoint(), masterID(0), work(0) {}
-
-	// Suppress warnings but requires stdlib
-    //virtual ~SyncMessage() {};
-
-    // Each subclass defines its own signature of init()
-
-	// Class method
-	// Does an OTA received byte seem like a MessageType?
-	static bool isReceivedTypeASyncType(uint8_t receivedType) {
-		// Fast and loose with casting
-		return      (receivedType == (uint8_t) MessageType::MasterSync)
-				|| (receivedType == (uint8_t) MessageType::MergeSync)
-				|| (receivedType == (uint8_t) MessageType::AbandonMastership)
-				|| (receivedType == (uint8_t) MessageType::WorkSync)	// FUTURE Work msg a distinct class of message
-				;
-	}
-
-
-	/*
-	 * Should this subclass have:
-	 * - non-null offset?
-	 * - non-null MasterID
-	 *
-	 * AbandonMastership may have null offset
-	 */
-	virtual bool carriesSync() = 0;
 };
-
-
-/*
- * Usual sync from a unit in Master role.
- * DeltaToNextSyncPoint is typically small.
- */
-class MasterSyncMessage : public SyncMessage {
-public:
-
-	~MasterSyncMessage() {};
-
-	void init(DeltaTime aDeltaToNextSyncPoint, SystemID aMasterID) {
-		type = MessageType::MasterSync;
-		deltaToNextSyncPoint.set(aDeltaToNextSyncPoint);	// asserts if out of range
-		masterID = aMasterID;
-		work = 0;
-	}
-
-	virtual bool carriesSync() { return true; }
-};
-
-
-
-/*
- * Sync from unit in Merger role (master or slave) requesting other clique change its sync time.
- * DeltaToNextSyncPoint is typically but not always large, more than one slot duration.
- */
-class MergeSyncMessage : public SyncMessage {
-public:
-	void init(DeltaTime aDeltaToNextSyncPoint, SystemID aMasterID) {
-		type = MessageType::MergeSync;
-		deltaToNextSyncPoint.set(aDeltaToNextSyncPoint);	// throws assertion if out of range
-		masterID = aMasterID;
-		work = 0;
-	}
-	~MergeSyncMessage() {};
-	virtual bool carriesSync() { return true; }
-};
-
-
-/*
- * Work message, also helps to maintain sync.
- */
-class WorkSyncMessage : public SyncMessage {
-public:
-	void init(DeltaTime aDeltaToNextSyncPoint, SystemID aMasterID, WorkPayload workPayload) {
-		type = MessageType::WorkSync;
-		deltaToNextSyncPoint.set(aDeltaToNextSyncPoint);	// throws assertion if out of range
-		masterID = aMasterID;
-		work = workPayload;
-	}
-	~WorkSyncMessage() {};
-	virtual bool carriesSync() { return true; }
-};
-
-
-
-
-/*
- * Dying breath message from master which is power failing.  deltaToNextSyncPoint is moot.
- */
-class AbandonMastershipMessage : public SyncMessage {
-public:
-	void init(SystemID aMasterID) {
-			type = MessageType::AbandonMastership;
-			deltaToNextSyncPoint.set(0);	// throws assertion if out of range
-			masterID = aMasterID;
-			work = 0;
-		}
-	~AbandonMastershipMessage() {};
-	virtual bool carriesSync() { return false; }
-};
-
-
-
-
-#ifdef FUTURE
-Distinct class for Work????
-
-// Messages used by app, relayed by SyncAgent
-class WorkMessage{
-public:
-	MessageType type;
-
-	// FUTURE: more content.  For testing, no content
-	void make() {
-		type = Work;
-	};
-};
-#endif
-
 

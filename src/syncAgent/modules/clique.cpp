@@ -8,6 +8,8 @@
 //#include "../policy/masterXmitSyncPolicy.h"
 #include "../policy/adaptiveXmitSyncPolicy.h"
 
+#include "../message/messageFactory.h"
+
 namespace {
 
 // attributes of clique
@@ -171,7 +173,7 @@ void Clique::onMasterDropout() {
  */
 void Clique::updateBySyncMessage(SyncMessage* msg) {
 	// assert (in Sync or Fish slot)
-	assert(msg->carriesSync());
+	assert (MessageFactory::carriesSync(msg->type));
 
 	/*
 	 * !!! Update.  Not assert that msg.MasterID != self.masterID:

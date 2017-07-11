@@ -6,7 +6,7 @@
 #include "serializer.h"
 
 #include "otaPacket.h"
-
+#include "messageFactory.h"
 
 /*
  * Implementation notes:
@@ -26,15 +26,11 @@
 namespace {
 
 /*
- * Serializer owns message objects and returns pointers to them.
+ * Serializer does NOT own message objects but returns pointers to them.
  *
- * There is only one of each type, be careful in reuse,
+ * There is only one SyncMessage instance, be careful in reuse,
  * i.e. don't try to send WorkSync while still accessing incoming WorkSync.
  */
-MasterSyncMessage masterSyncMsg;
-MergeSyncMessage mergeSyncMsg;
-WorkSyncMessage workSyncMsg;
-AbandonMastershipMessage abandonMastershipMsg;
 
 
 BufferPointer radioBufferPtr;
@@ -115,7 +111,7 @@ void unserializeOTAFieldsIntoMessageFields(MessageType receivedMsgType, SyncMess
 	unserializeWorkInto(msgPtr);
 }
 
-
+#ifdef OBSOLETE
 SyncMessage* getPointerToMessageOfOTAType(MessageType receivedMsgType) {
 	// already assert isReceivedTypeASyncType
 	SyncMessage* msgPtr = &masterSyncMsg;	// FUTURE InvalidMsgRef
@@ -128,6 +124,7 @@ SyncMessage* getPointerToMessageOfOTAType(MessageType receivedMsgType) {
 	}
 	return msgPtr;
 }
+#endif
 
 
 // FUTURE only unserializeOffset() once
@@ -150,7 +147,7 @@ SyncMessage* getPointerToMessageOfOTAType(MessageType receivedMsgType) {
 // XXX combine bufferIsSane w isOTA...
 bool isOTABufferAlgorithmicallyValid() {
 	bool result = true;
-	if (! SyncMessage::isReceivedTypeASyncType(radioBufferPtr[0])) {
+	if (! MessageFactory::isReceivedTypeASyncType(radioBufferPtr[0])) {
 		log("Invalid message type\n");
 		logInt(radioBufferPtr[0]);
 		result = false;
@@ -181,38 +178,30 @@ void Serializer::init(BufferPointer aRadioBuffer, uint8_t aBufferSize)
 	radioBufferSize = aBufferSize;
 }
 
-// Getters of internal shared message instances
-MasterSyncMessage* Serializer::getMasterSyncMsg() { return &masterSyncMsg; }
-MergeSyncMessage* Serializer::getMergeSyncMsg() { return &mergeSyncMsg; }
-WorkSyncMessage* Serializer::getWorkSyncMsg() { return &workSyncMsg; }
-AbandonMastershipMessage* Serializer::getAbandonMastershipMsg() { return &abandonMastershipMsg; }
 
 
 
 SyncMessage* Serializer::unserialize() {
 	// require validCRC  data in radioBuffer, of proper length
-	SyncMessage* result = &masterSyncMsg;
+	SyncMessage* result = nullptr;
 
 	// Minor optimization: only access radioBufferPtr[0] once.
 	// It is volatile, which prevents compiler from optimizing repeated references.
 	if (isOTABufferAlgorithmicallyValid()) {
 		// Fast and loose cast
 		MessageType receivedMsgType = (MessageType) radioBufferPtr[0];
-		result = getPointerToMessageOfOTAType(receivedMsgType);
+		result = MessageFactory::getMessagePtr();
+		// unserialize into singleton owned by MessageFactory
 		unserializeOTAFieldsIntoMessageFields(receivedMsgType, result);
 	}
-	else {
-		//assert(false);	// TESTING
-		result = nullptr;	// PRODUCTION
-	}
-	// assert result is pointer to instance of proper SyncMessage subclass, or nullptr
+	// assert result is pointer to valid SyncMessage, or nullptr
 	return result;
 }
 
 
 bool Serializer::bufferIsSane(){
 	// FUTURE other validity checks?
-	return SyncMessage::isReceivedTypeASyncType(radioBufferPtr[0]);
+	return MessageFactory::isReceivedTypeASyncType(radioBufferPtr[0]);
 }
 
 

@@ -36,7 +36,7 @@ public:
 	 * Create a MergeSync message in the common message.
 	 * !!! This must be called just before sending, since the SyncOffset is calculated when called.
 	 */
-	static void makeMergeSync();
+	static SyncMessage* makeMergeSync();
 
 	static const MergeOffset* getOffsetToMergee();
 };

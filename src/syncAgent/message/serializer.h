@@ -38,15 +38,7 @@ public:
 	 */
 	static SyncMessage* unserialize();
 
-	/*
-	 * Get address of internal message object instances.
-	 */
-	static MasterSyncMessage* getMasterSyncMsg();
-	static WorkSyncMessage* getWorkSyncMsg();
-	static MergeSyncMessage* getMergeSyncMsg();
-	static AbandonMastershipMessage* getAbandonMastershipMsg();
-
-	// Polymorphic on subclass of SyncMessage
+	// Polymorphic on MessageType of SyncMessage
 	static void serializeSyncMessageIntoRadioBuffer(SyncMessage* msgPtr);
 
 	// Does contents of Serializer's buffer minimally seem like a Message?
