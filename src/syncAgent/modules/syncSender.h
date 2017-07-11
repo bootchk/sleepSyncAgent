@@ -78,10 +78,15 @@ public:
 				forwardOffset,
 				/*
 				 * !!! Crux.  WorkSync identifies the clique Master,
-				 * even if self is not the Master I.E. WorkSync could be from a Slave.
+				 * even if self is not the Master I.E. WorkSync from a Slave uses Clique's ID.
 				 */
 				clique.getMasterID(),
-				work);	// from app, outward
+				myShortID());	// temp debugging
+		/*
+		 * Temporarily, sending self ID (short version) as work
+		 * In most applications, the last parameter is:
+		 * work);	// from app, outward
+		 */
 		sendMessage(msgPtr);
 	}
 
