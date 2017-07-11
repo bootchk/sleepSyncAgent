@@ -90,7 +90,7 @@ public:
 
 	static bool shouldTransmitSync() {
 		// Clique knows
-		return clique.shouldXmitSync();
+		return clique.shouldTransmitSync();
 	}
 
 

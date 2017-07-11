@@ -19,8 +19,8 @@ SystemID masterID;
 DropoutMonitor dropoutMonitor;
 
 // Choices here:  Adaptive or Master
-//static MasterXmitSyncPolicy masterXmitSyncPolicy;
-AdaptiveXmitSyncPolicy masterXmitSyncPolicy;
+//static MasterTransmitSyncPolicy masterTransmitSyncPolicy;
+AdaptiveTransmitSyncPolicy masterTransmitSyncPolicy;
 
 } // namespace
 
@@ -37,7 +37,7 @@ void Clique::init(){
 
 	setSelfMastership();
 	dropoutMonitor.reset();
-	masterXmitSyncPolicy.reset();
+	masterTransmitSyncPolicy.reset();
 
 	schedule.init();
 
@@ -78,8 +78,8 @@ bool Clique::isSelfMaster() { return masterID == myID(); }
  * Only master xmits FROM its sync slot.
  * And then with policy of randomness for collision avoidance.
  */
-bool Clique::shouldXmitSync() {
-	return isSelfMaster() && masterXmitSyncPolicy.shouldXmitSync();
+bool Clique::shouldTransmitSync() {
+	return isSelfMaster() && masterTransmitSyncPolicy.shouldTransmitSync();
 }
 
 
@@ -126,7 +126,7 @@ void Clique::heardSync() {
 	 * Avoids contention.
 	 */
 	if (isSelfMaster())
-		masterXmitSyncPolicy.disarmForOneCycle();
+		masterTransmitSyncPolicy.disarmForOneCycle();
 }
 
 
@@ -148,7 +148,7 @@ void Clique::onMasterDropout() {
 	// FUTURE: history of masters, self assume mastership only if was most recent master, thus avoiding contention.
 
 	setSelfMastership();	// !!! changes role: self will start xmitting sync
-	masterXmitSyncPolicy.reset();
+	masterTransmitSyncPolicy.reset();
 
 	/*
 	 * !!! Schedule is NOT changed. We may be able to recover by fishing nearby.
@@ -189,7 +189,7 @@ void Clique::updateBySyncMessage(SyncMessage* msg) {
 	 * but if self unit ever assumes mastership,
 	 * policy will then be in advanced stage.
 	 */
-	masterXmitSyncPolicy.advanceStage();
+	masterTransmitSyncPolicy.advanceStage();
 
 	// FUTURE clique.historyOfMasters.update(msg);
 

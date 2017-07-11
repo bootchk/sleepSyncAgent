@@ -1,6 +1,4 @@
 
-
-
 #include <cassert>
 
 #include "../globals.h"
@@ -10,6 +8,36 @@
 #include "../messageHandler/messageHandler.h"
 
 
+namespace {
+
+/*
+ * Did we already hear a Sync message for our clique?
+ *
+ * Might have heard:
+ * - a sync from a worse clique (result KeepListening)
+ * - OR a synch-keeping msg (Master, Merge, or WorkSync)
+ * - garbled messages or non-sync keeping messages (result KeepListening)
+ * - AbandonMastership (from some confused clique that overlaps ours?)
+ *
+ * !!! A WorkSync might be from a slave, but it briefly keeps sync for our clique,
+ * and we omit one MasterSync but don't relinquish Mastership.
+ */
+bool didFirstHalfHearSync(HandlingResult firstHalfResult){
+	bool result;
+	switch (firstHalfResult) {
+	case HandlingResult::TimedOut:
+	case HandlingResult::KeepListening:
+		result = false;
+		break;
+	case HandlingResult::StopListeningHeardMasterSync:
+	case HandlingResult::StopListeningHeardMergeSync:
+	case HandlingResult::StopListeningHeardWorkSync:
+		result = true;
+	}
+	return result;
+}
+
+}
 
 
 HandlingResult SyncWorkSlot::doListenHalfSyncWorkSlot(TimeoutFunc timeoutFunc) {
@@ -153,26 +181,27 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 	assert(!Ensemble::isRadioInUse());
 
 	/*
-	 * Might have heard:
-	 * - a sync from a worse clique,
-	 * - OR a synch-keeping msg
-	 * Regardless, continue to listen, mainly for work.
+	 * Moment to xmit sync.  (We are Master.)
+	 * But only if we didn't already (in first half) hear a message that keeps sync for our clique.
 	 */
-	if (handlingResult == HandlingResult::KeepListening) {
+	if ( ! didFirstHalfHearSync(handlingResult)) {
 		// Self is Master, send sync if didn't hear WorkSync or MergeSync
 		Phase::set(PhaseEnum::SyncXmit);
 		SyncSender::sendMasterSync();
 	}
 
-	// Keep listening for other better Masters and work.
-	// Result doesn't matter, slot is over and we proceed whether we heard sync keeping sync or not.
+	/*
+	 * Keep listening for other better Masters that might have fished us (MergeSync) and WorkSync.
+	 * Result of this listening doesn't matter, slot is over and we proceed whether we heard sync keeping sync or not.
+	 */
 	Phase::set(PhaseEnum::SyncListenSecondHalf);
 	(void) doListenHalfSyncWorkSlot(SyncSlotSchedule::deltaToThisSyncSlotEnd);
 
 	// not assert Ensemble::isLowPower()
 }
 
-// XXX try doing part of the sync slot i.e. fail after the first half.
+// XXX try doing part of the sync slot i.e. fail after the first half because power is exhausted.
+// XXX if we heard a MergeSync in the first half, no point in listening for the second half. (minor optimization.)
 
 
 /*

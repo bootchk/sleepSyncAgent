@@ -8,22 +8,22 @@
 
 namespace {
 
-MasterXmitSyncPolicy wrappedXmitSyncPolicy;
+MasterTransmitSyncPolicy wrappedTransmitSyncPolicy;
 static bool isAdvancedStage = false;
 
 } // namespace
 
 
-void AdaptiveXmitSyncPolicy::reset() {
-	wrappedXmitSyncPolicy.reset();
+void AdaptiveTransmitSyncPolicy::reset() {
+	wrappedTransmitSyncPolicy.reset();
 	isAdvancedStage = false;
 }
 
 // Called every sync slot
-bool AdaptiveXmitSyncPolicy::shouldXmitSync() {
+bool AdaptiveTransmitSyncPolicy::shouldTransmitSync() {
 	if (isAdvancedStage )
 		// xmit sync according to wrapped policy (which is more random, and less frequently.)
-		return wrappedXmitSyncPolicy.shouldXmitSync();
+		return wrappedTransmitSyncPolicy.shouldTransmitSync();
 	else {
 		/*
 		 * !!!! Should not xmit sync on every call, since it would always contend with MergeSync intended for us.
@@ -33,11 +33,11 @@ bool AdaptiveXmitSyncPolicy::shouldXmitSync() {
 }
 
 // Advance to next stage (retard frequency of xmittals.)
-void AdaptiveXmitSyncPolicy::advanceStage() {
+void AdaptiveTransmitSyncPolicy::advanceStage() {
 	isAdvancedStage = true;
 }
 
-void AdaptiveXmitSyncPolicy::disarmForOneCycle() {
+void AdaptiveTransmitSyncPolicy::disarmForOneCycle() {
 	log("disarm xmit policy\n");
-	wrappedXmitSyncPolicy.disarmForOneCycle();
+	wrappedTransmitSyncPolicy.disarmForOneCycle();
 }

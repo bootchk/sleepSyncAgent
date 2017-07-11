@@ -28,17 +28,17 @@
  * since it would always contend with MergeSync intended for us.
  * An alternative design is to spread syncs out slightly from center.
  *
- * Wrapper around MasterXmitSyncPolicy.
+ * Wrapper around MasterTransmitSyncPolicy.
  */
 
 
-class AdaptiveXmitSyncPolicy {
+class AdaptiveTransmitSyncPolicy {
 
 public:
 	static void reset();
 
 	// Called every sync slot
-	static bool shouldXmitSync();
+	static bool shouldTransmitSync();
 
 	// Advance to next stage (retard frequency of xmittals.)
 	static void advanceStage();
