@@ -8,6 +8,7 @@
 #include "sleepers/oversleepMonitor.h"
 //#include "modules/syncPowerManager.h"
 #include "message/messageFactory.h"
+#include "message/serializer.h"
 
 
 
@@ -76,7 +77,7 @@ void SyncAgent::initSyncObjects(
 	Ensemble::init(SyncSleeper::getMsgReceivedCallback());
 
 	// Serializer reads and writes directly to radio buffer
-	serializer.init(Ensemble::getBufferAddress(), Radio::FixedPayloadCount);
+	Serializer::init(Ensemble::getBufferAddress(), Radio::FixedPayloadCount);
 
 	clique.init();
 

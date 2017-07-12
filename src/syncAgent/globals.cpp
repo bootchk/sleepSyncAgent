@@ -8,7 +8,6 @@ SyncPowerManager* syncPowerManager;
 
 Clique clique;
 SyncAgent syncAgent;
-Serializer serializer;
 
 //SimpleFishPolicy fishPolicy;
 SyncRecoveryFishPolicy fishPolicy;

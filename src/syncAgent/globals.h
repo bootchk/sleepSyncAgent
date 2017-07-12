@@ -29,16 +29,8 @@ extern MergerFisherRole role;
 #include "state/phase.h"
 extern Phase phase;
 
-#include "message/serializer.h"
-extern Serializer serializer;
-
 #include "modules/syncBehaviour.h"
 extern SyncBehaviour syncBehaviour;
-
-
-// Must follow network.h which it depends on
-#include "modules/syncSender.h"
-extern SyncSender syncSender;
 
 #include "policy/workManager.h"
 extern WorkManager workManager;
