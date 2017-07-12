@@ -63,7 +63,7 @@ void SyncSender::sendMasterSync() {
 }
 
 
-static void sendMergeSync() {
+void SyncSender::sendMergeSync() {
 	log(LogMessage::SendMergeSync);
 
 	// cliqueMerger knows how to create SyncMessage of type MergeSync
