@@ -41,6 +41,9 @@
 class ScheduleParameters {
 public:	// for assertions
 
+/*
+ * Slot duration and duty cycle.
+ */
 
 /*
  * Duration of all slots.
@@ -104,6 +107,16 @@ static const unsigned int  DutyCycleInverse = 800;
 
 static const DeltaTime     HalfSlotDuration = VirtualSlotDuration / 2;
 
+
+
+
+
+
+
+/*
+ * Enumeration of slots.
+ */
+
 /*
  * This is:
  * - ordinal of first sleeping slot
@@ -140,6 +153,27 @@ static const ScheduleCount CountActiveSlots = 2;
  */
 static const ScheduleCount CountSlots = CountActiveSlots*DutyCycleInverse;
 
+
+/*
+ * Constants used by FishPolicy.
+ *
+ * Now, because of HFXO startup delay, we don't fish every sleeping slot.
+ * TODO, improve the design so that we fish every sleeping slot.
+ */
+/*
+ * Deficient design:
+ * Last sleeping slot could be the last slot i.e. CountSlots.
+ * But we don't fish it, since it overlaps/delays start of SyncPeriod.
+ * Also, fishing the first slot actually fishes the second sleeping slot,
+ * and the first sleeping slot is never fished.
+ */
+
+static const ScheduleCount LastSlotOrdinalToFish = ScheduleParameters::CountSlots - 1;	// !!!
+static const ScheduleCount FirstSlotOrdinalToFish = ScheduleParameters::FirstSleepingSlotOrdinal;
+
+
+
+
 /*
  * Duration of 'normal' SyncPeriod in units ticks.
  * Note that some actual SyncPeriods are not normal, extended in duration while merging cliques.
@@ -147,6 +181,11 @@ static const ScheduleCount CountSlots = CountActiveSlots*DutyCycleInverse;
 static const DeltaTime NormalSyncPeriodDuration = CountSlots * VirtualSlotDuration;
 
 
+
+
+/*
+ * Durations of real OTA events and other delays
+ */
 
 /*
  * Duration of message over-the-air (OTA).
@@ -229,6 +268,10 @@ static const DeltaTime RealSlotDuration = VirtualSlotDuration + RadioLag;
  * hence we subtract one RampupDelay.
  */
 static const DeltaTime DeltaToSyncSlotMiddle = HalfSlotDuration + RadioLag - RampupDelay;
+
+
+
+
 
 
 
