@@ -213,8 +213,10 @@ static const DeltaTime SenderLatency = 4;
 
 
 /*
- * After radio is powered on, delay until radio is enableable (DISABLED state).
+ * After system wakes from radio off state,
+ * delay until we should activate radio (from DISABLED state to active state).
  * This is one component of 'dead' time for radio.
+ * (Even after we activate, their is more dead time: rampup.)
  *
  * Comprises:
  * - time for HFXO clock to stabilize (1200uSec, 40 ticks)
@@ -250,7 +252,19 @@ static const DeltaTime PowerOffToActiveDelay = 41;
  * Delay from sleeping to radio ready (TXIDLE or RXIDLE).
  *
  */
-static const DeltaTime RadioLag = PowerOffToActiveDelay + RampupDelay;
+/*
+ * OLD Design:
+ * static const DeltaTime RadioLag = PowerOffToActiveDelay + RampupDelay;
+ */
+/*
+ * NEW Design:
+ * Make it the same as VirtualSlot.
+ * As long as VirtualSlot is greater than 40,
+ * that is ample time for HFXO startup.
+ * And it simplifies thinking about overlap of RealSlot and VirtualSlot
+ */
+static const DeltaTime RadioLag = VirtualSlotDuration;
+
 
 /*
  * Real slots are greater duration than virtual slots.
@@ -260,7 +274,8 @@ static const DeltaTime RealSlotDuration = VirtualSlotDuration + RadioLag;
 /*
  * Middle of active portion of sync slot.
  *
- * Radio is active after RadioLag.
+ * Radio is active a RadioLag duration after starting radio.
+ * Active means "able to receive or transmit."
  * Radio is active a full VirtualSlotDuration
  * Center of the active period is RadioLag plus HalfSlotDuration.
  * But a RampupDelay is incurred switching from rcv to xmit.
@@ -273,7 +288,9 @@ static const DeltaTime DeltaToSyncSlotMiddle = HalfSlotDuration + RadioLag - Ram
 
 
 
-
+/*
+ * Sanity checks for parameters passed to sleeping methods.
+ */
 
 // TODO don't use this, but more specific values
 /*
@@ -324,6 +341,13 @@ static const DeltaTime TimeoutWaitingForSyncPowerSleeper = 160000;
  */
 static const DeltaTime MaxSaneTimeoutSyncSleeper = 2* NormalSyncPeriodDuration;
 
+
+
+
+
+/*
+ * Constants used by OversleepMonitor.
+ */
 
 /* Ticks the code takes to get to sleep and wake from sleep.
  *
