@@ -20,7 +20,11 @@ bool isActive = false;
 // 2-way relation: Clique owns CliqueMerger, CliqueMerger uses owning Clique
 Clique* owningClique;
 
-MergeOffset offsetToMergee;
+/*
+ * See definition of MergeOffset: a DeltaTime.
+ */
+MergeOffset offsetToMergeeSyncSlotMiddle;
+
 SystemID masterID;
 
 
@@ -104,7 +108,7 @@ DeltaTime offsetForMergeOtherClique() {
 /*
  * Two variants: mergeMy and mergeOther
  *
- * For both, only the offsetToMergee need be calculated.
+ * For both, only the offsetToMergeeSyncSlotMiddle need be calculated.
  * A DeltaSync will be calculated at the time self sends MergeSync.
  *
  * For mergeMy, self's schedule is adjusted.  For mergeOther, not adjust self's schedule.
@@ -121,7 +125,7 @@ void initMergeMyClique(SyncMessage* msg){
 	 * |S..|W..|...|...|F..|...|...|S..|  current schedule
 	 *                    ^--------^   deltaNowToNextSyncPoint
 	 *                  |S..|W..|....M........|S..|  my adjusted schedule
-	 *                  ^H----------H^ offsetToMergee
+	 *                  ^H----------H^ offsetToMergeeSyncSlotMiddle
 	 * Note:
 	 * - adjusted schedule is not slot aligned with old.
 	 * - mergeSlot is not aligned with slots in adjusted schedule.
@@ -132,7 +136,7 @@ void initMergeMyClique(SyncMessage* msg){
 	log("Merge my clique\n");
 
 	// Using unadjusted schedule
-	offsetToMergee.set(offsetForMergeMyClique());
+	offsetToMergeeSyncSlotMiddle.set(offsetForMergeMyClique());
 
 	// FUTURE migrate this outside and return result to indicate it should be done
 	// After using current clique above, change my clique (new master and new schedule)
@@ -161,7 +165,7 @@ void initMergeOtherClique(){
 	log("Merge other clique\n");
 
 	// WRONG setOffsetToMergee(owningClique->schedule.deltaNowToNextSyncPoint());
-	offsetToMergee.set(offsetForMergeOtherClique());
+	offsetToMergeeSyncSlotMiddle.set(offsetForMergeOtherClique());
 
 	// No adjustment to self schedule
 
@@ -227,7 +231,7 @@ void CliqueMerger::adjustMergerBySyncMsg(SyncMessage* msg) {
 	(void) deltaStartSyncPeriodToNewNextSyncPoint;
 	// For now, do nothing, and xmit MergeSyncs at wrong time
 
-	// offsetToMergee -= msg->deltaToNextSyncPoint;
+	// offsetToMergeeSyncSlotMiddle -= msg->deltaToNextSyncPoint;
 	// FUTURE this is not right, result could be negative.  Need modulo.
 	// Also, if the mergeSlot now overlaps sync or work slot?
 #endif
@@ -255,6 +259,6 @@ SyncMessage* CliqueMerger::makeMergeSync(){
 
 
 // Return pointer to internal data structure, that is constant to the caller
-const MergeOffset* CliqueMerger::getOffsetToMergee() {
-	return &offsetToMergee;
+const MergeOffset* CliqueMerger::getOffsetToMergeeSyncSlotMiddle() {
+	return &offsetToMergeeSyncSlotMiddle;
 }
