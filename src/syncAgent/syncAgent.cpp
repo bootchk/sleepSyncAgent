@@ -113,6 +113,10 @@ void SyncAgent::initSyncObjects(
 
 // Merger and Fisher are duals
 
+/*
+ * We fished another clique.
+ * Begin MergerRole
+ */
 void SyncAgent::toMergerRole(SyncMessage* msg){
 	// assert slot is fishSlot
 	assert (MessageFactory::carriesSync(msg->type));

@@ -47,7 +47,7 @@ LongTime messageTimeOfArrival() {
 }
 
 LongTime middleOfNextSyncSlotOfFisher() {
-	LongTime result = owningClique->schedule.timeOfNextSyncPoint() + ScheduleParameters::DeltaToSyncSlotMiddle;
+	LongTime result = owningClique->schedule.timeOfNextSyncPoint() + ScheduleParameters::DeltaSyncPointToSyncSlotMiddle;
 	return result;
 }
 
@@ -55,17 +55,20 @@ LongTime nextSyncPointOfFisher() {
 	LongTime result = owningClique->schedule.timeOfNextSyncPoint();
 	return result;
 }
+
 /*
- * Assert now we just received a SyncMsg from middle of SyncSlot of Catch clique
+ * Assert we just received a SyncMsg from middle of SyncSlot of Catch clique
  */
 // Time in future when Catch will be in middle of next SyncSlot
 LongTime middleOfNextSyncSlotOfCatch() {
 	LongTime result = messageTimeOfArrival() + ScheduleParameters::NormalSyncPeriodDuration;
 	return result;
 }
-// Time in past when Catch started SyncSlot
+// Time in past of Catch's SyncPoint
 LongTime pastSyncPointOfCatch() {
-	LongTime result = messageTimeOfArrival() - ScheduleParameters::DeltaToSyncSlotMiddle;
+	LongTime result = messageTimeOfArrival()
+			- ScheduleParameters::DeltaSyncPointToSyncSlotMiddle
+			- ScheduleParameters::MsgOverTheAirTimeInTicks;
 	// TODO minus a halfMessageLatency or other adjustment???
 	// WAS: owningClique->schedule.halfSlotDuration();
 	return result;
@@ -91,7 +94,7 @@ DeltaTime offsetForMergeMyClique() {
 }
 
 /*
- * Here, self will be sender, and on self's same schedule
+ * Self will be sender, on self's existing schedule
  */
 DeltaTime offsetForMergeOtherClique() {
 	/*
@@ -153,8 +156,6 @@ void initMergeMyClique(SyncMessage* msg){
 	 */
 	owningClique->updateBySyncMessage(msg);
 
-
-
 	assert(!owningClique->isSelfMaster());	// Even if true previously
 	/*
 	 * Post conditions:
@@ -208,14 +209,22 @@ void initMergeOtherClique(SyncMessage* msg){
 
 } // namespace
 
+
+
+
 void CliqueMerger::deactivate(){ isActive = false; }
 
+
+
+/*
+ * Other clique's sync heard in a fishing slot.
+ * Responsibility:
+ * - understand superior/inferior i.e. merge my vs merge other
+ * - adjust my schedule when merge my
+ * - save design so later, at endSyncSlot, we can schedule any mergeSlot.
+ */
 void CliqueMerger::initFromMsg(SyncMessage* msg){
-	/*
-	 * msg heard in a fishing slot.
-	 * Responsibility: know design and possibly adjust my schedule
-	 * Save design so later, at endSyncSlot, we can schedule any mergeSlot.
-	 */
+
 
 	assert (MessageFactory::carriesSync(msg->type));
 	log("Other Master ID: \n");

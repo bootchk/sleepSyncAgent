@@ -21,13 +21,13 @@ DeltaTime SyncSlotSchedule::deltaToThisSyncSlotEnd(){
 
 LongTime SyncSlotSchedule::timeOfThisSyncSlotMiddleSubslot() {
 	return clique.schedule.startTimeOfSyncPeriod()
-			+ ScheduleParameters::DeltaToSyncSlotMiddle;
+			+ ScheduleParameters::DeltaSyncPointToSyncSlotMiddle;
 }
 
 
 /*
  * Real slot is longer than virtual slot,
- * by startup delays for radio.
+ * by startup delays for ensemble.
  */
 LongTime SyncSlotSchedule::timeOfThisSyncSlotEnd() {
 	return clique.schedule.startTimeOfSyncPeriod()

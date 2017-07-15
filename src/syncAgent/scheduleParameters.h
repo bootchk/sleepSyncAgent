@@ -16,7 +16,7 @@
  * Virtual slots divide a sync period into non-overlapping segments.
  * Real slot duration is greater, and real slots overlap.
  *
- * Real slots are longer to accommodate RadioLag.
+ * Real slots are longer to accommodate HFXOStartup.
  * That is, real slots have radio dead time for radio lag, but then listen a full VirtualSlotDuration.
  * Thus, a sequence of FishSlots listens to the whole sync period without gaps in listening.
  *
@@ -254,7 +254,7 @@ static const DeltaTime PowerOffToActiveDelay = 41;
  */
 /*
  * OLD Design:
- * static const DeltaTime RadioLag = PowerOffToActiveDelay + RampupDelay;
+ * static const DeltaTime HFXOStartup = PowerOffToActiveDelay + RampupDelay;
  */
 /*
  * NEW Design:
@@ -263,26 +263,36 @@ static const DeltaTime PowerOffToActiveDelay = 41;
  * that is ample time for HFXO startup.
  * And it simplifies thinking about overlap of RealSlot and VirtualSlot
  */
-static const DeltaTime RadioLag = VirtualSlotDuration;
+static const DeltaTime HFXOStartup = VirtualSlotDuration;
 
+/*
+ * DeltaTime from a time we must wakeup
+ * to the time when we want a message to be received.
+ */
+static const DeltaTime PreflightDelta = HFXOStartup + RampupDelay + MsgOverTheAirTimeInTicks;
 
 /*
  * Real slots are greater duration than virtual slots.
  */
-static const DeltaTime RealSlotDuration = VirtualSlotDuration + RadioLag;
+static const DeltaTime RealSlotDuration = VirtualSlotDuration + HFXOStartup;
+
 
 /*
- * Middle of active portion of sync slot.
+ * Middle of virtual (active) portion of RealSyncSlot.
  *
- * Radio is active a RadioLag duration after starting radio.
+ * Radio is active a HFXOStartup duration after starting RealSyncSlot.
  * Active means "able to receive or transmit."
+ * (Here we are ignoring initial Radio RampupDelay.)
  * Radio is active a full VirtualSlotDuration
- * Center of the active period is RadioLag plus HalfSlotDuration.
+ * Center of the active period is HFXOStartup plus HalfSlotDuration.
  * But a RampupDelay is incurred switching from rcv to xmit.
  * So to center the xmit, must start one RampupDelay before center of active period,
  * hence we subtract one RampupDelay.
+ *
+ * This is a time when transmission starts.
+ * A transmission is received MsgOverTheAirTimeInTicks later.
  */
-static const DeltaTime DeltaToSyncSlotMiddle = HalfSlotDuration + RadioLag - RampupDelay;
+static const DeltaTime DeltaSyncPointToSyncSlotMiddle = HalfSlotDuration + HFXOStartup - RampupDelay;
 
 
 

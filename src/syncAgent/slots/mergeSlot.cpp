@@ -15,25 +15,30 @@
 
 namespace {
 
+
 /*
  * Partial application:
  * Convert function of one arg into function of no args.
  *
  * A method that whenever called, returns time remaining until time to start merge slot.
- * !!! This time is before actual transmit time, accounting for RadioLag.
+ * !!! This time is before actual start transmit end time, accounting for various preflight.
  */
 DeltaTime timeoutUntilMergeSlotStart() {
 	/*
 	 * Much futzing here to use the constraints of MergeOffset type
 	 */
 
-	// Get unconstrained DeltaTime
+	// Get DeltaTime from SyncPoint to when we should transmit MergeSync
 	DeltaTime offset = SyncAgent::cliqueMerger.getOffsetToMergeeSyncSlotMiddle()->get();
-	offset -= ScheduleParameters::RadioLag;	// start slot one RadioLag before time to transmit
+
+	// Adjust
+	offset -= ScheduleParameters::PreflightDelta;
+
 	const MergeOffset offsetToMergeSlotStart;
-	// Back to type MergeOffset with constraints checked
+	// To type MergeOffset with constraints checked (insure modulo subtraction didn't yield a large DeltaTime.)
 	offsetToMergeSlotStart.set(offset);
 
+	// Pass address of stack var, its lifetime is long enough to pass as a parameter.
 	return clique.schedule.deltaToThisMergeStart(&offsetToMergeSlotStart);
 }
 
