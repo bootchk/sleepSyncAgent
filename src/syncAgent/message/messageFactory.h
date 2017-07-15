@@ -4,9 +4,11 @@
 
 namespace {
 
+// One message instance, reused
 SyncMessage message;
 
 }
+
 
 /*
  * Knows how to construct a message.
@@ -55,14 +57,21 @@ public:
 		message.type = MessageType::MasterSync;
 		message.deltaToNextSyncPoint.set(aDeltaToNextSyncPoint);	// asserts if out of range
 		message.masterID = aMasterID;
+
+		// For testing: carry
 		message.work = 0;
 		return &message;
 	}
-	static SyncMessage* initMergeSyncMessage(DeltaTime aDeltaToNextSyncPoint, SystemID aMasterID) {
+	static SyncMessage* initMergeSyncMessage(DeltaTime aDeltaToNextSyncPoint,
+			SystemID superiorMasterID,
+			SystemID inferiorMasterID
+			) {
 		message.type = MessageType::MergeSync;
 		message.deltaToNextSyncPoint.set(aDeltaToNextSyncPoint);	// throws assertion if out of range
-		message.masterID = aMasterID;
-		message.work = 0;
+		message.masterID = superiorMasterID;
+
+		// Work is normally unused, sent as zero.  For testing: send lower two bytes of inferior
+		message.work = (WorkPayload) inferiorMasterID;
 		return &message;
 	}
 	static SyncMessage* initWorkSyncMessage(DeltaTime aDeltaToNextSyncPoint, SystemID aMasterID, WorkPayload workPayload) {

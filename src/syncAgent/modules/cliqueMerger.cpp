@@ -25,7 +25,9 @@ Clique* owningClique;
  */
 MergeOffset offsetToMergeeSyncSlotMiddle;
 
-SystemID masterID;
+
+SystemID superiorMasterID;
+SystemID inferiorMasterID;
 
 
 /*
@@ -135,20 +137,40 @@ void initMergeMyClique(SyncMessage* msg){
 	 */
 	log("Merge my clique\n");
 
-	// Using unadjusted schedule
+	// Using self unadjusted schedule
 	offsetToMergeeSyncSlotMiddle.set(offsetForMergeMyClique());
 
+	/*
+	 * Merging my inferior clique into superior clique ID of fished message
+	 */
+	superiorMasterID = msg->masterID;
+	inferiorMasterID = owningClique->getMasterID();
+
+
 	// FUTURE migrate this outside and return result to indicate it should be done
-	// After using current clique above, change my clique (new master and new schedule)
+	/*
+	 * After using current clique above, change my clique (new master and new schedule)
+	 */
 	owningClique->updateBySyncMessage(msg);
 
-	// Merging my clique into clique ID of message
-	masterID = msg->masterID;
+
+
 	assert(!owningClique->isSelfMaster());	// Even if true previously
+	/*
+	 * Post conditions:
+	 * Self is on a new clique and schedule (that of the fished message.)
+	 * Self is not master.
+	 * Self is Role Merger.
+	 * Self will send MergeSync in SyncSlot of former clique.
+	 */
 }
 
-
-void initMergeOtherClique(){
+/*
+ * Pre conditions:
+ * Self fished and caught other clique.
+ * Other clique is inferior.
+ */
+void initMergeOtherClique(SyncMessage* msg){
 	/*
 	 * Start sending sync to other clique members telling them to merge to self's clique,
 	 * and pass them offset from now to next SyncPoint
@@ -169,9 +191,19 @@ void initMergeOtherClique(){
 
 	// No adjustment to self schedule
 
-	// Self fished and caught other clique, and self will send MergeSync (contending with current other master)
-	// but saying master is self's clique.masterID, not necessarily self's masterID
-	masterID = owningClique->getMasterID();
+	/*
+	 * Self is Master or Slave.
+	 * master of superior clique is self's clique.masterID, not necessarily self's ID
+	 */
+	superiorMasterID = owningClique->getMasterID();
+	inferiorMasterID = msg->masterID;
+
+	/*
+	 * Post conditions
+	 * Self in Merge Role.
+	 * Will send MergeSync (contending with master of other inferior clique.)
+	 * Self's clique and schedule unchanged.
+	 */
 }
 
 } // namespace
@@ -192,7 +224,7 @@ void CliqueMerger::initFromMsg(SyncMessage* msg){
 	if (owningClique->isOtherCliqueBetter(msg->masterID))
 		initMergeMyClique(msg);
 	else
-		initMergeOtherClique();
+		initMergeOtherClique(msg);
 
 	isActive = true;
 	assert(isActive);
@@ -253,7 +285,7 @@ SyncMessage* CliqueMerger::makeMergeSync(){
 	 */
 	DeltaTime rawOffset = owningClique->schedule.deltaNowToNextSyncPoint();
 
-	return MessageFactory::initMergeSyncMessage(rawOffset, masterID);
+	return MessageFactory::initMergeSyncMessage(rawOffset, superiorMasterID, inferiorMasterID);
 }
 
 
