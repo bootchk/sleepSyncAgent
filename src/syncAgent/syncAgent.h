@@ -43,6 +43,8 @@ private:
 public:	// to SyncSlot mainly
 	static CliqueMerger cliqueMerger;
 
+	static WorkPayload countMergeSyncHeard ;
+
 private:
 	// syncPeriod local to syncAgentLoop.c
 

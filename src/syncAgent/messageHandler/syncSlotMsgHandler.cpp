@@ -27,6 +27,7 @@ HandlingResult SyncSlotMessageHandler::handle(SyncMessage* msg){
 	case MessageType::MergeSync:
 		log(LogMessage::RXMergeSync);
 		handlingResult = handleMergeSyncMessage(msg);
+		SyncAgent::countMergeSyncHeard++;
 		break;
 	case MessageType::AbandonMastership:
 		log(LogMessage::RXAbandonMastership);

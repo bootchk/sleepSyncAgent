@@ -20,6 +20,8 @@
 
 CliqueMerger SyncAgent::cliqueMerger;
 
+WorkPayload SyncAgent::countMergeSyncHeard;
+
 void (*SyncAgent::onWorkMsgCallback)(WorkPayload);
 void (*SyncAgent::onSyncPointCallback)();
 
@@ -91,6 +93,8 @@ void SyncAgent::initSyncObjects(
 			//SyncSleeper::getPriorReasonForWake,
 			OverSleepMonitor::getPhaseAndReason,
 			OverSleepMonitor::timeElapsedSinceLastStartSleep);
+
+	countMergeSyncHeard = 0;
 
 	// assert LongClock is reset
 	// not assert LongClock running assert(aLCT->isOSClockRunning());

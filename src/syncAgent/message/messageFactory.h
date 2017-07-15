@@ -2,6 +2,8 @@
 
 #include "message.h"
 
+#include "../syncAgent.h"	// Testing
+
 namespace {
 
 // One message instance, reused
@@ -58,8 +60,8 @@ public:
 		message.deltaToNextSyncPoint.set(aDeltaToNextSyncPoint);	// asserts if out of range
 		message.masterID = aMasterID;
 
-		// For testing: carry
-		message.work = 0;
+		// Normally work is empty.  For testing: carry
+		message.work = SyncAgent::countMergeSyncHeard;
 		return &message;
 	}
 	static SyncMessage* initMergeSyncMessage(DeltaTime aDeltaToNextSyncPoint,
