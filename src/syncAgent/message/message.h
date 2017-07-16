@@ -7,8 +7,8 @@
 
 /*
  * !!! Message IS a singleton class.
- * Only one message at a time is handled.
- * The receiver is never active until the current received message is handled.
+ * Only one message at a time is being processed.
+ * The receiver is never active until the current received message has been processed.
  * The transmitter is never active until we are done with the received message.
  *
  * MessageFactory owns one instance.
@@ -86,11 +86,13 @@ enum class MessageType {
 
 class SyncMessage{
 public:
+	// One static class data
+	static LongTime timeOfArrival;	// not OTA
 
 	MessageType type;
 	DeltaSync deltaToNextSyncPoint;	// forward in time
 	SystemID masterID;
 	WorkPayload work;	// work always allocated/transmitted, but often empty/null
-
 };
+
 

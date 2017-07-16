@@ -36,15 +36,7 @@ SystemID inferiorMasterID;
  * They could be optimized: substitute and algebraically simplify yielding a simpler formula.
  */
 
-/*
- * Allow for future changes and more robustness.
- * For now, assert little time has passed executing code since message arrived, so nowTime() is close enough.
- * FUTURE: record TOA when message arrives.  See elsewhere, already recorded?
- */
-LongTime messageTimeOfArrival() {
-	// WAS return owningClique->schedule.nowTime();
-	return LongClock::nowTime();
-}
+
 
 LongTime middleOfNextSyncSlotOfFisher() {
 	LongTime result = owningClique->schedule.timeOfNextSyncPoint() + ScheduleParameters::DeltaSyncPointToSyncSlotMiddle;
@@ -61,12 +53,12 @@ LongTime nextSyncPointOfFisher() {
  */
 // Time in future when Catch will be in middle of next SyncSlot
 LongTime middleOfNextSyncSlotOfCatch() {
-	LongTime result = messageTimeOfArrival() + ScheduleParameters::NormalSyncPeriodDuration;
+	LongTime result = SyncMessage::timeOfArrival + ScheduleParameters::NormalSyncPeriodDuration;
 	return result;
 }
 // Time in past of Catch's SyncPoint
 LongTime pastSyncPointOfCatch() {
-	LongTime result = messageTimeOfArrival()
+	LongTime result = SyncMessage::timeOfArrival
 			- ScheduleParameters::DeltaSyncPointToSyncSlotMiddle
 			- ScheduleParameters::MsgOverTheAirTimeInTicks;
 	// TODO minus a halfMessageLatency or other adjustment???

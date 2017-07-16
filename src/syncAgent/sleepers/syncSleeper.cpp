@@ -131,7 +131,7 @@ HandlingResult determineHandlingResult(MessageHandler msgHandler) {
 	// TODO, its a packet not a msg, could be invalid
 	case ReasonForWake::MsgReceived:
 		// Record TOA as soon as possible
-		Schedule::recordMsgArrivalTime();
+		SyncMessage::timeOfArrival = LongClock::nowTime();
 
 		// if timer semantics are: restartable, cancel timer here
 		handlingResult = dispatchFilteredMsg(msgHandler);

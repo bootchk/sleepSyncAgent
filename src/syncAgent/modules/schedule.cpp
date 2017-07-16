@@ -8,10 +8,6 @@
 
 namespace {
 
-LongTime messageTOA;
-
-
-
 /*
  * Set every SyncPoint (when SyncPeriod starts) and never elsewhere.
  * I.E. It is history that we don't rewrite.
@@ -182,7 +178,7 @@ LongTime Schedule::adjustedEndTime(const SyncMessage* msg) {
 	DeltaTime delta = msg->deltaToNextSyncPoint.get();
 	// delta < SyncPeriodDuration
 
-	LongTime toa = getMsgArrivalTime();
+	LongTime toa = msg->timeOfArrival;
 	LongTime result = toa +
 			+ delta
 			- ScheduleParameters::MsgOverTheAirTimeInTicks
@@ -277,15 +273,6 @@ DeltaTime Schedule::deltaToThisMergeStart(const MergeOffset* const offset){
 }
 
 
-
-
-void Schedule::recordMsgArrivalTime() {
-	messageTOA = LongClock::nowTime();
-}
-
-LongTime Schedule::getMsgArrivalTime() {
-	return messageTOA;
-}
 
 #ifdef OBSOLETE
 

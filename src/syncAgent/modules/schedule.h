@@ -121,8 +121,6 @@ public:
 
 
 	static LongTime timeOfThisMergeStart(DeltaTime offset);
-
-	static void recordMsgArrivalTime();
-	static LongTime getMsgArrivalTime();
-
 };
+
+
