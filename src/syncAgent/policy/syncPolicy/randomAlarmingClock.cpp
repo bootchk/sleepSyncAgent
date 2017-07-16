@@ -1,8 +1,8 @@
 
 #include <cassert>
 
-#include "../../augment/random.h"
-#include "policyParameters.h"
+#include "../../../augment/random.h"
+#include "../policyParameters.h"
 
 #include "randomAlarmingClock.h"
 

@@ -6,7 +6,7 @@
 #include "../globals.h"  // fishPolicy
 #include "../policy/dropoutMonitor.h"
 //#include "../policy/masterXmitSyncPolicy.h"
-#include "../policy/adaptiveXmitSyncPolicy.h"
+#include "../policy/syncPolicy/adaptiveXmitSyncPolicy.h"
 
 #include "../message/messageFactory.h"
 
@@ -167,6 +167,13 @@ void Clique::onMasterDropout() {
 
 
 /*
+ * Implementation:
+ * Three steps:
+ * 1) update mastership
+ * 2) update policy
+ * 3) update schedule
+ * 4) FUTURE update history of mastership
+ *
  * An update, not necessarily a change.  Not assert result data different from current data.
  * The MasterID may be the same as current.
  * The offset may be zero.
@@ -175,25 +182,22 @@ void Clique::updateBySyncMessage(SyncMessage* msg) {
 	// assert (in Sync or Fish slot)
 	assert (MessageFactory::carriesSync(msg->type));
 
+	// 1) update mastership
+	setOtherMastership(msg->masterID);
 	/*
-	 * !!! Update.  Not assert that msg.MasterID != self.masterID:
+	 * Not assert master changed. Not assert that msg.MasterID != self.masterID:
 	 * a WorkSync from a Slave carries MasterID of clique which could match my MasterID when self is Master
 	 */
-	setOtherMastership(msg->masterID);
-	// Not assert master changed
 
 	/*
-	 * Self has heard another unit, retard policy.
-	 * (The sync message may have same MasterID as self's clique, but msg is definitely from another unit.)
-	 * If self unit not master, won't be xmitting sync now,
-	 * but if self unit ever assumes mastership,
-	 * policy will then be in advanced stage.
+	 * 2) update policy
+	 * See advanceStage() comments
 	 */
 	masterTransmitSyncPolicy.advanceStage();
 
 	// FUTURE clique.historyOfMasters.update(msg);
 
-	// Change schedule.
+	// 3) update schedule
 	// Regardless: from my master (small offset) or from another clique (large offset)
 	schedule.adjustBySyncMsg(msg);
 }

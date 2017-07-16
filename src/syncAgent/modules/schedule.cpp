@@ -126,10 +126,6 @@ void Schedule::rollPeriodForwardToNow() {
  * assert startTimeOfSyncPeriod < nowTime()  < endTimeOfSyncPeriod
  * i.e. now in the current period, but may be near the end of it,
  * or beyond it because of delay in processing fished SyncMessage?
- *
- * assert not much time has elapsed since msg arrived.
- * I.E. nowTime() is approximate TOA of SyncMessage.
- * For more accuracy, we could timestamp msg arrival as early as possible.
  */
 void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 	/*

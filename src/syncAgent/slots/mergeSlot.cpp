@@ -28,18 +28,18 @@ DeltaTime timeoutUntilMergeSlotStart() {
 	 * Much futzing here to use the constraints of MergeOffset type
 	 */
 
-	// Get DeltaTime from SyncPoint to when we should transmit MergeSync
-	DeltaTime offset = SyncAgent::cliqueMerger.getOffsetToMergeeSyncSlotMiddle()->get();
+	// Get DeltaTime from SyncPoint to when mergee should receive MergeSync
+	DeltaTime deltaTime = SyncAgent::cliqueMerger.getPeriodTimeToMergeeSyncSlotMiddle()->get();
 
-	// Adjust
-	offset -= ScheduleParameters::PreflightDelta;
+	// Adjust to get the time we should start transmit
+	deltaTime -= ScheduleParameters::PreflightDelta;
 
-	const MergeOffset offsetToMergeSlotStart;
+	const MergeOffset deltaTimeToMergeSlotStart;
 	// To type MergeOffset with constraints checked (insure modulo subtraction didn't yield a large DeltaTime.)
-	offsetToMergeSlotStart.set(offset);
+	deltaTimeToMergeSlotStart.set(deltaTime);
 
 	// Pass address of stack var, its lifetime is long enough to pass as a parameter.
-	return clique.schedule.deltaToThisMergeStart(&offsetToMergeSlotStart);
+	return clique.schedule.deltaToThisMergeStart(&deltaTimeToMergeSlotStart);
 }
 
 } // namespace

@@ -38,5 +38,5 @@ public:
 	 */
 	static SyncMessage* makeMergeSync();
 
-	static const MergeOffset* getOffsetToMergeeSyncSlotMiddle();
+	static const MergeOffset* getPeriodTimeToMergeeSyncSlotMiddle();
 };

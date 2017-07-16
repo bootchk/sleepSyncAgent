@@ -204,8 +204,8 @@ static const DeltaTime NormalSyncPeriodDuration = CountSlots * VirtualSlotDurati
 static const DeltaTime MsgOverTheAirTimeInTicks = 2;
 
 /*
- * The delay between the time the sender fetches offset time
- * and sender actually sends it.
+ * The delay between the time the sender fetches offset time and sender actually sends it.
+ * IOW delay between send and receive, on a reference clock.
  * This is currently just a guess or measured.
  * If sending code changes, or optimization, this changes too.
  */

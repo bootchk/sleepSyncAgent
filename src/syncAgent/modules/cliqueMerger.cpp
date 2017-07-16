@@ -23,7 +23,7 @@ Clique* owningClique;
 /*
  * See definition of MergeOffset: a DeltaTime.
  */
-MergeOffset offsetToMergeeSyncSlotMiddle;
+MergeOffset periodTimeToMergeeSyncSlotMiddle;
 
 
 SystemID superiorMasterID;
@@ -48,20 +48,23 @@ LongTime nextSyncPointOfFisher() {
 	return result;
 }
 
+
 /*
- * Assert we just received a SyncMsg from middle of SyncSlot of Catch clique
+ * Assert we just received a SyncMsg from middle of SyncSlot of Catch clique.
+ *
+ * These return LongTime on local LongClock of events on a caught other unit.
  */
 // Time in future when Catch will be in middle of next SyncSlot
 LongTime middleOfNextSyncSlotOfCatch() {
-	LongTime result = SyncMessage::timeOfArrival + ScheduleParameters::NormalSyncPeriodDuration;
+	LongTime result = SyncMessage::timeOfTransmittal()
+			+ ScheduleParameters::NormalSyncPeriodDuration;
 	return result;
 }
+
 // Time in past of Catch's SyncPoint
 LongTime pastSyncPointOfCatch() {
-	LongTime result = SyncMessage::timeOfArrival
-			- ScheduleParameters::DeltaSyncPointToSyncSlotMiddle
-			- ScheduleParameters::MsgOverTheAirTimeInTicks;
-	// TODO minus a halfMessageLatency or other adjustment???
+	LongTime result = SyncMessage::timeOfTransmittal()
+			- ScheduleParameters::DeltaSyncPointToSyncSlotMiddle;
 	// WAS: owningClique->schedule.halfSlotDuration();
 	return result;
 }
@@ -72,9 +75,9 @@ LongTime pastSyncPointOfCatch() {
  */
 
 /*
- * Here, self will be sender, but will be on schedule of Catch clique
+ * Self will be sender to inferior former clique, self will be on schedule of Catch's superior clique
  */
-DeltaTime offsetForMergeMyClique() {
+DeltaTime periodTimeToMergeMyClique() {
 	/*
 	XXX this might be an optimized equivalent.
 	owningClique->schedule.deltaNowToNextSyncPoint()
@@ -88,7 +91,7 @@ DeltaTime offsetForMergeMyClique() {
 /*
  * Self will be sender, on self's existing schedule
  */
-DeltaTime offsetForMergeOtherClique() {
+DeltaTime periodTimeToMergeOtherClique() {
 	/*
 	 * XXX this might be an optimized equivalent.
 	 * owningClique->schedule.deltaPastSyncPointToNow();
@@ -105,7 +108,7 @@ DeltaTime offsetForMergeOtherClique() {
 /*
  * Two variants: mergeMy and mergeOther
  *
- * For both, only the offsetToMergeeSyncSlotMiddle need be calculated.
+ * For both, only the periodTimeToMergeeSyncSlotMiddle need be calculated.
  * A DeltaSync will be calculated at the time self sends MergeSync.
  *
  * For mergeMy, self's schedule is adjusted.  For mergeOther, not adjust self's schedule.
@@ -122,18 +125,18 @@ void initMergeMyClique(SyncMessage* msg){
 	 * |S..|W..|...|...|F..|...|...|S..|  current schedule
 	 *                    ^--------^   deltaNowToNextSyncPoint
 	 *                  |S..|W..|....M........|S..|  my adjusted schedule
-	 *                  ^H----------H^ offsetToMergeeSyncSlotMiddle
+	 *                  ^H----------H^ periodTimeToMergeeSyncSlotMiddle
 	 * Note:
 	 * - adjusted schedule is not slot aligned with old.
 	 * - mergeSlot is not aligned with slots in adjusted schedule.
-	 * - want total offset to include two halfSlotDurations
+	 * - want total periodTime to include two halfSlotDurations
 	 * -- one to get back to syncPoint of adjusted schedule
 	 * -- ont to get forward to middle of syncSlot of old, unadjusted schedule
 	 */
 	log("Merge my clique\n");
 
 	// Using self unadjusted schedule
-	offsetToMergeeSyncSlotMiddle.set(offsetForMergeMyClique());
+	periodTimeToMergeeSyncSlotMiddle.set(periodTimeToMergeMyClique());
 
 	/*
 	 * Merging my inferior clique into superior clique ID of fished message
@@ -180,7 +183,7 @@ void initMergeOtherClique(SyncMessage* msg){
 	log("Merge other clique\n");
 
 	// WRONG setOffsetToMergee(owningClique->schedule.deltaNowToNextSyncPoint());
-	offsetToMergeeSyncSlotMiddle.set(offsetForMergeOtherClique());
+	periodTimeToMergeeSyncSlotMiddle.set(periodTimeToMergeOtherClique());
 
 	// No adjustment to self schedule
 
@@ -280,18 +283,20 @@ SyncMessage* CliqueMerger::makeMergeSync(){
 
 	/*
 	 * masterID from this CliqueMerger
+	 * deltaSync calculated now.
 	 *
-	 * DeltaSync calculate now.
-	 * The call here must be just before sending.
+	 * deltaSync should be calculated just before sending.
+	 *
+	 * The receiving unit (mergee) will adjust for latency.
 	 */
-	DeltaTime rawOffset = owningClique->schedule.deltaNowToNextSyncPoint();
+	DeltaTime deltaSync = owningClique->schedule.deltaNowToNextSyncPoint();
 
-	return MessageFactory::initMergeSyncMessage(rawOffset, superiorMasterID, inferiorMasterID);
+	return MessageFactory::initMergeSyncMessage(deltaSync, superiorMasterID, inferiorMasterID);
 }
 
 
 
 // Return pointer to internal data structure, that is constant to the caller
-const MergeOffset* CliqueMerger::getOffsetToMergeeSyncSlotMiddle() {
-	return &offsetToMergeeSyncSlotMiddle;
+const MergeOffset* CliqueMerger::getPeriodTimeToMergeeSyncSlotMiddle() {
+	return &periodTimeToMergeeSyncSlotMiddle;
 }

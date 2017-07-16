@@ -86,9 +86,17 @@ enum class MessageType {
 
 class SyncMessage{
 public:
-	// One static class data
-	static LongTime timeOfArrival;	// not OTA
+	// One static class data, not sent OTA
+	static LongTime timeOfArrival;
 
+	/*
+	 * Calculated property.
+	 * Time on local LongClock when sender started transmit.
+	 */
+	static LongTime timeOfTransmittal();
+
+
+	// These fields are sent over the air OTA
 	MessageType type;
 	DeltaSync deltaToNextSyncPoint;	// forward in time
 	SystemID masterID;
