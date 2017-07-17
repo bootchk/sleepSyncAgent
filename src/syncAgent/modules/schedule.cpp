@@ -203,9 +203,8 @@ LongTime Schedule::adjustedEndTime(const SyncMessage* msg) {
 }
 
 
-LongTime Schedule::startTimeOfSyncPeriod(){
-	return _startTimeOfSyncPeriod;
-}
+LongTime Schedule::startTimeOfSyncPeriod(){ return _startTimeOfSyncPeriod; }
+LongTime Schedule::endTimeOfSyncPeriod(){ return _endTimeOfSyncPeriod; }
 
 
 

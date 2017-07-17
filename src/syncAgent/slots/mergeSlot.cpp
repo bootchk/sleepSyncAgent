@@ -26,22 +26,9 @@ namespace {
  * !!! This time is before actual start transmit end time, accounting for various preflight.
  */
 DeltaTime timeoutUntilMergeSlotStart() {
-	/*
-	 * Much futzing here to use the constraints of MergeOffset type
-	 */
 
-	// Get DeltaTime from SyncPoint to when mergee should receive MergeSync
-	DeltaTime deltaTime = SyncAgent::cliqueMerger.getPeriodTimeToMergeeSyncSlotMiddle()->get();
-
-	// Adjust to get the time we should start transmit
-	deltaTime -= ScheduleParameters::PreflightDelta;
-
-	const PeriodTime deltaTimeToMergeSlotStart;
-	// To type MergeOffset with constraints checked (insure modulo subtraction didn't yield a large DeltaTime.)
-	deltaTimeToMergeSlotStart.set(deltaTime);
-
-	// Pass address of stack var, its lifetime is long enough to pass as a parameter.
-	return MergeSchedule::deltaToThisMergeStart(&deltaTimeToMergeSlotStart);
+	// Pass PeriodTime from my SyncPoint to when self should start MergeSlot
+	return MergeSchedule::deltaToThisMergeStart(SyncAgent::cliqueMerger.getPeriodTimeToMergeSlotStart());
 }
 
 } // namespace

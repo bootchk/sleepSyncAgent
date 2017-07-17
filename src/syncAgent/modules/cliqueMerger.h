@@ -38,5 +38,6 @@ public:
 	 */
 	static SyncMessage* makeMergeSync();
 
-	static const PeriodTime* getPeriodTimeToMergeeSyncSlotMiddle();
+	// const pointer to const PeriodTime
+	static const PeriodTime* getPeriodTimeToMergeSlotStart();
 };

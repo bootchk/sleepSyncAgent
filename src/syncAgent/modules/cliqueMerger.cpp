@@ -20,10 +20,7 @@ bool isActive = false;
 // 2-way relation: Clique owns CliqueMerger, CliqueMerger uses owning Clique
 Clique* owningClique;
 
-/*
- * See definition of MergeOffset: a DeltaTime.
- */
-PeriodTime periodTimeToMergeeSyncSlotMiddle;
+PeriodTime periodTimeToMergeSlotStart;
 
 
 SystemID superiorMasterID;
@@ -71,8 +68,20 @@ LongTime pastSyncPointOfCatch() {
 
 
 /*
- * MergeOffset is TimeToXmitMergeSync - SyncPointOfSender
+ * PeriodTime to transmit MergeSync is TimeToXmitMergeSync - SyncPointOfSender
+ *
+ * Calculated once, read each time we send MergeSync,
+ * (An alternative design is to recalculate it if our Schedule is adjusted: not implemented.)
+ *
+ * Calculated in two steps:
+ * - raw
+ * - plus adjustments
  */
+
+DeltaTime adjustedRawTimeToMergeClique(DeltaTime rawTime) {
+	// Adjust time to transmit to get the time we should start MergeSlot
+	return rawTime - ScheduleParameters::PreflightDelta;
+}
 
 /*
  * Self will be sender to inferior former clique, self will be on schedule of Catch's superior clique
@@ -83,9 +92,9 @@ DeltaTime periodTimeToMergeMyClique() {
 	owningClique->schedule.deltaNowToNextSyncPoint()
 				+ ScheduleParameters::SlotDuration;	// plus two half slots
 	*/
-	DeltaTime result = TimeMath::clampedTimeDifference(middleOfNextSyncSlotOfFisher(), pastSyncPointOfCatch())
+	DeltaTime rawTime = TimeMath::clampedTimeDifference(middleOfNextSyncSlotOfFisher(), pastSyncPointOfCatch())
 			% ScheduleParameters::NormalSyncPeriodDuration;
-	return result;
+	return adjustedRawTimeToMergeClique(rawTime);
 }
 
 /*
@@ -96,10 +105,10 @@ DeltaTime periodTimeToMergeOtherClique() {
 	 * XXX this might be an optimized equivalent.
 	 * owningClique->schedule.deltaPastSyncPointToNow();
 	 */
-	DeltaTime result =  TimeMath::clampedTimeDifference(middleOfNextSyncSlotOfCatch(), nextSyncPointOfFisher())
+	DeltaTime rawTime =  TimeMath::clampedTimeDifference(middleOfNextSyncSlotOfCatch(), nextSyncPointOfFisher())
 		% ScheduleParameters::NormalSyncPeriodDuration;
 
-	return result;
+	return adjustedRawTimeToMergeClique(rawTime);
 }
 
 
@@ -136,7 +145,7 @@ void initMergeMyClique(SyncMessage* msg){
 	log("Merge my clique\n");
 
 	// Using self unadjusted schedule
-	periodTimeToMergeeSyncSlotMiddle.set(periodTimeToMergeMyClique());
+	periodTimeToMergeSlotStart.set(periodTimeToMergeMyClique());
 
 	/*
 	 * Merging my inferior clique into superior clique ID of fished message
@@ -183,7 +192,7 @@ void initMergeOtherClique(SyncMessage* msg){
 	log("Merge other clique\n");
 
 	// WRONG setOffsetToMergee(owningClique->schedule.deltaNowToNextSyncPoint());
-	periodTimeToMergeeSyncSlotMiddle.set(periodTimeToMergeOtherClique());
+	periodTimeToMergeSlotStart.set(periodTimeToMergeOtherClique());
 
 	// No adjustment to self schedule
 
@@ -299,7 +308,7 @@ SyncMessage* CliqueMerger::makeMergeSync(){
 
 
 
-// Return pointer to internal data structure, that is constant to the caller
-const PeriodTime* CliqueMerger::getPeriodTimeToMergeeSyncSlotMiddle() {
-	return &periodTimeToMergeeSyncSlotMiddle;
+// Return const pointer to internal data structure, that is constant to the caller
+const PeriodTime * CliqueMerger::getPeriodTimeToMergeSlotStart() {
+	return &periodTimeToMergeSlotStart;
 }

@@ -9,7 +9,7 @@
  * that spans from SyncPoint forward to another time within normal sync period.
  * Constrained to be less than NormalSyncPeriodDuration.
  *
- * Pure class, used by CliqueMerger.
+ * Pure class, but one instance declared by CliqueMerger.
  */
 class PeriodTime {
 
