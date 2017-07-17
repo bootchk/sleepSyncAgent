@@ -5,13 +5,13 @@
 
 
 /*
- * Type for specialized DeltaTime that spans from SyncPoint to time to transmit a MergeSync.
- *
+ * Type for specialized DeltaTime
+ * that spans from SyncPoint forward to another time within normal sync period.
  * Constrained to be less than NormalSyncPeriodDuration.
  *
- * Only one instance, owned by CliqueMerger.
+ * Pure class, used by CliqueMerger.
  */
-class MergeOffset {
+class PeriodTime {
 
 public:
 	/*

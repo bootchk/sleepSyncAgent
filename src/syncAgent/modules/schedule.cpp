@@ -252,22 +252,6 @@ LongTime Schedule::timeOfNextSyncPoint() {
 
 
 
-/*
- * Merge slot:
- * Only start of slot is needed, not the end (slot ends when MergeSynce is xmitted.)
- *
- * offset comes from cliqueMerger.mergeOffset
- */
-LongTime Schedule::timeOfThisMergeStart(DeltaTime offset) {
-	LongTime result;
-	result = startTimeOfSyncPeriod() + offset;
-	assert(result < _endTimeOfSyncPeriod);
-	return result;
-}
-
-DeltaTime Schedule::deltaToThisMergeStart(const MergeOffset* const offset){
-	return TimeMath::clampedTimeDifferenceFromNow(timeOfThisMergeStart(offset->get()));
-}
 
 
 

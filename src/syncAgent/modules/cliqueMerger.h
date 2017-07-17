@@ -2,8 +2,8 @@
 
 
 #include "clique.h"
-#include "mergeOffset.h"
 #include "../message/message.h"
+#include "periodTime.h"
 
 /*
  * Record of a Clique merging into a better Clique.
@@ -13,7 +13,7 @@
  * Singleton.
  *
  * Responsibilities
- * 1. know time of merge slot
+ * 1. know PeriodTime of merge slot
  * 2. know the 'design' (state) of merger (attributes of the mergee clique.)
  *
  *
@@ -38,5 +38,5 @@ public:
 	 */
 	static SyncMessage* makeMergeSync();
 
-	static const MergeOffset* getPeriodTimeToMergeeSyncSlotMiddle();
+	static const PeriodTime* getPeriodTimeToMergeeSyncSlotMiddle();
 };

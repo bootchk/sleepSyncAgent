@@ -8,7 +8,7 @@
  */
 #include "../message/message.h"	// SyncMessage, DeltaSync
 #include "../../augment/timeMath.h"	// LongTime, DeltaTime
-#include "mergeOffset.h"
+#include "periodTime.h"
 
 
 /*
@@ -85,42 +85,35 @@ public:
 	static void adjustBySyncMsg(SyncMessage* msg);
 	static LongTime adjustedEndTime(const SyncMessage* msg);
 	static LongTime startTimeOfSyncPeriod();
+	static LongTime endTimeOfSyncPeriod();
 
 	/*
 	 * Deltas from past time to now.
 	 *
-	 * nowTime is not aligned with slot starts.  Result need not be multiple of slotDuration.
+	 * nowTime is not aligned with slot starts.
+	 * Result need not be multiple of slotDuration.
+	 * If you call this late (after end of SyncPeriod) result will not be a PeriodTime.
 	 */
 	static DeltaTime deltaPastSyncPointToNow();
 
 	/*
 	 * Deltas from now to future time.
-	 * Positive or zero and < SyncPeriodDuration
+	 * Positive or zero.
+	 * Since next sync point is adjustable and may be up to two SyncPeriods in the future,
+	 * result is not a PeriodTime
 	 */
 	static DeltaTime deltaNowToNextSyncPoint();
-
-	// deltas to slots
-
-
-	static DeltaTime deltaToThisWorkSlotMiddle();
-	static DeltaTime deltaToThisWorkSlotEnd();
-
-	static DeltaTime deltaToThisMergeStart(const MergeOffset* const offset);	 // <<<<
-
-	static DeltaTime deltaFromWorkMiddleToEndSyncPeriod();
-
 	static LongTime timeOfNextSyncPoint();
 
+
+	// deltas to Fish, Merge slots are in slots/fooSchedule.h
+
+	//static DeltaTime deltaToThisWorkSlotMiddle();
+	//static DeltaTime deltaToThisWorkSlotEnd();
+	//static DeltaTime deltaFromWorkMiddleToEndSyncPeriod();
 	// slot times
-
-
-
-
-	static LongTime timeOfThisWorkSlotMiddle();
-	static LongTime timeOfThisWorkSlotEnd();
-
-
-	static LongTime timeOfThisMergeStart(DeltaTime offset);
+	// static LongTime timeOfThisWorkSlotMiddle();
+	// static LongTime timeOfThisWorkSlotEnd();
 };
 
 

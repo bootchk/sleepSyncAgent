@@ -63,7 +63,6 @@ HandlingResult FishSlotMessageHandler::handle(SyncMessage* msg){
  * Intended catch: MasterSync from another clique's Master in its sync slot.
  */
 HandlingResult FishSlotMessageHandler::handleMasterSyncMessage(SyncMessage* msg){
-	log(Logger::FishedMasterSync);
 	doFishedSyncMsg(msg);
 	// Stop listening: self can't handle more than one, or slot is busy with another merge
 	return HandlingResult::StopListeningHeardMasterSync;
@@ -79,7 +78,6 @@ HandlingResult FishSlotMessageHandler::handleMasterSyncMessage(SyncMessage* msg)
  * can calculate the other clique's sync slot from the Work msg.
  */
 HandlingResult FishSlotMessageHandler::handleWorkSyncMessage(SyncMessage* msg){
-	log(Logger::FishedWorkSync);
 	doFishedSyncMsg(msg);
 	// Stop listening: self can't handle more than one, or slot is busy with another merge
 	return HandlingResult::StopListeningHeardWorkSync;

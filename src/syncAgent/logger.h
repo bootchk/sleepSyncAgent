@@ -16,10 +16,12 @@ public:
 	static constexpr const char* FishSlot = "FishSlot\n";
 	static constexpr const char* MergeSlot = "MergeSlot\n";
 
-	static constexpr const char* FishedMasterSync = "Fish Master\n";
+	// Fished but ignored
 	static constexpr const char* FishedMergeSync = "Fish Merge\n";
-	static constexpr const char* FishedWorkSync = "Fish Work\n";
 	static constexpr const char* FishedAbandonMastershipSync = "Fish Abandon\n";
+
+	static constexpr const char* MergeMy = "\nMergeMy";
+	static constexpr const char* MergeOther = "\nMergeOther";
 
 	static constexpr const char* SendNone = "Listen\n";
 
@@ -71,5 +73,10 @@ public:
 		log("TX ");
 		log(SyncMessage::representation(msg));
 		logByte(msg->work);
+	}
+
+	static void logMsgDetail(SyncMessage* msg){
+		log("\n ID:");
+		logLongLong(msg->masterID);
 	}
 };

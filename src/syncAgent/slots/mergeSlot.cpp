@@ -1,15 +1,17 @@
 
 #include <cassert>
 
-//TODO no globals
-#include "../globals.h"
 #include "mergeSlot.h"
+#include "mergeSchedule.h"
 
 #include "../modules/syncSender.h"
 #include "../sleepers/syncSleeper.h"
 #include "../state/phase.h"
 #include "../syncAgent.h"
 #include "../scheduleParameters.h"
+
+// For debugging
+#include "../state/role.h"
 
 
 
@@ -34,12 +36,12 @@ DeltaTime timeoutUntilMergeSlotStart() {
 	// Adjust to get the time we should start transmit
 	deltaTime -= ScheduleParameters::PreflightDelta;
 
-	const MergeOffset deltaTimeToMergeSlotStart;
+	const PeriodTime deltaTimeToMergeSlotStart;
 	// To type MergeOffset with constraints checked (insure modulo subtraction didn't yield a large DeltaTime.)
 	deltaTimeToMergeSlotStart.set(deltaTime);
 
 	// Pass address of stack var, its lifetime is long enough to pass as a parameter.
-	return clique.schedule.deltaToThisMergeStart(&deltaTimeToMergeSlotStart);
+	return MergeSchedule::deltaToThisMergeStart(&deltaTimeToMergeSlotStart);
 }
 
 } // namespace
@@ -62,7 +64,7 @@ void MergeSlot::tryPerform() {
  */
 void MergeSlot::perform() {
 	assert(Ensemble::isLowPower());
-	assert(role.isMerger());
+	assert(MergerFisherRole::isMerger());
 
 	Phase::set(PhaseEnum::SleepTilMerge);
 	//LogMessage::logMerge();
@@ -95,8 +97,7 @@ void MergeSlot::perform() {
 		mergePolicy.restart();
 		SyncAgent::toFisherRole();
 		// assert next SyncPeriod will schedule FishSlot
-		assert(!role.isMerger());
-		assert(role.isFisher());
+		assert(MergerFisherRole::isFisher());
 	}
 	// else continue in role Merger
 }

@@ -23,7 +23,7 @@ Clique* owningClique;
 /*
  * See definition of MergeOffset: a DeltaTime.
  */
-MergeOffset periodTimeToMergeeSyncSlotMiddle;
+PeriodTime periodTimeToMergeeSyncSlotMiddle;
 
 
 SystemID superiorMasterID;
@@ -222,13 +222,16 @@ void CliqueMerger::initFromMsg(SyncMessage* msg){
 
 
 	assert (MessageFactory::carriesSync(msg->type));
-	log("Other Master ID: \n");
-	logLongLong(msg->masterID);
+	Logger::logMsgDetail(msg);
 
-	if (owningClique->isOtherCliqueBetter(msg->masterID))
+	if (owningClique->isOtherCliqueBetter(msg->masterID)) {
+		log(Logger::MergeMy);
 		initMergeMyClique(msg);
-	else
+	}
+	else {
+		log(Logger::MergeOther);
 		initMergeOtherClique(msg);
+	}
 
 	isActive = true;
 	assert(isActive);
@@ -297,6 +300,6 @@ SyncMessage* CliqueMerger::makeMergeSync(){
 
 
 // Return pointer to internal data structure, that is constant to the caller
-const MergeOffset* CliqueMerger::getPeriodTimeToMergeeSyncSlotMiddle() {
+const PeriodTime* CliqueMerger::getPeriodTimeToMergeeSyncSlotMiddle() {
 	return &periodTimeToMergeeSyncSlotMiddle;
 }
