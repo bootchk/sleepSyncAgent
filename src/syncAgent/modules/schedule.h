@@ -92,7 +92,9 @@ public:
 	 *
 	 * nowTime is not aligned with slot starts.
 	 * Result need not be multiple of slotDuration.
-	 * If you call this late (after end of SyncPeriod) result will not be a PeriodTime.
+	 *
+	 * This would be of type PeriodTime, except if you call this late (after end of SyncPeriod).
+	 * So a call to this is more relaxed.
 	 */
 	static DeltaTime deltaPastSyncPointToNow();
 

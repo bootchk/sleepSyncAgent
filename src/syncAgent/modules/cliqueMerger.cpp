@@ -3,9 +3,11 @@
 #include "cliqueMerger.h"
 #include "../../augment/timeMath.h"
 #include "../scheduleParameters.h"
-#include "../globals.h"
 
 #include "../message/messageFactory.h"
+
+// Debugging
+#include "../logger.h"
 
 
 namespace {
@@ -142,7 +144,6 @@ void initMergeMyClique(SyncMessage* msg){
 	 * -- one to get back to syncPoint of adjusted schedule
 	 * -- ont to get forward to middle of syncSlot of old, unadjusted schedule
 	 */
-	log("Merge my clique\n");
 
 	// Using self unadjusted schedule
 	periodTimeToMergeSlotStart.set(periodTimeToMergeMyClique());
@@ -189,7 +190,6 @@ void initMergeOtherClique(SyncMessage* msg){
 	 *
 	 * We don't care which SyncMessage we fished or which MasterID owned the other clique.
 	 */
-	log("Merge other clique\n");
 
 	// WRONG setOffsetToMergee(owningClique->schedule.deltaNowToNextSyncPoint());
 	periodTimeToMergeSlotStart.set(periodTimeToMergeOtherClique());
@@ -231,6 +231,9 @@ void CliqueMerger::initFromMsg(SyncMessage* msg){
 
 
 	assert (MessageFactory::carriesSync(msg->type));
+
+	// Log PeriodTime we fished sync, and log details
+	Logger::logMsgTime();
 	Logger::logMsgDetail(msg);
 
 	if (owningClique->isOtherCliqueBetter(msg->masterID)) {

@@ -193,6 +193,7 @@ LongTime Schedule::adjustedEndTime(const SyncMessage* msg) {
 		result += ScheduleParameters::NormalSyncPeriodDuration;
 	}
 
+	// -DLOGGING
 	logLongLong(toa); log(":toa\n");
 	logInt(delta); log(":offset\n");
 	logLongLong(result); log(":new period end\n");

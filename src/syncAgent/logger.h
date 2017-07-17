@@ -3,6 +3,7 @@
 #include "flashIndex.h"
 
 #include "message/message.h"
+#include "modules/schedule.h"
 
 
 /*
@@ -78,5 +79,13 @@ public:
 	static void logMsgDetail(SyncMessage* msg){
 		log("\n ID:");
 		logLongLong(msg->masterID);
+		log(" Off:");
+		logInt(msg->deltaToNextSyncPoint.get());
+	}
+
+	// A msg sent or received, log PeriodTime
+	static void logMsgTime() {
+		log("\nPT:");
+		logInt(Schedule::deltaPastSyncPointToNow());
 	}
 };

@@ -14,6 +14,5 @@ public:
 	static void hearWork();
 	static bool isNeedSendWork();
 	static bool isHeardWork();
-
 };
 

@@ -12,6 +12,7 @@
 
 // For debugging
 #include "../state/role.h"
+#include "../logger.h"
 
 
 
@@ -54,7 +55,6 @@ void MergeSlot::perform() {
 	assert(MergerFisherRole::isMerger());
 
 	Phase::set(PhaseEnum::SleepTilMerge);
-	//LogMessage::logMerge();
 
 	/*
 	 * sleep without radio until MergeSlotStartTime.
@@ -73,8 +73,8 @@ void MergeSlot::perform() {
 	 * MergeTransmitTime
 	 * now() is aligned with middle of a mergee sync slots (same wall time as fished sync from mergee.)
 	 */
-	logLongLong(LongClock::nowTime()); log(":mergeSync");
 	Phase::set(PhaseEnum::Merge);
+	Logger::logMsgTime();
 	SyncSender::sendMergeSync();	// Synchronous
 
 	// Radio is not in use.  Ensemble::shutdown requires it
