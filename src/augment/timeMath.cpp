@@ -46,7 +46,6 @@ DeltaTime TimeMath::clampedTimeDifferenceFromNow(LongTime futureTime) {
 	return result;
 }
 
-#ifdef NOT_USED
 /*
  * Note require pastTime earlier than now.
  * Returns zero if pastTime earlier than now.
@@ -58,7 +57,7 @@ DeltaTime TimeMath::clampedTimeDifferenceToNow(LongTime pastTime) {
 	// Already asserted: assert(result < MaxDeltaTime);
 	return result;
 }
-#endif
+
 
 
 // TODO this is same as above

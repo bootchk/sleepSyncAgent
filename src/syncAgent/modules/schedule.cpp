@@ -230,18 +230,20 @@ DeltaTime  Schedule::deltaNowToNextSyncPoint() {
 	return result;
 }
 
-#ifdef NOT_USED
-// Different: backwards from others: from past time to now
+/*
+ * Different: backwards from others: from past time to now
+ *
+ * This can be called when now is after current sync period,
+ * hence result can be greater than sync period duration.
+ * Stronger would return PeriodTime.
+ */
 DeltaTime  Schedule::deltaPastSyncPointToNow() {
 	DeltaTime result = TimeMath::clampedTimeDifferenceToNow(startTimeOfSyncPeriod());
-	/*
-	 * This can only be called when now is within current sync period,
-	 * hence result must be less than sync period duration
-	 */
-	assert(result <= ScheduleParameters::NormalSyncPeriodDuration);
+
+	// Not:  assert(result <= ScheduleParameters::NormalSyncPeriodDuration);
 	return result;
 }
-#endif
+
 
 
 
