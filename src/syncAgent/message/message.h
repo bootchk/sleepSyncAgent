@@ -94,6 +94,7 @@ public:
 	 * Time on local LongClock when sender started transmit.
 	 */
 	static LongTime timeOfTransmittal();
+	static char const * representation(SyncMessage*);
 
 
 	// These fields are sent over the air OTA

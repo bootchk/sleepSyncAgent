@@ -32,21 +32,19 @@ void doFishedSyncMsg(SyncMessage* msg){
 HandlingResult FishSlotMessageHandler::handle(SyncMessage* msg){
 	HandlingResult handlingResult;
 
+	Logger::logReceivedMsg(msg);
+
 	switch(msg->type) {
 	case MessageType::MasterSync:
-		log(Logger::RXMasterSync);
 		handlingResult = handleMasterSyncMessage(msg);
 		break;
 	case MessageType::MergeSync:
-		log(Logger::RXMergeSync);
 		handlingResult = handleMergeSyncMessage(msg);
 		break;
 	case MessageType::AbandonMastership:
-		log(Logger::RXAbandonMastership);
 		handlingResult = handleAbandonMastershipMessage(msg);
 		break;
 	case MessageType::WorkSync:
-		log(Logger::RXWorkSync);
 		handlingResult = handleWorkSyncMessage(msg);
 		break;
 	default:

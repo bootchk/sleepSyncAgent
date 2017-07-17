@@ -2,6 +2,7 @@
 
 #include "flashIndex.h"
 
+#include "message/message.h"
 
 
 /*
@@ -15,25 +16,11 @@ public:
 	static constexpr const char* FishSlot = "FishSlot\n";
 	static constexpr const char* MergeSlot = "MergeSlot\n";
 
-	// logged in dispatch messages received
-	static constexpr const char* RXMasterSync = "  RX Master\n";
-	static constexpr const char* RXWorseMasterSync = "  RX WorseMaster\n";
-	static constexpr const char* RXMergeSync = "  RX Merge\n";
-	static constexpr const char* RXAbandonMastership = "  RX AbandonMastership\n";
-	static constexpr const char* RXWorkSync = "  RX Work\n";
-	static constexpr const char* RXUnknown = "  RX unknown msg type\n";
-
 	static constexpr const char* FishedMasterSync = "Fish Master\n";
 	static constexpr const char* FishedMergeSync = "Fish Merge\n";
 	static constexpr const char* FishedWorkSync = "Fish Work\n";
 	static constexpr const char* FishedAbandonMastershipSync = "Fish Abandon\n";
 
-	// Sending
-	static constexpr const char* SendMasterSync = "TX Master\n";
-	static constexpr const char* SendWorkSync = "TX Work\n";
-	static constexpr const char* SendMergeSync = "TX Merge\n";
-	static constexpr const char* SendWork = "TX Work\n";
-	static constexpr const char* SendAbandonMastership = "TX Abandon\n";
 	static constexpr const char* SendNone = "Listen\n";
 
 	// Role change
@@ -70,4 +57,19 @@ public:
 	static void logUnexpectedWakeWhileListening() { CustomFlash::writeZeroAtIndex(UnexpectedWakeWhileListen); }
 
 	static void logPauseSync() { CustomFlash::writeZeroAtIndex(PauseSync); }
+
+
+	static void logReceivedMsg(SyncMessage* msg){
+		log("\nRX ");
+		log(SyncMessage::representation(msg));
+		logLongLong(msg->masterID);
+		logByte(msg->work);
+
+	}
+
+	static void logSend(SyncMessage* msg){
+		log("TX ");
+		log(SyncMessage::representation(msg));
+		logByte(msg->work);
+	}
 };

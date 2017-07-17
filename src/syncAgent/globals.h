@@ -9,7 +9,7 @@
  * Formerly owned by SyncAgent.
  */
 
-#include <nRF5x.h>	// Radio, Sleeper
+#include <nRF5x.h>	// Ensemble, Radio, Sleeper
 
 // Owned by calling app, implemented by lib nRF5x
 extern Mailbox* workOutMailbox;

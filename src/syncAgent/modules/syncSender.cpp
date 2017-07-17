@@ -1,8 +1,8 @@
 
 #include <cassert>
 
-//#include <ensemble/ensemble.h>
-#include <nRF5x.h>  // myID()
+
+#include <nRF5x.h>  // Ensemble, myID()
 
 #include "syncSender.h"
 
@@ -10,8 +10,6 @@
 #include "../message/serializer.h"
 #include "../globals.h"	// clique
 #include "../logger.h"
-
-// Network previously defined global
 
 
 
@@ -22,6 +20,8 @@ namespace {
  */
 static void sendMessage(SyncMessage* msgPtr) {
 	// assert caller has initialized *msgPtr
+
+	Logger::logSend(msgPtr);
 	Serializer::serializeSyncMessageIntoRadioBuffer(msgPtr);
 	assert(Serializer::bufferIsSane());
 
@@ -33,8 +33,6 @@ static void sendMessage(SyncMessage* msgPtr) {
 
 
 void SyncSender::sendMasterSync() {
-	log(Logger::SendMasterSync);
-
 	/*
 	 * Make MasterSyncMessage, having:
 	 * - type MasterSync
@@ -63,8 +61,6 @@ void SyncSender::sendMasterSync() {
 
 
 void SyncSender::sendMergeSync() {
-	log(Logger::SendMergeSync);
-
 	// cliqueMerger knows how to create SyncMessage of type MergeSync
 	SyncMessage* msgPtr = syncAgent.cliqueMerger.makeMergeSync();
 	sendMessage(msgPtr);
@@ -80,7 +76,6 @@ void SyncSender::sendWorkSync(WorkPayload work) {
 	 * The listener may choose to ignore it if they lack power.
 	 * But we must send this workSync because it carries sync.
 	 */
-	log(Logger::SendWorkSync);
 	DeltaTime forwardOffset = clique.schedule.deltaNowToNextSyncPoint();
 	SyncMessage* msgPtr = MessageFactory::initWorkSyncMessage(
 			forwardOffset,
@@ -99,7 +94,6 @@ void SyncSender::sendWorkSync(WorkPayload work) {
 }
 
 void SyncSender::sendAbandonMastership() {
-	log(Logger::SendAbandonMastership);
 	assert( clique.isSelfMaster);	// Only master can abandon
 	SyncMessage* msgPtr = MessageFactory::initAbandonMastershipMessage( clique.getMasterID() );
 	sendMessage(msgPtr);
