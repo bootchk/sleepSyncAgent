@@ -53,7 +53,7 @@ HandlingResult SyncSlotMessageHandler::handleMasterSyncMessage(SyncMessage* msg)
 	 * Discard result and keep listening since:
 	 * - two masters may be competing
 	 */
-	(void) syncBehaviour.doSyncMsg(msg);
+	(void) syncBehaviour.filterSyncMsg(msg);
 	return HandlingResult::KeepListening;
 }
 
@@ -63,7 +63,7 @@ HandlingResult SyncSlotMessageHandler::handleMergeSyncMessage(SyncMessage* msg){
 	 * Discard result and keep listening since:
 	 * - two other cliques may be competing to merge me
 	 */
-	(void) syncBehaviour.doSyncMsg(msg);
+	(void) syncBehaviour.filterSyncMsg(msg);
 	return HandlingResult::KeepListening;
 }
 
@@ -93,8 +93,9 @@ HandlingResult SyncSlotMessageHandler::handleWorkSyncMessage(SyncMessage* msg){
 
 	/*
 	 *  Handle sync aspect of message.
+	 *  Don't care if it is invalid from inferior clique.
 	 */
-	(void) syncBehaviour.doSyncMsg(msg);
+	(void) syncBehaviour.filterSyncMsg(msg);
 
 	/*
 	 * Ignore sync-keeping result above and keep listening:

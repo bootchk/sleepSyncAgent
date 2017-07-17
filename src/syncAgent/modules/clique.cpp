@@ -1,6 +1,6 @@
 
 #include <cassert>
-#include "../../config.h"
+
 #include "clique.h"
 
 #include "../globals.h"  // fishPolicy
@@ -10,10 +10,9 @@
 
 #include "../message/messageFactory.h"
 
-namespace {
 
-// attributes of clique
-SystemID masterID;
+
+namespace {
 
 // collaborators
 DropoutMonitor dropoutMonitor;
@@ -23,6 +22,8 @@ DropoutMonitor dropoutMonitor;
 AdaptiveTransmitSyncPolicy masterTransmitSyncPolicy;
 
 } // namespace
+
+
 
 
 // Schedule is public
@@ -49,66 +50,12 @@ void Clique::init(){
 
 
 
-
-SystemID Clique::getMasterID() { return masterID; }
-
-void Clique::setSelfMastership() {
-	log("set self mastership\n");
-	masterID = myID();
-}
-
-/*
- * In this design MasterSync from master and WorkSync msg from slave
- * both carry the MasterID of the clique master.
- * We might be the master, and so otherID (from WorkSync slave could already be the clique master.)
- *
- * In an alternative design (Work is separate and not piggybacked on Sync)
- * then you can make the assertion:
- * assert(otherID != myID());	// we can't hear our own sync
- */
-void Clique::setOtherMastership(SystemID otherID) {
-	log("set other master\n");
-	masterID = otherID;
-}
-
-bool Clique::isSelfMaster() { return masterID == myID(); }
-
-
 /*
  * Only master xmits FROM its sync slot.
  * And then with policy of randomness for collision avoidance.
  */
 bool Clique::shouldTransmitSync() {
 	return isSelfMaster() && masterTransmitSyncPolicy.shouldTransmitSync();
-}
-
-
-
-/*
- * Is msg from member of my clique?
- *
- * Formerly, only the Master sent MasterSync.
- * Now, a Slave member of my clique may send a WorkSync, still identifying the Master i.e. clique
- *
- * (When a MergeSync, might be from a recent member of my clique, now a member of identified clique.)
- *
- */
-bool Clique::isMsgFromMyClique(SystemID otherMasterID){ return masterID == otherMasterID; }
-
-/*
- * All units use same comparison.  The direction is arbitrary.
- * For testing, it may help to swap it.
- * No need for equality, no unit can hear itself.
- * my > other means: clique/unit with least numerical ID is better clique
- */
-bool Clique::isOtherCliqueBetter(SystemID otherMasterID){
-
-#ifdef LEAST_ID_IS_BETTER_CLIQUE
-	return masterID > otherMasterID;
-#else
-	return masterID < otherMasterID;
-#endif
-
 }
 
 
@@ -169,10 +116,10 @@ void Clique::onMasterDropout() {
 /*
  * Implementation:
  * Three steps:
- * 1) update mastership
+ * 1) update mastership (!!! might change Master/Slave role)
  * 2) update policy
  * 3) update schedule
- * 4) FUTURE update history of mastership
+ * 4) FUTURE update history of masters
  *
  * An update, not necessarily a change.  Not assert result data different from current data.
  * The MasterID may be the same as current.
@@ -182,7 +129,7 @@ void Clique::updateBySyncMessage(SyncMessage* msg) {
 	// assert (in Sync or Fish slot)
 	assert (MessageFactory::carriesSync(msg->type));
 
-	// 1) update mastership
+	// 1) update master
 	setOtherMastership(msg->masterID);
 	/*
 	 * Not assert master changed. Not assert that msg.MasterID != self.masterID:
@@ -197,8 +144,10 @@ void Clique::updateBySyncMessage(SyncMessage* msg) {
 
 	// FUTURE clique.historyOfMasters.update(msg);
 
-	// 3) update schedule
-	// Regardless: from my master (small offset) or from another clique (large offset)
+	/*
+	 *  3) update schedule
+	 *  Regardless: from my master (small offset) or from another clique (large offset)
+	 */
 	schedule.adjustBySyncMsg(msg);
 }
 

@@ -32,13 +32,13 @@ public:
 	 */
 
 	/*
-	 * Returns true if message keeps my sync (from current or new master of my clique.)
+	 * Filter: processes message and returns true if message keeps my sync (from current or new master of my clique.)
 	 *
 	 * Side effect is call dropoutMonitor.heardSync() i.e. status of sync is good
 	 *
 	 * Each Sync has an offset, could be zero or small (MasterSync) or larger (MergeSync)
 	 */
-	static bool doSyncMsg(SyncMessage* msg){
+	static bool filterSyncMsg(SyncMessage* msg){
 		// assert sync not from self (xmitter and receiver are exclusive)
 		// assert self.isMaster || self.isSlave i.e. this code doesn't require any particular role
 		assert (MessageFactory::carriesSync(msg->type));
@@ -65,6 +65,7 @@ public:
 			log("Better master\n");
 			handleSyncMsg(msg);
 			clique.heardSync();
+			// assert(! isSelfMaster());
 			doesMsgKeepSynch = true;
 		}
 		else {
