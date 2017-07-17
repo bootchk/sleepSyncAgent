@@ -9,6 +9,7 @@
 //#include "modules/syncPowerManager.h"
 #include "message/messageFactory.h"
 #include "message/serializer.h"
+#include "state/phase.h"
 
 
 
@@ -100,7 +101,7 @@ void SyncAgent::initSyncObjects(
 	// not assert LongClock running assert(aLCT->isOSClockRunning());
 
 	// ensure initial state of SyncAgent
-	assert(role.isFisher());
+	assert(MergerFisherRole::isFisher());
 	assert(clique.isSelfMaster());
 	assert(!Ensemble::isRadioInUse());
 	assert(Ensemble::isConfigured());
@@ -121,19 +122,20 @@ void SyncAgent::toMergerRole(SyncMessage* msg){
 	// assert slot is fishSlot
 	assert (MessageFactory::carriesSync(msg->type));
 	assert(msg->type != MessageType::MergeSync);
-	assert(role.isFisher());
-	role.setMerger();
+	assert(MergerFisherRole::isFisher());
+	MergerFisherRole::setMerger();
+	// logging done later
 	cliqueMerger.initFromMsg(msg);
 
 	// assert my schedule might have been adjusted
 	// assert I might have relinquished mastership
 	// assert I might have joined another clique
-	assert(role.isMerger());
+	// assert(role.isMerger());
 }
 
 
 void SyncAgent::toFisherRole(){
-	role.setFisher();
+	MergerFisherRole::setFisher();
 	// role does not know about cliqueMerger
 	cliqueMerger.deactivate();
 	log(Logger::ToFisher);

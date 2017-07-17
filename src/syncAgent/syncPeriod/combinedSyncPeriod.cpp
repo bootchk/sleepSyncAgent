@@ -4,9 +4,12 @@
 #include "../globals.h"
 #include "syncPeriod.h"
 
+#include "../state/phase.h"
+
 #include "../slots/syncWorkSlot.h"
 #include "../slots/fishSlot.h"
 #include "../slots/mergeSlot.h"
+
 
 
 namespace {
@@ -25,7 +28,7 @@ void tryFishOrMerge() {
 	 * Variation: next event (if any) occurs within a large sleeping time (lots of 'slots').
 	 * We don't check power here because it may recover during sleep until time to perform.
 	 */
-	if (role.isMerger()) {
+	if (MergerFisherRole::isMerger()) {
 		// avoid collision
 		if (mergeSlot.mergePolicy.shouldScheduleMerge())  {
 			mergeSlot.tryPerform();

@@ -23,12 +23,6 @@ class Clique;
 //#include "modules/clique.h"
 extern Clique clique;
 
-#include "state/role.h"
-extern MergerFisherRole role;
-
-#include "state/phase.h"
-extern Phase phase;
-
 #include "modules/syncBehaviour.h"
 extern SyncBehaviour syncBehaviour;
 

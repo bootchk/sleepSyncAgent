@@ -6,7 +6,7 @@
 #include "syncWorkSlot.h"
 #include "syncSlotSchedule.h"
 #include "../messageHandler/messageHandler.h"
-
+#include "../state/phase.h"
 
 namespace {
 

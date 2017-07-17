@@ -2,7 +2,10 @@
 #include <cassert>
 
 #include "messageHandler.h"
-#include "../globals.h"
+
+#include "../logger.h"
+#include "../state/role.h"
+#include "../syncAgent.h"
 
 
 namespace {
@@ -15,8 +18,8 @@ void doFishedSyncMsg(SyncMessage* msg){
 	 * toMergerRole() handles both cases,
 	 * but always toMerger(), either merging my clique or other clique.
 	 */
-	syncAgent.toMergerRole(msg);
-	assert(role.isMerger());
+	SyncAgent::toMergerRole(msg);
+	assert(MergerFisherRole::isMerger());
 	/*
 	 * assert (schedule changed AND self is merging my former clique)
 	 * OR (schedule unchanged AND self is merging other clique)

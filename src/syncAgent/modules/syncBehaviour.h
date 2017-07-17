@@ -11,6 +11,8 @@
 #include "../logger.h"
 #include "../message/messageFactory.h"
 
+#include "../state/role.h"
+
 
 class SyncBehaviour {
 public:
@@ -115,7 +117,7 @@ public:
 		clique.updateBySyncMessage(msg);
 		// assert endOfSyncPeriod changed or not changed
 
-		if (role.isMerger()) {
+		if (MergerFisherRole::isMerger()) {
 			// Already merging an other clique, now merge other clique to updated sync slot time
 			syncAgent.cliqueMerger.adjustMergerBySyncMsg(msg);
 		}
