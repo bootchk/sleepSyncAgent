@@ -7,7 +7,7 @@
 /*
  * Holds log messages.
  */
-class LogMessage {
+class Logger {
 public:
 	// logged at start of slots
 	static constexpr const char* SyncSlot = "SyncSlot\n";

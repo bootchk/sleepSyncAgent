@@ -8,7 +8,6 @@
 #include "../slots/fishSlot.h"
 #include "../slots/mergeSlot.h"
 
-#include "../logMessage.h"
 
 namespace {
 SyncWorkSlot syncWorkSlot;

@@ -129,7 +129,7 @@ void SyncAgent::toMergerRole(SyncMessage* msg){
 	// assert I might have relinquished mastership
 	// assert I might have joined another clique
 	assert(role.isMerger());
-	log(LogMessage::ToMerger);
+	log(Logger::ToMerger);
 }
 
 
@@ -137,7 +137,7 @@ void SyncAgent::toFisherRole(){
 	role.setFisher();
 	// role does not know about cliqueMerger
 	cliqueMerger.deactivate();
-	log(LogMessage::ToFisher);
+	log(Logger::ToFisher);
 }
 
 

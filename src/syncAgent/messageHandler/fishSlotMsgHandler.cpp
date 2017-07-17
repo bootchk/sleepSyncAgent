@@ -34,19 +34,19 @@ HandlingResult FishSlotMessageHandler::handle(SyncMessage* msg){
 
 	switch(msg->type) {
 	case MessageType::MasterSync:
-		log(LogMessage::RXMasterSync);
+		log(Logger::RXMasterSync);
 		handlingResult = handleMasterSyncMessage(msg);
 		break;
 	case MessageType::MergeSync:
-		log(LogMessage::RXMergeSync);
+		log(Logger::RXMergeSync);
 		handlingResult = handleMergeSyncMessage(msg);
 		break;
 	case MessageType::AbandonMastership:
-		log(LogMessage::RXAbandonMastership);
+		log(Logger::RXAbandonMastership);
 		handlingResult = handleAbandonMastershipMessage(msg);
 		break;
 	case MessageType::WorkSync:
-		log(LogMessage::RXWorkSync);
+		log(Logger::RXWorkSync);
 		handlingResult = handleWorkSyncMessage(msg);
 		break;
 	default:
@@ -65,7 +65,7 @@ HandlingResult FishSlotMessageHandler::handle(SyncMessage* msg){
  * Intended catch: MasterSync from another clique's Master in its sync slot.
  */
 HandlingResult FishSlotMessageHandler::handleMasterSyncMessage(SyncMessage* msg){
-	log(LogMessage::FishedMasterSync);
+	log(Logger::FishedMasterSync);
 	doFishedSyncMsg(msg);
 	// Stop listening: self can't handle more than one, or slot is busy with another merge
 	return HandlingResult::StopListeningHeardMasterSync;
@@ -81,7 +81,7 @@ HandlingResult FishSlotMessageHandler::handleMasterSyncMessage(SyncMessage* msg)
  * can calculate the other clique's sync slot from the Work msg.
  */
 HandlingResult FishSlotMessageHandler::handleWorkSyncMessage(SyncMessage* msg){
-	log(LogMessage::FishedWorkSync);
+	log(Logger::FishedWorkSync);
 	doFishedSyncMsg(msg);
 	// Stop listening: self can't handle more than one, or slot is busy with another merge
 	return HandlingResult::StopListeningHeardWorkSync;
@@ -94,7 +94,7 @@ HandlingResult FishSlotMessageHandler::handleWorkSyncMessage(SyncMessage* msg){
  * Ignore except to stop fishing this slot.
  */
 HandlingResult FishSlotMessageHandler::handleMergeSyncMessage(SyncMessage* msg){
-	log(LogMessage::FishedMergeSync);
+	log(Logger::FishedMergeSync);
 	(void) msg;
 	return HandlingResult::StopListeningHeardMergeSync;
 }
@@ -108,7 +108,7 @@ HandlingResult FishSlotMessageHandler::handleMergeSyncMessage(SyncMessage* msg){
  * Should catch clique again later, after another member assumes mastership.
  */
 HandlingResult FishSlotMessageHandler::handleAbandonMastershipMessage(SyncMessage* msg){
-	log(LogMessage::FishedAbandonMastershipSync);
+	log(Logger::FishedAbandonMastershipSync);
 	(void) msg;
 	return HandlingResult::KeepListening;
 }

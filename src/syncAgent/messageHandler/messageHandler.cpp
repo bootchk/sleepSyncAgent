@@ -2,7 +2,7 @@
 
 #include "messageHandler.h"
 
-#include "../logMessage.h"
+#include "../logger.h"
 
 #ifdef OLD
 Now this is copied into subclasses

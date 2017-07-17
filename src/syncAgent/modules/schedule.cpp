@@ -2,9 +2,10 @@
 #include <cassert>
 
 #include "schedule.h"
+
+#include "../logger.h"
 #include "../scheduleParameters.h"	// probably already included by MergeOffset
 
-#include "../logMessage.h"
 
 namespace {
 
@@ -83,7 +84,7 @@ void Schedule::rollPeriodForwardToNow() {
 
 	LongTime now = LongClock::nowTime();
 
-	LogMessage::logStartSyncPeriod(now);
+	Logger::logStartSyncPeriod(now);
 
 	// Starts now.  See above.  If called late, sync might be lost.
 	_startTimeOfSyncPeriod = now;

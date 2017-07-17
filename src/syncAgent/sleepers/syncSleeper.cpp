@@ -8,11 +8,9 @@
 #include <exceptions/powerAssertions.h>
 #include <exceptions/resetAssertions.h>
 
-#include "../logMessage.h"
-
-// Uses pure classes
 #include "oversleepMonitor.h"
 #include "../../augment/timeMath.h"
+#include "../logger.h"
 #include "../message/serializer.h"
 #include "../modules/schedule.h"
 
@@ -89,7 +87,7 @@ HandlingResult dispatchFilteredMsg( MessageHandler msgHandler) { // Slot has han
 		}
 		else {
 			// Ignore garbled type or offset
-			log(LogMessage::Garbled);
+			log(Logger::Garbled);
 			// continuation is wait for another message
 			Ensemble::startReceiving();
 		}
@@ -101,7 +99,7 @@ HandlingResult dispatchFilteredMsg( MessageHandler msgHandler) { // Slot has han
 		 *
 		 * Note CRCSTATUS register remains showing invalid until another message is received.
 		 */
-		log(LogMessage::CRC);
+		log(Logger::CRC);
 		// continuation is wait for another message
 		Ensemble::startReceiving();
 
@@ -163,7 +161,7 @@ HandlingResult determineHandlingResult(MessageHandler msgHandler) {
 		 * Unexpected: No IRQ handler set reason reasonForWake.
 		 * KeepListening
 		 */
-		LogMessage::logUnexpectedWakeWhileListening();
+		Logger::logUnexpectedWakeWhileListening();
 		// assert Ensemble::isRadioInUse()
 		break;
 

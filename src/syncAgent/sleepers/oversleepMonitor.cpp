@@ -5,10 +5,9 @@
 
 #include "nRF5x.h"	// LongTime, CustomFlash
 
+#include "../logger.h"
 #include "../scheduleParameters.h"
 #include "../syncAgent.h"
-#include "../logMessage.h"
-
 #include "syncSleeper.h"
 
 namespace {
@@ -60,7 +59,7 @@ bool OverSleepMonitor::checkOverslept(){
 		CustomFlash::tryWriteIntAtIndex(IntendedSleepDuration, intendedSleepDuration);
 		CustomFlash::tryWriteIntAtIndex(OversleptDuration, actualSleepDuration);
 
-		LogMessage::logOverslept();
+		Logger::logOverslept();
 
 		result = true;
 	}

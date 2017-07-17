@@ -51,7 +51,7 @@ HandlingResult SyncWorkSlot::doListenHalfSyncWorkSlot(TimeoutFunc timeoutFunc) {
 		Ensemble::startReceiving();
 	}
 	else {
-		LogMessage::logNoPowerForHalfSyncSlot();
+		Logger::logNoPowerForHalfSyncSlot();
 		// Note HFXO is still running
 		// Continue to sleep for half a slot: we may yet xmit sync, and/or listen for second half.
 	}
@@ -227,7 +227,7 @@ void SyncWorkSlot::tryPerform() {
 	}
 	else {
 		Phase::set(PhaseEnum::SyncSkipSlot);
-		LogMessage::logNoPowerToStartSyncSlot();
+		Logger::logNoPowerToStartSyncSlot();
 
 		// Busted SyncSlot, no listen, no send sync
 		sleepSlotRemainder();

@@ -8,9 +8,8 @@
 
 #include "../message/message.h"
 #include "../message/serializer.h"
-#include "../logMessage.h"
-
 #include "../globals.h"	// clique
+#include "../logger.h"
 
 // Network previously defined global
 
@@ -34,7 +33,7 @@ static void sendMessage(SyncMessage* msgPtr) {
 
 
 void SyncSender::sendMasterSync() {
-	log(LogMessage::SendMasterSync);
+	log(Logger::SendMasterSync);
 
 	/*
 	 * Make MasterSyncMessage, having:
@@ -64,7 +63,7 @@ void SyncSender::sendMasterSync() {
 
 
 void SyncSender::sendMergeSync() {
-	log(LogMessage::SendMergeSync);
+	log(Logger::SendMergeSync);
 
 	// cliqueMerger knows how to create SyncMessage of type MergeSync
 	SyncMessage* msgPtr = syncAgent.cliqueMerger.makeMergeSync();
@@ -81,7 +80,7 @@ void SyncSender::sendWorkSync(WorkPayload work) {
 	 * The listener may choose to ignore it if they lack power.
 	 * But we must send this workSync because it carries sync.
 	 */
-	log(LogMessage::SendWorkSync);
+	log(Logger::SendWorkSync);
 	DeltaTime forwardOffset = clique.schedule.deltaNowToNextSyncPoint();
 	SyncMessage* msgPtr = MessageFactory::initWorkSyncMessage(
 			forwardOffset,
@@ -100,7 +99,7 @@ void SyncSender::sendWorkSync(WorkPayload work) {
 }
 
 void SyncSender::sendAbandonMastership() {
-	log(LogMessage::SendAbandonMastership);
+	log(Logger::SendAbandonMastership);
 	assert( clique.isSelfMaster);	// Only master can abandon
 	SyncMessage* msgPtr = MessageFactory::initAbandonMastershipMessage( clique.getMasterID() );
 	sendMessage(msgPtr);

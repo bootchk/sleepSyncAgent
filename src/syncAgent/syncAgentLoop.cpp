@@ -3,11 +3,11 @@
 #include <cassert>
 
 #include "globals.h"	// radio, etc.
+#include "logger.h"
 #include "syncAgent.h"
 #include "scheduleParameters.h"
 
 #include "state/syncState.h"
-#include "logMessage.h"
 #include "syncPeriod/syncPeriod.h"
 #include "sleepers/syncSleeper.h"
 

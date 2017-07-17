@@ -21,20 +21,20 @@ HandlingResult SyncSlotMessageHandler::handle(SyncMessage* msg){
 
 	switch(msg->type) {
 	case MessageType::MasterSync:
-		log(LogMessage::RXMasterSync);
+		log(Logger::RXMasterSync);
 		handlingResult = handleMasterSyncMessage(msg);
 		break;
 	case MessageType::MergeSync:
-		log(LogMessage::RXMergeSync);
+		log(Logger::RXMergeSync);
 		handlingResult = handleMergeSyncMessage(msg);
 		SyncAgent::countMergeSyncHeard++;
 		break;
 	case MessageType::AbandonMastership:
-		log(LogMessage::RXAbandonMastership);
+		log(Logger::RXAbandonMastership);
 		handlingResult = handleAbandonMastershipMessage(msg);
 		break;
 	case MessageType::WorkSync:
-		log(LogMessage::RXWorkSync);
+		log(Logger::RXWorkSync);
 		handlingResult = handleWorkSyncMessage(msg);
 		break;
 	default:
