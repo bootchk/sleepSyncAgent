@@ -72,7 +72,7 @@ public:
 	static void logInferiorCliqueSyncSlotOfSlave();
 
 	static void log(char const*);
-	static void log(unsigned int);
+	static void log(uint8_t);
 	static void log(unsigned long long int);
-	static void logInt(unsigned int); // TODO ambiguous call problems if omit this
+	static void logInt(uint32_t); // TODO ambiguous call problems if omit this
 };

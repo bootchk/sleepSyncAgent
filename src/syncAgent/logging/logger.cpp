@@ -79,4 +79,13 @@ void Logger::logMsgTime() {
 void Logger::logInferiorCliqueSyncSlotOfMaster() { logger.log("Master heard inferior."); }
 void Logger::logInferiorCliqueSyncSlotOfSlave() { logger.log("Slave heard inferior."); }
 
+// Simple pass through
+void Logger::init() { logger.init(); }
+void Logger::log(const char * text) { logger.log(text); }
+void Logger::logInt(uint32_t value) { logger.log(value); }
+void Logger::log(uint8_t value) { logger.log(value); }
+void Logger::log(unsigned long long value) { logger.log(value); }
+
+
+
 
