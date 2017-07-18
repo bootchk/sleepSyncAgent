@@ -1,8 +1,8 @@
 
-#include <nRF5x.h>  // logger
-
 #include "adaptiveXmitSyncPolicy.h"
+
 #include "../../../augment/random.h"
+#include "../../logging/logger.h"
 
 
 
@@ -38,6 +38,6 @@ void AdaptiveTransmitSyncPolicy::advanceStage() {
 }
 
 void AdaptiveTransmitSyncPolicy::disarmForOneCycle() {
-	log("disarm xmit policy\n");
+	Logger::log("disarm xmit policy\n");
 	wrappedTransmitSyncPolicy.disarmForOneCycle();
 }

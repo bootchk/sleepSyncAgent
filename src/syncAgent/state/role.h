@@ -2,10 +2,14 @@
 
 #include <cassert>
 
-#include <nRF5x.h>  // logging
+#include "../logging/logger.h"
+
+
+
 
 typedef enum { Merger, Fisher } RoleType;
 // OBS WorkMerger
+
 
 // Master/Slave role implemented by Clique.
 class MergerFisherRole {
@@ -18,12 +22,12 @@ public:
 	static bool isFisher() {return role == Fisher;}
 
 	static void setFisher() {
-		log("To role Fisher\n");
+		//log("To role Fisher\n");
 		assert(isMerger());
 		role = Fisher;
 	}
 	static void setMerger() {
-		log("To role Merger\n");
+		//log("To role Merger\n");
 		assert(isFisher());
 		role = Merger;
 	}

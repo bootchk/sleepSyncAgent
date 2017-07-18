@@ -4,10 +4,15 @@
 
 
 /*
- * Holds log messages.
+ * Abstract Logger w/ some specificity to SleepSyncAgent.
+ *
+ * Calls another Logger from some library.
  */
 class Logger {
 public:
+
+	static void init();
+
 	// logged at start of slots
 	static constexpr const char* SyncSlot = "SyncSlot\n";
 	static constexpr const char* WorkSlot = "WorkSlot\n";
@@ -65,4 +70,9 @@ public:
 
 	static void logInferiorCliqueSyncSlotOfMaster();
 	static void logInferiorCliqueSyncSlotOfSlave();
+
+	static void log(char const*);
+	static void log(unsigned int);
+	static void log(unsigned long long int);
+	static void logInt(unsigned int); // TODO ambiguous call problems if omit this
 };

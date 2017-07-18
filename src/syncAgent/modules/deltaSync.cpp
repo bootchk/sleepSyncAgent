@@ -1,9 +1,10 @@
 
-#include <nRF5x.h>  // logger
 #include <cassert>
 
 #include "deltaSync.h"
 #include "../scheduleParameters.h"
+
+#include "../logging/logger.h"
 
 
 
@@ -19,8 +20,8 @@ void DeltaSync::set(DeltaTime value){
 bool DeltaSync::isValidValue(DeltaTime value) {
 	bool result = value <= ScheduleParameters::NormalSyncPeriodDuration;
 	if (!result) {
-		logInt(value);
-		log("<<<<Invalid OTA offset\n");
+		Logger::logInt(value);
+		Logger::log("<<<<Invalid OTA offset\n");
 	}
 	return result;
 }

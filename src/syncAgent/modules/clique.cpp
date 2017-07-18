@@ -3,12 +3,15 @@
 
 #include "clique.h"
 
-#include "../globals.h"  // fishPolicy
+#include "../policy/fishPolicy.h"
 #include "../policy/dropoutMonitor.h"
+
 //#include "../policy/masterXmitSyncPolicy.h"
 #include "../policy/syncPolicy/adaptiveXmitSyncPolicy.h"
 
 #include "../message/messageFactory.h"
+
+#include "../logging/logger.h"
 
 
 
@@ -34,7 +37,7 @@ Schedule Clique::schedule;
  * Init is called only after a hw, power on reset POR
  */
 void Clique::init(){
-	log("Clique init\n");
+	Logger::log("Clique init\n");
 
 	setSelfMastership();
 	dropoutMonitor.reset();
@@ -81,7 +84,7 @@ void Clique::heardSync() {
 void Clique::checkMasterDroppedOut() {
 	if (dropoutMonitor.isDropout()) {
 		// assert dropoutMonitor is reset
-		log("    MASTER DROP OUT\n");
+		Logger::log("    MASTER DROP OUT\n");
 		onMasterDropout();
 	}
 }
@@ -107,7 +110,7 @@ void Clique::onMasterDropout() {
 	 * - busy or insufficient power temporarily
 	 * - drifted too much
 	 */
-	fishPolicy.reset();
+	SyncRecoveryFishPolicy::reset();
 }
 
 

@@ -93,7 +93,7 @@ HandlingResult FishSlotMessageHandler::handleWorkSyncMessage(SyncMessage* msg){
  * Ignore except to stop fishing this slot.
  */
 HandlingResult FishSlotMessageHandler::handleMergeSyncMessage(SyncMessage* msg){
-	log(Logger::FishedMergeSync);
+	Logger::log(Logger::FishedMergeSync);
 	(void) msg;
 	return HandlingResult::StopListeningHeardMergeSync;
 }
@@ -107,7 +107,7 @@ HandlingResult FishSlotMessageHandler::handleMergeSyncMessage(SyncMessage* msg){
  * Should catch clique again later, after another member assumes mastership.
  */
 HandlingResult FishSlotMessageHandler::handleAbandonMastershipMessage(SyncMessage* msg){
-	log(Logger::FishedAbandonMastershipSync);
+	Logger::log(Logger::FishedAbandonMastershipSync);
 	(void) msg;
 	return HandlingResult::KeepListening;
 }

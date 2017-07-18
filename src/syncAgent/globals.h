@@ -28,18 +28,3 @@ extern SyncBehaviour syncBehaviour;
 
 #include "policy/workManager.h"
 extern WorkManager workManager;
-
-
-/*
- * fishPolicy used by clique and fishSchedule
- */
-#include "policy/fishPolicy.h"
-//extern SimpleFishPolicy fishPolicy;
-extern SyncRecoveryFishPolicy fishPolicy;
-
-
-
-
-
-
-

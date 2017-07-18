@@ -10,6 +10,8 @@
 
 #include "clique.h"
 
+#include "../logging/logger.h"
+
 
 
 namespace {
@@ -62,7 +64,7 @@ SystemID Clique::getMasterID() { return masterID; }
 
 
 void Clique::setSelfMastership() {
-	log("set self mastership\n");
+	Logger::log("set self mastership\n");
 	masterID = myID();
 }
 
@@ -76,7 +78,7 @@ void Clique::setSelfMastership() {
  * assert(otherID != myID());	// we can't hear our own sync
  */
 void Clique::setOtherMastership(SystemID otherID) {
-	log("set other master\n");
+	Logger::log("set other master\n");
 	masterID = otherID;
 }
 

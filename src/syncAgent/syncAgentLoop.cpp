@@ -3,7 +3,6 @@
 #include <cassert>
 
 #include "globals.h"	// radio, etc.
-#include "logging/logger.h"
 #include "syncAgent.h"
 #include "scheduleParameters.h"
 
@@ -12,7 +11,7 @@
 #include "sleepers/syncSleeper.h"
 #include "state/phase.h"
 
-
+#include "logging/logger.h"
 
 /*
  * SyncAgent is a task(thread) that is infinite sequence of sync periods.
@@ -66,9 +65,9 @@ void SyncAgent::loop(){
 	assert(!Ensemble::isRadioInUse());
 
 	// DEBUG
-	initLogging();
-	log("ID:\n");
-	logLongLong(clique.getMasterID());
+	Logger::init();
+	Logger::log("ID:\n");
+	Logger::log(clique.getMasterID());
 
 	// Set sane timeout for SyncPeriod calculations, different from that used by SyncPowerSleeper
 	Sleeper::setSaneTimeout( ScheduleParameters::MaxSaneTimeoutSyncSleeper );

@@ -10,12 +10,11 @@
 
 #include "oversleepMonitor.h"
 #include "../../augment/timeMath.h"
-#include "../logging/logger.h"
 #include "../message/serializer.h"
 #include "../modules/schedule.h"
-
 #include "../scheduleParameters.h"
 
+#include "../logging/logger.h"
 
 namespace {
 
@@ -87,7 +86,7 @@ HandlingResult dispatchFilteredMsg( MessageHandler msgHandler) { // Slot has han
 		}
 		else {
 			// Ignore garbled type or offset
-			log(Logger::Garbled);
+			Logger::log(Logger::Garbled);
 			// continuation is wait for another message
 			Ensemble::startReceiving();
 		}
@@ -99,7 +98,7 @@ HandlingResult dispatchFilteredMsg( MessageHandler msgHandler) { // Slot has han
 		 *
 		 * Note CRCSTATUS register remains showing invalid until another message is received.
 		 */
-		log(Logger::CRC);
+		Logger::log(Logger::CRC);
 		// continuation is wait for another message
 		Ensemble::startReceiving();
 

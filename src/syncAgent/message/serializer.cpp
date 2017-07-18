@@ -1,12 +1,13 @@
 
 #include <cassert>
 #include <cstring>	// memcpy
-#include <nRF5x.h>	// MaxDeltaTime
 
 #include "serializer.h"
 
 #include "otaPacket.h"
 #include "messageFactory.h"
+
+#include "../logging/logger.h"
 
 /*
  * Implementation notes:
@@ -148,8 +149,8 @@ SyncMessage* getPointerToMessageOfOTAType(MessageType receivedMsgType) {
 bool isOTABufferAlgorithmicallyValid() {
 	bool result = true;
 	if (! MessageFactory::isReceivedTypeASyncType(radioBufferPtr[0])) {
-		log("Invalid message type\n");
-		logInt(radioBufferPtr[0]);
+		Logger::log("Invalid message type\n");
+		Logger::logInt(radioBufferPtr[0]);
 		result = false;
 	}
 	if (! DeltaSync::isValidValue(unserializeOffset())) {

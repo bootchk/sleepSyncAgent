@@ -138,7 +138,7 @@ void SyncAgent::toFisherRole(){
 	MergerFisherRole::setFisher();
 	// role does not know about cliqueMerger
 	cliqueMerger.deactivate();
-	log(Logger::ToFisher);
+	Logger::log(Logger::ToFisher);
 }
 
 

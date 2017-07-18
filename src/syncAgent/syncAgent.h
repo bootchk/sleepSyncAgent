@@ -31,6 +31,14 @@
  */
 
 
+// TODO fishPolicy should be owned by SyncAgent
+/*
+ * fishPolicy used by clique and fishSchedule
+
+#include "policy/fishPolicy.h"
+//extern SimpleFishPolicy fishPolicy;
+extern SyncRecoveryFishPolicy fishPolicy;
+ */
 
 class SyncAgent {
 

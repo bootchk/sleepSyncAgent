@@ -1,15 +1,10 @@
 
-#include <nRF5x.h>	// logger
-
 #include "fishPolicy.h"
 #include "../scheduleParameters.h"
 
-
+#include "../logging/logger.h"
 
 namespace {
-
-
-
 
 ScheduleCount simpleUpCounter = ScheduleParameters::FirstSlotOrdinalToFish;
 
@@ -60,7 +55,7 @@ namespace {
 
 // !!! This should be the same as above compile time initialization.
 void SyncRecoveryFishPolicy::reset() {
-	log("reset FishPolicy\n");
+	Logger::log("reset FishPolicy\n");
 	upCounter = ScheduleParameters::FirstSlotOrdinalToFish;
 	downCounter = ScheduleParameters::LastSlotOrdinalToFish;
 	direction = true;

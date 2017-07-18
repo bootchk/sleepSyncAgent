@@ -40,7 +40,7 @@ LongTime _endTimeOfSyncPeriod;
 
 
 void Schedule::init(){
-	log("Schedule reset\n");
+	Logger::log("Schedule reset\n");
 
 	/*
 	 * Not necessary: LongClock::resetToNearZero();
@@ -194,9 +194,12 @@ LongTime Schedule::adjustedEndTime(const SyncMessage* msg) {
 	}
 
 	// -DLOGGING
-	logLongLong(toa); log(":toa\n");
-	logInt(delta); log(":offset\n");
-	logLongLong(result); log(":new period end\n");
+	Logger::log(toa);
+	Logger::log(":toa\n");
+	// TODO why ambiguous Logger::log(delta);
+	Logger::log(":offset\n");
+	Logger::log(result);
+	Logger::log(":new period end\n");
 	//logInt(deltaNowToNextSyncPoint()); log(":Delta to next sync\n");
 
 	assert( (result - startTimeOfSyncPeriod()) <= 2* ScheduleParameters::NormalSyncPeriodDuration);
@@ -223,8 +226,8 @@ DeltaTime  Schedule::deltaNowToNextSyncPoint() {
 	if (result == 0) {
 		// Calculate magnitude in past, how late are we?
 		DeltaTime wrongDelta = TimeMath::elapsed(timeOfNextSyncPoint());
-		logInt(wrongDelta);
-		log(">>> zero or neg delta to next SyncPoint\n");
+		Logger::logInt(wrongDelta);
+		Logger::log(">>> zero or neg delta to next SyncPoint\n");
 	}
 #endif
 	return result;

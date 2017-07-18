@@ -1,19 +1,26 @@
 
 #include "logger.h"
 
+#include <services/logger.h>
+
 #include "flashIndex.h"
 
 #include "../message/message.h"
 #include "../modules/schedule.h"
 
 
+namespace {
 
+// Implemented using RTT from nRF5x library
+RTTLogger logger;
+
+}
 
 
 void Logger::logStartSyncPeriod(LongTime now) {
 	return;
-	logLongLong(now);
-	log("<Sync\n");
+	logger.log(now);
+	logger.log("<Sync\n");
 }
 
 
@@ -39,37 +46,37 @@ void Logger::logPauseSync() { CustomFlash::writeZeroAtIndex(PauseSync); }
 
 
 void Logger::logReceivedMsg(SyncMessage* msg){
-	log("\nRX ");
-	log(SyncMessage::representation(msg));
-	logLongLong(msg->masterID);
-	logByte(msg->work);
+	logger.log("\nRX ");
+	logger.log(SyncMessage::representation(msg));
+	logger.log(msg->masterID);
+	logger.log(msg->work);
 
 }
 
 void Logger::logSend(SyncMessage* msg){
-	log("TX ");
-	log(SyncMessage::representation(msg));
-	logByte(msg->work);
+	logger.log("TX ");
+	logger.log(SyncMessage::representation(msg));
+	logger.log(msg->work);
 }
 
 void Logger::logMsgDetail(SyncMessage* msg){
-	log("\n ID:");
-	logLongLong(msg->masterID);
-	log(" Off:");
-	logInt(msg->deltaToNextSyncPoint.get());
+	logger.log("\n ID:");
+	logger.log(msg->masterID);
+	logger.log(" Off:");
+	logger.log(msg->deltaToNextSyncPoint.get());
 }
 
 // A msg sent or received, log PeriodTime
 void Logger::logMsgTime() {
-	log("\nPT:");
-	logInt(Schedule::deltaPastSyncPointToNow());
+	logger.log("\nPT:");
+	logger.log(Schedule::deltaPastSyncPointToNow());
 }
 
 /*
  * Log sync message received in SyncSlot from inferior clique (often WorkSync, sometimes other.)
  * See syncBehaviour.cpp
  */
-void Logger::logInferiorCliqueSyncSlotOfMaster() { log("Master heard inferior."); }
-void Logger::logInferiorCliqueSyncSlotOfSlave() { log("Slave heard inferior."); }
+void Logger::logInferiorCliqueSyncSlotOfMaster() { logger.log("Master heard inferior."); }
+void Logger::logInferiorCliqueSyncSlotOfSlave() { logger.log("Slave heard inferior."); }
 
 

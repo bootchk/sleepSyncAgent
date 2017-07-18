@@ -59,6 +59,6 @@ public:
  */
 class SyncRecoveryFishPolicy {
 public:
-	ScheduleCount nextFishSlotOrdinal();
-	void reset();
+	static ScheduleCount nextFishSlotOrdinal();
+	static void reset();
 };

@@ -237,11 +237,11 @@ void CliqueMerger::initFromMsg(SyncMessage* msg){
 	Logger::logMsgDetail(msg);
 
 	if (owningClique->isOtherCliqueBetter(msg->masterID)) {
-		log(Logger::MergeMy);
+		Logger::log(Logger::MergeMy);
 		initMergeMyClique(msg);
 	}
 	else {
-		log(Logger::MergeOther);
+		Logger::log(Logger::MergeOther);
 		initMergeOtherClique(msg);
 	}
 
@@ -266,7 +266,7 @@ void CliqueMerger::adjustMergerBySyncMsg(SyncMessage* msg) {
 	// assert endOfSyncPeriod was changed, it now is my new end of sync period
 
 	(void) msg;	// temporarily suppress warnings
-	log("Not implemented: adjustMerger\n");
+	Logger::log("Not implemented: adjustMerger\n");
 	// TODO implement adjustMerger
 	/*
 	 * FUTURE, when more than two units.

@@ -1,8 +1,10 @@
 
 #include "fishSchedule.h"
 
-#include "../globals.h"  // clique, fishPolicy
+#include "../globals.h"  // clique
 #include "../scheduleParameters.h"
+
+#include "../policy/fishPolicy.h"
 
 // FUTURE memoize end time also???
 
@@ -42,7 +44,7 @@ DeltaTime FishSchedule::deltaToSlotEnd(){
  */
 void FishSchedule::memoizeTimeOfThisFishSlotStart() {
 	// policy chooses which normally sleeping slots to fish in.
-	ScheduleCount sleepingSlotOrdinal = fishPolicy.nextFishSlotOrdinal();
+	ScheduleCount sleepingSlotOrdinal = SyncRecoveryFishPolicy::nextFishSlotOrdinal();
 	// minus 1: convert ordinal to zero-based duration multiplier
 	LongTime result = clique.schedule.startTimeOfSyncPeriod() +  (sleepingSlotOrdinal - 1) * ScheduleParameters::VirtualSlotDuration;
 
@@ -83,7 +85,7 @@ LongTime FishSchedule::timeOfThisFishSlotEnd() {
 	// Fish slot should not end after next SyncPoint
 	LongTime nextSyncPoint = clique.schedule.timeOfNextSyncPoint();
 	if (result > nextSyncPoint) {
-		log("End fish slot at sync point\n");
+		Logger::log("End fish slot past sync point\n");
 		result = nextSyncPoint;
 	}
 

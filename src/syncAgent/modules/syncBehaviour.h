@@ -8,11 +8,10 @@
  * History: formerly part of SyncSlot.
  */
 
-#include "../logging/logger.h"
+
 #include "../message/messageFactory.h"
-
 #include "../state/role.h"
-
+#include "../logging/logger.h"
 
 class SyncBehaviour {
 public:
@@ -56,7 +55,7 @@ public:
 			 * - Master or Slave fished another better clique and is MergeSync ing self
 			 * - Slave is WorkSync ing Master or Slave self
 			 */
-			log("Sync from my clique (master or slave)\n");
+			//log("Sync from my clique (master or slave)\n");
 			// WAS clique.changeBySyncMessage(msg);
 			handleSyncMsg(msg);
 			clique.heardSync();
@@ -64,7 +63,7 @@ public:
 		}
 		else if (clique.isOtherCliqueBetter(msg->masterID)) {
 			// Strictly better
-			log("Better master\n");
+			//log("Better master\n");
 			handleSyncMsg(msg);
 			clique.heardSync();
 			// assert(! isSelfMaster());
