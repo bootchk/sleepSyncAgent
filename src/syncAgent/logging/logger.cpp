@@ -64,3 +64,12 @@ void Logger::logMsgTime() {
 	log("\nPT:");
 	logInt(Schedule::deltaPastSyncPointToNow());
 }
+
+/*
+ * Log sync message received in SyncSlot from inferior clique (often WorkSync, sometimes other.)
+ * See syncBehaviour.cpp
+ */
+void Logger::logInferiorCliqueSyncSlotOfMaster() { log("Master heard inferior."); }
+void Logger::logInferiorCliqueSyncSlotOfSlave() { log("Slave heard inferior."); }
+
+

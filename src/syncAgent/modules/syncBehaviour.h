@@ -125,7 +125,12 @@ public:
 
 
 
-	// DEBUG only, no substantive effect
+/*
+ * Log sync message received in SyncSlot from inferior clique (often WorkSync, sometimes other.)
+ *
+ * Currently no substantive effect.
+ * But the comments are about sync behaviour.
+ */
 	static void logWorseSync() {
 		// FUTURE: for now this is just logging, in future will record history
 		if (clique.isSelfMaster()) {
@@ -134,7 +139,7 @@ public:
 			 * Since I am still alive, they should not be assuming mastership.
 			 * Could be assymetric communication (I can hear they, they cannot hear me.)
 			 */
-			log("Worse sync while self is master.\n");
+			Logger::logInferiorCliqueSyncSlotOfMaster();
 		}
 		else { // self is slave
 			/*
@@ -145,7 +150,9 @@ public:
 			// FUTURE: if msg.masterID < myID(), I should assume mastership instead of sender
 			// FUTURE: if msg.masterID > myID() record msg.masterID in my historyOfMasters
 			// so when I discover dropout, I will defer to msg.masterID
-			log("Worse sync while self is slave.\n");
+			Logger::logInferiorCliqueSyncSlotOfSlave();
 		}
 	}
+
+
 };

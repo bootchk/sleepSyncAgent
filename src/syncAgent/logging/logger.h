@@ -62,4 +62,7 @@ public:
 
 	// A msg sent or received, log PeriodTime
 	static void logMsgTime();
+
+	static void logInferiorCliqueSyncSlotOfMaster();
+	static void logInferiorCliqueSyncSlotOfSlave();
 };
