@@ -3,7 +3,7 @@
 #include <cassert>
 
 #include "globals.h"	// radio, etc.
-#include "logger.h"
+#include "logging/logger.h"
 #include "syncAgent.h"
 #include "scheduleParameters.h"
 

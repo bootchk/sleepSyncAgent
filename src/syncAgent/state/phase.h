@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../flashIndex.h"
+#include "../logging/flashIndex.h"
 
 
 

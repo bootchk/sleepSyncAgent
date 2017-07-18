@@ -11,20 +11,22 @@ LongTime SyncMessage::timeOfTransmittal() {
 }
 
 char const * SyncMessage::representation(SyncMessage* msg) {
-	char * result;
+	char const * result;
 
 	switch(msg->type) {
 		case MessageType::MasterSync:
-			result = "MSyn";
+			result = "MastS";
 			break;
 		case MessageType::MergeSync:
-			result = "Merg";
-			break;
-		case MessageType::AbandonMastership:
-			result = "Aban";
+			result = "MergS";
 			break;
 		case MessageType::WorkSync:
-			result = "Work";
+			result = "WorkS";
+			break;
+
+		case MessageType::AbandonMastership:
+			result = " Aban";
+			break;
 	}
 	return result;
 }

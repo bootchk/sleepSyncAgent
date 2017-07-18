@@ -7,7 +7,7 @@
 #include "../message/messageFactory.h"
 
 // Debugging
-#include "../logger.h"
+#include "../logging/logger.h"
 
 
 namespace {

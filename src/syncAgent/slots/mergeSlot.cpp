@@ -12,7 +12,7 @@
 
 // For debugging
 #include "../state/role.h"
-#include "../logger.h"
+#include "../logging/logger.h"
 
 
 

@@ -3,7 +3,7 @@
 
 #include "schedule.h"
 
-#include "../logger.h"
+#include "../logging/logger.h"
 #include "../scheduleParameters.h"	// probably already included by MergeOffset
 
 

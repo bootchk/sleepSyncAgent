@@ -9,7 +9,7 @@
 #include "../message/message.h"
 #include "../message/serializer.h"
 #include "../globals.h"	// clique
-#include "../logger.h"
+#include "../logging/logger.h"
 
 
 

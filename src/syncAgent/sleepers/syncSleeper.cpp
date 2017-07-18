@@ -10,7 +10,7 @@
 
 #include "oversleepMonitor.h"
 #include "../../augment/timeMath.h"
-#include "../logger.h"
+#include "../logging/logger.h"
 #include "../message/serializer.h"
 #include "../modules/schedule.h"
 

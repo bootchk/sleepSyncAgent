@@ -5,7 +5,8 @@
 
 #include "nRF5x.h"	// LongTime, CustomFlash
 
-#include "../logger.h"
+#include "../logging/flashIndex.h"
+#include "../logging/logger.h"
 #include "../scheduleParameters.h"
 #include "../syncAgent.h"
 #include "syncSleeper.h"

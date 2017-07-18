@@ -1,27 +1,30 @@
-A sleep synchronization algorithm for ultra low power radio networks
+A distributed sleep synchronization algorithm for ultra low power radio networks
 
 [See also the project wiki](../../wiki)
 
 Work in progress.
 
-TL;DR  nanopower radios sleep mostly; the fundamental task is to synchronize sleep.  After that, you can worry about what you might to communicate.
+TL;DR  nanopower radios sleep mostly.  They must wake up at the same time to communicate.  To wake up at the same time requires synchronized clocks.  To synchronize clocks without an always-on time beacon and when units are sleeping mostly, I "fish" for other units and elect one of the two units to become the master.  It can take tens of minutes for many units to sync up.
 
 Status:
 
 	- algorithm seems to achieve sync (for three units)
 	- algorithm conveys data (work) piggybacked in sync message format
 	- built as a static library
-	- target platform Nordic nrf52, without OS, using a raw protocol (see my other GitHub repository)
+	- target platform Nordic nrf52/nrf51, without OS, using a proprietary protocol 
+	
+	
+	(see my other GitHub repository)
 
 
-Todo:
+Related projects
+=
 
-	- harvested power operation (daily solar power down and resync)
-    - testing with many tens, hundreds,... of units
-    - RTOS work thread with work queues in and out
-    - fleshing out corners of algorithm: dropping out, adjusting mergers in progress, etc. 
-    - other platforms
-    - broadcast mesh:  relay sync to cliques that can't hear my master.  No addressing or routes, just hop count
+    solarRadioFirefly https://github.com/bootchk/solarRadioFirefly is an app that uses SleepSyncAgent (a Blinky app of sorts.)
+    
+    sleepSyncAgent uses nRF5x https://github.com/bootchk/nRF5x, a platform library for Nordic radios.
+    
+    
 
 
 Characteristics of the algorithm:
@@ -106,11 +109,11 @@ SleepSyncAgent is a wedge into the app. Built as a library cross-compiled to the
     	<-- workToAppQue    <-- onWorkMsgReceive()
  
 
-The system can be in these states (in order of electrical power available):
+A unit can be in these states (in order of electrical power available):
 
 	- reset: not enough power for the mcu
-	- low power: mcu duty-cycled, app running, but syncAgent stopped and radio off
-	- enough power to sync: mcu and radio duty-cycled, app running, and syncAgent started
+	- low power: mcu duty-cycled, app running, but syncAgent's clock drifting, and radio not used
+	- enough power to sync: mcu and radio duty-cycled, app running, and syncAgent actively syncing
 	- enough power to work: same as above, but enough power to do work when work messages received
 	
 If work takes little power, the last two states might be the same.  If work takes much power, then in the third state, work messages might be received but ignored (while sync is still maintained.)
@@ -159,7 +162,7 @@ Platforms could be:
 	- RTOS and wireless stack on target chip
 
 		- a Bluetooth stack with Broadcaster/Observer roles to implement a UDP like protocol, without connections (TI CC2650, FUTURE)
-		- a raw wireless protocol stack (Nordic nRF52)
+		- a proprietary wireless protocol stack (Nordic nRF52)
 
 Debug configuration
 -
@@ -206,3 +209,13 @@ During development, there were these variants which I hope are still viable:
 See config.h
 
 Currently developing the last variant.
+
+To Do
+=
+
+	- harvested power operation (daily solar power down and resync)
+    - testing with many tens, hundreds,... of units
+    - RTOS work thread with work queues in and out
+    - fleshing out corners of algorithm: dropping out, adjusting mergers in progress, etc. 
+    - other platforms
+    - broadcast mesh:  relay sync to cliques that can't hear my master.  No addressing or routes, just hop count

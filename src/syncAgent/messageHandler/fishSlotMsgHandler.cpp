@@ -3,7 +3,7 @@
 
 #include "messageHandler.h"
 
-#include "../logger.h"
+#include "../logging/logger.h"
 #include "../state/role.h"
 #include "../syncAgent.h"
 

@@ -8,7 +8,7 @@
  * History: formerly part of SyncSlot.
  */
 
-#include "../logger.h"
+#include "../logging/logger.h"
 #include "../message/messageFactory.h"
 
 #include "../state/role.h"
