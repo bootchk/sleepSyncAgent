@@ -154,22 +154,7 @@ static const ScheduleCount CountActiveSlots = 2;
 static const ScheduleCount CountSlots = CountActiveSlots*DutyCycleInverse;
 
 
-/*
- * Constants used by FishPolicy.
- *
- * Now, because of HFXO startup delay, we don't fish every sleeping slot.
- * TODO, improve the design so that we fish every sleeping slot.
- */
-/*
- * Deficient design:
- * Last sleeping slot could be the last slot i.e. CountSlots.
- * But we don't fish it, since it overlaps/delays start of SyncPeriod.
- * Also, fishing the first slot actually fishes the second sleeping slot,
- * and the first sleeping slot is never fished.
- */
 
-static const ScheduleCount LastSlotOrdinalToFish = ScheduleParameters::CountSlots - 1;	// !!!
-static const ScheduleCount FirstSlotOrdinalToFish = ScheduleParameters::FirstSleepingSlotOrdinal;
 
 
 

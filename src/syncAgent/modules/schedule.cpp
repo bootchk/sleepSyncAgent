@@ -193,7 +193,6 @@ LongTime Schedule::adjustedEndTime(const SyncMessage* msg) {
 		result += ScheduleParameters::NormalSyncPeriodDuration;
 	}
 
-	// -DLOGGING
 	Logger::log(toa);
 	Logger::log(":toa\n");
 	// TODO why ambiguous Logger::log(delta);

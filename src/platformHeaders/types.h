@@ -53,6 +53,6 @@ typedef volatile uint8_t * BufferPointer;
 #else
 
 // platform
-#include <types.h>
+#include <platformTypes.h>
 
 #endif

@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../../platformHeaders/types.h"  // SystemID
+#include <nRF5x.h>	// LongTime, SystemID, WorkPayload
 #include "../modules/deltaSync.h"
 
 

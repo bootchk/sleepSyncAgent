@@ -2,7 +2,7 @@
 #include "fishSchedule.h"
 
 #include "../globals.h"  // clique
-#include "../scheduleParameters.h"
+#include "../fishingParameters.h"
 
 #include "../policy/fishPolicy.h"
 
@@ -77,19 +77,26 @@ void FishSchedule::memoizeTimeOfThisFishSlotStart() {
 	_memoStartTimeOfFishSlot = result;
 }
 
+
+
 LongTime FishSchedule::timeOfThisFishSlotEnd() {
 	LongTime result = _memoStartTimeOfFishSlot
-			+ ScheduleParameters::RealSlotDuration;		// !!!!
+			+ FishingParameters::FishSessionDuration;
 
-	// A Fish slot can be the last slot
-	// Fish slot should not end after next SyncPoint
+	/*
+	 * A Fish slot started near end of SyncPeriod
+	 * should not end after end of SyncPeriod (next SyncPoint)
+	 */
+	// Fish slot
 	LongTime nextSyncPoint = clique.schedule.timeOfNextSyncPoint();
 	if (result > nextSyncPoint) {
 		Logger::log("End fish slot past sync point\n");
 		result = nextSyncPoint;
 	}
 
-	// result may be < nowTime() i.e. in the past
-	// in which case delta==0 and sleepUntilTimeout(delta) will timeout immediately.
+	/*
+	 * result may be < nowTime() i.e. in the past
+	 * in which case subsequently computed delta will be 0 and sleepUntilTimeout(delta) will timeout immediately.
+	 */
 	return result;
 }

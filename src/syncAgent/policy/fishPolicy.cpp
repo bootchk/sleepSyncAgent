@@ -1,24 +1,24 @@
 
 #include "fishPolicy.h"
-#include "../scheduleParameters.h"
 
-#include "../logging/logger.h"
+#include "../fishingParameters.h"
+
 
 namespace {
 
-ScheduleCount simpleUpCounter = ScheduleParameters::FirstSlotOrdinalToFish;
+ScheduleCount simpleUpCounter = FishingParameters::FirstSlotOrdinalToFish;
 
 void incrementCounterModuloSleepingSlots(ScheduleCount* counter) {
 	(*counter)++;
-	if (*counter > ScheduleParameters::LastSlotOrdinalToFish) {
-		*counter = ScheduleParameters::FirstSlotOrdinalToFish;
+	if (*counter > FishingParameters::LastSlotOrdinalToFish) {
+		*counter = FishingParameters::FirstSlotOrdinalToFish;
 	}
 }
 
 void decrementCounterModuloSleepingSlots(ScheduleCount* counter) {
 	(*counter)--;
-	if (*counter < ScheduleParameters::FirstSlotOrdinalToFish) {
-		*counter = ScheduleParameters::LastSlotOrdinalToFish;
+	if (*counter < FishingParameters::FirstSlotOrdinalToFish) {
+		*counter = FishingParameters::LastSlotOrdinalToFish;
 	}
 }
 }
@@ -29,7 +29,7 @@ ScheduleCount SimpleFishPolicy::nextFishSlotOrdinal() {
 
 	incrementCounterModuloSleepingSlots(&simpleUpCounter);
 	result = simpleUpCounter;
-	assert(result >= ScheduleParameters::FirstSlotOrdinalToFish && result <= ScheduleParameters::LastSlotOrdinalToFish);
+	assert(result >= FishingParameters::FirstSlotOrdinalToFish && result <= FishingParameters::LastSlotOrdinalToFish);
 	return result;
 }
 
@@ -48,16 +48,15 @@ namespace {
  * !!! upCounter initialized to  last slot, the first call after reset increments,
  * and the first result is FirstSleepingSlotOrdinal.
  */
-	ScheduleCount upCounter = ScheduleParameters::LastSlotOrdinalToFish;
-	ScheduleCount downCounter = ScheduleParameters::FirstSlotOrdinalToFish;
+	ScheduleCount upCounter = FishingParameters::LastSlotOrdinalToFish;
+	ScheduleCount downCounter = FishingParameters::FirstSlotOrdinalToFish;
 	bool direction = true;
 }
 
 // !!! This should be the same as above compile time initialization.
 void SyncRecoveryFishPolicy::reset() {
-	Logger::log("reset FishPolicy\n");
-	upCounter = ScheduleParameters::FirstSlotOrdinalToFish;
-	downCounter = ScheduleParameters::LastSlotOrdinalToFish;
+	upCounter = FishingParameters::FirstSlotOrdinalToFish;
+	downCounter = FishingParameters::LastSlotOrdinalToFish;
 	direction = true;
 	// next generated ordinal will be first sleeping slot
 }
@@ -76,7 +75,7 @@ ScheduleCount SyncRecoveryFishPolicy::nextFishSlotOrdinal() {
 
 	direction = ! direction;	// reverse direction, i.e. counter to return next call
 
-	assert(result >=ScheduleParameters::FirstSlotOrdinalToFish && result <= ScheduleParameters::LastSlotOrdinalToFish);
+	assert(result >=FishingParameters::FirstSlotOrdinalToFish && result <= FishingParameters::LastSlotOrdinalToFish);
 	return result;
 }
 

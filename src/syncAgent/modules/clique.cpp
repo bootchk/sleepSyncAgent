@@ -110,6 +110,7 @@ void Clique::onMasterDropout() {
 	 * - busy or insufficient power temporarily
 	 * - drifted too much
 	 */
+	Logger::log("reset FishPolicy\n");
 	SyncRecoveryFishPolicy::reset();
 }
 
