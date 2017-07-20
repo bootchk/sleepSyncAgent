@@ -12,6 +12,11 @@
 #include "../logging/logger.h"
 
 
+/*
+ * Offset should be calculated as close to OTA time as possible.
+ * If you insert code between calculate offset and transmit
+ * you should remeasure latency and adjust latency parameters
+ */
 
 namespace {
 
@@ -19,13 +24,17 @@ namespace {
  * Convert SyncMessage object into a byte array, and xmit OTA.
  */
 static void sendMessage(SyncMessage* msgPtr) {
-	// assert caller has initialized *msgPtr
+	// assert caller created valid message
+	// assert Ensemble startup was done
 
-	Logger::logSend(msgPtr);
 	Serializer::serializeSyncMessageIntoRadioBuffer(msgPtr);
 	assert(Serializer::bufferIsSane());
 
+	// Takes time: RampupDelay + MsgOverTheAirTimeInTicks
 	Ensemble::transmitStaticSynchronously();
+
+	// !!! logging after send so it doesn't affect latency
+	Logger::logSend(msgPtr);
 }
 
 
@@ -67,8 +76,7 @@ void SyncSender::sendMergeSync() {
 }
 
 
-// XXX should calculate offset as late as possible
-// XXX I assume it is only a few tens of instructions, i.e. less than one tick difference?
+
 void SyncSender::sendWorkSync(WorkPayload work) {
 	/*
 	 * The app sends work OUT only when there is enough power for self to do work,

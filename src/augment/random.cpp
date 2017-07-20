@@ -31,7 +31,15 @@ uint16_t randUnsignedInt16(uint16_t min, uint16_t max) {
 	 */
 	assert( max >= min);
 	assert((max - min) < RAND_MAX);	// else not uniformly distributed
-	int intResult = rand() % ( max + 1 - min) + min;
+	/*
+	 * This poor solution is biased because % uses low order bits which are non-random:
+	 * int intResult = rand() % ( max + 1 - min) + min;
+	 */
+
+	/*
+	 * This solution does NOT use floating point.
+	 */
+	int intResult = min + rand() / (RAND_MAX / (max - min + 1) + 1);
 
 	// Convert, i.e. take lower two LSB
 	assert(intResult < UINT16_MAX);	// No loss of data

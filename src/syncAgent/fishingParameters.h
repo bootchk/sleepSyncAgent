@@ -20,7 +20,7 @@ class FishingParameters {
 public:
 #define EXTENDED_FISH_DURATION 1
 #ifdef EXTENDED_FISH_DURATION
-	static const ScheduleCount SlotsFishedPerPeriod = 10;
+	static const ScheduleCount SlotsFishedPerPeriod = 20;
 #else
 	static const ScheduleCount SlotsFishedPerPeriod = 1;
 #endif

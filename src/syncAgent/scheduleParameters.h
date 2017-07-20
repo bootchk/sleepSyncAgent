@@ -93,7 +93,7 @@ public:	// for assertions
 //static const DeltaTime     SlotDuration = 40;
 //static const unsigned int  DutyCycleInverse = 100;
 
-// 40, 800 Sync period 2 sec
+// 40, 800 Sync period 2 sec (1.92)
 // This is the one that I did most testing with
 static const DeltaTime     VirtualSlotDuration = 40;
 static const unsigned int  DutyCycleInverse = 800;

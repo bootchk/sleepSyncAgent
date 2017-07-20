@@ -7,6 +7,9 @@
 #include "syncSlotSchedule.h"
 #include "../messageHandler/messageHandler.h"
 #include "../state/phase.h"
+#include "../policy/workPolicy.h"
+
+
 
 namespace {
 
@@ -261,7 +264,7 @@ void SyncWorkSlot::perform() {
 	 * Work must be rare, lest it flood airwaves and destroy sync
 	 * (colliding too often with MergeSync or MasterSync.)
 	 */
-	if (workManager.isNeedSendWork()) {
+	if (WorkPolicy::shouldXmitWorkSync() and workManager.isNeedSendWork()) {
 		// This satisfies needXmitSync
 		doSendingWorkSyncWorkSlot();
 	}

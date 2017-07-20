@@ -9,7 +9,7 @@
 /*
  * Message handling for SyncSlot.
  *
- * Sync handling is agnostic of role.isMaster or role.isSlave
+ * Sync handling is agnostic of isMaster or isSlave
  *
  * MasterSync and MergeSync handled the same.
  *
