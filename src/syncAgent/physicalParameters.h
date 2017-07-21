@@ -32,11 +32,23 @@ public:
  *
  */
 #ifdef NRF52
-	// 2 rampup + 2 OTA + ? SW overhead
+	/*
+	 * 2 rampup + 2 OTA + ? SW overhead
+	 *
+	 * SW overhead appears to be about 1 tick
+	 *
+	 * 4 measured July 2017 no optimization, logging enable, asserts enabled, gcc 6, NRF52DK
+	 */
 	static const DeltaTime SendLatency = 4;
 #else // NRF51
-	// 4 rampup + 2 OTA + ? SW overhead
-	static const DeltaTime SendLatency = 6;
+	/*
+	 * 4 rampup + 2 OTA + ? SW overhead
+	 *
+	 * SW overhead appears to be about 4 ticks, i.e. 4x nrf52
+	 *
+	 * 10 measured July 2017 no optimization, logging enable, asserts enabled, gcc 6, Waveshare Core to NRF52DK
+	 */
+	static const DeltaTime SendLatency = 10;
 #endif
 
 
