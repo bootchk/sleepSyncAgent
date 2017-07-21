@@ -87,8 +87,11 @@ void Logger::log(uint8_t value) { logger.log(value); }
 void Logger::log(unsigned long long value) { logger.log(value); }
 
 void Logger::logSendLatency(uint32_t value) {
-	logger.log("\nSLatency ");
+	logger.log("SLatency ");
 	logger.log(value);
 }
 
 
+/*
+ * Leading \n loses some data???
+ */

@@ -7,7 +7,11 @@
 LongTime SyncMessage::timeOfArrival;
 
 
-// TODO only the sender knows sendlatency
+/*
+ * Only the sender knows sendlatency (varies by platform.)
+ * Thus this is an approximation, using this units SendLatency.
+ */
+// FIXME
 LongTime SyncMessage::timeOfTransmittal() {
 	return timeOfArrival - PhysicalParameters::SendLatency;
 }

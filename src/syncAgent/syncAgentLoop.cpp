@@ -78,14 +78,27 @@ void SyncAgent::loop(){
 
 
 	/*
-	 * assert schedule already started and not too much time has elapsed
-	 * Note that we roll forward at the end of the loop.
-	 * If we roll forward at the beginning of the loop,
-	 * we need to initialize schedule differently.
+	 * assert schedule already started.
+	 * But some time has elapsed.
+	 * Roll forward at the beginning of the loop.
+	 *
+	 * Rolling forward can have different implementations.
+	 * At least the very first call must ensure that startTimeOfPeriod == nowTime();
 	 */
 
 	while (true){
 
+		/*
+		 * Sync period over,
+		 * Assert now == timeAtStartOfSyncPeriod + syncPeriodDuration
+		 * i.e. we must have slept the proper duration.
+		 * Advance schedule, even if not enough power to listen/send sync messages to maintain accuracy.
+		 */
+		clique.schedule.rollPeriodForwardToNow();
+
+		assert(Ensemble::isLowPower());	// After every sync period
+
+		// TODO move this to where it could not possible interfere with SyncSlot
 		Phase::set(PhaseEnum::SyncPointCallback);
 		onSyncPointCallback();	// call back app, which must return quickly
 
@@ -130,15 +143,7 @@ void SyncAgent::loop(){
 			// We may exhaust it and brown out, losing sync altogether
 		}
 
-		/*
-		 * Sync period over,
-		 * Assert now == timeAtStartOfSyncPeriod + syncPeriodDuration
-		 * i.e. we must have slept the proper duration.
-		 * Advance schedule, even if not enough power to listen/send sync messages to maintain accuracy.
-		 */
-		clique.schedule.rollPeriodForwardToNow();
-
-		assert(Ensemble::isLowPower());	// After every sync period
+		// SyncPeriod over and next one starts.
 	}
 	// never returns
 }

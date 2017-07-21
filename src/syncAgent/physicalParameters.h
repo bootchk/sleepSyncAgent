@@ -41,15 +41,18 @@ public:
 
 
 /*
- * The delay between TOA at receiver and the time
- * the receiver updates sync using the offset from the message.
+ * The delay between message received and time TOA was recorded.
+ * This is negligible: an interrupt occurs and a few tens of instructions later we record TOA.
+ *
+ * The time betwen message received and the receiver updates sync (using the offset from the message)
+ * is irrelevant since TOA and offset don't change with passing time at receiver.
  *
  * Comprises:
  * SW overhead (to check validity, make calculations, etc.)
  *
  * This too can vary by platform (faster cpu clock.)
  */
-static const DeltaTime ReceiveLatency = 4;
+//NOT USED static const DeltaTime ReceiveLatency = 0;
 
 
 /*

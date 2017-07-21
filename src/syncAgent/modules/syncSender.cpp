@@ -29,6 +29,9 @@ static void sendMessage(SyncMessage* msgPtr) {
 	// assert caller created valid message
 	// assert Ensemble startup was done
 
+	/*
+	 * Time to serialize is a component of SendLatency.
+	 */
 	Serializer::serializeSyncMessageIntoRadioBuffer(msgPtr);
 
 	// Use for extreme testing, but affects latency
@@ -37,8 +40,10 @@ static void sendMessage(SyncMessage* msgPtr) {
 	// Takes time: RampupDelay + MsgOverTheAirTimeInTicks
 	Ensemble::transmitStaticSynchronously();
 
-	// !!! logging after send so it doesn't affect latency
-	Logger::logSend(msgPtr);
+	/*
+	 * No logging above since it would affect send latency.
+	 * Caller may measure and log send latency.
+	 */
 }
 
 
@@ -71,10 +76,15 @@ void SyncSender::sendMasterSync() {
 	// XXX assert we are not xmitting sync past end of syncSlot?
 	// i.e. calculations are rapid and sync slot not too short?
 
+	/*
+	 * Time to create message is component of SendLatency.
+	 */
 	SyncMessage* msgPtr = MessageFactory::initMasterSyncMessage(sendLatencyAdjustedOffset, myID());
 	sendMessage(msgPtr);
 
 	Logger::logSendLatency(rawOffset - clique.schedule.deltaNowToNextSyncPoint());
+	// Log message after sendLatency
+	Logger::logSend(msgPtr);
 }
 
 

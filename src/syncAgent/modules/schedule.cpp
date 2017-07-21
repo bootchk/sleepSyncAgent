@@ -176,10 +176,14 @@ LongTime Schedule::adjustedEndTime(const SyncMessage* msg) {
 	DeltaTime delta = msg->deltaToNextSyncPoint.get();
 	// delta < SyncPeriodDuration
 
+	/*
+	 * Sender has already adjusted offset for SendLatency.
+	 */
 	LongTime toa = msg->timeOfArrival;
-	LongTime result = toa +
-			+ delta
-			- PhysicalParameters::SendLatency;
+	LongTime result = toa + delta;
+
+	// TODO measure ReceiveLatency, probably near zero
+	// TODO no such thing, not needed.
 
 	/*
 	 * Don't adjust end time sooner than it already is,
@@ -194,11 +198,10 @@ LongTime Schedule::adjustedEndTime(const SyncMessage* msg) {
 	}
 
 	Logger::log(toa);
-	Logger::log(":toa\n");
-	// TODO why ambiguous Logger::log(delta);
-	Logger::log(":offset\n");
+	Logger::log("<toa\n");
+	// Offset already logged in msg details.
 	Logger::log(result);
-	Logger::log(":new period end\n");
+	Logger::log("<new period end\n");
 	//logInt(deltaNowToNextSyncPoint()); log(":Delta to next sync\n");
 
 	assert( (result - startTimeOfSyncPeriod()) <= 2* ScheduleParameters::NormalSyncPeriodDuration);

@@ -57,7 +57,9 @@ public:
 	 * - start a SyncPeriod
 	 */
 	// For some debugging: static bool isPowerForSync()  { return PowerManager::isPowerAboveUltraHigh(); }	// > 3.2
-	static bool isPowerForSync()  { return PowerManager::isPowerAboveHigh(); }	// > 2.7
+	// For some debugging with 2AAA batteries @2.68V
+	static bool isPowerForSync()  { return PowerManager::isPowerAboveMedium(); }	// > 2.5
+	// static bool isPowerForSync()  { return PowerManager::isPowerAboveHigh(); }	// > 2.7
 
 	// Enough to continue a SyncPeriod that has been started
 	static bool isPowerForRadio()  { return PowerManager::isPowerAboveMedium(); } // > 2.5
