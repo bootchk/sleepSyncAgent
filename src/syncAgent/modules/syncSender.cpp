@@ -11,6 +11,8 @@
 #include "../globals.h"	// clique
 #include "../logging/logger.h"
 
+#include "../physicalParameters.h"
+
 
 /*
  * Offset should be calculated as close to OTA time as possible.
@@ -57,17 +59,22 @@ void SyncSender::sendMasterSync() {
 	 */
 	DeltaTime rawOffset = clique.schedule.deltaNowToNextSyncPoint();
 
+	/*
+	 * Sender specific send latency
+	 * The offset will be correct to receiver when last bit is received.
+	 */
+	DeltaTime sendLatencyAdjustedOffset = rawOffset - PhysicalParameters::SendLatency;
+
 	// XXX robust code: check rawOffset in range now and return if not
 	// XXX rawOffset greater than zero except when breakpointed
 
 	// XXX assert we are not xmitting sync past end of syncSlot?
 	// i.e. calculations are rapid and sync slot not too short?
 
-	SyncMessage* msgPtr = MessageFactory::initMasterSyncMessage(rawOffset, myID());
+	SyncMessage* msgPtr = MessageFactory::initMasterSyncMessage(sendLatencyAdjustedOffset, myID());
 	sendMessage(msgPtr);
 
-	// Uncomment this to experimentally determine send latency.
-	//logInt(rawOffset - clique.schedule.deltaNowToNextSyncPoint()); log(":Send latency\n");
+	Logger::logSendLatency(rawOffset - clique.schedule.deltaNowToNextSyncPoint());
 }
 
 

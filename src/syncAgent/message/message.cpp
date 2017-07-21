@@ -6,8 +6,10 @@
 
 LongTime SyncMessage::timeOfArrival;
 
+
+// TODO only the sender knows sendlatency
 LongTime SyncMessage::timeOfTransmittal() {
-	return timeOfArrival - ScheduleParameters::SenderLatency;
+	return timeOfArrival - PhysicalParameters::SendLatency;
 }
 
 char const * SyncMessage::representation(SyncMessage* msg) {

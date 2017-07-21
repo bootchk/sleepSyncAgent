@@ -75,4 +75,6 @@ public:
 	static void log(uint8_t);
 	static void log(unsigned long long int);
 	static void logInt(uint32_t); // TODO ambiguous call problems if omit this
+
+	static void logSendLatency(uint32_t);
 };

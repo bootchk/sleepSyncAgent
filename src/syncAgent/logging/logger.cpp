@@ -86,6 +86,9 @@ void Logger::logInt(uint32_t value) { logger.log(value); }
 void Logger::log(uint8_t value) { logger.log(value); }
 void Logger::log(unsigned long long value) { logger.log(value); }
 
-
+void Logger::logSendLatency(uint32_t value) {
+	logger.log("\nSLatency ");
+	logger.log(value);
+}
 
 

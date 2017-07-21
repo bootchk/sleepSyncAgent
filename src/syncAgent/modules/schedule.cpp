@@ -170,7 +170,8 @@ LongTime Schedule::adjustedEndTime(const SyncMessage* msg) {
 	//logInt(elapsedTicksSinceTOA); log("<<<Elapsed since toa.\n");
 
 	/*
-	 * Crux: new end time is TOA of SyncMessage + DeltaSync + various latencies
+	 * Crux: new end time is TOA of SyncMessage + DeltaSync + various delays:
+	 * rampup + OTA time + SW overhead
 	 */
 	DeltaTime delta = msg->deltaToNextSyncPoint.get();
 	// delta < SyncPeriodDuration
@@ -178,8 +179,7 @@ LongTime Schedule::adjustedEndTime(const SyncMessage* msg) {
 	LongTime toa = msg->timeOfArrival;
 	LongTime result = toa +
 			+ delta
-			- ScheduleParameters::MsgOverTheAirTimeInTicks
-			- ScheduleParameters::SenderLatency;
+			- PhysicalParameters::SendLatency;
 
 	/*
 	 * Don't adjust end time sooner than it already is,

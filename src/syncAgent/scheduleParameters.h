@@ -2,6 +2,8 @@
 
 #include "types.h"  // ScheduleCount, DeltaTime
 
+#include "physicalParameters.h"
+
 
 /* !!! Parameters of schedule.
  *
@@ -155,9 +157,31 @@ static const ScheduleCount CountSlots = CountActiveSlots*DutyCycleInverse;
 
 
 
+/*
+ * Duration of wait for HFXO to start.
+ * We wait a fixed duration, longer than the measured time.
+ * Measured time depends on design of physical HFXO oscillator,
+ * which depends on the board (not on Nordic.)
+ *
+ * NEW Design:
+ * Make it the same as VirtualSlot.
+ * As long as VirtualSlot is greater than 40,
+ * that is ample time for HFXO startup.
+ * And it simplifies thinking about overlap of RealSlot and VirtualSlot
+ */
+static const DeltaTime HFXOStartup = VirtualSlotDuration;
 
 
-
+/*
+ * DeltaTime from a time we must wakeup
+ * to the time when we want a message transmission to end
+ * (same as when it is received)
+ * if we start ensemble and immediately transmit.
+ * (For MergeSync.)
+ */
+// static const DeltaTime PreflightDelta = HFXOStartup + RampupDelay + MsgOverTheAirTimeInTicks;
+static const DeltaTime PreflightDelta = HFXOStartup + PhysicalParameters::SendLatency;
+// TODO plus other parts of ensemble startup?
 
 /*
  * Duration of 'normal' SyncPeriod in units ticks.
@@ -168,93 +192,9 @@ static const DeltaTime NormalSyncPeriodDuration = CountSlots * VirtualSlotDurati
 
 
 
-/*
- * Durations of real OTA events and other delays
- */
-
-/*
- * Duration of message over-the-air (OTA).
- * Units ticks.
- * Function of bitrate, message length, and RTC frequency:
- *
- * OTA ticks = 1/bitrate [second/bits] * messageLength [bits] * RTCFreq [ticks/second]
- *
- * Message bytes 1 preamble 3 address 11 payload 1 CRC => 16 bytes
- * 16 bytes is 128 bits
- * Used in sanity assertions only?
- */
-// 1 Mbit bitrate, 128bit message, 32kHz   yields .12mSec = 4 ticks
-// 2 Mbit bitrate, 128bit message, 32kHz   yields .064mSec == 64uSec = 2 ticks
-// 2 Mbit, 120 bits, 32kHz yields 1.8 ticks
-static const DeltaTime MsgOverTheAirTimeInTicks = 2;
-
-/*
- * The delay between the time the sender fetches offset time and sender actually sends it.
- * IOW delay between send and receive, on a reference clock.
- * This is currently just a guess or measured.
- * If sending code changes, or optimization, this changes too.
- */
-static const DeltaTime SenderLatency = 4;
 
 
-/*
- * After system wakes from radio off state,
- * delay until we should activate radio (from DISABLED state to active state).
- * This is one component of 'dead' time for radio.
- * (Even after we activate, their is more dead time: rampup.)
- *
- * Comprises:
- * - time for HFXO clock to stabilize (1200uSec, 40 ticks)
- * - a few ticks for other overhead (some execution time.)
- * - an allowance for variance (expected worst deviation from experiments.)
- *
- * The constant is experimentally measured, for specific HF crystals.
- * If enough allowance is not made,  there will be dead gaps in listening/fishing.
- * This is used to overlap real slots.
- *
- * !!! Should not be more than SlotDuration, else the last FishSlot will lap into SyncSlot
- */
-static const DeltaTime PowerOffToActiveDelay = 41;
-// TODO check these constants at runtime
-#if PowerOffToActiveDelay > VirtualSlotDuration
-#error "delay too long"
-#endif
 
-/*
- * After radio is enabled, delay until radio is ready for OTA (TXIDLE or RXIDLE).
- * This is another component of 'dead' time.
- * !!! RampupDelay can be incurred again when switching from xmit to rcv or vice versa.
- */
-#ifdef NRF52
-	// ramp up in fast mode is 40uSec, i.e. 1.3 ticks
-	static const DeltaTime RampupDelay = 2;
-#else // NRF51
-	// ramp up is 130 uSec i.e. 4.3 ticks
-	static const DeltaTime RampupDelay = 4;
-#endif
-
-/*
- * Delay from sleeping to radio ready (TXIDLE or RXIDLE).
- *
- */
-/*
- * OLD Design:
- * static const DeltaTime HFXOStartup = PowerOffToActiveDelay + RampupDelay;
- */
-/*
- * NEW Design:
- * Make it the same as VirtualSlot.
- * As long as VirtualSlot is greater than 40,
- * that is ample time for HFXO startup.
- * And it simplifies thinking about overlap of RealSlot and VirtualSlot
- */
-static const DeltaTime HFXOStartup = VirtualSlotDuration;
-
-/*
- * DeltaTime from a time we must wakeup
- * to the time when we want a message to be received.
- */
-static const DeltaTime PreflightDelta = HFXOStartup + RampupDelay + MsgOverTheAirTimeInTicks;
 
 /*
  * Real slots are greater duration than virtual slots.
@@ -265,7 +205,9 @@ static const DeltaTime RealSlotDuration = VirtualSlotDuration + HFXOStartup;
 /*
  * Middle of virtual (active) portion of RealSyncSlot.
  *
- * Radio is active a HFXOStartup duration after starting RealSyncSlot.
+ * Radio is started a HFXOStartup duration after starting RealSyncSlot.
+ *
+ * TODO following comments obsolete.
  * Active means "able to receive or transmit."
  * (Here we are ignoring initial Radio RampupDelay.)
  * Radio is active a full VirtualSlotDuration
@@ -277,9 +219,9 @@ static const DeltaTime RealSlotDuration = VirtualSlotDuration + HFXOStartup;
  * This is a time when transmission starts.
  * A transmission is received MsgOverTheAirTimeInTicks later.
  */
-static const DeltaTime DeltaSyncPointToSyncSlotMiddle = HalfSlotDuration + HFXOStartup - RampupDelay;
+// static const DeltaTime DeltaSyncPointToSyncSlotMiddle = HalfSlotDuration + HFXOStartup - RampupDelay;
 
-
+static const DeltaTime DeltaSyncPointToSyncSlotMiddle = HalfSlotDuration + HFXOStartup - PhysicalParameters::SendLatency;
 
 
 
