@@ -2,7 +2,7 @@
 #include "fishSchedule.h"
 
 #include "../globals.h"  // clique
-#include "../fishingParameters.h"
+#include "fishingParameters.h"
 
 #include "../policy/fishPolicy.h"
 

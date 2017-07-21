@@ -28,7 +28,9 @@ static void sendMessage(SyncMessage* msgPtr) {
 	// assert Ensemble startup was done
 
 	Serializer::serializeSyncMessageIntoRadioBuffer(msgPtr);
-	assert(Serializer::bufferIsSane());
+
+	// Use for extreme testing, but affects latency
+	// assert(Serializer::bufferIsSane());
 
 	// Takes time: RampupDelay + MsgOverTheAirTimeInTicks
 	Ensemble::transmitStaticSynchronously();

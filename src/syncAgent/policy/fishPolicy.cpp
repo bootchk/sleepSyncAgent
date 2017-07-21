@@ -1,7 +1,7 @@
 
 #include "fishPolicy.h"
 
-#include "../fishingParameters.h"
+#include "../slots/fishingParameters.h"
 
 
 namespace {

@@ -261,7 +261,7 @@ void SyncWorkSlot::perform() {
 
 	/*
 	 * Work is higher priority than ordinary sync.
-	 * Work must be rare, lest it flood airwaves and destroy sync
+	 * Work must be rare, lest it flood airwaves and destroy sync.
 	 * (colliding too often with MergeSync or MasterSync.)
 	 */
 	if (WorkPolicy::shouldXmitWorkSync() and workManager.isNeedSendWork()) {
@@ -273,7 +273,10 @@ void SyncWorkSlot::perform() {
 		if (needXmitSync)
 			doMasterSyncWorkSlot();
 		else
-			// isSlave or (isMaster and not xmitting (coin flip))
+			/*
+			 * isSlave
+			 * OR (isMaster and not xmitting (coin flip))
+			 */
 			doSlaveSyncWorkSlot();
 	}
 
