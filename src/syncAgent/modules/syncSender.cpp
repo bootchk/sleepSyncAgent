@@ -8,6 +8,8 @@
 
 #include "../message/message.h"
 #include "../message/serializer.h"
+#include "../message/messageFactory.h"
+
 #include "../globals.h"	// clique
 #include "../logging/logger.h"
 
@@ -40,14 +42,14 @@ static void sendMessage(SyncMessage* msgPtr) {
 	// Takes time: RampupDelay + MsgOverTheAirTimeInTicks
 	Ensemble::transmitStaticSynchronously();
 
-	/*
-	 * No logging above since it would affect send latency.
-	 * Caller may measure and log send latency.
-	 */
-}
+#ifndef TEST_LATENCY
+	// Don't log if testing latency, logging affects measurement
+	Logger::logSend(msgPtr);
+#endif
+	}
 
 
-}
+}  // namespace
 
 
 void SyncSender::sendMasterSync() {
@@ -82,9 +84,9 @@ void SyncSender::sendMasterSync() {
 	SyncMessage* msgPtr = MessageFactory::initMasterSyncMessage(sendLatencyAdjustedOffset, myID());
 	sendMessage(msgPtr);
 
+#ifdef TEST_LATENCY
 	Logger::logSendLatency(rawOffset - clique.schedule.deltaNowToNextSyncPoint());
-	// Log message after sendLatency
-	Logger::logSend(msgPtr);
+#endif
 }
 
 

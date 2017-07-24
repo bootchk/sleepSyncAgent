@@ -5,6 +5,7 @@
 #include "fishingParameters.h"
 
 #include "../policy/fishPolicy.h"
+#include "../logging/logger.h"
 
 // FUTURE memoize end time also???
 

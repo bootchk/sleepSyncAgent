@@ -12,9 +12,15 @@ LongTime SyncMessage::timeOfArrival;
  * Thus this is an approximation, using this units SendLatency.
  */
 // FIXME
+/*
+ * We could send the latency in the Work byte, ins some messages?
+ */
 LongTime SyncMessage::timeOfTransmittal() {
-	return timeOfArrival - PhysicalParameters::SendLatency;
+	return timeOfArrival - PhysicalParameters::GuessedSendLatency;
 }
+
+
+
 
 char const * SyncMessage::representation(SyncMessage* msg) {
 	char const * result;

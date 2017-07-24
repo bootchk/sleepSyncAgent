@@ -1,5 +1,8 @@
 #pragma once
 
+#include <services/mailbox.h>
+
+
 
 /*
  * Coordinates sending and receiving of work.
@@ -10,9 +13,13 @@
 
 class WorkManager {
 public:
+	static void init(Mailbox*);
+
+	static bool isNeedSendWork();
+	static WorkPayload fetch();
+
 	static void resetState();
 	static void hearWork();
-	static bool isNeedSendWork();
 	static bool isHeardWork();
 };
 

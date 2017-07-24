@@ -1,7 +1,7 @@
 
 #include "syncState.h"
-#include "../globals.h"
-// #include "../modules/syncSender.h"
+
+#include "../logging/logger.h"
 
 
 namespace {

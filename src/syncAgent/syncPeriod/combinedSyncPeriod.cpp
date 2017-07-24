@@ -1,10 +1,11 @@
 
 #include <cassert>
 
-#include "../globals.h"
+#include "../globals.h"	// clique, CustomFlash
 #include "syncPeriod.h"
 
 #include "../state/phase.h"
+#include "../state/role.h"
 
 #include "../slots/syncWorkSlot.h"
 #include "../slots/fishSlot.h"

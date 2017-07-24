@@ -53,6 +53,14 @@ public:
 
 
 /*
+ * When latency is not in message payload, use this.
+ * Currently, most of the units are nRF51
+ */
+static const DeltaTime GuessedSendLatency = 10;
+
+
+
+/*
  * The delay between message received and time TOA was recorded.
  * This is negligible: an interrupt occurs and a few tens of instructions later we record TOA.
  *

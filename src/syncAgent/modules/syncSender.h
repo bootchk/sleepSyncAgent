@@ -1,5 +1,7 @@
 #pragma once
 
+#include <platformTypes.h>
+
 /*
  * Knows how to fabricate and transmit/broadcast a flavor of Sync msg.
  *

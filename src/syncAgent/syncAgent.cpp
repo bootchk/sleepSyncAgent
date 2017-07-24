@@ -10,7 +10,9 @@
 #include "message/messageFactory.h"
 #include "message/serializer.h"
 #include "state/phase.h"
+#include "state/role.h"
 
+#include "policy/workManager.h"
 
 
 // SyncSleeper, Sleeper pure classes
@@ -63,8 +65,7 @@ void SyncAgent::initSyncObjects(
 	 * RADIO->POWER is set at POR reset, but it means 'was reset', not 'is using power'.
 	 */
 
-	// Copy parameters to globals
-	workOutMailbox = aMailbox;
+	WorkManager::init(aMailbox);
 
 	// Temp: test power consumption when all sleep
 	// while(true) waitForOSClockAndToRecoverBootEnergy(aLCT);

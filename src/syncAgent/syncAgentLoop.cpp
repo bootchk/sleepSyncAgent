@@ -11,6 +11,8 @@
 #include "sleepers/syncSleeper.h"
 #include "state/phase.h"
 
+#include "policy/workManager.h"
+
 #include "logging/logger.h"
 
 /*
@@ -104,7 +106,7 @@ void SyncAgent::loop(){
 
 		// app may have queued work
 
-		workManager.resetState();
+		WorkManager::resetState();
 
 		if ( SyncPowerManager::isPowerForSync() ) {
 			/*

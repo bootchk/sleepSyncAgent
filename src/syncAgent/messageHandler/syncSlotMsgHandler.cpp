@@ -1,8 +1,11 @@
 
 #include <cassert>
 
-#include "../globals.h"		// syncBehaviour, clique, etc.
+#include "../globals.h"		// clique, etc.
 #include "messageHandler.h"
+#include "../policy/workManager.h"
+#include "../modules/syncBehaviour.h"
+#include "../logging/logger.h"
 
 
 
@@ -51,7 +54,7 @@ HandlingResult SyncSlotMessageHandler::handleMasterSyncMessage(SyncMessage* msg)
 	 * Discard result and keep listening since:
 	 * - two masters may be competing
 	 */
-	(void) syncBehaviour.filterSyncMsg(msg);
+	(void) SyncBehaviour::filterSyncMsg(msg);
 	return HandlingResult::KeepListening;
 }
 
@@ -61,7 +64,7 @@ HandlingResult SyncSlotMessageHandler::handleMergeSyncMessage(SyncMessage* msg){
 	 * Discard result and keep listening since:
 	 * - two other cliques may be competing to merge me
 	 */
-	(void) syncBehaviour.filterSyncMsg(msg);
+	(void) SyncBehaviour::filterSyncMsg(msg);
 	return HandlingResult::KeepListening;
 }
 
@@ -86,14 +89,14 @@ HandlingResult SyncSlotMessageHandler::handleWorkSyncMessage(SyncMessage* msg){
 	 * Handle work aspect of message.
 	 * Doesn't matter which clique it came from, relay work.
 	 */
-	workManager.hearWork();	// keep work state for slot
+	WorkManager::hearWork();	// keep work state for slot
 	syncAgent.relayHeardWorkToApp(msg->work);
 
 	/*
 	 *  Handle sync aspect of message.
 	 *  Don't care if it is invalid from inferior clique.
 	 */
-	(void) syncBehaviour.filterSyncMsg(msg);
+	(void) SyncBehaviour::filterSyncMsg(msg);
 
 	/*
 	 * Ignore sync-keeping result above and keep listening:

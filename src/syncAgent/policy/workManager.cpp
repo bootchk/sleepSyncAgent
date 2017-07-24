@@ -1,12 +1,18 @@
 
 #include "workManager.h"
-#include "../globals.h"  // mailbox
 
 
 namespace {
 	static bool heardWork = false;
+
+	// Owned by calling app, implemented by lib nRF5x
+	static Mailbox* workOutMailbox;
 }
 
+
+void WorkManager::init(Mailbox* aMailbox) {
+	workOutMailbox = aMailbox;
+}
 
 void WorkManager::resetState() {
 	heardWork = false;
@@ -22,4 +28,8 @@ bool WorkManager::isHeardWork() {
 
 bool WorkManager::isNeedSendWork() {
  return workOutMailbox->isMail();
+}
+
+WorkPayload WorkManager::fetch() {
+	return workOutMailbox->fetch();
 }

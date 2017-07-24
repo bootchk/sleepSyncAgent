@@ -3,11 +3,16 @@
 
 #include "../globals.h"
 #include "../modules/syncSender.h"
+#include "../modules/syncBehaviour.h"
+#include "../modules/syncPowerManager.h"
+
 #include "syncWorkSlot.h"
 #include "syncSlotSchedule.h"
 #include "../messageHandler/messageHandler.h"
 #include "../state/phase.h"
 #include "../policy/workPolicy.h"
+#include "../policy/workManager.h"
+#include "../logging/logger.h"
 
 
 
@@ -102,8 +107,8 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 	 * Also, this knows that we bounce out work back to app.
 	 */
 	// Fetch work from app
-	WorkPayload work = workOutMailbox->fetch();
-	if (! workManager.isHeardWork() ) {
+	WorkPayload work = WorkManager::fetch();
+	if (! WorkManager::isHeardWork() ) {
 		Phase::set(PhaseEnum::SyncXmitWorkSync);
 		SyncSender::sendWorkSync(work);
 		/*
@@ -257,14 +262,14 @@ void SyncWorkSlot::perform() {
 	// assert network is started
 
 	// Call shouldTransmitSync every time, since it needs calls side effect reset itself
-	bool needXmitSync = syncBehaviour.shouldTransmitSync();
+	bool needXmitSync = SyncBehaviour::shouldTransmitSync();
 
 	/*
 	 * Work is higher priority than ordinary sync.
 	 * Work must be rare, lest it flood airwaves and destroy sync.
 	 * (colliding too often with MergeSync or MasterSync.)
 	 */
-	if (WorkPolicy::shouldXmitWorkSync() and workManager.isNeedSendWork()) {
+	if (WorkPolicy::shouldXmitWorkSync() and WorkManager::isNeedSendWork()) {
 		// This satisfies needXmitSync
 		doSendingWorkSyncWorkSlot();
 	}
