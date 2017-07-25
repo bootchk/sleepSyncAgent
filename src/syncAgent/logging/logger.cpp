@@ -46,10 +46,16 @@ void Logger::logPauseSync() { CustomFlash::writeZeroAtIndex(PauseSync); }
 
 
 void Logger::logReceivedMsg(SyncMessage* msg){
+	logMsgTime();
 	logger.log("\nRX ");
 	logger.log(SyncMessage::representation(msg));
+	logger.log("ID:");
 	logger.log(msg->masterID);
+	logger.log("Off:");
+	logger.log(msg->deltaToNextSyncPoint.get());
+	logger.log("Wk:");
 	logger.log(msg->work);
+	logger.log("\n");
 
 }
 

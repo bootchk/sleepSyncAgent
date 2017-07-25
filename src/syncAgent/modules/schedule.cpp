@@ -31,55 +31,8 @@ LongTime _startTimeOfSyncPeriod;
 LongTime _endTimeOfSyncPeriod;
 
 
-} // namespace
 
-
-
-
-
-
-
-void Schedule::init(){
-	Logger::log("Schedule reset\n");
-
-	/*
-	 * Not necessary: LongClock::resetToNearZero();
-	 * This is near POR, the LongClock is still near zero in relation to its near infinite length.
-	 */
-
-	_startTimeOfSyncPeriod = LongClock::nowTime();	// Must do this to avoid assertion in rollPeriodForwardToNow
-	rollPeriodForwardToNow();
-	// Out of sync with other cliques
-}
-
-
-/*
- * Called at wall time that should be SyncPoint.
- * That is, called when a timer expires that indicates end of sync period and time to begin next.
- *
- * There are cases when this is called late:
- * 1) Since we can fish in the last slot before this time, and fishing code may delay us a short time,
- * this may be called a short time later than usual.
- * If not a short time, is error in algorithm.
- *
- * 2) There could be other faults that delay a call to this (timer does not expire at correct wall time.)
- * E.G. there is a mysterious delay when an invalid CRC is detected.
- *
- * 3) Also, using the debugger could delay timer expiration.
- *
- * In those cases, if the delay is not short, sync is lost
- * (the wall time of our SyncPoint not the same as other clique member's wall time of SyncPoint.)
- * But it is unavoidable for a robust algorithm.  See next paragraph.
- *
- * FLAWED design if called late:
- *    startTimeOfSyncPeriod = endTimeOfSyncPeriod;
- *    endTimeOfSyncPeriod = startTimeOfSyncPeriod + NormalSyncPeriodDuration;
- * That yields flawed scheduling (scheduling events in the past or at zero timeout) later
- * since it leaves the startTimeOfSyncPeriod much in the past.
- * It yields setting timers for times in the past, which should expire immediately.
- */
-void Schedule::rollPeriodForwardToNow() {
-
+void rollPeriodForwardToNow() {
 	//LongTime startOfPreviousSyncPeriod = startTimeOfSyncPeriod;
 
 	LongTime now = LongClock::nowTime();
@@ -104,6 +57,79 @@ void Schedule::rollPeriodForwardToNow() {
 	 */
 	//assert( TimeMath::timeDifferenceFromNow(startTimeOfSyncPeriod) < ScheduleParameters::SlotDuration );
 }
+
+
+void rollPeriodForwardDiscretely() {
+	/*
+	 * Keep SyncPeriod clock tuned to base LongClock and LFXO,
+	 * by rolling period forward by NormalSyncPeriodDuration without regard to nowTime();
+	 *
+	 * if called late:
+	 * yields flawed scheduling (scheduling events in the past or at zero timeout) later
+	 * since it leaves the startTimeOfSyncPeriod much in the past.
+	 * It yields setting timers for times in the past, which even though they will expire immediately,
+	 * the timer expirations will also be late.
+	 *
+	 * The present design has 40 tick "padding" at the front for HFXO startup.
+	 * That padding is sufficent for lateness of less than a few ticks.
+	 *
+	 * If late, syncPointCallback will be late, but that is not important to sync keeping (only to the app.)
+	 * And when the syncPointCallback is called should be changed anyway.
+	 */
+
+	 _startTimeOfSyncPeriod = _endTimeOfSyncPeriod;
+	 _endTimeOfSyncPeriod = _startTimeOfSyncPeriod + ScheduleParameters::NormalSyncPeriodDuration;
+
+	 // TODO an assertion that we are not too late,
+	 // or increment in a loop until start and end time are within limits of now time.
+}
+
+
+} // namespace
+
+
+
+
+
+
+
+void Schedule::init(){
+	Logger::log("Schedule reset\n");
+
+	/*
+	 * Not necessary: LongClock::resetToNearZero();
+	 * This is near POR, the LongClock is still near zero in relation to its near infinite length.
+	 */
+
+	_startTimeOfSyncPeriod = LongClock::nowTime();	// Must do this to avoid assertion in rollPeriodForwardToNow
+	rollPeriodForward();
+	// Out of sync with other cliques
+}
+
+
+/*
+ * Called at wall time that should be SyncPoint.
+ * That is, called when a timer expires that indicates end of sync period and time to begin next.
+ *
+ * There are cases when this is called late:
+ * 1) Since we can fish in the last slot before this time, and fishing code may delay us a short time,
+ * this may be called a short time later than usual.
+ * If not a short time, is error in algorithm.
+ *
+ * 2) There could be other faults that delay a call to this (timer does not expire at correct wall time.)
+ * E.G. there is a mysterious delay when an invalid CRC is detected.
+ *
+ * 3) Also, using the debugger could delay timer expiration.
+ *
+ * In those cases, if the delay is not short, sync is lost
+ * (the wall time of our SyncPoint not the same as other clique member's wall time of SyncPoint.)
+ * But it is unavoidable for a robust algorithm.  See next paragraph.
+ */
+
+void Schedule::rollPeriodForward() {
+	rollPeriodForwardDiscretely();
+}
+
 
 
 /*

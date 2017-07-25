@@ -81,7 +81,7 @@ public:
 
 	// FUTURE static void resumeAfterPowerRestored();
 
-	static void rollPeriodForwardToNow();
+	static void rollPeriodForward();
 	static void adjustBySyncMsg(SyncMessage* msg);
 	static LongTime adjustedEndTime(const SyncMessage* msg);
 	static LongTime startTimeOfSyncPeriod();

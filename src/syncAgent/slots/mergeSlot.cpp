@@ -36,6 +36,7 @@ DeltaTime timeoutUntilMergeSlotStart() {
 
 
 
+// FIXME pure class
 // static data member
 MergePolicy MergeSlot::mergePolicy;
 
@@ -81,10 +82,7 @@ void MergeSlot::perform() {
 	Ensemble::shutdown();
 
 	if (mergePolicy.checkCompletionOfMergerRole()){
-		mergePolicy.restart();
-		SyncAgent::toFisherRole();
-		// assert next SyncPeriod will schedule FishSlot
-		assert(MergerFisherRole::isFisher());
+		SyncAgent::stopMerger();
 	}
 	// else continue in role Merger
 }

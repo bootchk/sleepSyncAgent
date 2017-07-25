@@ -27,6 +27,8 @@ bool AdaptiveTransmitSyncPolicy::shouldTransmitSync() {
 	else {
 		/*
 		 * !!!! Should not xmit sync on every call, since it would always contend with MergeSync intended for us.
+		 *
+		 * Note this may have long runs of false, i.e. not transmitting sync.
 		 */
 		return randBool();
 	}

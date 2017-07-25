@@ -284,8 +284,17 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 	 * otherwise we will receive a message but sleep until timeout.
 	 */
 	//assert(radio->isEnabledInterruptForMsgReceived());	// will interrupt
-	// we beat the radio race, i.e. msg not already received
-	assert(Ensemble::isRadioInUse());
+
+	/*
+	 * There is a race.
+	 * We just started the radio, and Ensemble::isRadioInUse WAS true.
+	 * But if too much time has elapsed since then, a message could have been received already and thus not isRadioInUse.
+	 *
+	 * So we can't: assert(Ensemble::isRadioInUse());
+	 *
+	 * We could check for a message already received and dispatch it.
+	 * But for now, just wait for the timeout (and any message already received is lost.)
+	 */
 
 	//assert(Sleeper::reasonForWakeIsCleared());	// This also checks we haven't received yet
 	// FUTURE currently, this is being cleared in sleepUntil but that suffers from races

@@ -22,9 +22,14 @@ class CliqueMerger {
 
 public:
 	/*
-	 * Received a SyncMessage while fishing that means we will assumer role Merger.
+	 * Received a SyncMessage while fishing.
+	 * Will assumer role Merger, but this only activates a record.
 	 */
 	static void initFromMsg(SyncMessage* msg);
+
+	/*
+	 * Does not stop Merger role, just marks record no longer used.
+	 */
 	static void deactivate();
 
 	/*

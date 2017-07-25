@@ -85,6 +85,10 @@ public:
 
 	static void toMergerRole(SyncMessage* msg);
 	static void toFisherRole();
+	/*
+	 * Normal completion, or abandoning.
+	 */
+	static void stopMerger();
 
 	static uint32_t getPhase();
 	static uint32_t getReasonForWake();

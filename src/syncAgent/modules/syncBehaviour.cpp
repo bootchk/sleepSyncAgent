@@ -8,6 +8,26 @@
 #include "../logging/logger.h"
 
 
+namespace {
+
+/*
+ * Receive sync while already merging.
+ *
+ * FUTURE: merge other clique to updated sync slot time
+ *
+ * NOW: just abandon merging
+ */
+void handleSyncWhileMerging(SyncMessage* msg) {
+
+	// FUTURE: syncAgent.cliqueMerger.adjustMergerBySyncMsg(msg);
+
+	SyncAgent::stopMerger();
+}
+
+}
+
+
+
 bool SyncBehaviour::filterSyncMsg(SyncMessage* msg){
 	// assert sync not from self (xmitter and receiver are exclusive)
 	// assert self.isMaster || self.isSlave i.e. this code doesn't require any particular role
@@ -73,15 +93,17 @@ void SyncBehaviour::handleSyncMsg(SyncMessage* msg) {
 	 * i.e. this does not assume the sync is from my current clique, or not from my current clique.
 	 * If it is from my current clique, my Master does not change, but schedule is adjusted (usually small.)
 	 * If it is from another clique, my Master does change, and schedule is adjusted.
+	 *
+	 * Assert the other clique is superior or my clique (msg from the master, or another slave in my clique.)
 	 */
 
 	clique.updateBySyncMessage(msg);
 	// assert endOfSyncPeriod changed or not changed
 
 	if (MergerFisherRole::isMerger()) {
-		// Already merging an other clique, now merge other clique to updated sync slot time
-		syncAgent.cliqueMerger.adjustMergerBySyncMsg(msg);
+		handleSyncWhileMerging(msg);
 	}
+
 }
 
 

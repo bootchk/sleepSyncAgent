@@ -13,6 +13,7 @@
 #include "state/role.h"
 
 #include "policy/workManager.h"
+#include "policy/mergePolicy.h"
 
 
 // SyncSleeper, Sleeper pure classes
@@ -132,6 +133,14 @@ void SyncAgent::toMergerRole(SyncMessage* msg){
 	// assert I might have relinquished mastership
 	// assert I might have joined another clique
 	// assert(role.isMerger());
+}
+
+
+void SyncAgent::stopMerger(){
+	MergePolicy::restart();
+	SyncAgent::toFisherRole();	// deactivates CliqueMerger
+	// assert next SyncPeriod will schedule FishSlot
+	assert(MergerFisherRole::isFisher());
 }
 
 

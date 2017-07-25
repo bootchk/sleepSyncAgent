@@ -68,8 +68,9 @@ void SyncAgent::loop(){
 
 	// DEBUG
 	Logger::init();
-	Logger::log("ID:\n");
+
 	Logger::log(clique.getMasterID());
+	Logger::log("<ID\n");
 
 	// Set sane timeout for SyncPeriod calculations, different from that used by SyncPowerSleeper
 	Sleeper::setSaneTimeout( ScheduleParameters::MaxSaneTimeoutSyncSleeper );
@@ -96,7 +97,7 @@ void SyncAgent::loop(){
 		 * i.e. we must have slept the proper duration.
 		 * Advance schedule, even if not enough power to listen/send sync messages to maintain accuracy.
 		 */
-		clique.schedule.rollPeriodForwardToNow();
+		clique.schedule.rollPeriodForward();
 
 		assert(Ensemble::isLowPower());	// After every sync period
 

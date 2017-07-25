@@ -22,6 +22,7 @@
 HandlingResult SyncSlotMessageHandler::handle(SyncMessage* msg){
 	HandlingResult handlingResult;
 
+	Logger::log("Sync ");
 	Logger::logReceivedMsg(msg);
 
 	switch(msg->type) {
