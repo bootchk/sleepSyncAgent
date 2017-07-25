@@ -28,12 +28,15 @@ public:
 	 *
 	 * Typically, slave will drift half a sync slot in 50 sync periods.
 	 */
-	static const ScheduleCount maxMissingSyncsPerDropout = 40;
+	//static const ScheduleCount maxMissingSyncsPerDropout = 40;
+	static const ScheduleCount maxMissingSyncsPerDropout = 80;
 
 	/*
 	 * Role Master xmits MasterSync once per this many SyncPeriods, in a random one of them.
 	 * The max span between MasterSyncs xmitted can be twice this
 	 * The max span between MasterSyncs heard can be much greater, because of contention
+	 *
+	 * !!! Note some policies are adaptive, and will use a different parameter sometimes.
 	 */
 	// Original concept: every third period
 	static const ScheduleCount CountSyncPeriodsToChooseMasterSyncXmits = 3;

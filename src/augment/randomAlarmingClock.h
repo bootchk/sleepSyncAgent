@@ -1,5 +1,9 @@
 #pragma once
 
+#include <inttypes.h>
+
+typedef uint16_t ClockCount;
+
 /*
  * Specialized RNG Random Number Generator
  *
@@ -18,6 +22,10 @@
  */
 class RandomAlarmingCircularClock {
 public:
+
+	static void init(ClockCount cycle);
+
+
 	/*
 	 * Advance counting hand to midnight(0) and set alarm to random hour.
 	 *

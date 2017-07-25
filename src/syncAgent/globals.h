@@ -20,6 +20,4 @@ class Clique;
 //#include "modules/clique.h"
 extern Clique clique;
 
-//#include "modules/syncBehaviour.h"
-//extern SyncBehaviour syncBehaviour;
 

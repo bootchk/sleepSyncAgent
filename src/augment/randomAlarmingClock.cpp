@@ -1,8 +1,7 @@
 
 #include <cassert>
 
-#include "../../../augment/random.h"
-#include "../policyParameters.h"
+#include "random.h"
 
 #include "randomAlarmingClock.h"
 
@@ -13,22 +12,32 @@
  * Uses specific types from the application (SleepSync).
  */
 
+
+
+
 namespace {
 
 bool isAlarmEnabled;
 
 // unsigned, counts upwards
-ScheduleCount alarmTick;
-ScheduleCount clockTick;
+ClockCount alarmTick;
+ClockCount clockTick;
+
+ClockCount cycleLength;
+
 
 void setAlarm() {
-	alarmTick = randUnsignedInt16(0, Policy::CountSyncPeriodsToChooseMasterSyncXmits-1);
+	// cast to eliminate conversion warning
+	alarmTick = randUnsignedInt16(0, (ClockCount) (cycleLength - 1));
 	// alarmTick in [0, CountSyncPeriodsToChooseMasterSyncXmits-1]
 }
 
 } // namespace
 
 
+
+
+void RandomAlarmingCircularClock::init(ClockCount cycle) { cycleLength = cycle; }
 
 
 void RandomAlarmingCircularClock::wrap() {
@@ -41,7 +50,7 @@ void RandomAlarmingCircularClock::wrap() {
 // Returns true if alarm goes off
 bool RandomAlarmingCircularClock::tickWithAlarm(){
 	// clockTick is unsigned => positive or zero
-	assert(clockTick <= Policy::CountSyncPeriodsToChooseMasterSyncXmits-1);
+	assert(clockTick <= cycleLength-1);
 
 	bool result;
 	if (isAlarmEnabled) {
@@ -54,7 +63,7 @@ bool RandomAlarmingCircularClock::tickWithAlarm(){
 	clockTick++;
 
 	// Make clock circular i.e. modulo
-	if (clockTick >= Policy::CountSyncPeriodsToChooseMasterSyncXmits)
+	if (clockTick >= cycleLength)
 		wrap();
 
 	return result;

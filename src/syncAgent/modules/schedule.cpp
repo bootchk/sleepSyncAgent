@@ -182,8 +182,11 @@ LongTime Schedule::adjustedEndTime(const SyncMessage* msg) {
 	LongTime toa = msg->timeOfArrival;
 	LongTime result = toa + delta;
 
-	// TODO measure ReceiveLatency, probably near zero
-	// TODO no such thing, not needed.
+	/*
+	 * We don't measure ReceiveLatency here.
+	 * The time to perform these calculations is immaterial.
+	 * ReceiveLatency is between last OTA bit and time OTA was recorded.
+	 */
 
 	/*
 	 * Don't adjust end time sooner than it already is,

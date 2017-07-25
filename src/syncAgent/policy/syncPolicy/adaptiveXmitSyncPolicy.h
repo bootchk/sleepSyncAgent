@@ -5,7 +5,7 @@
 
 /*
  * Policy for xmitting sync that is adaptive:
- * transmits sync continuously in an early stage.
+ * transmits sync more frequently in an early stage.
  * Two stages: isolated and joined.
  *
  * Isolated stage is early, when system is just starting up.
