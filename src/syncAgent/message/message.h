@@ -86,8 +86,10 @@ enum class MessageType {
 
 class SyncMessage{
 public:
-	// One static class data, not sent OTA
-	static LongTime timeOfArrival;
+	/*
+	 * TOA is captured by Radio.
+	 * It is not an attribute of SyncMessage.
+	 */
 
 	/*
 	 * Calculated property.

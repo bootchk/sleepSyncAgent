@@ -203,9 +203,12 @@ LongTime Schedule::adjustedEndTime(const SyncMessage* msg) {
 	// delta < SyncPeriodDuration
 
 	/*
+	 * Radio knows toa of single message in use, Radio not enabled while message is processed.
+	 */
+	LongTime toa = Radio::timeOfArrival();
+	/*
 	 * Sender has already adjusted offset for SendLatency.
 	 */
-	LongTime toa = msg->timeOfArrival;
 	LongTime result = toa + delta;
 
 	/*
