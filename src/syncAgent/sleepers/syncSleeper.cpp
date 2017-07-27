@@ -153,9 +153,13 @@ HandlingResult determineHandlingResult(MessageHandler msgHandler) {
 		// assert Ensemble::isRadioInUse()
 		break;
 
+	case ReasonForWake::Cleared:
+		/*
+		 * Unexpected: WFE returned but no IRQ handler appears to have run.
+		 */
 	case ReasonForWake::Unknown:
 		/*
-		 * Unexpected: No IRQ handler set reason reasonForWake.
+		 * Unexpected: An IRQ handler was called but found no events.
 		 * KeepListening
 		 */
 		Logger::logUnexpectedWakeWhileListening();
@@ -171,12 +175,11 @@ HandlingResult determineHandlingResult(MessageHandler msgHandler) {
 		// TODO we should stop listening more gracefully
 		break;
 
-	case ReasonForWake::Cleared:
+
 	case ReasonForWake::HFClockStarted:
 	case ReasonForWake::LFClockStarted:
-		// Impossible, Sleeper will not return without reason
 		// Impossible, LFClock and HFClock started earlier
-		assert(false);
+		Logger::logUnexpectedEventWhileListening();
 	}
 
 	return handlingResult;

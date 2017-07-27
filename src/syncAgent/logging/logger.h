@@ -57,6 +57,7 @@ public:
 
 	static void logUnexpectedMsg();
 	static void logUnexpectedWakeWhileListening();
+	static void logUnexpectedEventWhileListening();
 
 	static void logPauseSync();
 

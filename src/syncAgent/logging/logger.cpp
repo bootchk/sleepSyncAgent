@@ -40,7 +40,15 @@ void Logger::logOverslept() { CustomFlash::writeZeroAtIndex(OverSlept); }
 void Logger::logUnexpectedWakeReason() { CustomFlash::writeZeroAtIndex(UnexpectedWake); }
 
 void Logger::logUnexpectedMsg() { CustomFlash::writeZeroAtIndex(UnexpectedMsg); }
-void Logger::logUnexpectedWakeWhileListening() { CustomFlash::writeZeroAtIndex(UnexpectedWakeWhileListen); }
+
+void Logger::logUnexpectedEventWhileListening() {
+	logger.log("\nUnexpected clock event while listening.");
+}
+
+void Logger::logUnexpectedWakeWhileListening() {
+	logger.log("\nUnexpected wake while listening.");
+	CustomFlash::writeZeroAtIndex(UnexpectedWakeWhileListen);
+}
 
 void Logger::logPauseSync() { CustomFlash::writeZeroAtIndex(PauseSync); }
 
