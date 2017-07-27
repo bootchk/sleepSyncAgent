@@ -303,9 +303,7 @@ HandlingResult SyncSleeper::sleepUntilMsgAcceptedOrTimeout (
 	// loop invariant ??
 
 	do {
-		// We only loop to listen: assert radio on
-		assert(Ensemble::isRadioInUse());
-		//  TODO && (! Timer::isStarted()));
+		// See above: radio is on, but a race so we can't assert
 
 		// debugging
 		countSleeps++;
