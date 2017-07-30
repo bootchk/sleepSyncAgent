@@ -57,3 +57,11 @@ bool randBool() {
 	assert( result == 0 || result == 1);
 	return result;	// coerce to bool
 }
+
+bool randomProbability(unsigned int inverseProbability) {
+	// 0 is arbitrary, could be any positive integer less than inverseProbability
+	bool result = (rand() % inverseProbability) == 0;
+	return result;
+}
+
+

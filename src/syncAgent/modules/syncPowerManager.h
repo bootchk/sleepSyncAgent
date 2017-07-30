@@ -49,8 +49,11 @@ public:
 	 */
 	// Above Vmax of chip 3.6V
 	static bool isPowerExcess() { return PowerManager::isPowerExcess(); }
+
 	// In sync and can work
-	static bool isPowerForWork() { return PowerManager::isPowerAboveHigh(); }	// > 2.7
+	// static bool isPowerForWork() { return PowerManager::isPowerAboveHigh(); }	// > 2.7
+	static bool isPowerForWork() { return PowerManager::isPowerAboveMedium(); }	// > 2.5
+
 	/*
 	 * Enough to:
 	 * - begin the sync loop
