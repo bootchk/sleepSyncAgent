@@ -153,6 +153,9 @@ void SyncAgent::toFisherRole(){
 
 
 
+bool SyncAgent::isSelfMaster() { return clique.isSelfMaster(); }
+
+
 
 void SyncAgent::relayHeardWorkToApp(WorkPayload work) {
 	/*

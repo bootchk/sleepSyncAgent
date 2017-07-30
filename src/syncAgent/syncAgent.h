@@ -85,6 +85,10 @@ public:
 
 	static void toMergerRole(SyncMessage* msg);
 	static void toFisherRole();
+
+	// Is self Master of some clique (for now, only one clique.  Future: hops)
+	static bool isSelfMaster();
+
 	/*
 	 * Normal completion, or abandoning.
 	 */

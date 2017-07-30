@@ -268,8 +268,11 @@ void SyncWorkSlot::perform() {
 	 * Work is higher priority than ordinary sync.
 	 * Work must be rare, lest it flood airwaves and destroy sync.
 	 * (colliding too often with MergeSync or MasterSync.)
+	 *
+	 * Owner of SyncAgent decides policy and conveys  (queues) work to be sent.
+	 * OBSOLETE: WorkPolicy::shouldXmitWorkSync() and
 	 */
-	if (WorkPolicy::shouldXmitWorkSync() and WorkManager::isNeedSendWork()) {
+	if (WorkManager::isNeedSendWork()) {
 		// This satisfies needXmitSync
 		doSendingWorkSyncWorkSlot();
 	}

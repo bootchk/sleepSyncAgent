@@ -12,6 +12,11 @@
  *
  * Send work is also contingent on app conveying work when it is ready.
  */
+
+
+
+// NOT USED???
+
 class WorkPolicy {
 public:
 	static bool shouldXmitWorkSync();
