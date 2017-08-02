@@ -61,18 +61,22 @@ void SyncSender::sendMasterSync() {
 	 *
 	 * Since we are in sync slot near front of sync period, offset should (0, NormalSyncPeriodDuration)
 	 * Type DeltaSync ensures that.
-	 *
-	 * Susceptible to breakpoints: If breakpointed, nextSyncPoint is in past and forwardOffset is zero.
 	 */
 	DeltaTime rawOffset = clique.schedule.deltaNowToNextSyncPoint();
 
 	/*
 	 * Sender specific send latency
-	 * The offset will be correct to receiver when last bit is received.
+	 * The offset will be correct to receiver at the time receiver receives last bit.
+	 *
+	 * Susceptible to breakpoints: If breakpointed, nextSyncPoint is in past and forwardOffset is zero.
+	 * Here we use clampedSubtraction to insure clock subtraction not yield large number.
+	 * An alternative design it discussed below: perform simple subtraction and just not send the message
+	 * if the result is greater than one SyncPeriodDuration from now.
+	 * Again, this situation usually results from debugging.
 	 */
-	DeltaTime sendLatencyAdjustedOffset = rawOffset - PhysicalParameters::SendLatency;
+	DeltaTime sendLatencyAdjustedOffset = TimeMath::clampedSubtraction(rawOffset, PhysicalParameters::SendLatency);
 
-	// XXX robust code: check rawOffset in range now and return if not
+	// XXX robust code: check sendLatencyAdjustedOffset in range now and return if not
 	// XXX rawOffset greater than zero except when breakpointed
 
 	// XXX assert we are not xmitting sync past end of syncSlot?
