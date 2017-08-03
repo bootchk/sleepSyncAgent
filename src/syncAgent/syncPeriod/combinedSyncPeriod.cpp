@@ -1,7 +1,7 @@
 
 #include <cassert>
 
-#include "../globals.h"	// clique, CustomFlash
+#include "../globals.h"	// clique
 #include "syncPeriod.h"
 
 #include "../state/phase.h"
@@ -11,6 +11,7 @@
 #include "../slots/fishSlot.h"
 #include "../slots/mergeSlot.h"
 
+#include "../modules/clique.h"
 
 
 namespace {

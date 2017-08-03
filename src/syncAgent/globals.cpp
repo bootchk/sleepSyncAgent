@@ -1,8 +1,7 @@
 #include "globals.h"
 
-Mailbox* workOutMailbox;
-SyncPowerManager* syncPowerManager;
+#include "modules/clique.h"
 
 Clique clique;
-SyncAgent syncAgent;
+
 

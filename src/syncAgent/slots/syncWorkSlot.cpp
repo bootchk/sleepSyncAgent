@@ -1,7 +1,8 @@
 
 #include <cassert>
 
-#include "../globals.h"
+#include "../globals.h"	// clique
+
 #include "../modules/syncSender.h"
 #include "../modules/syncBehaviour.h"
 #include "../modules/syncPowerManager.h"
@@ -13,6 +14,8 @@
 #include "../policy/workPolicy.h"
 #include "../policy/workManager.h"
 #include "../logging/logger.h"
+
+#include "../modules/clique.h"
 
 
 

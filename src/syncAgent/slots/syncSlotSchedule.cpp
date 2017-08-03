@@ -1,8 +1,11 @@
 
 #include "syncSlotSchedule.h"
 
-#include "../globals.h"  // clique, fishPolicy
 #include "../scheduleParameters.h"
+
+#include "../modules/clique.h"
+#include "../globals.h"  // clique
+
 
 DeltaTime SyncSlotSchedule::deltaToThisSyncSlotMiddleSubslot(){
 	return TimeMath::clampedTimeDifferenceFromNow(timeOfThisSyncSlotMiddleSubslot());

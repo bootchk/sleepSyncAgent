@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-#include "globals.h"	// radio, etc.
+#include "globals.h"	// clique
 #include "syncAgent.h"
 #include "scheduleParameters.h"
 

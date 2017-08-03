@@ -1,7 +1,7 @@
 
 #include <cassert>
 #include "syncAgent.h"
-#include "globals.h"	// which includes nRF5x.h
+#include "globals.h"	// clique
 #include "scheduleParameters.h"
 #include "sleepers/syncPowerSleeper.h"
 #include "sleepers/syncSleeper.h"

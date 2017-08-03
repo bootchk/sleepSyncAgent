@@ -3,6 +3,7 @@
 
 #include "../logging/flashIndex.h"
 
+#include <nRF5x.h>	// CustomFlash
 
 
 /*

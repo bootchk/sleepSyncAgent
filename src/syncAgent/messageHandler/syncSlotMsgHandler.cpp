@@ -6,6 +6,7 @@
 #include "../policy/workManager.h"
 #include "../modules/syncBehaviour.h"
 #include "../logging/logger.h"
+#include "../syncAgent.h"
 
 
 
@@ -91,7 +92,7 @@ HandlingResult SyncSlotMessageHandler::handleWorkSyncMessage(SyncMessage* msg){
 	 * Doesn't matter which clique it came from, relay work.
 	 */
 	WorkManager::hearWork();	// keep work state for slot
-	syncAgent.relayHeardWorkToApp(msg->work);
+	SyncAgent::relayHeardWorkToApp(msg->work);
 
 	/*
 	 *  Handle sync aspect of message.
