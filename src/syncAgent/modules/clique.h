@@ -28,7 +28,7 @@ public:
 	 * Methods related to mastership and ID of clique.
 	 */
 	static SystemID getMasterID();
-	// This unit (with ID given by myID() ) is master of clique
+	// This unit (with ID given by System::ID() ) is master of clique
 	static void setSelfMastership();
 	static void setOtherMastership(SystemID otherMasterID);
 	static bool isSelfMaster();

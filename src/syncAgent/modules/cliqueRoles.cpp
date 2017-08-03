@@ -14,6 +14,7 @@
 
 
 
+
 namespace {
 
 /*
@@ -65,7 +66,7 @@ SystemID Clique::getMasterID() { return masterID; }
 
 void Clique::setSelfMastership() {
 	Logger::log("set self mastership\n");
-	masterID = myID();
+	masterID = System::ID();
 }
 
 /*
@@ -75,11 +76,11 @@ void Clique::setSelfMastership() {
  *
  * In an alternative design (Work is separate and not piggybacked on Sync)
  * then you can make the assertion:
- * assert(otherID != myID());	// we can't hear our own sync
+ * assert(otherID != System::ID());	// we can't hear our own sync
  */
 void Clique::setOtherMastership(SystemID otherID) {
 	Logger::log("set other master\n");
 	masterID = otherID;
 }
 
-bool Clique::isSelfMaster() { return masterID == myID(); }
+bool Clique::isSelfMaster() { return masterID == System::ID(); }

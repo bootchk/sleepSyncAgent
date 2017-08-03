@@ -2,7 +2,7 @@
 #include <cassert>
 
 
-#include <nRF5x.h>  // Ensemble, myID()
+#include <nRF5x.h>  // Ensemble, System::ID()
 
 #include "syncSender.h"
 
@@ -85,7 +85,7 @@ void SyncSender::sendMasterSync() {
 	/*
 	 * Time to create message is component of SendLatency.
 	 */
-	SyncMessage* msgPtr = MessageFactory::initMasterSyncMessage(sendLatencyAdjustedOffset, myID());
+	SyncMessage* msgPtr = MessageFactory::initMasterSyncMessage(sendLatencyAdjustedOffset, System::ID());
 	sendMessage(msgPtr);
 
 #ifdef TEST_LATENCY
@@ -109,6 +109,11 @@ void SyncSender::sendWorkSync(WorkPayload work) {
 	 * The listener may choose to ignore it if they lack power.
 	 * But we must send this workSync because it carries sync.
 	 */
+
+	// Temp suppress warning not using work while debugging
+	(void) work;
+
+
 	DeltaTime forwardOffset = clique.schedule.deltaNowToNextSyncPoint();
 	SyncMessage* msgPtr = MessageFactory::initWorkSyncMessage(
 			forwardOffset,
@@ -117,7 +122,7 @@ void SyncSender::sendWorkSync(WorkPayload work) {
 			 * even if self is not the Master I.E. WorkSync from a Slave uses Clique's ID.
 			 */
 			clique.getMasterID(),
-			myShortID());	// temp debugging
+			System::shortID());	// temp debugging
 	/*
 	 * Temporarily, sending self ID (short version) as work
 	 * In most applications, the last parameter is:

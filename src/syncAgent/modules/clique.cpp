@@ -160,7 +160,7 @@ void Clique::updateBySyncMessage(SyncMessage* msg) {
 #ifdef NOT_USED
 void Clique::initFromSyncMsg(SyncMessage* msg){
 	assert(msg->type == Sync);	// require
-	assert(msg->masterID != myID());	// invariant: we can't hear our own sync
+	assert(msg->masterID != System::ID());	// invariant: we can't hear our own sync
 	masterID = msg->masterID;
 }
 #endif
