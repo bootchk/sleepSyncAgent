@@ -301,7 +301,7 @@ void SyncWorkSlot::perform() {
 	// Radio might be in use.  In use: we timeout'd while receiving
 	Ensemble::stopReceiving();
 
-	// FUTURE we could do this elsewhere, e.g. start of sync slot so this doesn't delay the start of work slot
+	// FUTURE we could do this elsewhere, e.g. start of sync slot
 	if (!clique.isSelfMaster())
 		clique.checkMasterDroppedOut();
 

@@ -56,7 +56,6 @@ void SyncState::setPaused() {
 	if ( isSyncing ){
 		// Change state
 		isSyncing = false;
-		Logger::logPauseSync();	// Log that we fell out
 		pauseSyncing();
 	}
 }

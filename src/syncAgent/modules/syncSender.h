@@ -22,4 +22,5 @@ public:
 	static void sendWorkSync(WorkPayload work);
 	static void sendMergeSync();
 	static void sendAbandonMastership();
+	static void sendInfo(WorkPayload work);
 };

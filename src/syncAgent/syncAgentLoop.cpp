@@ -140,6 +140,7 @@ void SyncAgent::loop(){
 				assert(false);
 			}
 			else {
+				Logger::logPauseSync();
 				sleepEntireSyncPeriod();
 			}
 			// continue to check power for radio.

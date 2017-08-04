@@ -137,3 +137,8 @@ void SyncSender::sendAbandonMastership() {
 	sendMessage(msgPtr);
 }
 
+void SyncSender::sendInfo(WorkPayload work) {
+	SyncMessage* msgPtr = MessageFactory::initInfoMessage( clique.getMasterID(), work );
+	sendMessage(msgPtr);
+}
+

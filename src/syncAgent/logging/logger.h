@@ -59,8 +59,6 @@ public:
 	static void logUnexpectedWakeWhileListening();
 	static void logUnexpectedEventWhileListening();
 
-	static void logPauseSync();
-
 
 	static void logReceivedMsg(SyncMessage* msg);
 	static void logSend(SyncMessage* msg);
@@ -78,4 +76,12 @@ public:
 	static void logInt(uint32_t); // TODO ambiguous call problems if omit this
 
 	static void logSendLatency(uint32_t);
+
+	/*
+	 * Significant events?
+	 */
+	static void logPauseSync();
+	static void logMasterDropout();
+
+	static void logReceivedInfo(uint8_t);
 };

@@ -50,11 +50,9 @@ HandlingResult FishSlotMessageHandler::handle(SyncMessage* msg){
 	case MessageType::WorkSync:
 		handlingResult = handleWorkSyncMessage(msg);
 		break;
-	default:
-		/*
-		 * Covers case where coder cast a semantically bad value into the enum class MessageType.
-		 */
-		assert(false);
+	case MessageType::Info:
+		handlingResult = handleInfoMessage(msg);
+		break;
 	}
 
 	return handlingResult;
@@ -112,6 +110,11 @@ HandlingResult FishSlotMessageHandler::handleAbandonMastershipMessage(SyncMessag
 	return HandlingResult::KeepListening;
 }
 
+
+HandlingResult FishSlotMessageHandler::handleInfoMessage(SyncMessage* msg){
+	Logger::logReceivedInfo(msg->work);
+	return HandlingResult::KeepListening;
+}
 
 
 /*

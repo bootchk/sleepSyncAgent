@@ -34,17 +34,15 @@ HandlingResult SyncSlotMessageHandler::handle(SyncMessage* msg){
 		handlingResult = handleMergeSyncMessage(msg);
 		SyncAgent::countMergeSyncHeard++;
 		break;
-	case MessageType::AbandonMastership:
-		handlingResult = handleAbandonMastershipMessage(msg);
-		break;
 	case MessageType::WorkSync:
 		handlingResult = handleWorkSyncMessage(msg);
 		break;
-	default:
-		/*
-		 * Covers case where coder cast a semantically bad value into the enum class MessageType.
-		 */
-		assert(false);
+	case MessageType::AbandonMastership:
+		handlingResult = handleAbandonMastershipMessage(msg);
+		break;
+	case MessageType::Info:
+		handlingResult = handleInfoMessage(msg);
+		break;
 	}
 
 	return handlingResult;
@@ -71,20 +69,6 @@ HandlingResult SyncSlotMessageHandler::handleMergeSyncMessage(SyncMessage* msg){
 }
 
 
-HandlingResult SyncSlotMessageHandler::handleAbandonMastershipMessage(SyncMessage* msg){
-	/*
-	 * My clique is still in sync, but master is dropout.
-	 *
-	 * Naive design: all units that hear master abandon assume mastership.
-	 * FUTURE: keep historyOfMasters, and better slaves assume mastership.
-	 */
-	(void) msg;  // FUTURE use msg to record history
-
-	clique.setSelfMastership();
-	assert(clique.isSelfMaster());
-	return HandlingResult::KeepListening;
-}
-
 
 HandlingResult SyncSlotMessageHandler::handleWorkSyncMessage(SyncMessage* msg){
 	/*
@@ -110,3 +94,29 @@ HandlingResult SyncSlotMessageHandler::handleWorkSyncMessage(SyncMessage* msg){
 
 	return HandlingResult::KeepListening;
 }
+
+
+HandlingResult SyncSlotMessageHandler::handleAbandonMastershipMessage(SyncMessage* msg){
+	/*
+	 * My clique is still in sync, but master is dropout.
+	 *
+	 * Naive design: all units that hear master abandon assume mastership.
+	 * FUTURE: keep historyOfMasters, and better slaves assume mastership.
+	 */
+	(void) msg;  // FUTURE use msg to record history
+
+	clique.setSelfMastership();
+	assert(clique.isSelfMaster());
+	return HandlingResult::KeepListening;
+}
+
+
+
+
+HandlingResult SyncSlotMessageHandler::handleInfoMessage(SyncMessage* msg){
+	Logger::logReceivedInfo(msg->work);
+	return HandlingResult::KeepListening;
+}
+
+
+

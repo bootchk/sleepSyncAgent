@@ -36,6 +36,9 @@ char const * SyncMessage::representation(SyncMessage* msg) {
 		case MessageType::AbandonMastership:
 			result = " Aban";
 			break;
+		case MessageType::Info:
+			result = " Info";
+			break;
 	}
 	return result;
 }

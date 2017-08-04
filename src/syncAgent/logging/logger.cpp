@@ -11,7 +11,11 @@
 
 namespace {
 
-// Implemented using RTT from nRF5x library
+/*
+ * This is owned instance of interior logger.  Logger class is pure.
+ *
+ * Implemented using RTT from nRF5x library
+ */
 RTTLogger logger;
 
 }
@@ -50,7 +54,7 @@ void Logger::logUnexpectedWakeWhileListening() {
 	CustomFlash::writeZeroAtIndex(UnexpectedWakeWhileListen);
 }
 
-void Logger::logPauseSync() { CustomFlash::writeZeroAtIndex(PauseSync); }
+
 
 
 void Logger::logReceivedMsg(SyncMessage* msg){
@@ -105,6 +109,40 @@ void Logger::logSendLatency(uint32_t value) {
 	logger.log(value);
 }
 
+void Logger::logReceivedInfo(uint8_t value){
+	logger.log("\nInfo ");
+	logger.log(value);
+}
+
+
+/*
+ * Remote logging using Info messages.
+ */
+
+/*
+ * Using sniffer: no definitive indication this has happened,
+ * except a master stops transmitting sync for a while and others suffer master drop out.
+ */
+void Logger::logPauseSync() {
+	// OLD CustomFlash::writeZeroAtIndex(PauseSync);
+
+	// log it locally
+
+	// queue it for later sending using persistent memory so it survives a soft reset
+	// Only my clique can possible hear it.
+	// FIXME
+	// is ensemble on?
+
+	// send it immediately, but only a sniffer will hear it
+}
+
+/*
+ * Using sniffer: a slave doesn't transmit.
+ * You can tell a slave suffers master dropout when it might resume mastership and resume transmitting.
+ */
+void Logger::logMasterDropout() {
+	logger.log("    MASTER DROP OUT\n");
+}
 
 /*
  * Leading \n loses some data???

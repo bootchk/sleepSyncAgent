@@ -18,6 +18,7 @@ namespace {
  * NOW: just abandon merging
  */
 void handleSyncWhileMerging(SyncMessage* msg) {
+	(void) msg;
 
 	// FUTURE: syncAgent.cliqueMerger.adjustMergerBySyncMsg(msg);
 
@@ -103,7 +104,6 @@ void SyncBehaviour::handleSyncMsg(SyncMessage* msg) {
 	if (MergerFisherRole::isMerger()) {
 		handleSyncWhileMerging(msg);
 	}
-
 }
 
 

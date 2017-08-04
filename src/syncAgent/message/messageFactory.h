@@ -25,12 +25,22 @@ public:
 
 	// Does an OTA received byte seem like a MessageType?
 	static bool isReceivedTypeASyncType(uint8_t receivedType) {
-		// Fast and loose with casting
-		return      (receivedType == (uint8_t) MessageType::MasterSync)
-				|| (receivedType == (uint8_t) MessageType::MergeSync)
-				|| (receivedType == (uint8_t) MessageType::AbandonMastership)
-				|| (receivedType == (uint8_t) MessageType::WorkSync)	// FUTURE Work msg a distinct class of message
-				;
+		// cast it
+		MessageType castType = (MessageType) receivedType;
+
+		// check cast was valid
+		bool result = false;
+
+		switch(castType) {
+		case MessageType::Info:
+		case MessageType::MasterSync:
+		case MessageType::MergeSync:
+		case MessageType::AbandonMastership:
+		case MessageType::WorkSync:
+			result = true;
+		}
+
+		return result;
 	}
 
 
@@ -50,6 +60,7 @@ public:
 			result = true;
 			break;
 		case MessageType::AbandonMastership:
+		case MessageType::Info:
 			result = false;
 		}
 		return result;
@@ -85,9 +96,16 @@ public:
 	}
 	static SyncMessage* initAbandonMastershipMessage(SystemID aMasterID) {
 		message.type = MessageType::AbandonMastership;
-		message.deltaToNextSyncPoint.set(0);	// throws assertion if out of range
+		message.deltaToNextSyncPoint.set(0);
 		message.masterID = aMasterID;
 		message.work = 0;
+		return &message;
+	}
+	static SyncMessage* initInfoMessage(SystemID aMasterID, WorkPayload workPayload) {
+		message.type = MessageType::Info;
+		message.deltaToNextSyncPoint.set(0);
+		message.masterID = aMasterID;
+		message.work = workPayload;
 		return &message;
 	}
 };
