@@ -1,7 +1,12 @@
 
 #include "logger.h"
 
+/*
+ * Local and remote interior loggers.
+ * Logger uses local RTTLogger and RemoteLogger.
+ */
 #include <services/logger.h>
+#include "remoteLogger.h"
 
 #include "flashIndex.h"
 
@@ -9,22 +14,24 @@
 #include "../modules/schedule.h"
 
 
+
+
 namespace {
 
 /*
- * This is owned instance of interior logger.  Logger class is pure.
+ * Owned instance of interior local logger.
  *
  * Implemented using RTT from nRF5x library
  */
-RTTLogger logger;
+RTTLogger localLogger;
 
 }
 
 
 void Logger::logStartSyncPeriod(LongTime now) {
 	return;
-	logger.log(now);
-	logger.log("<Sync\n");
+	localLogger.log(now);
+	localLogger.log("<Sync\n");
 }
 
 
@@ -46,11 +53,11 @@ void Logger::logUnexpectedWakeReason() { CustomFlash::writeZeroAtIndex(Unexpecte
 void Logger::logUnexpectedMsg() { CustomFlash::writeZeroAtIndex(UnexpectedMsg); }
 
 void Logger::logUnexpectedEventWhileListening() {
-	logger.log("\nUnexpected clock event while listening.");
+	localLogger.log("\nUnexpected clock event while listening.");
 }
 
 void Logger::logUnexpectedWakeWhileListening() {
-	logger.log("\nUnexpected wake while listening.");
+	localLogger.log("\nUnexpected wake while listening.");
 	CustomFlash::writeZeroAtIndex(UnexpectedWakeWhileListen);
 }
 
@@ -59,59 +66,59 @@ void Logger::logUnexpectedWakeWhileListening() {
 
 void Logger::logReceivedMsg(SyncMessage* msg){
 	logMsgTime();
-	logger.log("\nRX ");
-	logger.log(SyncMessage::representation(msg));
-	logger.log("ID:");
-	logger.log(msg->masterID);
-	logger.log("Off:");
-	logger.log(msg->deltaToNextSyncPoint.get());
-	logger.log("Wk:");
-	logger.log(msg->work);
-	logger.log("\n");
+	localLogger.log("\nRX ");
+	localLogger.log(SyncMessage::representation(msg));
+	localLogger.log("ID:");
+	localLogger.log(msg->masterID);
+	localLogger.log("Off:");
+	localLogger.log(msg->deltaToNextSyncPoint.get());
+	localLogger.log("Wk:");
+	localLogger.log(msg->work);
+	localLogger.log("\n");
 
 }
 
 void Logger::logSend(SyncMessage* msg){
-	logger.log("TX ");
-	logger.log(SyncMessage::representation(msg));
-	logger.log(msg->work);
+	localLogger.log("TX ");
+	localLogger.log(SyncMessage::representation(msg));
+	localLogger.log(msg->work);
 }
 
 void Logger::logMsgDetail(SyncMessage* msg){
-	logger.log("\n ID:");
-	logger.log(msg->masterID);
-	logger.log(" Off:");
-	logger.log(msg->deltaToNextSyncPoint.get());
+	localLogger.log("\n ID:");
+	localLogger.log(msg->masterID);
+	localLogger.log(" Off:");
+	localLogger.log(msg->deltaToNextSyncPoint.get());
 }
 
 // A msg sent or received, log PeriodTime
 void Logger::logMsgTime() {
-	logger.log("\nPT:");
-	logger.log(Schedule::deltaPastSyncPointToNow());
+	localLogger.log("\nPT:");
+	localLogger.log(Schedule::deltaPastSyncPointToNow());
 }
 
 /*
  * Log sync message received in SyncSlot from inferior clique (often WorkSync, sometimes other.)
  * See syncBehaviour.cpp
  */
-void Logger::logInferiorCliqueSyncSlotOfMaster() { logger.log("Master heard inferior."); }
-void Logger::logInferiorCliqueSyncSlotOfSlave() { logger.log("Slave heard inferior."); }
+void Logger::logInferiorCliqueSyncSlotOfMaster() { localLogger.log("Master heard inferior."); }
+void Logger::logInferiorCliqueSyncSlotOfSlave() { localLogger.log("Slave heard inferior."); }
 
 // Simple pass through
-void Logger::init() { logger.init(); }
-void Logger::log(const char * text) { logger.log(text); }
-void Logger::logInt(uint32_t value) { logger.log(value); }
-void Logger::log(uint8_t value) { logger.log(value); }
-void Logger::log(unsigned long long value) { logger.log(value); }
+void Logger::init() { localLogger.init(); }
+void Logger::log(const char * text) { localLogger.log(text); }
+void Logger::logInt(uint32_t value) { localLogger.log(value); }
+void Logger::log(uint8_t value) { localLogger.log(value); }
+void Logger::log(unsigned long long value) { localLogger.log(value); }
 
 void Logger::logSendLatency(uint32_t value) {
-	logger.log("SLatency ");
-	logger.log(value);
+	localLogger.log("SLatency ");
+	localLogger.log(value);
 }
 
 void Logger::logReceivedInfo(uint8_t value){
-	logger.log("\nInfo ");
-	logger.log(value);
+	localLogger.log("\nInfo ");
+	localLogger.log(value);
 }
 
 
@@ -128,12 +135,7 @@ void Logger::logPauseSync() {
 
 	// log it locally
 
-	// queue it for later sending using persistent memory so it survives a soft reset
-	// Only my clique can possible hear it.
-	// FIXME
-	// is ensemble on?
-
-	// send it immediately, but only a sniffer will hear it
+	RemoteLogger::log(1);
 }
 
 /*
@@ -141,8 +143,24 @@ void Logger::logPauseSync() {
  * You can tell a slave suffers master dropout when it might resume mastership and resume transmitting.
  */
 void Logger::logMasterDropout() {
-	logger.log("    MASTER DROP OUT\n");
+
+	localLogger.log("    MASTER DROP OUT\n");	// Local
+
+	RemoteLogger::log(RemoteLoggedEvent::MasterDropOut);
+	// TODO symbolic constant
 }
+
+/*
+ * Log brownout.
+ * Used as a callback to BrownoutRecorder.
+ * Thus this is called when brownout is in progress.
+ * Remote logging does not take much energy, but sending remote might never occur.
+ */
+unsigned int Logger::logBrownout() {
+	RemoteLogger::log(RemoteLoggedEvent::BrownOut);
+	return 1;	// dummy value to be recorded to UICR
+}
+
 
 /*
  * Leading \n loses some data???

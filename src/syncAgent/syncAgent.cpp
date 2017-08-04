@@ -86,13 +86,16 @@ void SyncAgent::initSyncObjects(
 
 	clique.init();
 
-	// Register callbacks that return debug info
 	/*
+	 * Register callbacks that return debug info
 	 * BrownoutRecorder will also record phase if not already written by prior oversleep.
+	 *
+	 * Some choices commented out.
 	 */
 	BrownoutRecorder::registerCallbacks(
 			//getPhase,
-			SyncSleeper::getCountSleeps,
+			//SyncSleeper::getCountSleeps,
+			Logger::logBrownout,
 			//SyncSleeper::getPriorReasonForWake,
 			OverSleepMonitor::getPhaseAndReason,
 			OverSleepMonitor::timeElapsedSinceLastStartSleep);

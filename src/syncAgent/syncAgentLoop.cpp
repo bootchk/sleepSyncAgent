@@ -14,6 +14,7 @@
 #include "policy/workManager.h"
 
 #include "logging/logger.h"
+#include "logging/remoteLogger.h"
 
 /*
  * SyncAgent is a task(thread) that is infinite sequence of sync periods.
@@ -109,7 +110,14 @@ void SyncAgent::loop(){
 
 		WorkManager::resetState();
 
-		if ( SyncPowerManager::isPowerForSync() ) {
+		/*
+		 * Remote logging is high priority, do it first.
+		 */
+		if (RemoteLogger::trySendingLog()) {
+			// InfoSlot was performed, sleep remainder of SyncPeriod
+			sleepEntireSyncPeriod();
+		}
+		else if ( SyncPowerManager::isPowerForSync() ) {
 			/*
 			 * Sync keeping: enough power to use radio for two slots
 			 */

@@ -3,6 +3,14 @@
 #include "../message/message.h"
 
 
+enum RemoteLoggedEvent {
+	PausedSync,
+	MasterDropOut,
+	BrownOut
+};
+
+
+
 /*
  * Abstract Logger w/ some specificity to SleepSyncAgent.
  *
@@ -50,6 +58,10 @@ public:
 	static void logNoPowerToFish();
 	static void logNoPowerToStartSyncSlot();
 	static void logNoPowerForHalfSyncSlot();
+
+	/*
+	 * Unexpected, rare events.
+	 */
 	static void logOverslept();
 
 	// Only a timer running but it was not the reason for wake.
@@ -60,6 +72,9 @@ public:
 	static void logUnexpectedEventWhileListening();
 
 
+	/*
+	 * Normal details.
+	 */
 	static void logReceivedMsg(SyncMessage* msg);
 	static void logSend(SyncMessage* msg);
 	static void logMsgDetail(SyncMessage* msg);
@@ -70,18 +85,26 @@ public:
 	static void logInferiorCliqueSyncSlotOfMaster();
 	static void logInferiorCliqueSyncSlotOfSlave();
 
+
+	/*
+	 * Generic methods not associated with specific events.
+	 */
 	static void log(char const*);
 	static void log(uint8_t);
 	static void log(unsigned long long int);
 	static void logInt(uint32_t); // TODO ambiguous call problems if omit this
 
+	/*
+	 * Only using during development, while measuring software.
+	 */
 	static void logSendLatency(uint32_t);
 
 	/*
-	 * Significant events?
+	 * Significant events?  Logged remotely?
 	 */
 	static void logPauseSync();
 	static void logMasterDropout();
+	static unsigned int logBrownout();
 
 	static void logReceivedInfo(uint8_t);
 };
