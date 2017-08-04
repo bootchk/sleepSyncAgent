@@ -66,6 +66,7 @@ void SyncAgent::initSyncObjects(
 	 * RADIO->POWER is set at POR reset, but it means 'was reset', not 'is using power'.
 	 */
 
+	MergerFisherRole::init();
 	WorkManager::init(aMailbox);
 
 	// Temp: test power consumption when all sleep
@@ -141,6 +142,10 @@ void SyncAgent::toMergerRole(SyncMessage* msg){
 
 void SyncAgent::stopMerger(){
 	MergePolicy::restart();
+	/*
+	 * Go directly to Role::Fisher.
+	 * Self as a Merger has already suffered a random delay.
+	 */
 	SyncAgent::toFisherRole();	// deactivates CliqueMerger
 	// assert next SyncPeriod will schedule FishSlot
 	assert(MergerFisherRole::isFisher());

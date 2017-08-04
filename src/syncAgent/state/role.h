@@ -5,31 +5,27 @@
 #include "../logging/logger.h"
 
 
-
-
-typedef enum { Merger, Fisher } RoleType;
-// OBS WorkMerger
-
+enum class  Role { Merger, Fisher, Waiting };
 
 // Master/Slave role implemented by Clique.
 class MergerFisherRole {
-
-private:
-	static RoleType role;
-
 public:
-	static bool isMerger() {return role == Merger;}
-	static bool isFisher() {return role == Fisher;}
+	static Role role;
+
+	static void init() { role = Role::Fisher; }
+
+	static bool isMerger() {return role == Role::Merger;}
+	static bool isFisher() {return role == Role::Fisher;}
 
 	static void setFisher() {
 		//log("To role Fisher\n");
 		assert(isMerger());
-		role = Fisher;
+		role = Role::Fisher;
 	}
 	static void setMerger() {
 		//log("To role Merger\n");
 		assert(isFisher());
-		role = Merger;
+		role = Role::Merger;
 	}
 
 #ifdef FUTURE

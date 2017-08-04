@@ -13,6 +13,8 @@
 
 #include "../modules/clique.h"
 
+#include "../policy/fishWaitingPolicy.h"
+
 
 namespace {
 SyncWorkSlot syncWorkSlot;
@@ -30,18 +32,28 @@ void tryFishOrMerge() {
 	 * Variation: next event (if any) occurs within a large sleeping time (lots of 'slots').
 	 * We don't check power here because it may recover during sleep until time to perform.
 	 */
-	if (MergerFisherRole::isMerger()) {
+	switch(MergerFisherRole::role) {
+	case Role::Merger:
 		// avoid collision
 		if (mergeSlot.mergePolicy.shouldScheduleMerge())  {
 			mergeSlot.tryPerform();
 			// We might have quit role Merger
 		}
 		// else continue and sleep until end of sync period
-	}
-	else {
+		break;
+	case Role::Fisher:
 		// Fish every period
 		fishSlot.tryPerform();
 		// continue and sleep until end of sync period
+		break;
+	case Role::Waiting:
+		/*
+		 * May change to Role::Fishing
+		 */
+		FishWaitingPolicy::advance();
+		/*
+		 * Otherwise, do no fishing or merging.
+		 */
 	}
 }
 
