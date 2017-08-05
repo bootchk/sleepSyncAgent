@@ -13,7 +13,7 @@
 
 #include "../modules/clique.h"
 
-#include "../policy/fishWaitingPolicy.h"
+#include "../policy/fishWaitingPolicy.cpp"
 
 
 namespace {

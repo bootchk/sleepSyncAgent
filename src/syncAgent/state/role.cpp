@@ -3,4 +3,4 @@
 // Method members are defined in role.h
 
 // static data member, can only be initialized in .cpp
-//MergerFisherRole::role = Role::Fisher;
+Role MergerFisherRole::role = Role::Fisher;
