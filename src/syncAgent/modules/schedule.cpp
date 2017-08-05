@@ -31,7 +31,7 @@ LongTime _startTimeOfSyncPeriod;
 LongTime _endTimeOfSyncPeriod;
 
 
-
+#ifdef NOT_USED
 void rollPeriodForwardToNow() {
 	//LongTime startOfPreviousSyncPeriod = startTimeOfSyncPeriod;
 
@@ -57,6 +57,7 @@ void rollPeriodForwardToNow() {
 	 */
 	//assert( TimeMath::timeDifferenceFromNow(startTimeOfSyncPeriod) < ScheduleParameters::SlotDuration );
 }
+#endif
 
 
 void rollPeriodForwardDiscretely() {
