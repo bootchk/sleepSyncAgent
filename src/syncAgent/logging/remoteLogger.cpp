@@ -21,8 +21,12 @@ bool RemoteLogger::trySendingLog(){
 	bool result = false;
 
 	if (mailbox.isMail()) {
-		InfoSlot::perform(mailbox.fetch());
+		sendInfo(mailbox.fetch());
 		result = true;
 	}
 	return result;
+}
+
+void RemoteLogger::sendInfo(uint8_t item){
+	InfoSlot::perform(item);
 }

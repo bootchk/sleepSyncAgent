@@ -67,7 +67,6 @@ void SyncAgent::loop(){
 	assert(clique.isSelfMaster());
 	assert(!Ensemble::isRadioInUse());
 
-	// DEBUG
 	Logger::init();
 
 	Logger::log(clique.getMasterID());
@@ -82,13 +81,11 @@ void SyncAgent::loop(){
 
 
 	/*
-	 * assert schedule already started.
-	 * But some time has elapsed.
-	 * Roll forward at the beginning of the loop.
-	 *
-	 * Rolling forward can have different implementations.
-	 * At least the very first call must ensure that startTimeOfPeriod == nowTime();
+	 * Assert schedule already started, but clock has ticked in meantime.
+	 * The roll forward at the beginning of the loop is in fixed increment.
+	 * Here we need to restart schedule to ensure that startTimeOfPeriod == nowTime();
 	 */
+	clique.schedule.rollPeriodForwardToNow();
 
 	while (true){
 

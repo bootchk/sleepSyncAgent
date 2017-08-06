@@ -31,33 +31,24 @@ LongTime _startTimeOfSyncPeriod;
 LongTime _endTimeOfSyncPeriod;
 
 
-#ifdef NOT_USED
+/*
+ * Only called once at start of sync loop.
+ *
+ * Not used for regular roll forward since if called late,
+ * schedule is thrown off.
+ */
+/*
+ * Why it can't be used for usual roll forward,at the time that should be SyncPoint.
+ * Since we can fish in the last slot before SyncPoint, and fishing may delay us a short time,
+ * roll forward may be called a little late.
+ * (If not a short time, is error in algorithm.)
+ * Rolling forward by fixed SyncPeriodDuration accommodates lateness, but rollPeriodForwardToNow() does not.
+ */
 void rollPeriodForwardToNow() {
-	//LongTime startOfPreviousSyncPeriod = startTimeOfSyncPeriod;
-
-	LongTime now = LongClock::nowTime();
-
-	Logger::logStartSyncPeriod(now);
-
 	// Starts now.  See above.  If called late, sync might be lost.
-	_startTimeOfSyncPeriod = now;
-	_endTimeOfSyncPeriod = now + ScheduleParameters::NormalSyncPeriodDuration;
-
-	/*
-	 * assert startTimeOfSyncPeriod is close to nowTime().
-	 * This is called at the time that should be SyncPoint.
-	 * But since we can fish in the last slot before this time,
-	 * and fishing may delay us a short time,
-	 * this may be called a short time later than usual.
-	 * If not a short time, is error in algorithm.
-	 */
-	/*
-	 * !!! This assertion can't be stepped-in while debugging
-	 * since the RTC continues to run while you are stepping.
-	 */
-	//assert( TimeMath::timeDifferenceFromNow(startTimeOfSyncPeriod) < ScheduleParameters::SlotDuration );
+	_startTimeOfSyncPeriod = LongClock::nowTime();
+	_endTimeOfSyncPeriod = _startTimeOfSyncPeriod + ScheduleParameters::NormalSyncPeriodDuration;
 }
-#endif
 
 
 void rollPeriodForwardDiscretely() {
@@ -81,8 +72,15 @@ void rollPeriodForwardDiscretely() {
 	 _startTimeOfSyncPeriod = _endTimeOfSyncPeriod;
 	 _endTimeOfSyncPeriod = _startTimeOfSyncPeriod + ScheduleParameters::NormalSyncPeriodDuration;
 
+	 Logger::logStartSyncPeriod(_startTimeOfSyncPeriod);
+
 	 // TODO an assertion that we are not too late,
 	 // or increment in a loop until start and end time are within limits of now time.
+	 /*
+	  * !!! This assertion can't be stepped-in while debugging
+	  * since the RTC continues to run while you are stepping.
+	  */
+	 //assert( TimeMath::timeDifferenceFromNow(startTimeOfSyncPeriod) < ScheduleParameters::SlotDuration );
 }
 
 
