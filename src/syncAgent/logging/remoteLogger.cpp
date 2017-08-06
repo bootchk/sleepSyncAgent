@@ -1,7 +1,10 @@
 
 #include "remoteLogger.h"
+#include "logger.h"
 
+// nRF5x
 #include <services/mailbox.h>
+#include <exceptions/faultHandlers.h>
 
 #include "../slots/infoSlot.h"
 
@@ -29,4 +32,11 @@ bool RemoteLogger::trySendingLog(){
 
 void RemoteLogger::sendInfo(uint8_t item){
 	InfoSlot::perform(item);
+}
+
+
+void RemoteLogger::sendAnyFaults() {
+	if (wasHardFault() or wasAssertionFault() ) {
+		sendInfo(HardOrAssertionFault);
+	}
 }

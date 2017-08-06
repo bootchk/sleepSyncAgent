@@ -6,7 +6,8 @@
 enum RemoteLoggedEvent {
 	PausedSync,
 	MasterDropOut,
-	BrownOut
+	BrownOut,
+	HardOrAssertionFault
 };
 
 
@@ -46,6 +47,7 @@ public:
 
 
 
+	static void logSystemInfo();
 	static void logStartSyncPeriod(LongTime now);
 
 

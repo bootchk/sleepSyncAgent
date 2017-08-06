@@ -39,4 +39,11 @@ public:
 	 * Performs InfoSlot: disrupts normal SyncPeriod.
 	 */
 	static void sendInfo(uint8_t);
+
+	/*
+	 * Send one indication if any faults logged to UICR flash.
+	 * Then you can read the UICR using a debugger probe.
+	 * This is called at every reset, before sync loop.
+	 */
+	static void sendAnyFaults();
 };

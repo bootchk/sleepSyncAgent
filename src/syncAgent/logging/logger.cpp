@@ -13,6 +13,8 @@
 #include "../message/message.h"
 #include "../modules/schedule.h"
 
+#include "../globals.h" // clique
+#include "../modules/clique.h"
 
 
 
@@ -25,6 +27,12 @@ namespace {
  */
 RTTLogger localLogger;
 
+}
+
+
+void Logger::logSystemInfo() {
+	localLogger.log(clique.getMasterID());
+	localLogger.log("<ID\n");
 }
 
 

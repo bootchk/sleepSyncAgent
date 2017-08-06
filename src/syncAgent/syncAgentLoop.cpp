@@ -69,8 +69,7 @@ void SyncAgent::loop(){
 
 	Logger::init();
 
-	Logger::log(clique.getMasterID());
-	Logger::log("<ID\n");
+	Logger::logSystemInfo();
 
 	// Set sane timeout for SyncPeriod calculations, different from that used by SyncPowerSleeper
 	Sleeper::setSaneTimeout( ScheduleParameters::MaxSaneTimeoutSyncSleeper );
@@ -79,6 +78,8 @@ void SyncAgent::loop(){
 	SyncPowerManager::enterBrownoutDetectMode();
 	// Detection not in force until first call to measure power
 
+
+	RemoteLogger::sendAnyFaults();
 
 	/*
 	 * Assert schedule already started, but clock has ticked in meantime.
