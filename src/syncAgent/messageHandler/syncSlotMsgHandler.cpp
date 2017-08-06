@@ -20,6 +20,37 @@
  * FUTURE discard multiple sync messages if they are queued
  */
 
+
+namespace {
+
+HandlingResult handleSyncAspectOfSyncMsg(SyncMessage* msg){
+	/*
+	 * Filter: only respond to superior or self's clique.
+	 */
+	bool heardSync = SyncBehaviour::filterSyncMsg(msg);
+
+	/*
+	 * This implements strategy for multiple superior syncs heard in the same SyncSlot.
+	 *
+	 * Simplest strategy:
+	 * don't listen for more sync and don't send our own sync.
+	 *
+	 * One strategy is to keep listening since:
+	 * - two masters may be competing
+	 * But there are bugs here: get assertion invalid OTA offset if we try to send our own MasterSync
+	 * after adjusting schedule by a Sync.
+	 */
+	if (heardSync)
+		return HandlingResult::StopListeningHeardMasterSync;	// TODO just some flavor of sync
+	else
+		return HandlingResult::KeepListening;
+}
+
+}  // namespace
+
+
+
+
 HandlingResult SyncSlotMessageHandler::handle(SyncMessage* msg){
 	HandlingResult handlingResult;
 
@@ -50,25 +81,12 @@ HandlingResult SyncSlotMessageHandler::handle(SyncMessage* msg){
 
 
 HandlingResult SyncSlotMessageHandler::handleMasterSyncMessage(SyncMessage* msg){
-	/*
-	 * Discard result and keep listening since:
-	 * - two masters may be competing
-	 */
-	(void) SyncBehaviour::filterSyncMsg(msg);
-	return HandlingResult::KeepListening;
+	return handleSyncAspectOfSyncMsg(msg);
 }
-
 
 HandlingResult SyncSlotMessageHandler::handleMergeSyncMessage(SyncMessage* msg){
-	/*
-	 * Discard result and keep listening since:
-	 * - two other cliques may be competing to merge me
-	 */
-	(void) SyncBehaviour::filterSyncMsg(msg);
-	return HandlingResult::KeepListening;
+	return handleSyncAspectOfSyncMsg(msg);
 }
-
-
 
 HandlingResult SyncSlotMessageHandler::handleWorkSyncMessage(SyncMessage* msg){
 	/*
@@ -79,12 +97,7 @@ HandlingResult SyncSlotMessageHandler::handleWorkSyncMessage(SyncMessage* msg){
 	SyncAgent::relayHeardWorkToApp(msg->work);
 
 	/*
-	 *  Handle sync aspect of message.
-	 *  Don't care if it is invalid from inferior clique.
-	 */
-	(void) SyncBehaviour::filterSyncMsg(msg);
-
-	/*
+	 * TODO revisit and consolidate these comments
 	 * Ignore sync-keeping result above and keep listening:
 	 * - other masters may be competing
 	 */
@@ -92,7 +105,7 @@ HandlingResult SyncSlotMessageHandler::handleWorkSyncMessage(SyncMessage* msg){
 	// FUTURE if our app is scheduling work and we already heard one
 	// and work is generic (not carrying any info) we should not xmit WorkSync
 
-	return HandlingResult::KeepListening;
+	return handleSyncAspectOfSyncMsg(msg);
 }
 
 

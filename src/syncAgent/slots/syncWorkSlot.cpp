@@ -192,11 +192,14 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 	assert(!Ensemble::isRadioInUse());
 
 	/*
-	 * Moment to xmit sync.  (We are Master.)
+	 * Moment to xmit sync.
 	 * But only if we didn't already (in first half) hear a message that keeps sync for our clique.
+	 * Self was Master, but a heard sync might have changed that.
 	 */
 	if ( ! didFirstHalfHearSync(handlingResult)) {
-		// Self is Master, send sync if didn't hear WorkSync or MergeSync
+		/*
+		 * Self is still master.
+		 */
 		Phase::set(PhaseEnum::SyncXmit);
 		SyncSender::sendMasterSync();
 	}
