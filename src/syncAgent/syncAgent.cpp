@@ -6,14 +6,12 @@
 #include "sleepers/syncPowerSleeper.h"
 #include "sleepers/syncSleeper.h"
 #include "sleepers/oversleepMonitor.h"
-//#include "modules/syncPowerManager.h"
-#include "message/messageFactory.h"
 #include "message/serializer.h"
 #include "state/phase.h"
 #include "state/role.h"
 
 #include "policy/workManager.h"
-#include "policy/mergePolicy.h"
+#include "logging/logger.h"
 
 
 // SyncSleeper, Sleeper pure classes
@@ -115,54 +113,7 @@ void SyncAgent::initSyncObjects(
 
 
 
-
-
-
-// Merger and Fisher are duals
-
-/*
- * We fished another clique.
- * Begin MergerRole
- */
-void SyncAgent::toMergerRole(SyncMessage* msg){
-	// assert slot is fishSlot
-	assert (MessageFactory::carriesSync(msg->type));
-	assert(msg->type != MessageType::MergeSync);
-	assert(MergerFisherRole::isFisher());
-	MergerFisherRole::setMerger();
-	// logging done later
-	cliqueMerger.initFromMsg(msg);
-
-	// assert my schedule might have been adjusted
-	// assert I might have relinquished mastership
-	// assert I might have joined another clique
-	// assert(role.isMerger());
-}
-
-
-void SyncAgent::stopMerger(){
-	MergePolicy::restart();
-	/*
-	 * Go directly to Role::Fisher.
-	 * Self as a Merger has already suffered a random delay.
-	 */
-	SyncAgent::toFisherRole();	// deactivates CliqueMerger
-	// assert next SyncPeriod will schedule FishSlot
-	assert(MergerFisherRole::isFisher());
-}
-
-
-void SyncAgent::toFisherRole(){
-	MergerFisherRole::setFisher();
-	// role does not know about cliqueMerger
-	cliqueMerger.deactivate();
-	Logger::log(Logger::ToFisher);
-}
-
-
-
 bool SyncAgent::isSelfMaster() { return clique.isSelfMaster(); }
-
 
 
 void SyncAgent::relayHeardWorkToApp(WorkPayload work) {

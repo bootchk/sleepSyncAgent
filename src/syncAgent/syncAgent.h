@@ -82,16 +82,23 @@ public:
 	// These  methods are called from below (friends?)
 	static void relayHeardWorkToApp(WorkPayload work);
 
-	static void toMergerRole(SyncMessage* msg);
-	static void toFisherRole();
-
-	// Is self Master of some clique (for now, only one clique.  Future: hops)
-	static bool isSelfMaster();
-
+	/*
+	 * Actions for state/mode/role transitions
+	 */
+	static void toMergerFromFisher(SyncMessage* msg);
+	static void toFisherFromMerger();
+	static void toFisherFromNoFishing();
+	static void ToNoFishingFromOther();
 	/*
 	 * Normal completion, or abandoning.
 	 */
 	static void stopMerger();
+
+
+
+	// Is self Master of some clique (for now, only one clique.  Future: hops)
+	static bool isSelfMaster();
+
 
 	static uint32_t getPhase();
 	static uint32_t getReasonForWake();

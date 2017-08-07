@@ -18,8 +18,7 @@ void doFishedSyncMsg(SyncMessage* msg){
 	 * toMergerRole() handles both cases,
 	 * but always toMerger(), either merging my clique or other clique.
 	 */
-	SyncAgent::toMergerRole(msg);
-	assert(MergerFisherRole::isMerger());
+	SyncAgent::toMergerFromFisher(msg);
 	/*
 	 * assert (schedule changed AND self is merging my former clique)
 	 * OR (schedule unchanged AND self is merging other clique)

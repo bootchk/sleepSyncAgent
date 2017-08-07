@@ -101,6 +101,10 @@ void SyncAgent::loop(){
 
 	RemoteLogger::sendAnyFaults();
 
+	SyncModeManager::init();
+	// assert in Maintain mode and
+	// assert(MergerFisherRole::role()==Role::Waiting);
+
 	/*
 	 * Assert schedule already started, but clock has ticked in meantime.
 	 * The roll forward at the beginning of the loop is in fixed increment.

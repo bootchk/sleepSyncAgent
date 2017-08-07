@@ -4,7 +4,10 @@
 
 
 enum RemoteLoggedEvent {
-	PausedSync,
+	StartSync,
+	StopSync,
+	StartFish,
+	StopFish,
 	MasterDropOut,
 	BrownOut,
 	HardOrAssertionFault
@@ -106,6 +109,9 @@ public:
 	 */
 	static void logStartSync();
 	static void logPauseSync();
+	static void logStartFish();
+	static void logStopFish();
+
 	static void logMasterDropout();
 	static unsigned int logBrownout();
 

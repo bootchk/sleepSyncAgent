@@ -23,6 +23,8 @@ enum class SyncMode {
 
 class SyncModeManager {
 public:
+	static void init();
+
 	static SyncMode mode();
 
 	/*

@@ -32,7 +32,7 @@ void tryFishOrMerge() {
 	 * Variation: next event (if any) occurs within a large sleeping time (lots of 'slots').
 	 * We don't check power here because it may recover during sleep until time to perform.
 	 */
-	switch(MergerFisherRole::role) {
+	switch(MergerFisherRole::role()) {
 	case Role::Merger:
 		// avoid collision
 		if (mergeSlot.mergePolicy.shouldScheduleMerge())  {
@@ -46,9 +46,10 @@ void tryFishOrMerge() {
 		fishSlot.tryPerform();
 		// continue and sleep until end of sync period
 		break;
-	case Role::Waiting:
+	case Role::NoFishing:
 		/*
 		 * May change to Role::Fishing
+		 * Unimplemented: if we can pause fishing to disrupt order of fishing.
 		 */
 		FishWaitingPolicy::advance();
 		/*

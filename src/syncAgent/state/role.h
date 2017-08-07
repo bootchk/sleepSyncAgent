@@ -1,32 +1,21 @@
 #pragma once
 
-#include <cassert>
-
-#include "../logging/logger.h"
-
-
-enum class  Role { Merger, Fisher, Waiting };
+enum class  Role { Merger, Fisher, NoFishing };
 
 // Master/Slave role implemented by Clique.
 class MergerFisherRole {
 public:
-	static Role role;
 
-	static void init() { role = Role::Fisher; }
+	static void init();
 
-	static bool isMerger() {return role == Role::Merger;}
-	static bool isFisher() {return role == Role::Fisher;}
+	static Role role();
 
-	static void setFisher() {
-		//log("To role Fisher\n");
-		assert(isMerger());
-		role = Role::Fisher;
-	}
-	static void setMerger() {
-		//log("To role Merger\n");
-		assert(isFisher());
-		role = Role::Merger;
-	}
+	static bool isMerger();
+	static bool isFisher();
+
+	static void toFisher();
+	static void toMerger();
+	static void toNoFishing();
 
 #ifdef FUTURE
 	static bool isWorkMerger() {return role == WorkMerger;}

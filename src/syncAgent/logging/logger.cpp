@@ -141,11 +141,19 @@ void Logger::logReceivedInfo(uint8_t value){
 void Logger::logPauseSync() {
 	// OLD CustomFlash::writeZeroAtIndex(PauseSync);
 	localLogger.log("\nPause sync ");
-	RemoteLogger::log(1);
+	RemoteLogger::log(RemoteLoggedEvent::StopSync);
 }
 void Logger::logStartSync() {
 	localLogger.log("\nStart sync ");
-	RemoteLogger::log(2);
+	RemoteLogger::log(RemoteLoggedEvent::StartSync);
+}
+void Logger::logStartFish() {
+	localLogger.log("\nStart fish ");
+	RemoteLogger::log(RemoteLoggedEvent::StartFish);
+}
+void Logger::logStopFish() {
+	localLogger.log("\nStop fish ");
+	RemoteLogger::log(RemoteLoggedEvent::StopFish);
 }
 
 /*
