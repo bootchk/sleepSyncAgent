@@ -140,10 +140,12 @@ void Logger::logReceivedInfo(uint8_t value){
  */
 void Logger::logPauseSync() {
 	// OLD CustomFlash::writeZeroAtIndex(PauseSync);
-
-	// log it locally
-
+	localLogger.log("\nPause sync ");
 	RemoteLogger::log(1);
+}
+void Logger::logStartSync() {
+	localLogger.log("\nStart sync ");
+	RemoteLogger::log(2);
 }
 
 /*

@@ -63,7 +63,9 @@ public:
 	// For some debugging with 2AAA batteries @2.68V
 	//static bool isPowerForSync()  { return PowerManager::isPowerAboveMedium(); }	// > 2.5
 	// Usually:
-	static bool isPowerForSync()  { return PowerManager::isPowerAboveHigh(); }	// > 2.7
+	static bool isPowerForSync()  { return PowerManager::isPowerAboveMedium(); }	// > 2.5
+
+	static bool isPowerForFish()  { return PowerManager::isPowerAboveHigh(); }	// > 2.7
 
 	// Enough to continue a SyncPeriod that has been started
 	static bool isPowerForRadio()  { return PowerManager::isPowerAboveMedium(); } // > 2.5

@@ -1,8 +1,9 @@
 #pragma once
 
 /*
- * Introduces random delay waiting until start fishing sequence.
- * Avoid all members of clique fishing in same slot when slots are fished in a known sequence.
+ * Introduces random delay waiting until start fishing order.
+ * Avoid all members of clique fishing in same slot when slots are fished in a known order.
+ *
  */
 class FishWaitingPolicy {
 public:

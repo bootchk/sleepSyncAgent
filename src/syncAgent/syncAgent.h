@@ -1,7 +1,6 @@
 
 #pragma once
 
-#include "modules/syncPowerManager.h"
 #include "modules/cliqueMerger.h"
 #include "message/message.h"
 

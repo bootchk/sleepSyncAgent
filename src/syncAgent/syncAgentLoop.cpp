@@ -6,8 +6,11 @@
 #include "syncAgent.h"
 #include "scheduleParameters.h"
 
-#include "state/syncState.h"
+#include "modules/syncPowerManager.h"
 #include "syncPeriod/syncPeriod.h"
+
+#include "state/syncMode.h"
+
 #include "sleepers/syncSleeper.h"
 #include "state/phase.h"
 
@@ -27,19 +30,36 @@
 
 namespace {
 
-SyncState syncState;
+//SyncState syncState;
+//SyncMode syncMode;
 
 
-#ifdef SIMPLE_SYNC_PERIOD
-SimpleSyncPeriod syncPeriod;
-#else
-CombinedSyncPeriod syncPeriod;
-#endif
 
 
 void sleepEntireSyncPeriod() {
 	Phase::set(PhaseEnum::SleepEntireSyncPeriod);
 	SyncSleeper::sleepUntilTimeout(clique.schedule.deltaNowToNextSyncPoint);
+}
+
+
+// Obsolete alternative SimpleSyncPeriod
+
+void doModalSyncPeriod() {
+	switch(SyncModeManager::mode()) {
+	case SyncMode::Maintain:
+		sleepEntireSyncPeriod();
+		break;
+
+	/*
+	 * CombinedSyncPeriod also checks FisherMergerRole (sub mode.)
+	 */
+	case SyncMode::SyncOnly:
+		CombinedSyncPeriod::doSlotSequence();
+		break;
+	case SyncMode::SyncAndFishMerge:
+		CombinedSyncPeriod::doSlotSequence();
+		break;
+	}
 }
 
 
@@ -109,48 +129,16 @@ void SyncAgent::loop(){
 		WorkManager::resetState();
 
 		/*
-		 * Remote logging is high priority, do it first.
+		 * Remote logging is high priority.
+		 * Do it regardless of mode and forego usual modal
 		 */
 		if (RemoteLogger::trySendingLog()) {
 			// InfoSlot was performed, sleep remainder of SyncPeriod
 			sleepEntireSyncPeriod();
 		}
-		else if ( SyncPowerManager::isPowerForSync() ) {
-			/*
-			 * Sync keeping: enough power to use radio for two slots
-			 */
-			syncState.setActive();
-			// SyncPeriod also checks power
-			syncPeriod.doSlotSequence();
-		}
 		else {
-			/*
-			 * Paused state:
-			 * Approximate sync schedule by marking sync periods, w/o using radio.
-			 *
-			 * Especially when starting up, and depending on how power levels are configured,
-			 * and how much energy is harvested:
-			 * Might be in this state for just one or two sync periods,
-			 * and even in active sync keeping, we don't xmit sync every period anyway.
-			 */
-
-			syncState.setPaused();	// side effects limited to syncingState
-
-			/*
-			 * Are we paused for long time and are we master?
-			 */
-
-			if ( SyncState::shouldAbandonMastership() ) {
-				// doAbandonMastershipSyncPeriod
-				// For now, no abandon mastership i.e. we never get here
-				assert(false);
-			}
-			else {
-				Logger::logPauseSync();
-				sleepEntireSyncPeriod();
-			}
-			// continue to check power for radio.
-			// We may exhaust it and brown out, losing sync altogether
+			SyncModeManager::tryTransitions();
+			doModalSyncPeriod();
 		}
 
 		// SyncPeriod over and next one starts.

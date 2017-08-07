@@ -104,6 +104,7 @@ public:
 	/*
 	 * Significant events?  Logged remotely?
 	 */
+	static void logStartSync();
 	static void logPauseSync();
 	static void logMasterDropout();
 	static unsigned int logBrownout();
