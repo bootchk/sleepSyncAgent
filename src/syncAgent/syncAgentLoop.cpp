@@ -22,17 +22,16 @@
 /*
  * SyncAgent is a task(thread) that is infinite sequence of sync periods.
  *
- * Sync periods are active if enough power.
+ * Sync periods are active (using radio) if enough power.
  * In inactive sync periods, schedule advances.
  * After enough inactive sync periods, schedule is much drifted.
  * After inactive sync periods, we try to resume drifted schedule.
+ *
+ * Active sync periods always do sync slot.
+ * Sync periods may also fish when enough power.
 */
 
 namespace {
-
-//SyncState syncState;
-//SyncMode syncMode;
-
 
 
 
@@ -141,6 +140,7 @@ void SyncAgent::loop(){
 			sleepEntireSyncPeriod();
 		}
 		else {
+			// Measure power and set mode
 			SyncModeManager::tryTransitions();
 			doModalSyncPeriod();
 		}

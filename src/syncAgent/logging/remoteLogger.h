@@ -16,20 +16,25 @@
  * An alternative usage chooses a different slot:
  * - only a sniffer might hear it
  *
- * Delivery is not guaranteed, now acknowledgement.
+ * Delivery is not guaranteed, no ack.
  *
- * log() is not synchronous: msg is sent later (queued)
+ * log() is not synchronous: msg is put in mailbox and sent later
  * trySendingLog() sends previously logged msg
  *
- * log queue does not survive a soft reset
+ * log mailbox does not survive a soft reset
  */
 
 class RemoteLogger {
 public:
+	/*
+	 * log msg for later sending.
+	 * !!! Mailbox only holds one.
+	 * Does nothing if mailbox full.
+	 */
 	static void log(uint8_t);
 
 	/*
-	 * If log queue not empty, try sending it, and return true.
+	 * If log mailbox not empty, try sending it, and return true.
 	 * When true returned, have performed InfoSlot: disrupts normal SyncPeriod.
 	 */
 	static bool trySendingLog();

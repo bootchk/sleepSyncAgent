@@ -37,9 +37,8 @@ void SyncModeManager::init() {
 }
 
 
-SyncMode SyncModeManager::mode() {
-	return _mode;
-}
+SyncMode SyncModeManager::mode() { return _mode; }
+
 
 /*
  * Implementation notes:
@@ -61,6 +60,7 @@ void SyncModeManager::tryTransitions(){
 		}
 		// else no change to mode
 		break;
+
 	case SyncMode::SyncOnly:
 		// to lower level?
 		if ( ! SyncPowerManager::isPowerForSync() ) {
@@ -69,13 +69,13 @@ void SyncModeManager::tryTransitions(){
 		}
 		else // to higher level?
 			if ( SyncPowerManager::isPowerForFish() ) {
-			Logger::logStartFish();
-			_mode = SyncMode::SyncAndFishMerge;
-			SyncAgent::toFisherFromNoFishing();
-		}
+				Logger::logStartFish();
+				_mode = SyncMode::SyncAndFishMerge;
+				SyncAgent::toFisherFromNoFishing();
+			}
 		// else no change to mode
-
 		break;
+
 	case SyncMode::SyncAndFishMerge:
 		/*
 		 * Here, SyncAgent adjusts sub mode: MergerFisherRole
@@ -88,16 +88,11 @@ void SyncModeManager::tryTransitions(){
 			SyncAgent::ToNoFishingFromOther();
 		}
 		// else no change to mode
+		break;
 		// No higher level
 #ifdef FUTURE
 		higher level is excess power, more fishing or power shedding
-		else // to higher level?
-			if ( SyncPowerManager::isPowerForFish() ) {
-				//Logger::logPauseSync();
-				_mode = SyncMode::SyncAndFishMerge;
-				// TODO
-			}
-		break;
+		// TODO
 #endif
 	}
 

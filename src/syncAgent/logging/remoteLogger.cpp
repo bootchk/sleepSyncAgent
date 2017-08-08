@@ -17,7 +17,7 @@ Mailbox mailbox;
 }
 
 void RemoteLogger::log(uint8_t item){
-	mailbox.put(item);
+	mailbox.tryPut(item);
 }
 
 bool RemoteLogger::trySendingLog(){

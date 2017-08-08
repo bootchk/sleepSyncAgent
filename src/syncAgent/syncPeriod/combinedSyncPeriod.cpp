@@ -69,7 +69,7 @@ void CombinedSyncPeriod::doSlotSequence() {
 
 	// the caller, at schedule.rollPeriodForward has logged syncPoint
 
-	// assert powerManager->isPowerForSync() which is higher than isPowerForRadio
+	// assert power is adequate
 
 	Phase::set(PhaseEnum::StartSlotSequence);
 	syncWorkSlot.tryPerform();	// arbitrary to do sync slot first

@@ -57,7 +57,7 @@ public:
 	/*
 	 * Enough to:
 	 * - begin the sync loop
-	 * - start a SyncPeriod
+	 * - do a SyncWorkSlot
 	 */
 	// For some debugging: static bool isPowerForSync()  { return PowerManager::isPowerAboveUltraHigh(); }	// > 3.2
 	// For some debugging with 2AAA batteries @2.68V
@@ -65,10 +65,12 @@ public:
 	// Usually:
 	static bool isPowerForSync()  { return PowerManager::isPowerAboveMedium(); }	// > 2.5
 
+	// Enough to fish and merge
 	static bool isPowerForFish()  { return PowerManager::isPowerAboveHigh(); }	// > 2.7
 
 	// Enough to continue a SyncPeriod that has been started
-	static bool isPowerForRadio()  { return PowerManager::isPowerAboveMedium(); } // > 2.5
+	static bool isPowerForRadio()  { return PowerManager::isPowerAboveLow(); } // > 2.3
+
 	// Only enough to count out SyncPeriods, not use radio
 	static bool isPowerForIdle()  { return PowerManager::isPowerAboveLow(); }	// > 2.3
 

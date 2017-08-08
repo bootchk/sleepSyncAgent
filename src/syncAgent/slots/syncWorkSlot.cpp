@@ -220,7 +220,7 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 
 /*
  * SyncSlot is first.
- * Assert already checked isPowerForSync(),
+ * Assert is enough power for this slot.
  */
 void SyncWorkSlot::tryPerform() {
 
