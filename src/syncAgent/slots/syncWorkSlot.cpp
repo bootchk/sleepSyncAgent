@@ -58,7 +58,7 @@ HandlingResult SyncWorkSlot::doListenHalfSyncWorkSlot(TimeoutFunc timeoutFunc) {
 	 * Starting the HFXO (previously) or anything else that preceded this call
 	 * is not expected to exhaust power.
 	 */
-	if (SyncPowerManager::isPowerForRadio()) {
+	if (SyncPowerManager::isPowerForSyncSlot()) {
 		Ensemble::startReceiving();
 	}
 	else {
@@ -235,7 +235,7 @@ void SyncWorkSlot::tryPerform() {
 	//LongTime endTime = clique.schedule.nowTime();
 
 	// Starting network might have exhausted power.  Unlikely
-	if (SyncPowerManager::isPowerForRadio()) {
+	if (SyncPowerManager::isPowerForSyncSlot()) {
 		Phase::set(PhaseEnum::SyncChooseKind);
 		perform();
 	}

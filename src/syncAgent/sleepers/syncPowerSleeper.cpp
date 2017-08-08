@@ -46,6 +46,6 @@ void SyncPowerSleeper::sleepUntilSyncPower(){
 		ReasonForWake reason = Sleeper::getReasonForWake();
 		assert(reason==ReasonForWake::SleepTimerExpired);
 	}
-	while (!SyncPowerManager::isPowerForSync());
+	while (!SyncPowerManager::isPowerForStartLoop());
 
 }

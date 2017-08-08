@@ -55,24 +55,37 @@ public:
 	static bool isPowerForWork() { return PowerManager::isPowerAboveMedium(); }	// > 2.5
 
 	/*
-	 * Enough to:
-	 * - begin the sync loop
-	 * - do a SyncWorkSlot
+	 * Enough to begin the sync loop.
+	 * Might require much to get past cpu usage during initialization.
+	 *
+	 * For some debugging: static bool isPowerForSync()  { return PowerManager::isPowerAboveUltraHigh(); }	// > 3.2
+	 * For some debugging with 2AAA batteries @2.68V
 	 */
-	// For some debugging: static bool isPowerForSync()  { return PowerManager::isPowerAboveUltraHigh(); }	// > 3.2
-	// For some debugging with 2AAA batteries @2.68V
-	//static bool isPowerForSync()  { return PowerManager::isPowerAboveMedium(); }	// > 2.5
-	// Usually:
-	static bool isPowerForSync()  { return PowerManager::isPowerAboveMedium(); }	// > 2.5
+	static bool isPowerForStartLoop()  { return PowerManager::isPowerAboveHigh(); }	// > 2.5
 
-	// Enough to fish and merge
-	static bool isPowerForFish()  { return PowerManager::isPowerAboveHigh(); }	// > 2.7
+	/*
+	 * In ascending order, corresponding to modes.
+	 */
+	// Enough to do a SyncWorkSlot
+	static bool isPowerForSyncMode()  { return PowerManager::isPowerAboveMedium(); }	// > 2.5
 
-	// Enough to continue a SyncPeriod that has been started
-	static bool isPowerForRadio()  { return PowerManager::isPowerAboveLow(); } // > 2.3
+	// Enough at beginning of loop to set mode to fish and merge
+	static bool isPowerForFishMode()  { return PowerManager::isPowerAboveHigh(); }	// > 2.7
+
+
+	/*
+	 * Even though we power might have been adequate when we decided mode, it might have been exhausted.
+	 * By ensemble startup? Or simple failing power?
+	 */
+	// Enough power to do a fish slot
+	// Since sync slot was also done, this allows 0.2V consumed by sync slot
+	static bool isPowerForFishSlot()  { return PowerManager::isPowerAboveMedium(); } // > 2.5
+
+	// Enough to do a SyncSlot or portions of it
+	static bool isPowerForSyncSlot()  { return PowerManager::isPowerAboveLow(); } // > 2.3
 
 	// Only enough to count out SyncPeriods, not use radio
-	static bool isPowerForIdle()  { return PowerManager::isPowerAboveLow(); }	// > 2.3
+	// NOT USED: static bool isPowerForIdle()  { return PowerManager::isPowerAboveLow(); }	// > 2.3
 
 	/*
 	 * Ranges

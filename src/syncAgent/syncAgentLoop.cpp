@@ -97,7 +97,11 @@ void SyncAgent::loop(){
 	SyncPowerManager::enterBrownoutDetectMode();
 	// Detection not in force until first call to measure power
 
-
+	/*
+	 * This requires some power to transmit.
+	 * Faults are in flash and this does not erase them.
+	 * So if power is low, this might result in: Brownout, SoftReset, sendAnyFaults, Brownout, ...
+	 */
 	RemoteLogger::sendAnyFaults();
 
 	SyncModeManager::init();

@@ -21,6 +21,7 @@ void InfoSlot::perform(uint8_t item) {
 	 *
 	 * Blocking sleep.
 	 */
+	// TODO check that ensemble can be started twice
 	Ensemble::startup();
 
 	//Phase::set(PhaseEnum::Merge);

@@ -52,7 +52,7 @@ void SyncModeManager::tryTransitions(){
 		/*
 		 * Can't fall to lower mode: just browns out.
 		 */
-		if ( SyncPowerManager::isPowerForSync() ) {
+		if ( SyncPowerManager::isPowerForSyncMode() ) {
 			// to next higher level
 			// FUTURE onSyncingResumedCallback();	// Tell app
 			Logger::logStartSync();
@@ -63,12 +63,12 @@ void SyncModeManager::tryTransitions(){
 
 	case SyncMode::SyncOnly:
 		// to lower level?
-		if ( ! SyncPowerManager::isPowerForSync() ) {
+		if ( ! SyncPowerManager::isPowerForSyncMode() ) {
 			Logger::logPauseSync();
 			_mode = SyncMode::Maintain;
 		}
 		else // to higher level?
-			if ( SyncPowerManager::isPowerForFish() ) {
+			if ( SyncPowerManager::isPowerForFishMode() ) {
 				Logger::logStartFish();
 				_mode = SyncMode::SyncAndFishMerge;
 				SyncAgent::toFisherFromNoFishing();
@@ -82,7 +82,7 @@ void SyncModeManager::tryTransitions(){
 		 */
 
 		// to lower level?
-		if ( ! SyncPowerManager::isPowerForFish() ) {
+		if ( ! SyncPowerManager::isPowerForFishMode() ) {
 			Logger::logStopFish();
 			_mode = SyncMode::SyncOnly;
 			SyncAgent::ToNoFishingFromOther();
