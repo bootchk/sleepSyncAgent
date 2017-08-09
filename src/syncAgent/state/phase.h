@@ -65,11 +65,19 @@ enum class PhaseEnum {
 };
 
 namespace {
-	PhaseEnum _phase;
+
+/*
+ * Like a program counter, for debugging.
+ * Set by algorithm as it steps.
+ */
+PhaseEnum _phase;
 }
 
 class Phase {
 public:
+	/*
+	 * Set current phase and mark in UICR that the phase has been done at least once.
+	 */
 	static void set(PhaseEnum phase) {
 		_phase = phase;
 		// Debugging: write zero bit to Phase flag of UICR

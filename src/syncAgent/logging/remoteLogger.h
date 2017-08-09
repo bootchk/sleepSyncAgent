@@ -25,6 +25,13 @@
  */
 
 class RemoteLogger {
+private:
+	/*
+	 * Send given info.
+	 * Performs InfoSlot: disrupts normal SyncPeriod.
+	 */
+	static void sendInfo(uint8_t);
+
 public:
 	/*
 	 * log msg for later sending.
@@ -38,12 +45,6 @@ public:
 	 * When true returned, have performed InfoSlot: disrupts normal SyncPeriod.
 	 */
 	static bool trySendingLog();
-
-	/*
-	 * Send given info.
-	 * Performs InfoSlot: disrupts normal SyncPeriod.
-	 */
-	static void sendInfo(uint8_t);
 
 	/*
 	 * Send one indication if any faults logged to UICR flash.
