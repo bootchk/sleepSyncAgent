@@ -81,8 +81,14 @@ public:
 
 	// FUTURE static void resumeAfterPowerRestored();
 
+	/*
+	 * Only called once in preamble of sync loop.
+	 * Immediately followed by rollPeriodForward() at front of loop.
+	 */
+	static void setEndTimeOfSyncPeriodToNow();
 	static void rollPeriodForward();
-	static void rollPeriodForwardToNow();
+
+
 	static void adjustBySyncMsg(SyncMessage* msg);
 	static LongTime adjustedEndTime(const SyncMessage* msg);
 	static LongTime startTimeOfSyncPeriod();

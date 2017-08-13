@@ -113,7 +113,7 @@ void SyncAgent::loop(){
 	 * The roll forward at the beginning of the loop is in fixed increment.
 	 * Here we need to restart schedule to ensure that startTimeOfPeriod == nowTime();
 	 */
-	clique.schedule.rollPeriodForwardToNow();
+	clique.schedule.setEndTimeOfSyncPeriodToNow();
 
 	while (true){
 

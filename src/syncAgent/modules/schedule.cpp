@@ -114,24 +114,15 @@ void Schedule::rollPeriodForward() {
 
 
 
-/*
- * Only called once at start of sync loop.
- *
- * Not used for regular roll forward since if called late,
- * schedule is thrown off.
- */
-/*
- * Why it can't be used for usual roll forward,at the time that should be SyncPoint.
- * Since we can fish in the last slot before SyncPoint, and fishing may delay us a short time,
- * roll forward may be called a little late.
- * (If not a short time, is error in algorithm.)
- * Rolling forward by fixed SyncPeriodDuration accommodates lateness, but rollPeriodForwardToNow() does not.
- */
-void Schedule::rollPeriodForwardToNow() {
-	// Starts now.  See above.  If called late, sync might be lost.
-	_startTimeOfSyncPeriod = LongClock::nowTime();
-	_endTimeOfSyncPeriod = _startTimeOfSyncPeriod + ScheduleParameters::NormalSyncPeriodDuration;
+
+void Schedule::setEndTimeOfSyncPeriodToNow() {
+	_endTimeOfSyncPeriod = LongClock::nowTime();
+	/*
+	* _startTime is long ago, but we will soon call rollPeriodForward() which calculates _startTime from _endTime
+	*/
 }
+
+
 
 /*
  * Crux
