@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../../../augment/randomAlarmingClock.h"
+#include <randomAlarmingClock.h>
+
 #include "../policyParameters.h"
 
 /*

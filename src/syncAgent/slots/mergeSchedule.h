@@ -1,6 +1,6 @@
 
-#include "../types.h"	// DeltaTime
-#include "../../augment/timeMath.h"	// LongTime
+#include <timeMath.h>
+
 #include "../modules/periodTime.h"
 
 /*

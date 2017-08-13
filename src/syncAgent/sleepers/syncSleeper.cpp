@@ -1,6 +1,8 @@
 
 #include <cassert>
 
+#include <timeMath.h>
+
 #include "syncSleeper.h"
 
 // nRF5x lib
@@ -9,7 +11,7 @@
 #include <exceptions/resetAssertions.h>
 
 #include "oversleepMonitor.h"
-#include "../../augment/timeMath.h"
+
 #include "../message/serializer.h"
 #include "../modules/schedule.h"
 #include "../scheduleParameters.h"

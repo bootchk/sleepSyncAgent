@@ -1,6 +1,6 @@
 
-#include "../types.h"
-#include "../../augment/timeMath.h"
+#include <timeMath.h>
+
 
 /*
  * Knows schedule within sync slot ie when middle and end

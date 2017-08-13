@@ -1,7 +1,8 @@
 
 #include <cassert>
 
-#include "../../augment/random.h"	// randBool
+#include <random.h>	// randBool
+
 #include "policyParameters.h"
 
 

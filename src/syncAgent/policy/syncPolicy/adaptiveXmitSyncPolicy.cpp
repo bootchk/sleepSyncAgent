@@ -1,7 +1,8 @@
 
 #include "adaptiveXmitSyncPolicy.h"
 
-#include "../../../augment/random.h"
+#include <random.h>
+
 #include "../../logging/logger.h"
 
 

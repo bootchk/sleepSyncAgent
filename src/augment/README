@@ -1,7 +1,0 @@
-This directory augments the platform.
-
-Many people would name it "utility" or "trivial".
-
-Simple functions but not provided on all platforms.
-
-In other words, a layer between SyncAgent and the platform.

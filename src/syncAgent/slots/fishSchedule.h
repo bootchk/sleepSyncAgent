@@ -1,6 +1,8 @@
 
+#include <timeMath.h>
+
 #include "../types.h"
-#include "../../augment/timeMath.h"
+
 
 /*
  * Schedule for FishSlot

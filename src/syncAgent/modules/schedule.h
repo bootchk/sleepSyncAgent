@@ -1,13 +1,14 @@
 
 #pragma once
 
+#include <timeMath.h>	// LongTime, DeltaTime
 
 /*
  * Crux types are DeltaSync and MergeOffset.
  * LongTime and DeltaTime are important but conventional.
  */
 #include "../message/message.h"	// SyncMessage, DeltaSync
-#include "../../augment/timeMath.h"	// LongTime, DeltaTime
+
 #include "periodTime.h"
 
 

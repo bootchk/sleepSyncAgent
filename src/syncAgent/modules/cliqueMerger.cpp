@@ -1,7 +1,9 @@
 
 #include <cassert>
 #include "cliqueMerger.h"
-#include "../../augment/timeMath.h"
+
+#include <timeMath.h>
+
 #include "../scheduleParameters.h"
 
 #include "../message/messageFactory.h"
