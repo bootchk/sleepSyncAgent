@@ -31,7 +31,7 @@
  * Finally, these might depend on the platform, where on the nRF52 more levels are pre-defined.
  * Some of the comments may be stale, don't trust them.
  */
-#include <nRF5x.h>	// PowerManager
+#include <radioSoC.h>	// PowerManager
 
 /*
  * Pure class

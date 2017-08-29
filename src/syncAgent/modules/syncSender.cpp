@@ -2,7 +2,7 @@
 #include <cassert>
 
 
-#include <nRF5x.h>  // Ensemble, System::ID()
+#include <radioSoC.h>  // Ensemble, System::ID()
 
 #include "syncSender.h"
 

@@ -2,7 +2,7 @@
 
 #include <inttypes.h>
 
-#include <nRF5x.h>	// BufferPointer
+#include <radioSoC.h>	// BufferPointer
 #include "message.h"
 
 

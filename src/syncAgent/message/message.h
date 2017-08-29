@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <nRF5x.h>	// LongTime, SystemID, WorkPayload
+#include <radioSoC.h>	// LongTime, SystemID, WorkPayload
 #include "../modules/deltaSync.h"
 
 

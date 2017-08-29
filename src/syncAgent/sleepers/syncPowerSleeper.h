@@ -1,5 +1,5 @@
 
-#include <nRF5x.h>	// Sleeper
+#include <radioSoC.h>	// Sleeper
 
 /*
  * Knows how to sleep until power is adequate for sync agent.

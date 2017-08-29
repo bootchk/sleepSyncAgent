@@ -3,7 +3,7 @@
 
 #include "oversleepMonitor.h"
 
-#include "nRF5x.h"	// LongTime, CustomFlash
+#include <radioSoC.h>	// LongTime, CustomFlash
 
 #include "../logging/flashIndex.h"
 #include "../logging/logger.h"

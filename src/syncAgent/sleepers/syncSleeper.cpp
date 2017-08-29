@@ -376,10 +376,12 @@ unsigned int SyncSleeper::getPriorReasonForWake() { return (unsigned int) priorR
 
 
 
+#ifdef OLD
 /*
  * Similar above, but overloaded: different parameter type
  * and different implementation.
  */
+// TODO move to radioSoc::sleepDuration
 void SyncSleeper::sleepUntilTimeout(DeltaTime timeout)
 {
 	LongTime endingTime = LongClock::nowTime() + timeout;
@@ -410,6 +412,7 @@ void SyncSleeper::sleepUntilTimeout(DeltaTime timeout)
 		}
 		// assert timeout amount of time has elapsed
 }
+#endif
 
 
 #ifdef FUTURE

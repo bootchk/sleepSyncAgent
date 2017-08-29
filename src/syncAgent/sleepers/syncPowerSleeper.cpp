@@ -34,10 +34,10 @@ void SyncPowerSleeper::sleepUntilSyncPower(){
 		// assertUltraLowPower();	// Even this assert may consume more power than we have?
 
 		/*
-		 * !!! Sleeper is not guaranteed to sleep entire timeout duration.
-		 * SyncSleeper is guaranteed to sleep entire timeout durations
+		 * !!! Must sleep entire timeout duration.
 		 */
-		SyncSleeper::sleepUntilTimeout(ScheduleParameters::TimeoutWaitingForSyncPowerSleeper);
+		//SyncSleeper::sleepUntilTimeout(ScheduleParameters::TimeoutWaitingForSyncPowerSleeper);
+		Sleeper::sleepDuration(ScheduleParameters::TimeoutWaitingForSyncPowerSleeper);
 
 		/*
 		 * Not expected to wake for CounterOverflow and unexpected events.

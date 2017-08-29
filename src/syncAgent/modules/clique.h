@@ -1,6 +1,6 @@
 #pragma once
 
-#include <nRF5x.h>	// SystemID
+#include <radioSoC.h>	// SystemID
 #include "schedule.h"
 
 
