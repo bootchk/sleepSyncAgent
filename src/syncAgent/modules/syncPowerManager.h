@@ -40,19 +40,19 @@
 class SyncPowerManager {
 
 public:
-	// Init generic PowerManager
-	static void init() { PowerManager::init(); }
+	static void init();
 
-	static void enterBrownoutDetectMode() { PowerManager::enterBrownoutDetectMode(); }
+	static void enterBrownoutDetectMode();
+
+
 	/*
 	 * Levels
 	 */
 	// Above Vmax of chip 3.6V
-	static bool isPowerExcess() { return PowerManager::isPowerExcess(); }
+	static bool isPowerExcess();
 
 	// In sync and can work
-	// static bool isPowerForWork() { return PowerManager::isPowerAboveHigh(); }	// > 2.7
-	static bool isPowerForWork() { return PowerManager::isPowerAboveMedium(); }	// > 2.5
+	static bool isPowerForWork();
 
 	/*
 	 * Enough to begin the sync loop.
@@ -61,16 +61,18 @@ public:
 	 * For some debugging: static bool isPowerForSync()  { return PowerManager::isPowerAboveUltraHigh(); }	// > 3.2
 	 * For some debugging with 2AAA batteries @2.68V
 	 */
-	static bool isPowerForStartLoop()  { return PowerManager::isPowerAboveHigh(); }	// > 2.5
+	static bool isPowerForStartLoop();
+
 
 	/*
 	 * In ascending order, corresponding to modes.
 	 */
+
 	// Enough to do a SyncWorkSlot
-	static bool isPowerForSyncMode()  { return PowerManager::isPowerAboveMedium(); }	// > 2.5
+	static bool isPowerForSyncMode();
 
 	// Enough at beginning of loop to set mode to fish and merge
-	static bool isPowerForFishMode()  { return PowerManager::isPowerAboveHigh(); }	// > 2.7
+	static bool isPowerForFishMode();
 
 
 	/*
@@ -79,16 +81,16 @@ public:
 	 */
 	// Enough power to do a fish slot
 	// Since sync slot was also done, this allows 0.2V consumed by sync slot
-	static bool isPowerForFishSlot()  { return PowerManager::isPowerAboveMedium(); } // > 2.5
+	static bool isPowerForFishSlot();
 
 	// Enough to do a SyncSlot or portions of it
-	static bool isPowerForSyncSlot()  { return PowerManager::isPowerAboveLow(); } // > 2.3
+	static bool isPowerForSyncSlot();
 
 	// Only enough to count out SyncPeriods, not use radio
-	// NOT USED: static bool isPowerForIdle()  { return PowerManager::isPowerAboveLow(); }	// > 2.3
+	// NOT USED: static bool isPowerForIdle();
 
 	/*
 	 * Ranges
 	 */
-	static VoltageRange getVoltageRange() { return PowerManager::getVoltageRange(); }
+	static VoltageRange getVoltageRange();
 };
