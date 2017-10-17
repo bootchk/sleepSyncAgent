@@ -50,6 +50,7 @@ public:
 	 */
 	// Above Vmax of chip 3.6V
 	static bool isPowerExcess();
+	static bool isPowerNearExcess();
 
 	// In sync and can work
 	static bool isPowerForWork();

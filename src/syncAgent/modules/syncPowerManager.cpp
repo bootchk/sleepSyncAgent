@@ -26,8 +26,9 @@ void SyncPowerManager::enterBrownoutDetectMode() { PowerManager::enterBrownoutDe
 
 VoltageRange SyncPowerManager::getVoltageRange() { return PowerManager::getVoltageRange(); }
 
-// This depends on the radio chip, not the solar cell
+// Vmax of radio chip, not the solar cell
 bool SyncPowerManager::isPowerExcess() { return PowerManager::isPowerExcess(); }
+bool SyncPowerManager::isPowerNearExcess() { return PowerManager::isPowerNearExcess(); }
 
 
 /*
@@ -42,13 +43,14 @@ bool SyncPowerManager::isPowerExcess() { return PowerManager::isPowerExcess(); }
 bool SyncPowerManager::isPowerForStartLoop() { return PowerManager::isPowerAboveMedium(); }	// > 2.5
 
 // Require more to work or fish
-bool SyncPowerManager::isPowerForWork()      { return PowerManager::isPowerAboveMedium(); }	// > 2.5
+bool SyncPowerManager::isPowerForWork()      { return PowerManager::isPowerAboveLow(); }	// > 2.3
+
 bool SyncPowerManager::isPowerForFishMode()  { return PowerManager::isPowerAboveMedium(); }	// > 2.5
 bool SyncPowerManager::isPowerForFishSlot()  { return PowerManager::isPowerAboveMedium(); } // > 2.5
 
 // Require less to maintain sync
-bool SyncPowerManager::isPowerForSyncMode()  { return PowerManager::isPowerAboveLow(); } // > 2.3
-bool SyncPowerManager::isPowerForSyncSlot()  { return PowerManager::isPowerAboveLow(); } // > 2.3
+bool SyncPowerManager::isPowerForSyncMode()  { return PowerManager::isPowerAboveUltraLow(); } // > 2.1
+bool SyncPowerManager::isPowerForSyncSlot()  { return PowerManager::isPowerAboveUltraLow(); } // > 2.1
 
 // From 1.7 (BOR) to 2.3, keep sync, but not maintain
 
