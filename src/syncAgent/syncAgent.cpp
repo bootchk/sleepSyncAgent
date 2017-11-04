@@ -27,6 +27,8 @@ WorkPayload SyncAgent::countMergeSyncHeard;
 void (*SyncAgent::onWorkMsgCallback)(WorkPayload);
 void (*SyncAgent::onSyncPointCallback)();
 
+RadioUseCase radioUseCaseSleepSync;
+
 
 // This file only implements part of the class, see other .cpp files.
 // See syncAgentLoop.cpp for high level algorithm.
@@ -78,7 +80,10 @@ void SyncAgent::initSyncObjects(
 	 * Initialize members (Radio, HfClock, DCDC) of ensemble.
 	 * Connect radio IRQ to syncSleeper so it knows reason for wake
 	 */
-	Ensemble::init(SyncSleeper::getMsgReceivedCallback());
+	Ensemble::init(SyncSleeper::getMsgReceivedCallback(), &radioUseCaseSleepSync);
+
+	// TEMP: testing range with lower xmit power
+	radioUseCaseSleepSync.setXmitPower(TransmitPowerdBm::Minus20);
 
 	// Serializer reads and writes directly to radio buffer
 	Serializer::init(Ensemble::getBufferAddress(), Radio::FixedPayloadCount);
