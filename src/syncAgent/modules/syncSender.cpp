@@ -122,7 +122,7 @@ void SyncSender::sendWorkSync(WorkPayload work) {
 			 * even if self is not the Master I.E. WorkSync from a Slave uses Clique's ID.
 			 */
 			clique.getMasterID(),
-			System::shortID());	// temp debugging
+			work);
 	/*
 	 * Temporarily, sending self ID (short version) as work
 	 * In most applications, the last parameter is:

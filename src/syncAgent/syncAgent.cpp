@@ -83,7 +83,8 @@ void SyncAgent::initSyncObjects(
 	Ensemble::init(SyncSleeper::getMsgReceivedCallback(), &radioUseCaseSleepSync);
 
 	// TEMP: testing range with lower xmit power
-	radioUseCaseSleepSync.setXmitPower(TransmitPowerdBm::Minus20);
+	// Plus0, Minus4, Minus12, Minus40
+	radioUseCaseSleepSync.setXmitPower(TransmitPowerdBm::Minus40);
 
 	// Serializer reads and writes directly to radio buffer
 	Serializer::init(Ensemble::getBufferAddress(), Radio::FixedPayloadCount);
