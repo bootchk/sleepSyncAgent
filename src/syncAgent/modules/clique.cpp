@@ -17,9 +17,6 @@
 
 namespace {
 
-// collaborators
-DropoutMonitor dropoutMonitor;
-
 // Choices here:  Adaptive or Master
 //static MasterTransmitSyncPolicy masterTransmitSyncPolicy;
 AdaptiveTransmitSyncPolicy masterTransmitSyncPolicy;
@@ -40,7 +37,7 @@ void Clique::init(){
 	Logger::log("Clique init\n");
 
 	setSelfMastership();
-	dropoutMonitor.reset();
+	DropoutMonitor::reset();
 	masterTransmitSyncPolicy.reset();
 
 	schedule.init();
@@ -66,7 +63,7 @@ bool Clique::shouldTransmitSync() {
 
 void Clique::heardSync() {
 	// relevant to role Slave
-	dropoutMonitor.heardSync();
+	DropoutMonitor::heardSync();
 
 	/*
 	 * Relevant to role Master.
@@ -82,7 +79,7 @@ void Clique::heardSync() {
 
 
 void Clique::checkMasterDroppedOut() {
-	if (dropoutMonitor.isDropout()) {
+	if (DropoutMonitor::isDropout()) {
 		// assert dropoutMonitor is reset
 		Logger::logMasterDropout();
 		onMasterDropout();
