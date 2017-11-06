@@ -110,11 +110,25 @@ public:
 		message.work = 0;
 		return &message;
 	}
+
+	/*
+	 * Message types that don't carry sync.
+	 */
 	static SyncMessage* initInfoMessage(SystemID aMasterID, WorkPayload workPayload) {
-		message.type = MessageType::Info;
+		initNonSyncMessage(MessageType::Info, aMasterID, workPayload);
+		return &message;
+	}
+	static SyncMessage* initControlSetXmitPowerMessage(SystemID aMasterID, WorkPayload workPayload) {
+		initNonSyncMessage(MessageType::ControlSetXmitPower, aMasterID, workPayload);
+		return &message;
+	}
+	static SyncMessage* initNonSyncMessage(MessageType msgType, SystemID aMasterID, WorkPayload workPayload) {
+		message.type = msgType;
 		message.deltaToNextSyncPoint.set(0);
 		message.masterID = aMasterID;
 		message.work = workPayload;
 		return &message;
 	}
+
+
 };

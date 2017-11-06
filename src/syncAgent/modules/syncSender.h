@@ -23,4 +23,5 @@ public:
 	static void sendMergeSync();
 	static void sendAbandonMastership();
 	static void sendInfo(WorkPayload work);
+	static void sendControlSetXmitPower(WorkPayload work);
 };

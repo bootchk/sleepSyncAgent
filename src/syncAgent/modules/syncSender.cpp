@@ -142,3 +142,8 @@ void SyncSender::sendInfo(WorkPayload work) {
 	sendMessage(msgPtr);
 }
 
+void SyncSender::sendControlSetXmitPower(WorkPayload work) {
+	SyncMessage* msgPtr = MessageFactory::initControlSetXmitPowerMessage( clique.getMasterID(), work );
+	sendMessage(msgPtr);
+}
+
