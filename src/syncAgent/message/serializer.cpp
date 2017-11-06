@@ -33,8 +33,8 @@ namespace {
  * i.e. don't try to send WorkSync while still accessing incoming WorkSync.
  */
 
-
-BufferPointer radioBufferPtr;
+// Serializer does not own buffer (Radio owns it), only knows pointer to it
+BufferPointer radioBufferPtr = nullptr;
 uint8_t radioBufferSize;
 
 
@@ -208,6 +208,9 @@ bool Serializer::bufferIsSane(){
 
 
 void Serializer::serializeSyncMessageIntoRadioBuffer(SyncMessage* msgPtr) {
+	// requires init() called previously
+	assert(radioBufferPtr != nullptr);
+
 	radioBufferPtr[0] = (uint8_t) msgPtr->type;	// 1
 	serializeMasterIDCommonIntoStream(msgPtr);	// 6
 	serializeOffsetCommonIntoStream(msgPtr);	// 3
