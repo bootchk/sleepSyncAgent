@@ -39,11 +39,26 @@
  * Encoding for OTA type
  */
 enum class MessageType {
-	// Subclass SyncMessage
+	/*
+	 * Subclass SyncMessage
+	 * Only in lower layers
+	 */
 	MasterSync = 17,	// Don't start at 0
 	MergeSync = 34,
 	AbandonMastership = 68,
+	/*
+	 * App layer
+	 */
 	WorkSync = 136,
+	// From app controller
+	WorkSetProximity = 139,
+	WorkScatterTime = 151,
+	/*
+	 * Link and network control from app to SleepSync
+	 */
+	ControlSetXmitPower = 171,
+	ControlScatterClique = 174,
+
 	Info = 231
 };
 

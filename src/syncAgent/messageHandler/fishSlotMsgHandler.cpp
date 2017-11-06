@@ -49,9 +49,17 @@ HandlingResult FishSlotMessageHandler::handle(SyncMessage* msg){
 	case MessageType::WorkSync:
 		handlingResult = handleWorkSyncMessage(msg);
 		break;
+
+	// Logged but ignored
+	// TODO handle these whenever received i.e. when fished
 	case MessageType::Info:
+	case MessageType::WorkSetProximity:
+	case MessageType::WorkScatterTime:
+	case MessageType::ControlSetXmitPower:
+	case MessageType::ControlScatterClique:
 		handlingResult = handleInfoMessage(msg);
 		break;
+
 	}
 
 	return handlingResult;

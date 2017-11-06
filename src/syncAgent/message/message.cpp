@@ -39,6 +39,18 @@ char const * SyncMessage::representation(SyncMessage* msg) {
 		case MessageType::Info:
 			result = " Info";
 			break;
+		case MessageType::WorkSetProximity:
+			result = " Prox";
+			break;
+		case MessageType::WorkScatterTime:
+			result = " WSca";
+			break;
+		case MessageType::ControlSetXmitPower:
+			result = " XPow";
+			break;
+		case MessageType::ControlScatterClique:
+			result = " CSca";
+			break;
 	}
 	return result;
 }

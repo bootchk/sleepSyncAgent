@@ -63,6 +63,7 @@ private:
 	static HandlingResult handleWorkSyncMessage(SyncMessage* msg);
 	static HandlingResult handleAbandonMastershipMessage(SyncMessage* msg);
 	static HandlingResult handleInfoMessage(SyncMessage* msg);
+	static HandlingResult handleControlMessage(SyncMessage* msg);
 };
 
 

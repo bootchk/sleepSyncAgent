@@ -37,6 +37,11 @@ public:
 		case MessageType::MergeSync:
 		case MessageType::AbandonMastership:
 		case MessageType::WorkSync:
+
+		case MessageType::WorkSetProximity:
+		case MessageType::WorkScatterTime:
+		case MessageType::ControlSetXmitPower:
+		case MessageType::ControlScatterClique:
 			result = true;
 		}
 
@@ -60,6 +65,10 @@ public:
 			result = true;
 			break;
 		case MessageType::AbandonMastership:
+		case MessageType::WorkSetProximity:
+		case MessageType::WorkScatterTime:
+		case MessageType::ControlSetXmitPower:
+		case MessageType::ControlScatterClique:
 		case MessageType::Info:
 			result = false;
 		}

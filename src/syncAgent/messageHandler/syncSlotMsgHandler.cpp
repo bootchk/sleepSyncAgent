@@ -7,6 +7,7 @@
 #include "../modules/syncBehaviour.h"
 #include "../logging/logger.h"
 #include "../syncAgent.h"
+#include "../control/controller.h"
 
 
 
@@ -72,7 +73,13 @@ HandlingResult SyncSlotMessageHandler::handle(SyncMessage* msg){
 		handlingResult = handleAbandonMastershipMessage(msg);
 		break;
 	case MessageType::Info:
+	case MessageType::WorkSetProximity:
+	case MessageType::WorkScatterTime:
 		handlingResult = handleInfoMessage(msg);
+		break;
+	case MessageType::ControlSetXmitPower:
+	case MessageType::ControlScatterClique:
+		handlingResult = handleControlMessage(msg);
 		break;
 	}
 
@@ -128,6 +135,12 @@ HandlingResult SyncSlotMessageHandler::handleAbandonMastershipMessage(SyncMessag
 
 HandlingResult SyncSlotMessageHandler::handleInfoMessage(SyncMessage* msg){
 	Logger::logReceivedInfo(msg->work);
+	return HandlingResult::KeepListening;
+}
+
+
+HandlingResult SyncSlotMessageHandler::handleControlMessage(SyncMessage* msg){
+	Controller::setXmitPower(msg->work);
 	return HandlingResult::KeepListening;
 }
 
