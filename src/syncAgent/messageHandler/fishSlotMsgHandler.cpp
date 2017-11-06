@@ -7,6 +7,9 @@
 #include "../state/role.h"
 #include "../syncAgent.h"
 
+// actions
+#include "../control/controller.h"
+
 
 namespace {
 
@@ -51,15 +54,18 @@ HandlingResult FishSlotMessageHandler::handle(SyncMessage* msg){
 		break;
 
 	// Logged but ignored
-	// TODO handle these whenever received i.e. when fished
+
 	case MessageType::Info:
 	case MessageType::WorkSetProximity:
 	case MessageType::WorkScatterTime:
-	case MessageType::ControlSetXmitPower:
-	case MessageType::ControlScatterClique:
 		handlingResult = handleInfoMessage(msg);
 		break;
 
+	// handle control messages when fished
+	case MessageType::ControlSetXmitPower:
+	case MessageType::ControlScatterClique:
+		handlingResult = handleControlMessage(msg);
+		break;
 	}
 
 	return handlingResult;
@@ -123,6 +129,11 @@ HandlingResult FishSlotMessageHandler::handleInfoMessage(SyncMessage* msg){
 	return HandlingResult::KeepListening;
 }
 
+
+HandlingResult FishSlotMessageHandler::handleControlMessage(SyncMessage* msg){
+	Controller::setXmitPower(msg->work);
+	return HandlingResult::KeepListening;
+}
 
 /*
  * Work
