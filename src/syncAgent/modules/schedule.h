@@ -91,9 +91,15 @@ public:
 	static void setEndTimeOfSyncPeriodToNow();
 	static void rollPeriodForward();
 
-
 	static void adjustBySyncMsg(SyncMessage* msg);
-	static LongTime adjustedEndTime(const SyncMessage* msg);
+	static void adjustByCliqueHistoryOffset(DeltaTime offset);
+
+private:
+	static void adjust(LongTime offset);
+	static LongTime adjustedEndTimeFromMsg(const SyncMessage* msg);
+	static LongTime adjustedEndTimeFromCliqueHistoryOffset(DeltaTime);
+
+public:
 	static LongTime startTimeOfSyncPeriod();
 	static LongTime endTimeOfSyncPeriod();
 

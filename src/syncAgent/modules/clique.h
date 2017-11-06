@@ -9,7 +9,9 @@
  * Clique in smaller sense, knows:
  * - master
  * - schedule
- * - FUTURE: local, incomplete history of masters
+ * I.E. is only the local representation of the larger clique,
+ * Different unit's representations of the same larger clique may differ.
+ * The larger clique might not even exist anymore.
  *
  * Clique in larger sense: a set of units on the same schedule having same master, knows:
  * - all members.
@@ -44,7 +46,7 @@ public:
 	 */
 	static void heardSync();
 	static void checkMasterDroppedOut();
-	// Clique is losing member that was Master
+	// Self as slave failed to hear sync from  Master
 	static void onMasterDropout();
 
 	/*
@@ -53,6 +55,21 @@ public:
 	 * - schedule <= offset of SyncMessage
 	 */
 	static void updateBySyncMessage(SyncMessage* msg);
+
+
+private:
+	/*
+	 * Behaviors on failing to hear sync
+	 */
+	// Brute force: self assume mastership
+	static void grabMastership();
+
+	static void revertToFormerMaster();
+
+	// More nuanced
+	static void revertByCliqueHistory();
+
+
 
 	// static void initFromSyncMsg(SyncMessage* msg);
 };

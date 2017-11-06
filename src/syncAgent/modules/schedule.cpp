@@ -150,11 +150,15 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 	/*
 	 * assert endSyncSlot or endFishSlot has not yet occurred, but this doesn't affect that.
 	 */
+	adjust(adjustedEndTimeFromMsg(msg));
+}
 
+
+void Schedule::adjust(LongTime newEndTime) {
 	LongTime oldEndTimeOfSyncPeriod = _endTimeOfSyncPeriod;
 
 	// FUTURE optimization?? If adjustedEndTime is near old endTime, forego setting it?
-	_endTimeOfSyncPeriod = adjustedEndTime(msg);
+	_endTimeOfSyncPeriod = newEndTime;
 
 	// assert old startTimeOfSyncPeriod < new endTimeOfSyncPeriod  < nowTime() + 2*periodDuration
 
@@ -164,6 +168,14 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 	// end time never jumps too far forward from remembered start time.
 	assert( (_endTimeOfSyncPeriod - startTimeOfSyncPeriod()) <= 2* ScheduleParameters::NormalSyncPeriodDuration);
 }
+
+
+
+void Schedule::adjustByCliqueHistoryOffset(DeltaTime offset){
+
+	adjust(adjustedEndTimeFromCliqueHistoryOffset(offset));
+}
+
 
 /*
  * ALTERNATIVE DESIGN: NOT IMPLEMENTED
@@ -181,7 +193,7 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 /*
  * Adjusted end time of SyncPeriod, where SyncPeriod is never shortened (at all), only lengthened.
  */
-LongTime Schedule::adjustedEndTime(const SyncMessage* msg) {
+LongTime Schedule::adjustedEndTimeFromMsg(const SyncMessage* msg) {
 
 	// log time elapsed since toa, not really used
 	//DeltaTime elapsedTicksSinceTOA = TimeMath::clampedTimeDifferenceToNow(getMsgArrivalTime());
@@ -229,6 +241,16 @@ LongTime Schedule::adjustedEndTime(const SyncMessage* msg) {
 	//logInt(deltaNowToNextSyncPoint()); log(":Delta to next sync\n");
 
 	assert( (result - startTimeOfSyncPeriod()) <= 2* ScheduleParameters::NormalSyncPeriodDuration);
+	return result;
+}
+
+LongTime Schedule::adjustedEndTimeFromCliqueHistoryOffset(DeltaTime offset) {
+	/*
+	 * Assert called at end of sync period.
+	 *
+	 * Offset is relative to end of sync period of current schedule.
+	 */
+	LongTime result = LongClock::nowTime() + offset;
 	return result;
 }
 

@@ -9,6 +9,8 @@
 //#include "../policy/masterXmitSyncPolicy.h"
 #include "../policy/syncPolicy/adaptiveXmitSyncPolicy.h"
 
+#include "../cliqueHistory/cliqueHistory.h"
+
 #include "../message/messageFactory.h"
 
 #include "../logging/logger.h"
@@ -86,29 +88,71 @@ void Clique::checkMasterDroppedOut() {
 	}
 }
 
-void Clique::onMasterDropout() {
-	/*
-	 * Self unit has not heard sync from any member for a long time.
-	 * Brute force: assume mastership.
-	 * Other Slaves might do this and engender contention (many Masters.)
-	 */
-	// FUTURE: history of masters, self assume mastership only if was most recent master, thus avoiding contention.
+/*
+ * Other Slaves might do this and engender contention (many Masters.)
+ */
+void Clique::grabMastership() {
+	// !!! changes role: self will start xmitting sync
+	setSelfMastership();
 
-	setSelfMastership();	// !!! changes role: self will start xmitting sync
+	// Reset so we don't xmit sync soon
 	masterTransmitSyncPolicy.reset();
 
 	/*
-	 * !!! Schedule is NOT changed. We may be able to recover by fishing nearby.
+	 * !!! Schedule is NOT changed.
+	 * We may be able to recover the master we lost by fishing nearby.
+	 * Also, we will sooner hear other slaves also grabbing mastership
 	 */
 
 	/*
-	 * Change fishing policy.
-	 * This might help recover a Master who didn't permanently drop out:
-	 * - busy or insufficient power temporarily
-	 * - drifted too much
+	 * Reset fishing policy to fish slot near syncSlot.
+	 * This might help recover a Master who didn't permanently drop out.
 	 */
-	Logger::log("reset FishPolicy\n");
 	SyncRecoveryFishPolicy::reset();
+}
+
+
+void Clique::revertToFormerMaster() {
+	setOtherMastership(CliqueHistory::formerCliqueMasterID());
+
+	// syncSlot at time of former master
+	schedule.adjustByCliqueHistoryOffset(CliqueHistory::offsetToFormerClique());
+
+	// Reset fishing policy to fish slot near syncSlot.
+	// Former master may have drifted.
+	SyncRecoveryFishPolicy::reset();
+}
+
+
+void Clique::revertByCliqueHistory(){
+	CliqueHistory::back();
+
+	if (CliqueHistory::isFormerCliqueSelf()) {
+		grabMastership();
+		// Self is master
+	}
+	else {
+		revertToFormerMaster();
+	}
+}
+
+
+
+void Clique::onMasterDropout() {
+	/*
+	 * Self unit has not heard sync from any member for a long time.
+	 *
+	 * Cases:
+	 * - Master busy or insufficient power temporarily
+	 * - Self busy or insufficient power temporarily
+	 * - mutual drift too much
+	 * - we were told to merge to a Master that is out of our range
+	 *
+	 * Make choice of strategy/behavior
+	 */
+	// FUTURE: history of masters, self assume mastership only if was most recent master, thus avoiding contention.
+	// grabMastership();
+	revertByCliqueHistory();
 }
 
 

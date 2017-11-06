@@ -7,6 +7,8 @@
  * Master could be powered off or moved away or just too much contention.
  *
  * Class monitors the condition.
+ *
+ * Pure class, no instances
  */
 
 class DropoutMonitor {

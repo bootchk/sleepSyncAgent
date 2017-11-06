@@ -3,6 +3,7 @@
 
 #include "../slots/fishingParameters.h"
 
+#include "../logging/logger.h"
 
 namespace {
 
@@ -55,6 +56,8 @@ namespace {
 
 // !!! This should be the same as above compile time initialization.
 void SyncRecoveryFishPolicy::reset() {
+	Logger::log("reset FishPolicy\n");
+
 	upCounter = FishingParameters::FirstSlotOrdinalToFish;
 	downCounter = FishingParameters::LastSlotOrdinalToFish;
 	direction = true;
