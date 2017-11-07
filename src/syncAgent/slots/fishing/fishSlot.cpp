@@ -8,12 +8,12 @@
 #include <cassert>
 
 #include "fishSlot.h"
-
 #include "fishSchedule.h"
-#include "../messageHandler/messageHandler.h"
-#include "../sleepers/syncSleeper.h"
-#include "../modules/syncPowerManager.h"
-#include "../state/phase.h"
+
+#include "../../messageHandler/messageHandler.h"
+#include "../../sleepers/syncSleeper.h"
+#include "../../modules/syncPowerManager.h"
+#include "../../state/phase.h"
 
 
 namespace {
@@ -34,7 +34,7 @@ void FishSlot::tryPerform() {
 
 	// Sleep ultra low-power across normally sleeping slots to start of fish slot.
 	// Note sleep might have assertions on power condition
-	FishSchedule::init();	// Calculate start time once
+	FishSchedule::initStartTime();
 
 	Phase::set(PhaseEnum::SleepTilFish);
 	sleepUntilFishSlotStart();

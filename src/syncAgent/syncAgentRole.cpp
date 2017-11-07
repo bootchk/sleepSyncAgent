@@ -5,7 +5,7 @@
 
 #include "message/messageFactory.h"
 #include "state/role.h"
-#include "policy/mergePolicy.h"
+#include "slots/merging/mergePolicy.h"
 #include "logging/logger.h"
 
 /*

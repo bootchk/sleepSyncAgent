@@ -3,7 +3,7 @@
 
 #include "mergeSchedule.h"
 
-#include "../clique/schedule.h"
+#include "../../clique/schedule.h"
 
 /*
  * Merge slot:

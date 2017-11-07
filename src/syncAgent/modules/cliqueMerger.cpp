@@ -126,7 +126,8 @@ DeltaTime periodTimeToMergeOtherClique() {
  * For both, only the periodTimeToMergeeSyncSlotMiddle need be calculated.
  * A DeltaSync will be calculated at the time self sends MergeSync.
  *
- * For mergeMy, self's schedule is adjusted.  For mergeOther, not adjust self's schedule.
+ * For mergeMy, self's schedule is adjusted.
+ * For mergeOther, not adjust self's schedule.
  */
 void initMergeMyClique(SyncMessage* msg){
 	/*

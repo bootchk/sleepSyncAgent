@@ -1,7 +1,7 @@
 
 #include <timeMath.h>
 
-#include "../clique/periodTime.h"
+#include "../../clique/periodTime.h"
 
 /*
  * Schedule for MergeSlot

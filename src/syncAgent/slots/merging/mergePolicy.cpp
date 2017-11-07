@@ -3,7 +3,8 @@
 
 #include <random.h>	// randBool
 
-#include "policyParameters.h"
+// TODO mergePolicyParameters.h
+#include "../../policy/policyParameters.h"
 
 
 #include "mergePolicy.h"

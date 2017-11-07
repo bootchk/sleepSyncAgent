@@ -8,8 +8,8 @@
 #include "../state/role.h"
 
 #include "../slots/syncWorkSlot.h"
-#include "../slots/fishSlot.h"
-#include "../slots/mergeSlot.h"
+#include "../slots/fishing/fishSlot.h"
+#include "../slots/merging/mergeSlot.h"
 
 #include "../clique/clique.h"
 

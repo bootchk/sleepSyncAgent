@@ -3,7 +3,7 @@
 
 #include "clique.h"
 
-#include "../policy/fishPolicy.h"
+#include "../slots/fishing/fishPolicy.h"
 #include "../policy/dropoutMonitor.h"
 
 //#include "../policy/masterXmitSyncPolicy.h"

@@ -4,15 +4,15 @@
 #include "mergeSlot.h"
 #include "mergeSchedule.h"
 
-#include "../modules/syncSender.h"
-#include "../sleepers/syncSleeper.h"
-#include "../state/phase.h"
-#include "../syncAgent.h"
-#include "../scheduleParameters.h"
+#include "../../modules/syncSender.h"
+#include "../../sleepers/syncSleeper.h"
+#include "../../state/phase.h"
+#include "../../syncAgent.h"
+#include "../../scheduleParameters.h"
 
 // For debugging
-#include "../state/role.h"
-#include "../logging/logger.h"
+#include "../../state/role.h"
+#include "../../logging/logger.h"
 
 
 

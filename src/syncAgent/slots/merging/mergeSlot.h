@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../policy/mergePolicy.h"
+#include "mergePolicy.h"
 
 
 /* MergeSlot of my schedule.

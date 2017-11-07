@@ -1,17 +1,20 @@
 
 #include <timeMath.h>
 
-#include "../types.h"
+#include "../../types.h"
 
 
 /*
  * Schedule for FishSlot
  *
- *
+ * Determines:
+ * - what slot to fish in
+ * - slot duration
  */
 class FishSchedule {
 public:
-	static void init();
+	static void initStartTime();
+
 
 	static DeltaTime deltaToSlotStart();
 	static DeltaTime deltaToSlotEnd();

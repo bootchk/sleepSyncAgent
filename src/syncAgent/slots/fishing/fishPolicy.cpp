@@ -1,9 +1,9 @@
 
 #include "fishPolicy.h"
 
-#include "../slots/fishingParameters.h"
+#include "fishingParameters.h"
 
-#include "../logging/logger.h"
+#include "../../logging/logger.h"
 
 namespace {
 
