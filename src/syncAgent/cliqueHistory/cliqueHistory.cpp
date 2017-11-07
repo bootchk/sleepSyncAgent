@@ -1,24 +1,55 @@
 
+#include <cassert>
+
+#include <radioSoC.h>	// SystemID
+
 #include "cliqueHistory.h"
+#include "cliqueRecord.h"
 
+namespace {
 
+static const unsigned int RecordCount = 6;
 
+CliqueRecord cliqueRecords[6];
 
-void CliqueHistory::back() {
-	// TODO
+unsigned int currentCliqueIndex = 0;
 }
 
-bool CliqueHistory::isFormerCliqueSelf() {
-	bool result = true;
-	// TODO
-	return result;
+
+/*
+ * History starts with self as master
+ */
+void CliqueHistory::init() {
+	cliqueRecords[0].masterID = System::ID();
+	cliqueRecords[0].offsetToNextMastersSync = 0;
 }
 
-SystemID CliqueHistory::formerCliqueMasterID() {
-	return 1;	// TODO
+
+void CliqueHistory::add(SystemID newMasterID, DeltaTime offsetToNextClique) {
+	if (currentCliqueIndex < (RecordCount - 1)) {
+		currentCliqueIndex++;
+		cliqueRecords[currentCliqueIndex].masterID = System::ID();
+		cliqueRecords[0].offsetToNextMastersSync = offsetToNextClique;
+	}
+	// else no more storage, history is flawed
+	// TODO update the offset of the last CliqueRecord to skip an intermediate clique
 }
 
-DeltaTime CliqueHistory::offsetToFormerClique() {
+
+void CliqueHistory::setCurrentCliqueRecordToFormerClique() {
+	assert(currentCliqueIndex > 0);
+	currentCliqueIndex--;
+}
+
+bool CliqueHistory::isCurrentCliqueRecordSelf() {
+	return (cliqueRecords[currentCliqueIndex].masterID == System::ID());
+}
+
+SystemID CliqueHistory::currentCliqueRecordMasterID() {
+	return cliqueRecords[0].masterID;
+}
+
+DeltaTime CliqueHistory::offsetToCurrentClique() {
 	// TODO latencies?  Near end of sync period?
 	return 1; // TODO
 }

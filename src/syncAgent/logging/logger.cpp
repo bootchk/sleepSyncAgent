@@ -11,10 +11,10 @@
 #include "flashIndex.h"
 
 #include "../message/message.h"
-#include "../modules/schedule.h"
+#include "../clique/schedule.h"
 
 #include "../globals.h" // clique
-#include "../modules/clique.h"
+#include "../clique/clique.h"
 
 
 

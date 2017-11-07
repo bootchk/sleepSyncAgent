@@ -3,7 +3,7 @@
 
 #include "../scheduleParameters.h"
 
-#include "../modules/clique.h"
+#include "../clique/clique.h"
 #include "../globals.h"  // clique
 
 

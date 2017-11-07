@@ -13,7 +13,7 @@
 #include "oversleepMonitor.h"
 
 #include "../message/serializer.h"
-#include "../modules/schedule.h"
+#include "../clique/schedule.h"
 #include "../scheduleParameters.h"
 
 #include "../logging/logger.h"

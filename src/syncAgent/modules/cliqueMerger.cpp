@@ -8,6 +8,8 @@
 
 #include "../message/messageFactory.h"
 
+#include "../cliqueHistory/cliqueHistory.h"
+
 // Debugging
 #include "../logging/logger.h"
 
@@ -156,6 +158,8 @@ void initMergeMyClique(SyncMessage* msg){
 	superiorMasterID = msg->masterID;
 	inferiorMasterID = owningClique->getMasterID();
 
+
+	CliqueHistory::add(superiorMasterID, 1 );	// TODO
 
 	// FUTURE migrate this outside and return result to indicate it should be done
 	/*

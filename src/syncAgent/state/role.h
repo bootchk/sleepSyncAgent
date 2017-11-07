@@ -1,8 +1,13 @@
 #pragma once
 
+/*
+ * Role self does in normally sleeping part of sync period.
+ *
+ * Master/Slave role implemented by Clique.
+ */
 enum class  Role { Merger, Fisher, NoFishing };
 
-// Master/Slave role implemented by Clique.
+
 class MergerFisherRole {
 public:
 

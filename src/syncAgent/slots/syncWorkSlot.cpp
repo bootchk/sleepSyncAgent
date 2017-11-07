@@ -15,7 +15,7 @@
 #include "../policy/workManager.h"
 #include "../logging/logger.h"
 
-#include "../modules/clique.h"
+#include "../clique/clique.h"
 
 
 

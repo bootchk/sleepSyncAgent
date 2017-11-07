@@ -11,7 +11,7 @@
 #include "../slots/fishSlot.h"
 #include "../slots/mergeSlot.h"
 
-#include "../modules/clique.h"
+#include "../clique/clique.h"
 
 #include "../policy/fishWaitingPolicy.cpp"
 

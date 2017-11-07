@@ -113,10 +113,11 @@ void Clique::grabMastership() {
 
 
 void Clique::revertToFormerMaster() {
-	setOtherMastership(CliqueHistory::formerCliqueMasterID());
+	// assert currentCliqueRecord is the former one
+	setOtherMastership(CliqueHistory::currentCliqueRecordMasterID());
 
 	// syncSlot at time of former master
-	schedule.adjustByCliqueHistoryOffset(CliqueHistory::offsetToFormerClique());
+	schedule.adjustByCliqueHistoryOffset(CliqueHistory::offsetToCurrentClique());
 
 	// Reset fishing policy to fish slot near syncSlot.
 	// Former master may have drifted.
@@ -125,9 +126,9 @@ void Clique::revertToFormerMaster() {
 
 
 void Clique::revertByCliqueHistory(){
-	CliqueHistory::back();
+	CliqueHistory::setCurrentCliqueRecordToFormerClique();
 
-	if (CliqueHistory::isFormerCliqueSelf()) {
+	if (CliqueHistory::isCurrentCliqueRecordSelf()) {
 		grabMastership();
 		// Self is master
 	}

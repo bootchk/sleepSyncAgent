@@ -2,6 +2,7 @@
 #include <cassert>
 #include "syncAgent.h"
 #include "globals.h"	// clique
+#include "cliqueHistory/cliqueHistory.h"
 #include "scheduleParameters.h"
 #include "sleepers/syncPowerSleeper.h"
 #include "sleepers/syncSleeper.h"
@@ -82,14 +83,19 @@ void SyncAgent::initSyncObjects(
 	 */
 	Ensemble::init(SyncSleeper::getMsgReceivedCallback(), &radioUseCaseSleepSync);
 
+#ifdef LOW_XMIT_POWER
 	// TEMP: testing range with lower xmit power
 	// Plus0, Minus4, Minus12, Minus40
 	radioUseCaseSleepSync.setXmitPower(TransmitPowerdBm::Minus40);
+#else
+	// Default: 0dBm
+#endif
 
 	// Serializer reads and writes directly to radio buffer
 	Serializer::init(Ensemble::getBufferAddress(), Radio::FixedPayloadCount);
 
 	clique.init();
+	CliqueHistory::init();
 
 	/*
 	 * Register callbacks that return debug info

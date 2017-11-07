@@ -7,7 +7,7 @@
 #include "../policy/fishPolicy.h"
 #include "../logging/logger.h"
 
-#include "../modules/clique.h"
+#include "../clique/clique.h"
 
 // FUTURE memoize end time also???
 

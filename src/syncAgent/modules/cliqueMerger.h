@@ -1,9 +1,10 @@
 #pragma once
 
 
-#include "clique.h"
+#include "../clique/clique.h"
+#include "../clique/periodTime.h"
 #include "../message/message.h"
-#include "periodTime.h"
+
 
 /*
  * Record of a Clique merging into a better Clique.

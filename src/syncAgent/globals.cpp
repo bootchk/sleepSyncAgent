@@ -1,6 +1,6 @@
 #include "globals.h"
 
-#include "modules/clique.h"
+#include "clique/clique.h"
 
 Clique clique;
 

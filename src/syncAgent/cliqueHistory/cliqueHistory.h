@@ -11,28 +11,33 @@
  *
  * Always includes one, when unit was its own master.
  *
- * "former" clique is a pointer into the history
+ * currentCliqueIndex is into the history
  */
 
 class CliqueHistory {
 public:
 
+	static void init();
+
 	/*
 	 * No result if exhaust storage.
 	 */
-	// TODO call to this
-	// TODO implement this
-	static void add();
+	static void add(SystemID,  DeltaTime offsetToNextClique);
 
 
 	/*
-	 * Point former clique at next one prior.
-	 * No effect if is no prior.
+	 * Point current clique at next one prior.
+	 * Illegal to call if current clique is self.
 	 */
-	static void back();
+	static void setCurrentCliqueRecordToFormerClique();
 
-	static bool isFormerCliqueSelf();
+	// Illegal to call except when there was a former clique (at least one, with self Master of own clique)
+	static bool isCurrentCliqueRecordSelf();
 
-	static SystemID formerCliqueMasterID();
-	static DeltaTime offsetToFormerClique();
+	static SystemID currentCliqueRecordMasterID();
+
+	/*
+	 * Return a DeltaTime from now to current clique (not the lost one, but one we are going back to.)
+	 */
+	static DeltaTime offsetToCurrentClique();
 };

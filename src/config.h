@@ -125,6 +125,18 @@
 #define LEAST_ID_IS_BETTER_CLIQUE 1
 
 
+/*
+ * Normal xmit power is 0dBm
+ * Low is -40dBm, vastly reduced.
+ */
+#define LOW_XMIT_POWER 1
+
+
+/*
+ * Fish for many consecutive slots per sync period.  See fishingParameters.h
+ */
+#define EXTENDED_FISH_DURATION 1
+
 
 /*
  * See also nRF5x powerMonitor.h where voltage threshold of brownout is defined.
