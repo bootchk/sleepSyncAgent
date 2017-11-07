@@ -1,29 +1,32 @@
 #pragma once
 
 #include <cassert>
+
+#include <radioSoC.h>  // LongTime
+
 #include "../../types.h"	// ScheduleCount
 
 
-// FUTURE, resettable and a policy that fishes outward in both directions from sync slot.
+
 /*
  * Generator of sequence of ordinal of normally sleeping slot to fish in.
  *
  * Abstract base class API:
- * - next()
- * - reset()
+ * - getStartTimeToFish()
+ * - restart()
  *
  * Subclasses:
  *
  * SimpleFishPolicy
  * - circular, ascending
  * - in sequential order
- * - reset() has no effect
+ * - restart() has no effect
  *
  * SyncRecoveryFishPolicy:
  * - expands outward from SyncPoint
  * - alternates direction, ascending and descending
  *
- * next() returns ordinal, i.e. not a zero-based index.
+ * nextFishSlotOrdinal() returns ordinal, i.e. not a zero-based index.
  */
 
 
@@ -57,8 +60,10 @@ public:
  * !!! Note it is vital to start at the first sleeping slot past and before the SyncSlot.
  * That is where a drifted master is most likely to be.
  */
-class SyncRecoveryFishPolicy {
-public:
+class SyncRecoveryTrollingPolicy {
+private:
 	static ScheduleCount nextFishSlotOrdinal();
-	static void reset();
+public:
+	static void restart();
+	static LongTime getStartTimeToFish();
 };

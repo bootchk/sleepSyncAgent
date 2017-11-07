@@ -3,7 +3,7 @@
 
 #include "clique.h"
 
-#include "../slots/fishing/fishPolicy.h"
+#include "../slots/fishing/fishingManager.h"
 #include "../policy/dropoutMonitor.h"
 
 //#include "../policy/masterXmitSyncPolicy.h"
@@ -105,10 +105,11 @@ void Clique::grabMastership() {
 	 */
 
 	/*
-	 * Reset fishing policy to fish slot near syncSlot.
+	 * Reset fishing to troll slot near syncSlot.
 	 * This might help recover a Master who didn't permanently drop out.
 	 */
-	SyncRecoveryFishPolicy::reset();
+	FishingManager::restartTrollingMode();
+	// WAS SyncRecoveryFishPolicy::reset();
 }
 
 
@@ -121,7 +122,8 @@ void Clique::revertToFormerMaster() {
 
 	// Reset fishing policy to fish slot near syncSlot.
 	// Former master may have drifted.
-	SyncRecoveryFishPolicy::reset();
+	FishingManager::restartTrollingMode();
+	// WAS SyncRecoveryFishPolicy::reset();
 }
 
 
