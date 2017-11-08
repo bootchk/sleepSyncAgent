@@ -2,6 +2,10 @@
 
 
 #include <radioSoC.h>  // LongTime
+#include "../../modules/deltaSync.h"  // DeltaSync
+
+
+
 
 /*
  * FishingMode is (roughly speaking) a subclass of MergerFisherRole::Fisher.
@@ -30,14 +34,22 @@ enum class FishingMode {
  * Knows current FishingMode
  * Switches mode on commmand, understands constraints.
  *
- * Algebra:
- * These are legal sequences:
+ * Algebra: legal sequences:
+ *
+ * - Usual sequence
+ * switchToTrolling(); getStartTimeToFish(); checkFishingDone();....getStartTimeToFish();
+ *
  * - mode can be switched regardless of current mode.
  * 	switchToTrolling();switchToTrolling();
  * 	switchToDeepFishing();switchToDeepFishing();
  *
  * - mode can be restarted even if mode is not current mode.  Does not switch to mode.
  * switchToDeepFishing(); restartTrollingMode();
+ *
+ * - every mode can checkFishingDone
+ * switchToDeepFishing(); checkFishingDone(); switchToTrolling(); checkFishingDone();
+ *
+ *
  */
 class FishingManager {
 public:
@@ -47,7 +59,7 @@ public:
 	static void checkFishingDone();
 
 	static void switchToTrolling();
-	static void switchToDeepFishing();
+	static void switchToDeepFishing(DeltaTime, Callback);
 
 	/*
 	 * Get from current mode
@@ -60,8 +72,8 @@ public:
 	 * We may already be deep fishing for a new master.
 	 * This does NOT force mode to trolling, deep fishing might continue.
 	 *
-	 * Called when we lost sync?
-	 * TODO
+	 * Called when we suspect a master would probably be found if policy restarts fishing around sync slot.
+	 * E.G. when master dropped out
 	 */
 	static void restartTrollingMode();
 };

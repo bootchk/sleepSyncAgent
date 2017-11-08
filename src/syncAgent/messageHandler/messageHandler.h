@@ -59,7 +59,7 @@ public:
 	static HandlingResult handle(SyncMessage* msg);
 private:
 	static HandlingResult handleMasterSyncMessage(SyncMessage* msg) ;
-	static HandlingResult handleMergeSyncMessage(SyncMessage* msg);
+	//static HandlingResult handleMergeSyncMessage(SyncMessage* msg);
 	static HandlingResult handleWorkSyncMessage(SyncMessage* msg);
 	static HandlingResult handleAbandonMastershipMessage(SyncMessage* msg);
 	static HandlingResult handleInfoMessage(SyncMessage* msg);

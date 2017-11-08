@@ -6,9 +6,9 @@ namespace {
 	FishingMode mode = FishingMode::Trolling;
 }
 
-void FishingManager::switchToDeepFishing() {
+void FishingManager::switchToDeepFishing(DeltaTime deltaToSyncPointOfFish, Callback aCallback) {
 	mode = FishingMode::DeepFishing;
-	DeepFishingPolicy::restart();
+	DeepFishingPolicy::restart(deltaToSyncPointOfFish, aCallback);
 }
 
 void FishingManager::switchToTrolling() {
@@ -16,6 +16,7 @@ void FishingManager::switchToTrolling() {
 }
 
 void FishingManager::restartTrollingMode() {
+	// Not require mode is Trolling
 	SyncRecoveryTrollingPolicy::restart();
 }
 
@@ -26,17 +27,19 @@ void FishingManager::checkFishingDone() {
 	// Delegate to current fishing mode
 	switch(mode){
 	case FishingMode::Trolling:
-		SyncRecoveryTrollingPolicy::checkDone();
+		// It never returns true, don't care
+		(void) SyncRecoveryTrollingPolicy::checkDone();
 		break;
 	case FishingMode::DeepFishing:
-		DeepFishingPolicy::checkDone();
+		if (DeepFishingPolicy::checkDone()) {
+			switchToTrolling();
+		}
 		break;
 	}
 }
 
 
 LongTime FishingManager::getStartTimeToFish(){
-
 
 	LongTime result;
 
@@ -50,6 +53,4 @@ LongTime FishingManager::getStartTimeToFish(){
 	}
 	return result;
 }
-
-
 

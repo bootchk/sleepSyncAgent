@@ -8,6 +8,7 @@
 #include "../logging/logger.h"
 #include "../syncAgent.h"
 #include "../control/controller.h"
+#include "../slots/fishing/fishingManager.h"
 
 
 
@@ -24,7 +25,8 @@
 
 namespace {
 
-HandlingResult handleSyncAspectOfSyncMsg(SyncMessage* msg){
+HandlingResult handleSyncAspectOfSyncCarryingMsg(SyncMessage* msg){
+
 	/*
 	 * Filter: only respond to superior or self's clique.
 	 */
@@ -47,6 +49,64 @@ HandlingResult handleSyncAspectOfSyncMsg(SyncMessage* msg){
 		return HandlingResult::KeepListening;
 }
 
+
+/*
+ * Callbacks registered with FishingManager
+ */
+void endDeepFishingWithNoAction() {
+	/*
+	 * Self stays in current clique.
+	 */
+	// FUTURE remember so we aren't continually fished to another.
+}
+
+void endDeepFishingWithRecoverMaster() {
+	/*
+	 * Master left.
+	 * Recover master if we haven't already heard another assuming mastership.
+	 */
+	// TODO poor strategy is self to assume
+
+}
+
+/*
+ * Some other superior clique member fished us.
+ * That other is sending this.
+ * Try to DeepFish their master.
+ * Stay in current clique until that succeeds.
+ */
+HandlingResult handleEnticingInferiorMessage(SyncMessage* msg){
+	/*
+	 * Conversion from DeltaSync to DeltaTime loses some rigor
+	 * Type DeltaSync in message is a class instance.
+	 * DeltaTime is dumber.
+	 */
+	FishingManager::switchToDeepFishing(msg->deltaToNextSyncPoint.get(), endDeepFishingWithNoAction);
+	return HandlingResult::KeepListening;
+}
+
+/*
+ * My master fished a superior clique and left.
+ * My former master is sending me this.
+ * Try to DeepFish the same superior master.
+ * My current clique probably has no master until that succeeds.
+ * If not succeed, try recover former master.
+ */
+HandlingResult handleMasterMergedAwayMessage(SyncMessage* msg){
+	FishingManager::switchToDeepFishing(msg->deltaToNextSyncPoint.get(), endDeepFishingWithRecoverMaster);
+	return HandlingResult::KeepListening;
+}
+/*
+ * A slave in my clique fished a superior clique and left.
+ * That slave is sending this.
+ */
+HandlingResult handleSlaveMergedAwayMessage(SyncMessage* msg){
+	FishingManager::switchToDeepFishing(msg->deltaToNextSyncPoint.get(), endDeepFishingWithNoAction);
+	return HandlingResult::KeepListening;
+}
+
+
+
 }  // namespace
 
 
@@ -62,11 +122,24 @@ HandlingResult SyncSlotMessageHandler::handle(SyncMessage* msg){
 	case MessageType::MasterSync:
 		handlingResult = handleMasterSyncMessage(msg);
 		break;
-	case MessageType::MasterMergedAway:
-	case MessageType::SlaveMergedAway:
+	/*
+	 * Former design: MergeSync carried sync and receiver immediately merged,
+	 * even if Master of other clique was not in range.
+	 * That worked, and well, but only if all units could hear each other.
+	 *
+	 * case MessageType::MergeSync:
+	 *	handlingResult = handleMergeSyncMessage(msg);
+	 */
 	case MessageType::EnticingInferior:
-		// TODO separate handling
-		handlingResult = handleMergeSyncMessage(msg);
+		handlingResult = handleEnticingInferiorMessage(msg);
+		SyncAgent::countMergeSyncHeard++;
+		break;
+	case MessageType::MasterMergedAway:
+		handlingResult = handleMasterMergedAwayMessage(msg);
+		SyncAgent::countMergeSyncHeard++;
+		break;
+	case MessageType::SlaveMergedAway:
+		handlingResult = handleSlaveMergedAwayMessage(msg);
 		SyncAgent::countMergeSyncHeard++;
 		break;
 	case MessageType::WorkSync:
@@ -91,12 +164,16 @@ HandlingResult SyncSlotMessageHandler::handle(SyncMessage* msg){
 
 
 HandlingResult SyncSlotMessageHandler::handleMasterSyncMessage(SyncMessage* msg){
-	return handleSyncAspectOfSyncMsg(msg);
+	return handleSyncAspectOfSyncCarryingMsg(msg);
 }
 
+/*
+OLD
 HandlingResult SyncSlotMessageHandler::handleMergeSyncMessage(SyncMessage* msg){
-	return handleSyncAspectOfSyncMsg(msg);
+	return handleSyncAspectOfSyncCarryingMsg(msg);
 }
+*/
+
 
 HandlingResult SyncSlotMessageHandler::handleWorkSyncMessage(SyncMessage* msg){
 	/*
@@ -115,7 +192,7 @@ HandlingResult SyncSlotMessageHandler::handleWorkSyncMessage(SyncMessage* msg){
 	// FUTURE if our app is scheduling work and we already heard one
 	// and work is generic (not carrying any info) we should not xmit WorkSync
 
-	return handleSyncAspectOfSyncMsg(msg);
+	return handleSyncAspectOfSyncCarryingMsg(msg);
 }
 
 

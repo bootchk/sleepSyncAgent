@@ -49,5 +49,12 @@ typedef DeltaTime (*TimeoutFunc)();
 
 
 
+/*
+ * Callback function taking void, returning void.
+ */
+typedef void (*Callback)();
+
+
+
 
 

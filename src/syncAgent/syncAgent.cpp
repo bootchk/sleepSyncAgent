@@ -23,6 +23,7 @@
 
 CliqueMerger SyncAgent::cliqueMerger;
 
+// A statistic we can include in certain messages
 WorkPayload SyncAgent::countMergeSyncHeard;
 
 void (*SyncAgent::onWorkMsgCallback)(WorkPayload);

@@ -5,6 +5,7 @@
 #include <radioSoC.h>  // LongTime
 
 #include "../../types.h"	// ScheduleCount
+//#include "../../modules/deltaSync.h"
 
 
 
@@ -71,12 +72,11 @@ public:
 };
 
 
-typedef void (*FishPolicyDoneCallback)();
+
 
 class DeepFishingPolicy {
 public:
-	static void restart();
+	static void restart(DeltaTime, Callback);
 	static LongTime getStartTimeToFish();
-	static void setCallbackOnDone(FishPolicyDoneCallback);
-	static void checkDone();
+	static bool checkDone();
 };
