@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "modules/cliqueMerger.h"
+#include "cliqueMerger/cliqueMerger.h"
 #include "message/message.h"
 
 

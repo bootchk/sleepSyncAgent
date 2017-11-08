@@ -309,7 +309,7 @@ void CliqueMerger::adjustMergerBySyncMsg(SyncMessage* msg) {
 
 
 
-SyncMessage* CliqueMerger::makeMergeSyncMsg(){
+SyncMessage* CliqueMerger::makeMergeMsg(){
 	// side effect on serializer's message templates
 	assert(isActive);
 

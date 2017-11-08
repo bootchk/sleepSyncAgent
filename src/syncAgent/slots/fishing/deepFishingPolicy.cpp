@@ -7,7 +7,13 @@
 
 namespace {
 	unsigned int countFishings;
+
+	/*
+	 * Info received in a MasterMergedAway or SlaveMergedAway msg in my SyncSlot
+	 * from the Master or Slave who merged away, who is now in the Merger role.
+	 */
 	DeltaTime deltaToSyncPointOfFish;
+
 	Callback fishPolicyDoneCallback = nullptr;
 }
 

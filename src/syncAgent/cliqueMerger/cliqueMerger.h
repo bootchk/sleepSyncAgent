@@ -42,8 +42,9 @@ public:
 	/*
 	 * Knows how construct.
 	 * !!! This must be called just before sending, since the SyncOffset is calculated when called.
+	 * Makes a message instance of subclass of MergeSync
 	 */
-	static SyncMessage* makeMergeSyncMsg();
+	static SyncMessage* makeMergeMsg();
 
 	// const pointer to const PeriodTime
 	static const PeriodTime* getPeriodTimeToMergeSlotStart();

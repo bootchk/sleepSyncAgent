@@ -36,15 +36,16 @@ void SyncAgent::ToNoFishingFromOther() {
 
 
 /*
- * Was Fisher, caught another clique.  Begin role Merger
+ * Was Fisher, caught another clique.
+ * Begin role Merger.
  */
 void SyncAgent::toMergerFromFisher(SyncMessage* msg){
 	// assert slot is fishSlot
 	assert (MessageFactory::carriesSync(msg->type));
 	assert(!MessageFactory::isMergeSync(msg->type));
 	assert(MergerFisherRole::isFisher());
+
 	MergerFisherRole::toMerger();
-	// logging done later
 	cliqueMerger.initFromMsg(msg);
 
 	// assert my schedule might have been adjusted
