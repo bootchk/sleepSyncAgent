@@ -43,7 +43,9 @@ HandlingResult FishSlotMessageHandler::handle(SyncMessage* msg){
 	case MessageType::MasterSync:
 		handlingResult = handleMasterSyncMessage(msg);
 		break;
-	case MessageType::MergeSync:
+	case MessageType::MasterMergedAway:
+	case MessageType::SlaveMergedAway:
+	case MessageType::EnticingInferior:
 		handlingResult = handleMergeSyncMessage(msg);
 		break;
 	case MessageType::AbandonMastership:

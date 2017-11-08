@@ -26,8 +26,14 @@ char const * SyncMessage::representation(SyncMessage* msg) {
 		case MessageType::MasterSync:
 			result = "MastS";
 			break;
-		case MessageType::MergeSync:
-			result = "MergS";
+		case MessageType::MasterMergedAway:
+			result = "MSMAw";
+			break;
+		case MessageType::SlaveMergedAway:
+			result = "MSSAw";
+			break;
+		case MessageType::EnticingInferior:
+			result = "MSEnt";
 			break;
 		case MessageType::WorkSync:
 			result = "WorkS";

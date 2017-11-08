@@ -96,7 +96,7 @@ void SyncSender::sendMasterSync() {
 
 void SyncSender::sendMergeSync() {
 	// cliqueMerger knows how to create SyncMessage of type MergeSync
-	SyncMessage* msgPtr = CliqueMerger::makeMergeSync();
+	SyncMessage* msgPtr = CliqueMerger::makeMergeSyncMsg();
 	sendMessage(msgPtr);
 }
 

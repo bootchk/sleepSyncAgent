@@ -34,7 +34,9 @@ public:
 		switch(castType) {
 		case MessageType::Info:
 		case MessageType::MasterSync:
-		case MessageType::MergeSync:
+		case MessageType::MasterMergedAway:
+		case MessageType::SlaveMergedAway:
+		case MessageType::EnticingInferior:
 		case MessageType::AbandonMastership:
 		case MessageType::WorkSync:
 
@@ -45,6 +47,23 @@ public:
 			result = true;
 		}
 
+		return result;
+	}
+
+	/*
+	 * Is message kind MergeSync (related to merging)?
+	 */
+	static bool isMergeSync(MessageType type) {
+		bool result;
+		switch (type){
+		case MessageType::MasterSync:
+		case MessageType::EnticingInferior:
+		case MessageType::WorkSync:
+			result = true;
+			break;
+		default:
+			result = false;
+		}
 		return result;
 	}
 
@@ -60,10 +79,15 @@ public:
 		bool result;
 		switch (type){
 		case MessageType::MasterSync:
-		case MessageType::MergeSync:
+		case MessageType::EnticingInferior:
 		case MessageType::WorkSync:
 			result = true;
 			break;
+
+		// Carry offset, but for DeepFishing
+		case MessageType::MasterMergedAway:
+		case MessageType::SlaveMergedAway:
+
 		case MessageType::AbandonMastership:
 		case MessageType::WorkSetProximity:
 		case MessageType::WorkScatterTime:
@@ -84,11 +108,11 @@ public:
 		message.work = SyncAgent::countMergeSyncHeard;
 		return &message;
 	}
-	static SyncMessage* initMergeSyncMessage(DeltaTime aDeltaToNextSyncPoint,
+	static SyncMessage* initMergeSyncMessage(MessageType aType, DeltaTime aDeltaToNextSyncPoint,
 			SystemID superiorMasterID,
 			SystemID inferiorMasterID
 			) {
-		message.type = MessageType::MergeSync;
+		message.type = aType;
 		message.deltaToNextSyncPoint.set(aDeltaToNextSyncPoint);	// throws assertion if out of range
 		message.masterID = superiorMasterID;
 

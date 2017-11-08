@@ -44,7 +44,12 @@ enum class MessageType {
 	 * Only in lower layers
 	 */
 	MasterSync = 17,	// Don't start at 0
-	MergeSync = 34,
+
+	// Merging
+	MasterMergedAway = 34,
+	SlaveMergedAway = 37,
+	EnticingInferior = 41,
+
 	AbandonMastership = 68,
 	/*
 	 * App layer

@@ -62,7 +62,10 @@ HandlingResult SyncSlotMessageHandler::handle(SyncMessage* msg){
 	case MessageType::MasterSync:
 		handlingResult = handleMasterSyncMessage(msg);
 		break;
-	case MessageType::MergeSync:
+	case MessageType::MasterMergedAway:
+	case MessageType::SlaveMergedAway:
+	case MessageType::EnticingInferior:
+		// TODO separate handling
 		handlingResult = handleMergeSyncMessage(msg);
 		SyncAgent::countMergeSyncHeard++;
 		break;

@@ -46,4 +46,7 @@ public:
 		static const ScheduleCount FishSessionDuration =
 				ScheduleParameters::HFXOStartup
 				+ SlotsFishedPerPeriod * ScheduleParameters::VirtualSlotDuration;
+
+
+	static const unsigned int CountFishingsPerDeepFishing = 6;
 };

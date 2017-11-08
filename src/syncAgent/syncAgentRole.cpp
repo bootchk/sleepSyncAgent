@@ -41,7 +41,7 @@ void SyncAgent::ToNoFishingFromOther() {
 void SyncAgent::toMergerFromFisher(SyncMessage* msg){
 	// assert slot is fishSlot
 	assert (MessageFactory::carriesSync(msg->type));
-	assert(msg->type != MessageType::MergeSync);
+	assert(!MessageFactory::isMergeSync(msg->type));
 	assert(MergerFisherRole::isFisher());
 	MergerFisherRole::toMerger();
 	// logging done later

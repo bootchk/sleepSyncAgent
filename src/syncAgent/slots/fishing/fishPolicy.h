@@ -14,6 +14,7 @@
  * Abstract base class API:
  * - getStartTimeToFish()
  * - restart()
+ * - checkDone()
  *
  * Subclasses:
  *
@@ -66,4 +67,16 @@ private:
 public:
 	static void restart();
 	static LongTime getStartTimeToFish();
+	static void checkDone() {};
+};
+
+
+typedef void (*FishPolicyDoneCallback)();
+
+class DeepFishingPolicy {
+public:
+	static void restart();
+	static LongTime getStartTimeToFish();
+	static void setCallbackOnDone(FishPolicyDoneCallback);
+	static void checkDone();
 };

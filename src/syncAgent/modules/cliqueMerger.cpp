@@ -32,6 +32,7 @@ PeriodTime periodTimeToMergeSlotStart;
 SystemID superiorMasterID;
 SystemID inferiorMasterID;
 
+MessageType kindOfMerger;
 
 /*
  * Many of the following routines are coded nievely, to be understandable and correct.
@@ -159,6 +160,7 @@ void initMergeMyClique(SyncMessage* msg){
 	superiorMasterID = msg->masterID;
 	inferiorMasterID = owningClique->getMasterID();
 
+	// TODO kindOfMerger == MessageType::MasterMergedAway
 
 	CliqueHistory::add(superiorMasterID, 1 );	// TODO
 
@@ -176,6 +178,7 @@ void initMergeMyClique(SyncMessage* msg){
 	 * Self is Role Merger.
 	 * Self will send MergeSync in SyncSlot of former clique.
 	 */
+	assert((kindOfMerger == MessageType::MasterMergedAway) or (kindOfMerger == MessageType::SlaveMergedAway));
 }
 
 /*
@@ -185,8 +188,8 @@ void initMergeMyClique(SyncMessage* msg){
  */
 void initMergeOtherClique(SyncMessage* msg){
 	/*
-	 * Start sending sync to other clique members telling them to merge to self's clique,
-	 * and pass them offset from now to next SyncPoint
+	 * Start sending sync to other clique members telling them to merge to self's clique.
+	 * Pass offset from now to next SyncPoint
 	 * Self (owning) schedule is unchanged.
 	 * Now time becomes a mergeSlot in self schedule.
 	 *
@@ -216,6 +219,7 @@ void initMergeOtherClique(SyncMessage* msg){
 	 * Will send MergeSync (contending with master of other inferior clique.)
 	 * Self's clique and schedule unchanged.
 	 */
+	assert(kindOfMerger == MessageType::EnticingInferior);
 }
 
 } // namespace
@@ -255,6 +259,7 @@ void CliqueMerger::initFromMsg(SyncMessage* msg){
 	isActive = true;
 	assert(isActive);
 	// assert my schedule might have been adjusted
+	// assert all fields updated
 }
 
 
@@ -299,7 +304,7 @@ void CliqueMerger::adjustMergerBySyncMsg(SyncMessage* msg) {
 
 
 
-SyncMessage* CliqueMerger::makeMergeSync(){
+SyncMessage* CliqueMerger::makeMergeSyncMsg(){
 	// side effect on serializer's message templates
 	assert(isActive);
 
@@ -313,7 +318,7 @@ SyncMessage* CliqueMerger::makeMergeSync(){
 	 */
 	DeltaTime deltaSync = owningClique->schedule.deltaNowToNextSyncPoint();
 
-	return MessageFactory::initMergeSyncMessage(deltaSync, superiorMasterID, inferiorMasterID);
+	return MessageFactory::initMergeSyncMessage(kindOfMerger, deltaSync, superiorMasterID, inferiorMasterID);
 }
 
 

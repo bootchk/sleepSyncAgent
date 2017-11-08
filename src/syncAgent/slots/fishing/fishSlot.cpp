@@ -9,6 +9,7 @@
 
 #include "fishSlot.h"
 #include "fishSchedule.h"
+#include "fishingManager.h"
 
 #include "../../messageHandler/messageHandler.h"
 #include "../../sleepers/syncSleeper.h"
@@ -71,6 +72,9 @@ void FishSlot::perform() {
 
 	assert(!Ensemble::isRadioInUse());
 	Ensemble::shutdown();
+
+	FishingManager::checkFishingDone();
+
 	/*
 	 * Conditions:
 	 * (no sync msg was heard and receiver still on)

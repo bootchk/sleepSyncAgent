@@ -16,6 +16,7 @@
  * Responsibilities
  * 1. know PeriodTime of merge slot
  * 2. know the 'design' (state) of merger (attributes of the mergee clique.)
+ * 3. know how to contstruct MergeSync msg
  *
  *
  */
@@ -39,10 +40,10 @@ public:
 	static void adjustMergerBySyncMsg(SyncMessage* msg);
 
 	/*
-	 * Create a MergeSync message in the common message.
+	 * Knows how construct.
 	 * !!! This must be called just before sending, since the SyncOffset is calculated when called.
 	 */
-	static SyncMessage* makeMergeSync();
+	static SyncMessage* makeMergeSyncMsg();
 
 	// const pointer to const PeriodTime
 	static const PeriodTime* getPeriodTimeToMergeSlotStart();
