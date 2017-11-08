@@ -1,21 +1,21 @@
 
 #include <cassert>
 
-#include "../globals.h"	// clique
+#include "../../globals.h"	// clique
 
-#include "../modules/syncSender.h"
-#include "../modules/syncBehaviour.h"
-#include "../modules/syncPowerManager.h"
+#include "../../modules/syncSender.h"
+#include "../../modules/syncBehaviour.h"
+#include "../../modules/syncPowerManager.h"
 
 #include "syncWorkSlot.h"
 #include "syncSlotSchedule.h"
-#include "../messageHandler/messageHandler.h"
-#include "../state/phase.h"
-#include "../policy/workPolicy.h"
-#include "../policy/workManager.h"
-#include "../logging/logger.h"
+#include "../../messageHandler/messageHandler.h"
+#include "../../state/phase.h"
+#include "../../policy/workPolicy.h"
+#include "../../policy/workManager.h"
+#include "../../logging/logger.h"
 
-#include "../clique/clique.h"
+#include "../../clique/clique.h"
 
 
 

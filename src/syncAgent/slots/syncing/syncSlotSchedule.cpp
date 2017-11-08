@@ -1,10 +1,10 @@
 
 #include "syncSlotSchedule.h"
 
-#include "../scheduleParameters.h"
+#include "../../scheduleParameters.h"
 
-#include "../clique/clique.h"
-#include "../globals.h"  // clique
+#include "../../clique/clique.h"
+#include "../../globals.h"  // clique
 
 
 DeltaTime SyncSlotSchedule::deltaToThisSyncSlotMiddleSubslot(){

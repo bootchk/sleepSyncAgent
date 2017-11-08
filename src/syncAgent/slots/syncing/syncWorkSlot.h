@@ -2,7 +2,7 @@
 #pragma once
 
 #include "syncWorkSlot.h"
-#include "../sleepers/syncSleeper.h"
+#include "../../sleepers/syncSleeper.h"
 
 /*
  * Combined work/sync slot.

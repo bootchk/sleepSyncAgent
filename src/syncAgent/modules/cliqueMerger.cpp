@@ -160,7 +160,10 @@ void initMergeMyClique(SyncMessage* msg){
 	superiorMasterID = msg->masterID;
 	inferiorMasterID = owningClique->getMasterID();
 
-	// TODO kindOfMerger == MessageType::MasterMergedAway
+	if (SyncAgent::isSelfMaster() )
+		kindOfMerger = MessageType::MasterMergedAway;
+	else
+		kindOfMerger = MessageType::SlaveMergedAway;
 
 	CliqueHistory::add(superiorMasterID, 1 );	// TODO
 
@@ -205,6 +208,8 @@ void initMergeOtherClique(SyncMessage* msg){
 	periodTimeToMergeSlotStart.set(periodTimeToMergeOtherClique());
 
 	// No adjustment to self schedule
+
+	kindOfMerger = MessageType::EnticingInferior;
 
 	/*
 	 * Self is Master or Slave.
