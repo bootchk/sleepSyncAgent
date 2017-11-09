@@ -5,6 +5,9 @@
 #include "../../clique/clique.h"
 #include "../../globals.h"   // clique
 
+#include "../../logging/logger.h"
+
+
 namespace {
 	unsigned int countFishings;
 
@@ -57,6 +60,7 @@ bool DeepFishingPolicy::checkDone() {
 	bool result = false;
 	if (countFishings > FishingParameters::CountFishingsPerDeepFishing) {
 		// never caught anything
+		Logger::log("\ndeep over");
 
 		// Generate event
 		assert(fishPolicyDoneCallback != nullptr);

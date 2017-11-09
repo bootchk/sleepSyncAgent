@@ -76,8 +76,8 @@ DeltaTime getFishingDeltaFromMergeMsg(SyncMessage* msg) {
 	LongTime timeToFish = clique.schedule.adjustedEventTimeFromMsg(msg);
 	DeltaTime deltaToFish = TimeMath::clampedTimeDifferenceFromNow(timeToFish);
 
+	// We haven't changed cliques, schedule is unchanged (or slightly changed) since we started SyncSlot
 	DeltaTime result = deltaToFish + clique.schedule.deltaPastSyncPointToNow();
-	// ScheduleParameters::VirtualSlotDuration;
 
 	// No assertions here, assertions later when we use it.
 	return result;
@@ -90,12 +90,6 @@ DeltaTime getFishingDeltaFromMergeMsg(SyncMessage* msg) {
  * Stay in current clique until that succeeds.
  */
 HandlingResult handleEnticingInferiorMessage(SyncMessage* msg){
-	/*
-	 * Conversion from DeltaSync to DeltaTime loses some rigor
-	 * Type DeltaSync in message is a class instance.
-	 * DeltaTime is dumber.
-	 */
-
 	FishingManager::switchToDeepFishing(getFishingDeltaFromMergeMsg(msg), FishSlot::endDeepFishingWithNoAction);
 	return HandlingResult::KeepListening;
 }
@@ -223,7 +217,7 @@ HandlingResult SyncSlotMessageHandler::handleAbandonMastershipMessage(SyncMessag
 	 */
 	(void) msg;  // FUTURE use msg to record history
 
-	clique.setSelfMastership();
-	assert(clique.isSelfMaster());
+	clique.assumeMastership();
+
 	return HandlingResult::KeepListening;
 }

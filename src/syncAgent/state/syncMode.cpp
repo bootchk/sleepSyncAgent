@@ -90,10 +90,8 @@ void SyncModeManager::tryTransitions(){
 		// else no change to mode
 		break;
 		// No higher level
-#ifdef FUTURE
-		higher level is excess power, more fishing or power shedding
-		// TODO
-#endif
+
+		// XXX higher level is excess power, do more fishing or power shedding
 	}
 
 }

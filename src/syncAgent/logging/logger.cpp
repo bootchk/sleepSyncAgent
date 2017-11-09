@@ -64,9 +64,23 @@ void Logger::logUnexpectedEventWhileListening() {
 	localLogger.log("\nUnexpected clock event while listening.");
 }
 
-void Logger::logUnexpectedWakeWhileListening() {
-	localLogger.log("\nUnexpected wake while listening.");
+/*
+ * All our IRQ's set reason.
+ * Maybe a default IRQ ran (without setting reason)
+ * or any other unexpected return from WFE.
+ */
+void Logger::logWakeWithoutIRQSettingReason() {
+	localLogger.log("\nWake w/o known IRQ set reason.");
 	CustomFlash::writeZeroAtIndex(UnexpectedWakeWhileListen);
+}
+
+/*
+ * One of our IRQ's was called but found no event flag
+ * and set ReasonForWake::Unknown.
+ * Not used?
+ */
+void Logger::logWakeIRQFoundNoEvent() {
+	localLogger.log("\nWake IRQ returned reason Unknown.");
 }
 
 
@@ -148,11 +162,11 @@ void Logger::logStartSync() {
 	RemoteLogger::log(RemoteLoggedEvent::StartSync);
 }
 void Logger::logStartFish() {
-	localLogger.log("\nStart fish ");
+	localLogger.log("\nStart fish mode");
 	RemoteLogger::log(RemoteLoggedEvent::StartFish);
 }
 void Logger::logStopFish() {
-	localLogger.log("\nStop fish ");
+	localLogger.log("\nStop fish mode ");
 	RemoteLogger::log(RemoteLoggedEvent::StopFish);
 }
 

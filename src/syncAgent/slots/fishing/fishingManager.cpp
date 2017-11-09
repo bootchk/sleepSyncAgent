@@ -2,6 +2,10 @@
 #include "fishingManager.h"
 #include "fishPolicy.h"
 
+#include "../../logging/logger.h"
+
+
+
 namespace {
 	FishingMode mode = FishingMode::Trolling;
 }
@@ -12,12 +16,14 @@ namespace {
  */
 void FishingManager::switchToDeepFishing(DeltaTime deltaToSyncPointOfFish, Callback aCallback) {
 	if (mode != FishingMode::DeepFishing) {
+		Logger::log("\nto deep ");
 		mode = FishingMode::DeepFishing;
 		DeepFishingPolicy::restart(deltaToSyncPointOfFish, aCallback);
 	}
 }
 
 void FishingManager::switchToTrolling() {
+	Logger::log("\nto troll ");
 	mode = FishingMode::Trolling;
 }
 

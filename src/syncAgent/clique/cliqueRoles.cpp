@@ -84,3 +84,8 @@ void Clique::setOtherMastership(SystemID otherID) {
 }
 
 bool Clique::isSelfMaster() { return masterID == System::ID(); }
+
+
+void Clique::assumeMastership() {
+	setSelfMastership();
+}

@@ -6,7 +6,7 @@
 #include "message/messageFactory.h"
 #include "state/role.h"
 #include "slots/merging/mergePolicy.h"
-#include "logging/logger.h"
+
 
 /*
  * Actions for role transitions
@@ -41,8 +41,7 @@ void SyncAgent::ToNoFishingFromOther() {
  */
 void SyncAgent::toMergerFromFisher(SyncMessage* msg){
 	// assert slot is fishSlot
-	assert (MessageFactory::carriesSync(msg->type));
-	assert(!MessageFactory::isMergeSync(msg->type));
+	assert (MessageFactory::doesCarrySync(msg->type));
 	assert(MergerFisherRole::isFisher());
 
 	MergerFisherRole::toMerger();
@@ -71,5 +70,4 @@ void SyncAgent::toFisherFromMerger(){
 	MergerFisherRole::toFisher();
 	// role does not know about cliqueMerger
 	cliqueMerger.deactivate();
-	Logger::log(Logger::ToFisher);
 }

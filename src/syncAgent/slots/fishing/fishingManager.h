@@ -33,7 +33,9 @@ enum class FishingMode {
  *
  * Knows current FishingMode
  * Switches mode on commmand, understands constraints.
- *
+ * Knows start time to fish
+ */
+/*
  * Algebra: legal sequences:
  *
  * - Usual sequence
@@ -62,7 +64,10 @@ public:
 	static void switchToDeepFishing(DeltaTime, Callback);
 
 	/*
-	 * Get from current mode
+	 * Get from current mode.
+	 *
+	 * Currently result is "wild": just what we were told by another unit via Merge msg.
+	 * Caller must ensure it meets other constraints.
 	 */
 	static LongTime getStartTimeToFish();
 

@@ -323,7 +323,50 @@ LongTime Schedule::timeOfNextSyncPoint() {
 }
 
 
+/*
+ * Current design:
+ * Allow for HFXO rampup, i.e. not beyond nextSyncPoint - rampup.
+ * FUTURE allow to fish last slot if we keep HFXO on and seque directly to SyncSlot.
+ *
+ * TODO this should also depend on the max duration of slots.
+ * E.G. a MergeSlot takes at least one transmission time,
+ * and is synchronous so it always takes that time.
+ */
+LongTime Schedule::latestTimeToEndSlots() {
+	// FIXME
+	// assert(aTime <= (nextSyncPoint - ScheduleParameters::VirtualSlotDuration + 10*ScheduleParameters::MsgDurationInTicks));
+	// TODO does subsequent scheduling prevent past HXFO rampup?
+	return timeOfNextSyncPoint();
+}
 
+
+/*
+ * Clamp a time.
+ *
+ * Used for many sync period marks: start and end times of slots, sessions.
+ *
+ * Clamping of end times may shorten usual durations of slots and sessions.
+ *
+ * Time to start and end fish slot must be no later than start time of last sleeping slot,
+ * else we won't start next sync period on time.
+ */
+/*
+ * Current SyncPeriod is never shortened by adjustment, only lengthened.
+ * So that is not a reason why proposedTime might be before next sync point.
+ */
+
+
+LongTime Schedule::clampTimeBeforeLatestSlotMark(LongTime proposedTime) {
+
+	LongTime result = proposedTime;
+	LongTime cutoffTime = latestTimeToEndSlots();
+
+	if (result > cutoffTime) {
+		Logger::log("Clamp time before latest slot\n");
+		result = cutoffTime;
+	}
+	return result;
+}
 
 
 

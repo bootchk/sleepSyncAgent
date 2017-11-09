@@ -175,7 +175,7 @@ void Clique::onMasterDropout() {
  */
 void Clique::updateBySyncMessage(SyncMessage* msg) {
 	// assert (in Sync or Fish slot)
-	assert (MessageFactory::carriesSync(msg->type));
+	assert (MessageFactory::doesCarrySync(msg->type));
 
 	// 1) update master
 	setOtherMastership(msg->masterID);

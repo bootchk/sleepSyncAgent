@@ -2,6 +2,7 @@
 
 #include "role.h"
 
+#include "../logging/logger.h"
 
 namespace {
 
@@ -18,19 +19,20 @@ bool MergerFisherRole::isMerger() {return _role == Role::Merger;}
 bool MergerFisherRole::isFisher() {return _role == Role::Fisher;}
 
 void MergerFisherRole::toFisher() {
-	//log("To role Fisher\n");
+	Logger::log(Logger::ToFisher);
 	// No assertion on prior role
 	_role = Role::Fisher;
 }
+
 void MergerFisherRole::toMerger() {
-	//log("To role Merger\n");
+	Logger::log(Logger::ToMerger);
 
 	// Can only begin merging while fishing
 	assert(isFisher());
 	_role = Role::Merger;
 }
 void MergerFisherRole::toNoFishing() {
-	//log("To role NoFishing\n");
+	Logger::log(Logger::ToNoFish);
 
 	// No assertion on prior role
 	_role = Role::NoFishing;

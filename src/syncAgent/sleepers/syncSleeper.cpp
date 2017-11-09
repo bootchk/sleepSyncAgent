@@ -159,12 +159,15 @@ HandlingResult determineHandlingResult(MessageHandler msgHandler) {
 		/*
 		 * Unexpected: WFE returned but no IRQ handler appears to have run.
 		 */
+		Logger::logWakeWithoutIRQSettingReason();
+		break;
+
 	case ReasonForWake::Unknown:
 		/*
 		 * Unexpected: An IRQ handler was called but found no events.
 		 * KeepListening
 		 */
-		Logger::logUnexpectedWakeWhileListening();
+		Logger::logWakeIRQFoundNoEvent();
 		// assert Ensemble::isRadioInUse()
 		break;
 

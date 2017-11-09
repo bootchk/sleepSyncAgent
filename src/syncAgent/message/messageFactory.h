@@ -51,9 +51,10 @@ public:
 	}
 
 	/*
-	 * Is message kind MergeSync (related to merging)?
+	 * Is message related to merging?
 	 */
-	static bool isMergeSync(MessageType type) {
+	// NOT USED?
+	static bool doesCarryOffsetToOtherClique(MessageType type) {
 		bool result;
 		switch (type){
 		case MessageType::MasterSync:
@@ -75,11 +76,10 @@ public:
 	 *
 	 * AbandonMastership may have null offset
 	 */
-	static bool carriesSync(MessageType type) {
+	static bool doesCarrySync(MessageType type) {
 		bool result;
 		switch (type){
 		case MessageType::MasterSync:
-		case MessageType::EnticingInferior:
 		case MessageType::WorkSync:
 			result = true;
 			break;
@@ -87,7 +87,9 @@ public:
 		// Carry offset, but for DeepFishing
 		case MessageType::MasterMergedAway:
 		case MessageType::SlaveMergedAway:
+		case MessageType::EnticingInferior:
 
+		// Offset field not used?
 		case MessageType::AbandonMastership:
 		case MessageType::WorkSetProximity:
 		case MessageType::WorkScatterTime:

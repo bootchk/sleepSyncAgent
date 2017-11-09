@@ -43,6 +43,7 @@ public:
 	// Role change
 	static constexpr const char* ToFisher = "Role fisher\n";
 	static constexpr const char* ToMerger = "Role merger\n";
+	static constexpr const char* ToNoFish = "Role no fish\n";
 
 	// Message statistics
 	static constexpr const char* Garbled = "Msg type or offset garbled\n";
@@ -73,7 +74,9 @@ public:
 	static void logUnexpectedWakeReason();
 
 	static void logUnexpectedMsg();
-	static void logUnexpectedWakeWhileListening();
+	static void logWakeWithoutIRQSettingReason();
+	static void logWakeIRQFoundNoEvent();
+
 	static void logUnexpectedEventWhileListening();
 
 

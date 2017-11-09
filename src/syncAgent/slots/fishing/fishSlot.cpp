@@ -16,6 +16,10 @@
 #include "../../modules/syncPowerManager.h"
 #include "../../state/phase.h"
 
+#include "../../clique/clique.h"
+#include "../../globals.h"
+
+
 
 namespace {
 
@@ -106,6 +110,9 @@ void FishSlot::endDeepFishingWithRecoverMaster() {
 	 * Master left.
 	 * Recover master if we haven't already heard another assuming mastership.
 	 */
-	// TODO poor strategy is self to assume
-
+	/*
+	 * For now, many slaves may assume Mastership
+	 */
+	// FUTURE: bettery strategy
+	clique.assumeMastership();
 }

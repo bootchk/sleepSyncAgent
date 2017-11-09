@@ -165,7 +165,7 @@ void initMergeMyClique(SyncMessage* msg){
 	else
 		kindOfMerger = MessageType::SlaveMergedAway;
 
-	CliqueHistory::add(superiorMasterID, 1 );	// TODO
+	CliqueHistory::add(superiorMasterID, 1 );	// TODO cliqueHistory
 
 	// FUTURE migrate this outside and return result to indicate it should be done
 	/*
@@ -246,7 +246,7 @@ void CliqueMerger::deactivate(){ isActive = false; }
 void CliqueMerger::initFromMsg(SyncMessage* msg){
 
 
-	assert (MessageFactory::carriesSync(msg->type));
+	assert (MessageFactory::doesCarrySync(msg->type));
 
 	// Log PeriodTime we fished sync, and log details
 	Logger::logMsgTime();

@@ -126,6 +126,13 @@ public:
 	static LongTime timeOfNextSyncPoint();
 
 
+	static LongTime latestTimeToEndSlots();
+	/*
+	 * Ensure result is before the latest time to start or end a Fishing or Merging Slot.
+	 * Understand various constraints.
+	 */
+	static LongTime clampTimeBeforeLatestSlotMark(LongTime);
+
 	// deltas to Fish, Merge slots are in slots/fooSchedule.h
 
 	//static DeltaTime deltaToThisWorkSlotMiddle();

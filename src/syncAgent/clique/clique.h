@@ -21,6 +21,12 @@
  */
 class Clique {
 
+private:
+	// Self (with ID given by System::ID() ) is master of clique
+	static void setSelfMastership();
+	// Other is master
+	static void setOtherMastership(SystemID otherMasterID);
+
 public:
 	static Schedule schedule;
 
@@ -30,16 +36,19 @@ public:
 	 * Methods related to mastership and ID of clique.
 	 */
 	static SystemID getMasterID();
-	// This unit (with ID given by System::ID() ) is master of clique
-	static void setSelfMastership();
-	static void setOtherMastership(SystemID otherMasterID);
 	static bool isSelfMaster();
-	static bool shouldTransmitSync();
 
 	static bool isOtherCliqueBetter(SystemID otherMasterID);
 	static bool isMsgFromMyClique(SystemID otherMasterID);
 
+	/*
+	 * Role transitions.
+	 */
+	static void assumeMastership();
+	// Current design doesn't distinguish when this transition occurs
+	// static void mergeMastership();
 
+	static bool shouldTransmitSync();
 
 	/*
 	 * Methods for determining whether we lost sync (master dropped out, or other reasons.)

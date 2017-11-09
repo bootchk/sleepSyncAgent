@@ -43,53 +43,56 @@ DeltaTime FishSchedule::deltaToSlotEnd(){
  * Fish slot:
  * - starts at slot normally sleeping (Trolling)
  * - starts in normally sleeping slot but not slot aligned (DeepFishing)
- * - ends a constant duration after memoized start.
+ * - ends a duration after memoized start.
+ * (Intended duration is compile time constant but in future may be variable.)
  *
  * startTimeOfFishSlot is calculated once, at end of sync slot, in FishSchedule.init()
- *
- * startTimeOfFishSlot could be in the past or beyond sync period
- * User of the value must ensure that a timeout calculated from it
- * is in [0, timeTilLastSleepingSlot]
  */
 void FishSchedule::memoizeTimeOfThisFishSlotStart() {
 
 	LongTime result = FishingManager::getStartTimeToFish();
-
 	/*
+	 * result is wild, i.e. could be:
+	 * - in past
+	 * - too far in future:
+	 * - - beyond end of current sync period
+	 * - - beyond any other constraint on latest time to start fishing (HXFO startup for syncSlot)
+
+	 * Result in past:
 	 * Since some cpu cycles have elapsed after end of previous slot,
 	 * startTimeOfFishSlot can be < longClock->nowTime().
 	 * In other words, the case where chosen slot (to fish in) is slot immediately following previous slot,
 	 * and time to start fish slot is already past.
 	 * In this case, the subsequently calculated timeout will be zero,
-	 * and there will be no sleep.
-	 */
+	 * and there will be no sleep, and will fish slot will start immediately.
 
-#ifdef FUTURE
-	??? Dubious code.
-	/*
-	 * Time to start fish slot must be no later than start time of last sleeping slot,
-	 * else we won't start next sync period on time.
+	 * Result too far in future:
+	 * See Schedule::clampTimeBeforeLatestSlotMark() for explanation.
 	 */
-	LongTime nextSyncPoint = timeOfNextSyncPoint();
-	assert(result <= (nextSyncPoint - ScheduleParameters::SlotDuration + 10*ScheduleParameters::MsgDurationInTicks));
-#endif
+	result = clique.schedule.clampTimeBeforeLatestSlotMark(result);
 
 	/*
-	 * SyncPeriod is never shortened by adjustment.
-	 * Hence result must be less than timeOfNextSyncPoint,
-	 * else not enough time to perform a FishSlot without delaying end of SyncPeriod.
+	 * Only ensure start time.
+	 * Not ensure end time will also meet these constraints.
+	 * Ensure that later.
+	 *
+	 * Start time could be in past.
+	 * User of start time must ensure that a timeout calculated from past start time is zero.
+	 * User of start time probably should ensure that if the schedule changes,
+	 * timeout to start time is still in range.
 	 */
-	// FIXME this is wrong, caller must enforce
-	// FIXME this is wrong, must allow for HFXO rampup, i.e. not beyond nextSyncPoint - rampup.
-	assert(result < clique.schedule.timeOfNextSyncPoint() );
-
 	_memoStartTimeOfFishSlot = result;
 }
 
 
 
 LongTime FishSchedule::timeOfThisFishSlotEnd() {
-	// TODO delegate to FishingManager ?
+	/*
+	 * Fish sessions are of fixed duration.
+	 * Regardless of kind: Trolling or DeepFishing.
+	 * Session may be many slots.
+	 * FUTURE delegate to FishingManager so duration depends on kind.
+	 */
 	LongTime result = _memoStartTimeOfFishSlot
 			+ FishingParameters::FishSessionDuration;
 
@@ -97,12 +100,7 @@ LongTime FishSchedule::timeOfThisFishSlotEnd() {
 	 * A Fish slot started near end of SyncPeriod
 	 * should not end after end of SyncPeriod (next SyncPoint)
 	 */
-	// Fish slot
-	LongTime nextSyncPoint = clique.schedule.timeOfNextSyncPoint();
-	if (result > nextSyncPoint) {
-		Logger::log("End fish slot past sync point\n");
-		result = nextSyncPoint;
-	}
+	result = clique.schedule.clampTimeBeforeLatestSlotMark(result);
 
 	/*
 	 * result may be < nowTime() i.e. in the past

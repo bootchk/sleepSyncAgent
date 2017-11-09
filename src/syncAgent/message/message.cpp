@@ -8,10 +8,9 @@
  * Only the sender knows sendlatency (varies by platform.)
  * Thus this is an approximation, using this units SendLatency.
  */
-// FIXME
-/*
- * We could send the latency in the Work byte, ins some messages?
- */
+
+// XXX send the latency in the Work byte, ins some messages?
+
 LongTime SyncMessage::timeOfTransmittal() {
 	return Radio::timeOfArrival() - PhysicalParameters::GuessedSendLatency;
 }

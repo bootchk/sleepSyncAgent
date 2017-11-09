@@ -7,8 +7,6 @@
 #include "../state/role.h"
 #include "../syncAgent.h"
 
-// actions
-#include "../control/controller.h"
 
 
 namespace {
@@ -43,19 +41,21 @@ HandlingResult FishSlotMessageHandler::handle(SyncMessage* msg){
 	case MessageType::MasterSync:
 		handlingResult = handleMasterSyncMessage(msg);
 		break;
+	case MessageType::WorkSync:
+		handlingResult = handleWorkSyncMessage(msg);
+		break;
+
 	case MessageType::MasterMergedAway:
 	case MessageType::SlaveMergedAway:
 	case MessageType::EnticingInferior:
 		handlingResult = handleMergeSyncMessage(msg);
 		break;
+
 	case MessageType::AbandonMastership:
 		handlingResult = handleAbandonMastershipMessage(msg);
 		break;
-	case MessageType::WorkSync:
-		handlingResult = handleWorkSyncMessage(msg);
-		break;
 
-	// Logged but ignored
+
 
 	case MessageType::Info:
 	case MessageType::WorkSetProximity:
@@ -63,7 +63,6 @@ HandlingResult FishSlotMessageHandler::handle(SyncMessage* msg){
 		handlingResult = CommonMessageHandler::handleInfoMessage(msg);
 		break;
 
-	// handle control messages when fished
 	case MessageType::ControlSetXmitPower:
 	case MessageType::ControlScatterClique:
 		handlingResult = CommonMessageHandler::handleControlMessage(msg);
