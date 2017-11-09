@@ -96,10 +96,12 @@ public:
 
 private:
 	static void adjust(LongTime offset);
-	static LongTime adjustedEndTimeFromMsg(const SyncMessage* msg);
+	static LongTime adjustedSyncPeriodEndTimeFromMsg(const SyncMessage* msg);
 	static LongTime adjustedEndTimeFromCliqueHistoryOffset(DeltaTime);
 
 public:
+	static LongTime adjustedEventTimeFromMsg(const SyncMessage* msg);
+
 	static LongTime startTimeOfSyncPeriod();
 	static LongTime endTimeOfSyncPeriod();
 

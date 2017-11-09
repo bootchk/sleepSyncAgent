@@ -12,7 +12,7 @@ namespace {
 	 * Info received in a MasterMergedAway or SlaveMergedAway msg in my SyncSlot
 	 * from the Master or Slave who merged away, who is now in the Merger role.
 	 */
-	DeltaTime deltaToSyncPointOfFish;
+	DeltaTime deltaSyncPointToSyncPointOfFishee;
 
 	Callback fishPolicyDoneCallback = nullptr;
 }
@@ -22,7 +22,7 @@ namespace {
 void DeepFishingPolicy::restart(DeltaTime aDeltaToSyncPointOfFish, Callback aCallback) {
 	countFishings = 0;
 	fishPolicyDoneCallback = aCallback;
-	deltaToSyncPointOfFish = aDeltaToSyncPointOfFish;
+	deltaSyncPointToSyncPointOfFishee = aDeltaToSyncPointOfFish;
 }
 
 
@@ -30,21 +30,22 @@ LongTime DeepFishingPolicy::getStartTimeToFish() {
 	countFishings++;
 
 	/*
-	 * Start time is an offset from start of self sync period to start of sync period of other.
+	 * Start time of time to start fishing.
+	 * Should be aligned with start of sync period of other.
+	 * Might not be aligned with slot boundaries of this clique.
 	 *
-	 * Might not be aligned with slot boundaries.
-	 *
-	 * Ensure it is in the sync period.
-	 * Ensure it is not the sync slot.
+	 * We saved an offset from start of sync period to time to fish earlier.
 	 */
 	LongTime result;
-	result = clique.schedule.startTimeOfSyncPeriod() + deltaToSyncPointOfFish;
+	result = clique.schedule.startTimeOfSyncPeriod() + deltaSyncPointToSyncPointOfFishee;
 
 	/*
 	 * Is called at end of SyncSlot.
-	 * Ensure in future.
+	 *
+	 * Not ensure in future.
+	 * Not ensure not too near end of sync period.
+	 * Caller must not use result to schedule in the past or beyond sync period.
 	 */
-	//TODO assert(result > clique.schedule.nowTime());
 
 	return result;
 }

@@ -150,7 +150,7 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 	/*
 	 * assert endSyncSlot or endFishSlot has not yet occurred, but this doesn't affect that.
 	 */
-	adjust(adjustedEndTimeFromMsg(msg));
+	adjust(adjustedSyncPeriodEndTimeFromMsg(msg));
 }
 
 
@@ -191,39 +191,20 @@ void Schedule::adjustByCliqueHistoryOffset(DeltaTime offset){
 		adjustment = senderDeltaToSyncPoint;
  */
 /*
- * Adjusted end time of SyncPeriod, where SyncPeriod is never shortened (at all), only lengthened.
+ * Adjusted end time of SyncPeriod,
+ * where SyncPeriod is never shortened (at all), only extended.
+ * Specialized for MasterSync message.
  */
-LongTime Schedule::adjustedEndTimeFromMsg(const SyncMessage* msg) {
+LongTime Schedule::adjustedSyncPeriodEndTimeFromMsg(const SyncMessage* msg) {
 
-	// log time elapsed since toa, not really used
-	//DeltaTime elapsedTicksSinceTOA = TimeMath::clampedTimeDifferenceToNow(getMsgArrivalTime());
-	//logInt(elapsedTicksSinceTOA); log("<<<Elapsed since toa.\n");
-
-	/*
-	 * Crux: new end time is TOA of SyncMessage + DeltaSync + various delays:
-	 * rampup + OTA time + SW overhead
-	 */
-	DeltaTime delta = msg->deltaToNextSyncPoint.get();
-	// delta < SyncPeriodDuration
-
-	/*
-	 * Radio knows toa of single message in use, Radio not enabled while message is processed.
-	 */
-	LongTime toa = Radio::timeOfArrival();
-	/*
-	 * Sender has already adjusted offset for SendLatency.
-	 */
-	LongTime result = toa + delta;
-
-	/*
-	 * We don't measure ReceiveLatency here.
-	 * The time to perform these calculations is immaterial.
-	 * ReceiveLatency is between last OTA bit and time OTA was recorded.
-	 */
+	// Get raw time from msg
+	LongTime result = adjustedEventTimeFromMsg(msg);
 
 	/*
 	 * Don't adjust end time sooner than it already is,
 	 * otherwise fishing and merging in this sync period also need adjusting.
+	 * If the calculate time is sooner, then add duration of a syncperiod.
+	 * So the current sync period will end much later, but that doesn't matter.
 	 *
 	 * !!!! < or = : if we are already past sync point,
 	 * both result and timeOfNextSyncPoint() could be the same
@@ -233,16 +214,54 @@ LongTime Schedule::adjustedEndTimeFromMsg(const SyncMessage* msg) {
 		result += ScheduleParameters::NormalSyncPeriodDuration;
 	}
 
-	Logger::log(toa);
-	Logger::log("<toa\n");
-	// Offset already logged in msg details.
+
 	Logger::log(result);
 	Logger::log("<new period end\n");
-	//logInt(deltaNowToNextSyncPoint()); log(":Delta to next sync\n");
 
 	assert( (result - startTimeOfSyncPeriod()) <= 2* ScheduleParameters::NormalSyncPeriodDuration);
 	return result;
 }
+
+
+/*
+ * Time calculated from msg offset.
+ * Msg is either MasterSync or of class MergeSync.
+ * Event is either end time of my clique's sync period
+ * or start time of other clique's next sync period.
+ */
+LongTime Schedule::adjustedEventTimeFromMsg(const SyncMessage* msg) {
+	/*
+	 * Crux: new end time is TOA of SyncMessage + DeltaSync + various delays:
+	 * rampup + OTA time + SW overhead.
+	 *
+	 * Sender has already adjusted offset for SendLatency.
+	 *
+	 * We don't measure ReceiveLatency here.
+	 * The time to perform these calculations is immaterial.
+	 * ReceiveLatency is between last OTA bit and time OTA was recorded.
+	 */
+
+	DeltaTime delta = msg->deltaToNextSyncPoint.get();
+	// delta < SyncPeriodDuration
+
+	// Radio knows toa of single message in use, Radio not enabled while message is processed.
+	LongTime toa = Radio::timeOfArrival();
+
+	LongTime result = toa + delta;
+
+	Logger::log(toa);
+	Logger::log("<toa\n");
+	// Offset already logged in msg details.
+	//logInt(deltaNowToNextSyncPoint());
+	//log(":Delta to next event\n");
+	// log time elapsed since toa, not really used
+	//DeltaTime elapsedTicksSinceTOA = TimeMath::clampedTimeDifferenceToNow(getMsgArrivalTime());
+	//logInt(elapsedTicksSinceTOA); log("<<<Elapsed since toa.\n");
+
+	return result;
+}
+
+
 
 LongTime Schedule::adjustedEndTimeFromCliqueHistoryOffset(DeltaTime offset) {
 	/*

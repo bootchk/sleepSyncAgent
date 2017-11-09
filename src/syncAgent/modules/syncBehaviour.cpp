@@ -31,9 +31,14 @@ void handleSyncWhileMerging(SyncMessage* msg) {
 
 
 bool SyncBehaviour::filterSyncMsg(SyncMessage* msg){
+
+	assert(msg->type == MessageType::MasterSync);
+	// WAS or one of the MergySync subclasses
+	assert (MessageFactory::carriesSync(msg->type));
+
 	// assert sync not from self (xmitter and receiver are exclusive)
 	// assert self.isMaster || self.isSlave i.e. this code doesn't require any particular role
-	assert (MessageFactory::carriesSync(msg->type));
+
 
 	// Carries sync, but doesn't keep sync if not from better master
 	bool doesMsgKeepSynch;

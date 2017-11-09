@@ -6,9 +6,15 @@ namespace {
 	FishingMode mode = FishingMode::Trolling;
 }
 
+/*
+ * Called many times (for repetitive Merge class msgs), but only restarts on the first.
+ * TODO Assert the repetitive Merge class msgs have the same parameters.
+ */
 void FishingManager::switchToDeepFishing(DeltaTime deltaToSyncPointOfFish, Callback aCallback) {
-	mode = FishingMode::DeepFishing;
-	DeepFishingPolicy::restart(deltaToSyncPointOfFish, aCallback);
+	if (mode != FishingMode::DeepFishing) {
+		mode = FishingMode::DeepFishing;
+		DeepFishingPolicy::restart(deltaToSyncPointOfFish, aCallback);
+	}
 }
 
 void FishingManager::switchToTrolling() {
@@ -51,6 +57,9 @@ LongTime FishingManager::getStartTimeToFish(){
 		result = DeepFishingPolicy::getStartTimeToFish();
 		break;
 	}
+	/*
+	 * Not ensure is in future nor beyond end of sync period.
+	 */
 	return result;
 }
 

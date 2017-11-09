@@ -89,3 +89,23 @@ void FishSlot::perform() {
 }
 
 
+
+
+/*
+ * Callbacks
+ */
+void FishSlot::endDeepFishingWithNoAction() {
+	/*
+	 * Self stays in current clique.
+	 */
+	// FUTURE remember so we aren't continually fished to another.
+}
+
+void FishSlot::endDeepFishingWithRecoverMaster() {
+	/*
+	 * Master left.
+	 * Recover master if we haven't already heard another assuming mastership.
+	 */
+	// TODO poor strategy is self to assume
+
+}

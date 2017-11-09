@@ -7,8 +7,11 @@
 #include "../modules/syncBehaviour.h"
 #include "../logging/logger.h"
 #include "../syncAgent.h"
+#include "../scheduleParameters.h"
 #include "../control/controller.h"
+
 #include "../slots/fishing/fishingManager.h"
+#include "../slots/fishing/fishSlot.h"
 
 
 
@@ -17,14 +20,15 @@
  *
  * Sync handling is agnostic of isMaster or isSlave
  *
- * MasterSync and MergeSync handled the same.
- *
  * FUTURE discard multiple sync messages if they are queued
  */
 
 
 namespace {
 
+/*
+ * Sync carrying messages
+ */
 HandlingResult handleSyncAspectOfSyncCarryingMsg(SyncMessage* msg){
 
 	/*
@@ -50,23 +54,34 @@ HandlingResult handleSyncAspectOfSyncCarryingMsg(SyncMessage* msg){
 }
 
 
+
 /*
- * Callbacks registered with FishingManager
+ * Merge class of messages.
+ *
+ * Formerly, MergeSync messages adjusted sync (joined other clique) immediately.
+ * Now, we DeepFish for other clique before joing it.
  */
-void endDeepFishingWithNoAction() {
-	/*
-	 * Self stays in current clique.
-	 */
-	// FUTURE remember so we aren't continually fished to another.
-}
 
-void endDeepFishingWithRecoverMaster() {
-	/*
-	 * Master left.
-	 * Recover master if we haven't already heard another assuming mastership.
-	 */
-	// TODO poor strategy is self to assume
+/*
+ * Just received msg, of class Merge.
+ * It's offset is somewhat adjusted delta from now to sync point of another clique.
+ *
+ * The result we want is a delta from our sync point to sync point of another clique.
+ * Result is used later (when we schedule fishing).
 
+ * But now is sometime in sync slot.
+ * So add backward delta from our sync point to now.
+ * Which is equal to slot duration minus delta from now to end of SyncSlot
+ */
+DeltaTime getFishingDeltaFromMergeMsg(SyncMessage* msg) {
+	LongTime timeToFish = clique.schedule.adjustedEventTimeFromMsg(msg);
+	DeltaTime deltaToFish = TimeMath::clampedTimeDifferenceFromNow(timeToFish);
+
+	DeltaTime result = deltaToFish + clique.schedule.deltaPastSyncPointToNow();
+	// ScheduleParameters::VirtualSlotDuration;
+
+	// No assertions here, assertions later when we use it.
+	return result;
 }
 
 /*
@@ -81,7 +96,8 @@ HandlingResult handleEnticingInferiorMessage(SyncMessage* msg){
 	 * Type DeltaSync in message is a class instance.
 	 * DeltaTime is dumber.
 	 */
-	FishingManager::switchToDeepFishing(msg->deltaToNextSyncPoint.get(), endDeepFishingWithNoAction);
+
+	FishingManager::switchToDeepFishing(getFishingDeltaFromMergeMsg(msg), FishSlot::endDeepFishingWithNoAction);
 	return HandlingResult::KeepListening;
 }
 
@@ -93,7 +109,7 @@ HandlingResult handleEnticingInferiorMessage(SyncMessage* msg){
  * If not succeed, try recover former master.
  */
 HandlingResult handleMasterMergedAwayMessage(SyncMessage* msg){
-	FishingManager::switchToDeepFishing(msg->deltaToNextSyncPoint.get(), endDeepFishingWithRecoverMaster);
+	FishingManager::switchToDeepFishing(getFishingDeltaFromMergeMsg(msg), FishSlot::endDeepFishingWithRecoverMaster);
 	return HandlingResult::KeepListening;
 }
 /*
@@ -101,7 +117,7 @@ HandlingResult handleMasterMergedAwayMessage(SyncMessage* msg){
  * That slave is sending this.
  */
 HandlingResult handleSlaveMergedAwayMessage(SyncMessage* msg){
-	FishingManager::switchToDeepFishing(msg->deltaToNextSyncPoint.get(), endDeepFishingWithNoAction);
+	FishingManager::switchToDeepFishing(getFishingDeltaFromMergeMsg(msg), FishSlot::endDeepFishingWithNoAction);
 	return HandlingResult::KeepListening;
 }
 
@@ -142,6 +158,7 @@ HandlingResult SyncSlotMessageHandler::handle(SyncMessage* msg){
 		handlingResult = handleSlaveMergedAwayMessage(msg);
 		SyncAgent::countMergeSyncHeard++;
 		break;
+
 	case MessageType::WorkSync:
 		handlingResult = handleWorkSyncMessage(msg);
 		break;
@@ -169,6 +186,8 @@ HandlingResult SyncSlotMessageHandler::handleMasterSyncMessage(SyncMessage* msg)
 
 /*
 OLD
+Immediately join other clique.
+
 HandlingResult SyncSlotMessageHandler::handleMergeSyncMessage(SyncMessage* msg){
 	return handleSyncAspectOfSyncCarryingMsg(msg);
 }

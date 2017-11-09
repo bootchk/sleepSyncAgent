@@ -33,13 +33,13 @@ public:
 	 */
 
 	/*
-	 * Filter: processes message and returns true if message keeps my sync (from current or new master of my clique.)
+	 * Filter: returns true if message keeps my sync (from current or new master of my clique.)
 	 *
 	 * Side effect is call dropoutMonitor.heardSync() i.e. status of sync is good
 	 *
-	 * Each Sync has an offset, could be zero or small (MasterSync) or larger (MergeSync)
-	 *
-	 * Returns whether message keeps sync.
+	 * Each Sync has an offset:
+	 * - zero or small (MasterSync)
+	 * - or larger (MergeSync)
 	 */
 	static bool filterSyncMsg(SyncMessage* msg);
 

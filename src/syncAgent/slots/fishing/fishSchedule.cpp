@@ -41,11 +41,15 @@ DeltaTime FishSchedule::deltaToSlotEnd(){
 
 /*
  * Fish slot:
- * - starts at slot normally sleeping.
- * - Ends after remembered start.
+ * - starts at slot normally sleeping (Trolling)
+ * - starts in normally sleeping slot but not slot aligned (DeepFishing)
+ * - ends a constant duration after memoized start.
  *
- * Start time is calculated once, at end of sync slot, in FishSchedule.init()
- * Time til start is in [0, timeTilLastSleepingSlot]
+ * startTimeOfFishSlot is calculated once, at end of sync slot, in FishSchedule.init()
+ *
+ * startTimeOfFishSlot could be in the past or beyond sync period
+ * User of the value must ensure that a timeout calculated from it
+ * is in [0, timeTilLastSleepingSlot]
  */
 void FishSchedule::memoizeTimeOfThisFishSlotStart() {
 
@@ -75,6 +79,8 @@ void FishSchedule::memoizeTimeOfThisFishSlotStart() {
 	 * Hence result must be less than timeOfNextSyncPoint,
 	 * else not enough time to perform a FishSlot without delaying end of SyncPeriod.
 	 */
+	// FIXME this is wrong, caller must enforce
+	// FIXME this is wrong, must allow for HFXO rampup, i.e. not beyond nextSyncPoint - rampup.
 	assert(result < clique.schedule.timeOfNextSyncPoint() );
 
 	_memoStartTimeOfFishSlot = result;
