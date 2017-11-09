@@ -60,13 +60,13 @@ HandlingResult FishSlotMessageHandler::handle(SyncMessage* msg){
 	case MessageType::Info:
 	case MessageType::WorkSetProximity:
 	case MessageType::WorkScatterTime:
-		handlingResult = handleInfoMessage(msg);
+		handlingResult = CommonMessageHandler::handleInfoMessage(msg);
 		break;
 
 	// handle control messages when fished
 	case MessageType::ControlSetXmitPower:
 	case MessageType::ControlScatterClique:
-		handlingResult = handleControlMessage(msg);
+		handlingResult = CommonMessageHandler::handleControlMessage(msg);
 		break;
 	}
 
@@ -126,16 +126,7 @@ HandlingResult FishSlotMessageHandler::handleAbandonMastershipMessage(SyncMessag
 }
 
 
-HandlingResult FishSlotMessageHandler::handleInfoMessage(SyncMessage* msg){
-	Logger::logReceivedInfo(msg->work);
-	return HandlingResult::KeepListening;
-}
 
-
-HandlingResult FishSlotMessageHandler::handleControlMessage(SyncMessage* msg){
-	Controller::setXmitPower(msg->work);
-	return HandlingResult::KeepListening;
-}
 
 /*
  * Work

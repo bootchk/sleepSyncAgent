@@ -62,8 +62,7 @@ private:
 	//static HandlingResult handleMergeSyncMessage(SyncMessage* msg);
 	static HandlingResult handleWorkSyncMessage(SyncMessage* msg);
 	static HandlingResult handleAbandonMastershipMessage(SyncMessage* msg);
-	static HandlingResult handleInfoMessage(SyncMessage* msg);
-	static HandlingResult handleControlMessage(SyncMessage* msg);
+
 };
 
 
@@ -75,9 +74,20 @@ private:
 	static HandlingResult handleMergeSyncMessage(SyncMessage* msg);
 	static HandlingResult handleWorkSyncMessage(SyncMessage* msg);
 	static HandlingResult handleAbandonMastershipMessage(SyncMessage* msg);
+};
+
+
+/*
+ * Handlers for messages
+ * not related to sleep sync.
+ */
+
+class CommonMessageHandler {
+public:
 	static HandlingResult handleInfoMessage(SyncMessage* msg);
 	static HandlingResult handleControlMessage(SyncMessage* msg);
 };
+
 
 
 #ifdef OLD

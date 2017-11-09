@@ -8,7 +8,6 @@
 #include "../logging/logger.h"
 #include "../syncAgent.h"
 #include "../scheduleParameters.h"
-#include "../control/controller.h"
 
 #include "../slots/fishing/fishingManager.h"
 #include "../slots/fishing/fishSlot.h"
@@ -168,11 +167,11 @@ HandlingResult SyncSlotMessageHandler::handle(SyncMessage* msg){
 	case MessageType::Info:
 	case MessageType::WorkSetProximity:
 	case MessageType::WorkScatterTime:
-		handlingResult = handleInfoMessage(msg);
+		handlingResult = CommonMessageHandler::handleInfoMessage(msg);
 		break;
 	case MessageType::ControlSetXmitPower:
 	case MessageType::ControlScatterClique:
-		handlingResult = handleControlMessage(msg);
+		handlingResult = CommonMessageHandler::handleControlMessage(msg);
 		break;
 	}
 
@@ -228,20 +227,3 @@ HandlingResult SyncSlotMessageHandler::handleAbandonMastershipMessage(SyncMessag
 	assert(clique.isSelfMaster());
 	return HandlingResult::KeepListening;
 }
-
-
-
-
-HandlingResult SyncSlotMessageHandler::handleInfoMessage(SyncMessage* msg){
-	Logger::logReceivedInfo(msg->work);
-	return HandlingResult::KeepListening;
-}
-
-
-HandlingResult SyncSlotMessageHandler::handleControlMessage(SyncMessage* msg){
-	Controller::setXmitPower(msg->work);
-	return HandlingResult::KeepListening;
-}
-
-
-
