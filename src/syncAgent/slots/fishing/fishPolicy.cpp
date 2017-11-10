@@ -74,4 +74,9 @@ LongTime SyncRecoveryTrollingPolicy::getStartTimeToFish() {
 	return result;
 }
 
+DeltaTime SyncRecoveryTrollingPolicy::getFishSessionDuration() {
+	// Constant
+	return FishingParameters::TrollingFishSessionDurationTicks;
+	// FUTURE variable trolling duration
+}
 

@@ -15,14 +15,22 @@
  * But we don't fish it, since it overlaps/delays start of SyncPeriod.
  * Also, fishing the first slot actually fishes the second sleeping slot,
  * and the first sleeping slot is never fished.
+ *
+ *
  */
 class FishingParameters {
 public:
 
+/*
+ * Certain build configurations (Debug52 running on NRF52DK USB powered)
+ * define EXTENDED_FISH_DURATION
+ * to affect the const duration of trolling
+ */
+
 #ifdef EXTENDED_FISH_DURATION
-	static const ScheduleCount SlotsFishedPerPeriod = 20;
+	static const ScheduleCount SlotsTrollingFishedPerPeriod = 20;
 #else
-	static const SlotCount SlotsFishedPerPeriod = 1;
+	static const SlotCount SlotsTrollingFishedPerPeriod = 1;
 #endif
 
 	/*
@@ -31,24 +39,24 @@ public:
 	 * because it would overlap the next SyncSlot.
 	 */
 	static const SlotCount LastSlotOrdinalToFish = ScheduleParameters::CountSlots
-			- SlotsFishedPerPeriod;	// !!!
+			- SlotsTrollingFishedPerPeriod;	// !!!
 	static const SlotCount FirstSlotOrdinalToFish = ScheduleParameters::FirstSleepingSlotOrdinal;
 
 	/*
 	 * A fish session can be many slots.
-	 * If power is unlimited, achieve sync faster with longer fish session.
+	 * If power is unlimited, achieve sync faster with longer trolling fish session.
 	 *
-	 * Certain build configurations (Debug52 running on NRF52DK USB powered)
-	 * define EXTENDED_FISH_DURATION
+
 	 *
 	 * Duration includes one HFXOStartup and one or many VirtualSlotDurations
 	 */
 	static const DeltaTime DeepFishSessionDurationTicks =
 				ScheduleParameters::HFXOStartup
-				+ SlotsFishedPerPeriod * ScheduleParameters::VirtualSlotDuration;
+				+ ScheduleParameters::VirtualSlotDuration;
+
 	static const DeltaTime TrollingFishSessionDurationTicks =
 					ScheduleParameters::HFXOStartup
-					+ SlotsFishedPerPeriod * ScheduleParameters::VirtualSlotDuration;
+					+ SlotsTrollingFishedPerPeriod * ScheduleParameters::VirtualSlotDuration;
 
 	static const unsigned int CountFishingsPerDeepFishing = 6;
 };

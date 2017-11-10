@@ -41,6 +41,7 @@ LongTime DeepFishingPolicy::getStartTimeToFish() {
 	 */
 	LongTime result;
 	result = clique.schedule.startTimeOfSyncPeriod() + deltaSyncPointToSyncPointOfFishee;
+	// FIXME allows for HFXO???
 
 	/*
 	 * Is called at end of SyncSlot.
@@ -55,9 +56,12 @@ LongTime DeepFishingPolicy::getStartTimeToFish() {
 
 /*
  * Deep fishing is one slot, to cover sync slot of fishee.
- * !!! Is two real slots, one for HFXO startup.
+ * !!! Is two real slots, one sleeping for HFXO startup.
+ *
+ * Compile time constant.
  */
 DeltaTime DeepFishingPolicy::getFishSessionDuration() {
+	// Constant
 	return FishingParameters::DeepFishSessionDurationTicks;
 }
 
