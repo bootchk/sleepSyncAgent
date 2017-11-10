@@ -74,6 +74,9 @@ private:
 	static HandlingResult handleMergeSyncMessage(SyncMessage* msg);
 	static HandlingResult handleWorkSyncMessage(SyncMessage* msg);
 	static HandlingResult handleAbandonMastershipMessage(SyncMessage* msg);
+
+	static HandlingResult doFishedSyncMsg(SyncMessage* msg);
+	static HandlingResult handleCatchFromDeepFishing(SyncMessage*);
 };
 
 

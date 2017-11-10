@@ -245,7 +245,7 @@ void CliqueMerger::deactivate(){ isActive = false; }
  * - save design so later, at endSyncSlot, we can schedule any mergeSlot.
  */
 void CliqueMerger::initFromMsg(SyncMessage* msg){
-	// Don't merge from Deep
+	// We don't merge from Deep (see state diagram.)
 	assert(FishingManager::mode() == FishingMode::Trolling);
 	assert (MessageFactory::doesCarrySync(msg->type));
 

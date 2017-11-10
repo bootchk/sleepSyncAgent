@@ -6,12 +6,11 @@
 #include "../logging/logger.h"
 #include "../state/role.h"
 #include "../syncAgent.h"
+#include "../slots/fishing/fishingManager.h"
 
 
 
-namespace {
-
-void doFishedSyncMsg(SyncMessage* msg){
+HandlingResult FishSlotMessageHandler::doFishedSyncMsg(SyncMessage* msg){
 	/*
 	 * Heard sync or worksync
 	 *
@@ -19,15 +18,28 @@ void doFishedSyncMsg(SyncMessage* msg){
 	 * toMergerRole() handles both cases,
 	 * but always toMerger(), either merging my clique or other clique.
 	 */
-	SyncAgent::toMergerFromFisher(msg);
-	/*
-	 * assert (schedule changed AND self is merging my former clique)
-	 * OR (schedule unchanged AND self is merging other clique)
-	 */
-	// assert my schedule might have changed
-}
+	HandlingResult result;
 
-} // namespace
+	switch(FishingManager::mode()){
+	case FishingMode::Trolling:
+		SyncAgent::toMergerFromFisher(msg);
+
+		// Stop listening: self can't handle more than one, or slot is busy with another merge
+		result = HandlingResult::StopListeningHeardMasterSync;
+		/*
+		 * assert (schedule changed AND self is merging my former clique)
+		 * OR (schedule unchanged AND self is merging other clique)
+		 */
+		break;
+	case FishingMode::DeepFishing:
+		result = FishSlotMessageHandler::handleCatchFromDeepFishing(msg);
+		break;
+	}
+
+	// assert my schedule might have changed
+	// assert (Role is Fishing and FishingMode is Trolling) or role is merger
+	return result;
+}
 
 
 
@@ -78,9 +90,9 @@ HandlingResult FishSlotMessageHandler::handle(SyncMessage* msg){
  * Intended catch: MasterSync from another clique's Master in its sync slot.
  */
 HandlingResult FishSlotMessageHandler::handleMasterSyncMessage(SyncMessage* msg){
-	doFishedSyncMsg(msg);
-	// Stop listening: self can't handle more than one, or slot is busy with another merge
-	return HandlingResult::StopListeningHeardMasterSync;
+	return doFishedSyncMsg(msg);
+
+	//return HandlingResult::StopListeningHeardMasterSync;
 }
 
 /*
