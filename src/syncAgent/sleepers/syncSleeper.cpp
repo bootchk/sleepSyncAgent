@@ -127,9 +127,9 @@ HandlingResult determineHandlingResult(MessageHandler msgHandler) {
 
 	switch (Sleeper::getReasonForWake()) {
 
-	// TODO, its a packet not a msg, could be invalid
-	case ReasonForWake::MsgReceived:
 
+	case ReasonForWake::MsgReceived:
+		// A packet,  could be invalid hence not a msg.
 		// if timer semantics are: restartable, cancel timer here
 		handlingResult = dispatchFilteredMsg(msgHandler);
 		// Handler may ignore packet and startReceiving again

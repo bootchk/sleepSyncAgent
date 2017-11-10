@@ -12,8 +12,12 @@ namespace {
 
 /*
  * Called many times (for repetitive Merge class msgs), but only restarts on the first.
- * TODO Assert the repetitive Merge class msgs have the same parameters.
+ *
+ * Repetitive Merge class msgs might have different parameters, different happenings.
+ * Overlapping happenings should complete one DeepFishing and then start another?
+ * For now, not checking for interleaved different msgs.
  */
+// XXX Check , and chose high priority?
 void FishingManager::switchToDeepFishing(DeltaTime deltaToSyncPointOfFish, Callback aCallback) {
 	if (mode != FishingMode::DeepFishing) {
 		Logger::log("\nto deep ");
@@ -61,6 +65,24 @@ LongTime FishingManager::getStartTimeToFish(){
 		break;
 	case FishingMode::DeepFishing:
 		result = DeepFishingPolicy::getStartTimeToFish();
+		break;
+	}
+	/*
+	 * Not ensure is in future nor beyond end of sync period.
+	 */
+	return result;
+}
+
+DeltaTime FishingManager::getFishSessionDuration(){
+
+	DeltaTime result;
+
+	switch(mode){
+	case FishingMode::Trolling:
+		result = SyncRecoveryTrollingPolicy::getFishSessionDuration();
+		break;
+	case FishingMode::DeepFishing:
+		result = DeepFishingPolicy::getFishSessionDuration();
 		break;
 	}
 	/*

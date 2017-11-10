@@ -53,6 +53,14 @@ LongTime DeepFishingPolicy::getStartTimeToFish() {
 	return result;
 }
 
+/*
+ * Deep fishing is one slot, to cover sync slot of fishee.
+ * !!! Is two real slots, one for HFXO startup.
+ */
+DeltaTime DeepFishingPolicy::getFishSessionDuration() {
+	return FishingParameters::DeepFishSessionDurationTicks;
+}
+
 
 
 

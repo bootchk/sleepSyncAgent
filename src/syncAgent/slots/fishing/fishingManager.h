@@ -71,6 +71,9 @@ public:
 	 */
 	static LongTime getStartTimeToFish();
 
+
+	static DeltaTime getFishSessionDuration();
+
 	/*
 	 * Restart trolling policy.
 	 *

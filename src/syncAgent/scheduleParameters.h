@@ -137,7 +137,7 @@ static const DeltaTime     HalfSlotDuration = VirtualSlotDuration / 2;
  * 1. SyncWork 2. Sleep, ...., Sleep
  */
 //static const ScheduleCount FirstSleepingSlotOrdinal = 3;
-static const ScheduleCount FirstSleepingSlotOrdinal = 2;
+static const SlotCount FirstSleepingSlotOrdinal = 2;
 
 
 /*
@@ -146,7 +146,7 @@ static const ScheduleCount FirstSleepingSlotOrdinal = 2;
  * Average, since Fish slot is alternative to Merge slot,
  * which is a short transmit, probablistically transmitted within a SyncPeriod.
  */
-static const ScheduleCount CountActiveSlots = 2;
+static const SlotCount CountActiveSlots = 2;
 
 /*
  * Count of slots in sync period.
@@ -156,7 +156,7 @@ static const ScheduleCount CountActiveSlots = 2;
  * - to calculate SyncPeriodDuration
  * - to schedule Fish slots (this defines the max of the range.)
  */
-static const ScheduleCount CountSlots = CountActiveSlots*DutyCycleInverse;
+static const SlotCount CountSlots = CountActiveSlots*DutyCycleInverse;
 
 
 

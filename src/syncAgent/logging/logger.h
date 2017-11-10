@@ -32,21 +32,21 @@ public:
 	static constexpr const char* MergeSlot = "MergeSlot\n";
 
 	// Fished but ignored
-	static constexpr const char* FishedMergeSync = "Fish Merge\n";
-	static constexpr const char* FishedAbandonMastershipSync = "Fish Abandon\n";
+	static constexpr const char* FishedMergeSync = "Fished merge msg.\n";
+	static constexpr const char* FishedAbandonMastershipSync = "Fish abandon msg.\n";
 
-	static constexpr const char* MergeMy = "\nMergeMy";
-	static constexpr const char* MergeOther = "\nMergeOther";
+	static constexpr const char* MergeMy = "\nMergeMy.";
+	static constexpr const char* MergeOther = "\nMergeOther.";
 
 	static constexpr const char* SendNone = "Listen\n";
 
 	// Role change
-	static constexpr const char* ToFisher = "Role fisher\n";
-	static constexpr const char* ToMerger = "Role merger\n";
-	static constexpr const char* ToNoFish = "Role no fish\n";
+	static constexpr const char* ToFisher = "Role fisher.\n";
+	static constexpr const char* ToMerger = "Role merger.\n";
+	static constexpr const char* ToNoFish = "Role no fish.\n";
 
 	// Message statistics
-	static constexpr const char* Garbled = "Msg type or offset garbled\n";
+	static constexpr const char* Garbled = "Msg type or offset garbled.\n";
 	static constexpr const char* CRC = "Msg CRC\n";
 
 
@@ -100,7 +100,7 @@ public:
 	static void log(char const*);
 	static void log(uint8_t);
 	static void log(unsigned long long int);
-	static void logInt(uint32_t); // TODO ambiguous call problems if omit this
+	static void logInt(uint32_t); // ??? ambiguous call problems if omit this
 
 	/*
 	 * Only using during development, while measuring software.

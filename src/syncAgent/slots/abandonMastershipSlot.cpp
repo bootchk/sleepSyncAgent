@@ -23,7 +23,7 @@ void tryAbandonMastership() {
 	// TODO AbandonMastershipSlot and remainder of SyncPeriod
 	if (clique.isSelfMaster()) {
 		doDyingBreath();
-		// TODO am I still master?
+		// TODO AbandonMastership, am I still master?
 	}
 }
 #endif

@@ -90,11 +90,13 @@ void Logger::logReceivedMsg(SyncMessage* msg){
 	logMsgTime();
 	localLogger.log("\nRX ");
 	localLogger.log(SyncMessage::representation(msg));
-	localLogger.log("ID:");
-	localLogger.log(msg->masterID);
-	localLogger.log("Off:");
+	localLogger.log(":");
+	// shortID
+	localLogger.log((uint8_t) msg->masterID);
+	//localLogger.log(msg->masterID);
+	localLogger.log(":");
 	localLogger.log(msg->deltaToNextSyncPoint.get());
-	localLogger.log("Wk:");
+	localLogger.log(":");
 	localLogger.log(msg->work);
 	localLogger.log("\n");
 

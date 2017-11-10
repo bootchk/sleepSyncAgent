@@ -3,17 +3,17 @@
 
 namespace Fishing {
 
-void incrementCounterModuloSleepingSlots(ScheduleCount* counter);
-void decrementCounterModuloSleepingSlots(ScheduleCount* counter);
+void incrementCounterModuloSleepingSlots(SlotCount* counter);
+void decrementCounterModuloSleepingSlots(SlotCount* counter);
 
-void incrementCounterModuloSleepingSlots(ScheduleCount* counter) {
+void incrementCounterModuloSleepingSlots(SlotCount* counter) {
 	(*counter)++;
 	if (*counter > FishingParameters::LastSlotOrdinalToFish) {
 		*counter = FishingParameters::FirstSlotOrdinalToFish;
 	}
 }
 
-void decrementCounterModuloSleepingSlots(ScheduleCount* counter) {
+void decrementCounterModuloSleepingSlots(SlotCount* counter) {
 	(*counter)--;
 	if (*counter < FishingParameters::FirstSlotOrdinalToFish) {
 		*counter = FishingParameters::LastSlotOrdinalToFish;

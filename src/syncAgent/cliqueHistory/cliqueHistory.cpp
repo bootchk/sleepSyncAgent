@@ -26,6 +26,8 @@ void CliqueHistory::init() {
 
 
 void CliqueHistory::add(SystemID newMasterID, DeltaTime offsetToNextClique) {
+	(void) newMasterID;
+
 	if (currentCliqueIndex < (RecordCount - 1)) {
 		currentCliqueIndex++;
 		cliqueRecords[currentCliqueIndex].masterID = System::ID();

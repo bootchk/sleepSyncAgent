@@ -38,7 +38,7 @@
  */
 class SimpleFishPolicy {
 public:
-	ScheduleCount nextFishSlotOrdinal();
+	SlotCount nextFishSlotOrdinal();
 	void reset() {}	// Does nothing, generator continues as before
 };
 
@@ -64,10 +64,11 @@ public:
  */
 class SyncRecoveryTrollingPolicy {
 private:
-	static ScheduleCount nextFishSlotOrdinal();
+	static SlotCount nextFishSlotOrdinal();
 public:
 	static void restart();
 	static LongTime getStartTimeToFish();
+	static DeltaTime getFishSessionDuration();
 	static void checkDone() {};
 };
 
@@ -78,5 +79,6 @@ class DeepFishingPolicy {
 public:
 	static void restart(DeltaTime, Callback);
 	static LongTime getStartTimeToFish();
+	static DeltaTime getFishSessionDuration();
 	static bool checkDone();
 };

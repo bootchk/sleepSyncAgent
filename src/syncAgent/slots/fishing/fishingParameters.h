@@ -22,7 +22,7 @@ public:
 #ifdef EXTENDED_FISH_DURATION
 	static const ScheduleCount SlotsFishedPerPeriod = 20;
 #else
-	static const ScheduleCount SlotsFishedPerPeriod = 1;
+	static const SlotCount SlotsFishedPerPeriod = 1;
 #endif
 
 	/*
@@ -30,9 +30,9 @@ public:
 	 * E.G. If we fish one slot, we can't start fishing at the last slot
 	 * because it would overlap the next SyncSlot.
 	 */
-	static const ScheduleCount LastSlotOrdinalToFish = ScheduleParameters::CountSlots
+	static const SlotCount LastSlotOrdinalToFish = ScheduleParameters::CountSlots
 			- SlotsFishedPerPeriod;	// !!!
-	static const ScheduleCount FirstSlotOrdinalToFish = ScheduleParameters::FirstSleepingSlotOrdinal;
+	static const SlotCount FirstSlotOrdinalToFish = ScheduleParameters::FirstSleepingSlotOrdinal;
 
 	/*
 	 * A fish session can be many slots.
@@ -43,10 +43,12 @@ public:
 	 *
 	 * Duration includes one HFXOStartup and one or many VirtualSlotDurations
 	 */
-		static const ScheduleCount FishSessionDuration =
+	static const DeltaTime DeepFishSessionDurationTicks =
 				ScheduleParameters::HFXOStartup
 				+ SlotsFishedPerPeriod * ScheduleParameters::VirtualSlotDuration;
-
+	static const DeltaTime TrollingFishSessionDurationTicks =
+					ScheduleParameters::HFXOStartup
+					+ SlotsFishedPerPeriod * ScheduleParameters::VirtualSlotDuration;
 
 	static const unsigned int CountFishingsPerDeepFishing = 6;
 };

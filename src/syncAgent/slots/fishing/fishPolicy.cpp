@@ -8,11 +8,11 @@
 using namespace Fishing;
 
 namespace {
-ScheduleCount simpleUpCounter = FishingParameters::FirstSlotOrdinalToFish;
+SlotCount simpleUpCounter = FishingParameters::FirstSlotOrdinalToFish;
 }
 
-ScheduleCount SimpleFishPolicy::nextFishSlotOrdinal() {
-	ScheduleCount result;
+SlotCount SimpleFishPolicy::nextFishSlotOrdinal() {
+	SlotCount result;
 
 	incrementCounterModuloSleepingSlots(&simpleUpCounter);
 	result = simpleUpCounter;
@@ -30,8 +30,8 @@ namespace {
  * !!! upCounter initialized to  last slot, the first call after reset increments,
  * and the first result is FirstSleepingSlotOrdinal.
  */
-	ScheduleCount upCounter = FishingParameters::LastSlotOrdinalToFish;
-	ScheduleCount downCounter = FishingParameters::FirstSlotOrdinalToFish;
+	SlotCount upCounter = FishingParameters::LastSlotOrdinalToFish;
+	SlotCount downCounter = FishingParameters::FirstSlotOrdinalToFish;
 	bool direction = true;
 }
 
@@ -47,8 +47,8 @@ void SyncRecoveryTrollingPolicy::restart() {
 	// next generated ordinal will be first sleeping slot
 }
 
-ScheduleCount SyncRecoveryTrollingPolicy::nextFishSlotOrdinal() {
-	ScheduleCount result;
+SlotCount SyncRecoveryTrollingPolicy::nextFishSlotOrdinal() {
+	SlotCount result;
 
 	if (direction) {
 		incrementCounterModuloSleepingSlots(&upCounter);
@@ -66,7 +66,7 @@ ScheduleCount SyncRecoveryTrollingPolicy::nextFishSlotOrdinal() {
 }
 
 LongTime SyncRecoveryTrollingPolicy::getStartTimeToFish() {
-	ScheduleCount sleepingSlotOrdinal = nextFishSlotOrdinal();
+	SlotCount sleepingSlotOrdinal = nextFishSlotOrdinal();
 
 	// minus 1: convert ordinal to zero-based duration multiplier
 	LongTime result = clique.schedule.startTimeOfSyncPeriod() +  (sleepingSlotOrdinal - 1) * ScheduleParameters::VirtualSlotDuration;

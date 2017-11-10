@@ -88,16 +88,14 @@ void FishSchedule::memoizeTimeOfThisFishSlotStart() {
 
 LongTime FishSchedule::timeOfThisFishSlotEnd() {
 	/*
-	 * Fish sessions are of fixed duration.
-	 * Regardless of kind: Trolling or DeepFishing.
-	 * Session may be many slots.
-	 * FUTURE delegate to FishingManager so duration depends on kind.
+	 * Fish session duration from FishingManager, may vary.
+	 * Next, clamp end time of long session started near end of sync period.
 	 */
 	LongTime result = _memoStartTimeOfFishSlot
-			+ FishingParameters::FishSessionDuration;
+			+ FishingManager::getFishSessionDuration();
 
 	/*
-	 * A Fish slot started near end of SyncPeriod
+	 * Fish session started near end of SyncPeriod
 	 * should not end after end of SyncPeriod (next SyncPoint)
 	 */
 	result = clique.schedule.clampTimeBeforeLatestSlotMark(result);

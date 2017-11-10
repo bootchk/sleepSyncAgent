@@ -29,7 +29,7 @@ public:
 	 * Typically, slave will drift half a sync slot in 50 sync periods.
 	 */
 	//static const ScheduleCount maxMissingSyncsPerDropout = 40;
-	static const ScheduleCount maxMissingSyncsPerDropout = 80;
+	static const EventCount maxMissingSyncsPerDropout = 80;
 
 	/*
 	 * Role Master xmits MasterSync once per this many SyncPeriods, in a random one of them.
@@ -39,7 +39,7 @@ public:
 	 * !!! Note some policies are adaptive, and will use a different parameter sometimes.
 	 */
 	// Original concept: every third period
-	static const ScheduleCount CountSyncPeriodsToChooseMasterSyncXmits = 3;
+	static const EventCount CountSyncPeriodsToChooseMasterSyncXmits = 3;
 
 	/*
 	 * !!! Only for testing DutyCycle and adaptiveSyncing: every period

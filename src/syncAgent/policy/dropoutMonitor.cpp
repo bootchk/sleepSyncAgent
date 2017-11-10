@@ -6,7 +6,7 @@
 
 namespace {
 
-ScheduleCount countSyncSlotsWithoutSyncMsg;
+EventCount countSyncSlotsWithoutSyncMsg;
 
 } // namespace
 

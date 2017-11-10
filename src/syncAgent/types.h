@@ -9,6 +9,8 @@
 
 
 /*
+ * Type used for OTA durations, in ticks of the LongClock.
+ *
  * Restrict TimeMath results to this type.
  *
  * Difference of LongTime actually yields another LongTime (modulo math on unsigned.)
@@ -22,8 +24,14 @@ typedef uint32_t DeltaTime;
  * Used in scheduling to count slots and periods.
  */
 // FUTURE since we aren't enforcing this, we might as well use native int
-// FUTURE distinguish PeriodCount from SlotCount
-typedef uint16_t ScheduleCount;
+typedef uint16_t SlotCount;
+
+
+/*
+ * Counts events
+ * e.g. missed sync
+ */
+typedef unsigned int EventCount;
 
 
 /*
