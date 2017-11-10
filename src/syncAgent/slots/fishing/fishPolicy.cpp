@@ -33,6 +33,9 @@ namespace {
 	SlotCount upCounter = FishingParameters::LastSlotOrdinalToFish;
 	SlotCount downCounter = FishingParameters::FirstSlotOrdinalToFish;
 	bool direction = true;
+
+	// Default value
+	DeltaTime durationFishSession = FishingParameters::TrollingFishSessionDurationTicks;
 }
 
 
@@ -75,8 +78,12 @@ LongTime SyncRecoveryTrollingPolicy::getStartTimeToFish() {
 }
 
 DeltaTime SyncRecoveryTrollingPolicy::getFishSessionDuration() {
-	// Constant
-	return FishingParameters::TrollingFishSessionDurationTicks;
-	// FUTURE variable trolling duration
+	// Variable with constant default
+	return durationFishSession;
+}
+
+void SyncRecoveryTrollingPolicy::incrementFishSessionDuration(unsigned int increment) {
+	// increment is in ticks
+	durationFishSession += increment;
 }
 

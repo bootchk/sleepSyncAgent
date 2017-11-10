@@ -333,7 +333,7 @@ LongTime Schedule::timeOfNextSyncPoint() {
  * and is synchronous so it always takes that time.
  */
 LongTime Schedule::latestTimeToEndSlots() {
-	// FIXME
+	// FIXME latesttimetoendslots
 	// assert(aTime <= (nextSyncPoint - ScheduleParameters::VirtualSlotDuration + 10*ScheduleParameters::MsgDurationInTicks));
 	// TODO does subsequent scheduling prevent past HXFO rampup?
 	return timeOfNextSyncPoint();

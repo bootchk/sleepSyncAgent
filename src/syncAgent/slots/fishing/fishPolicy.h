@@ -70,6 +70,9 @@ public:
 	static LongTime getStartTimeToFish();
 	static DeltaTime getFishSessionDuration();
 	static void checkDone() {};
+
+	static void incrementFishSessionDuration(unsigned int increment);
+	// TODO dec
 };
 
 

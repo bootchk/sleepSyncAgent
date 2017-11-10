@@ -23,15 +23,11 @@ public:
 
 /*
  * Certain build configurations (Debug52 running on NRF52DK USB powered)
- * define EXTENDED_FISH_DURATION
- * to affect the const duration of trolling
+ * calls to increment duration.
+ * This affects the default;
  */
 
-#ifdef EXTENDED_FISH_DURATION
-	static const ScheduleCount SlotsTrollingFishedPerPeriod = 20;
-#else
 	static const SlotCount SlotsTrollingFishedPerPeriod = 1;
-#endif
 
 	/*
 	 * Subtract to account for HFXO Startup.
