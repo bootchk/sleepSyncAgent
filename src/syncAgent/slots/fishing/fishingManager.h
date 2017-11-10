@@ -55,6 +55,8 @@ enum class FishingMode {
  */
 class FishingManager {
 public:
+	static FishingMode mode();
+
 	/*
 	 * If current mode is finite, check for completion and call callback for event.
 	 */

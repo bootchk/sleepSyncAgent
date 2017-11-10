@@ -11,6 +11,7 @@
 #include "../cliqueHistory/cliqueHistory.h"
 
 // Debugging
+#include "../slots/fishing/fishingManager.h"
 #include "../logging/logger.h"
 
 
@@ -244,8 +245,8 @@ void CliqueMerger::deactivate(){ isActive = false; }
  * - save design so later, at endSyncSlot, we can schedule any mergeSlot.
  */
 void CliqueMerger::initFromMsg(SyncMessage* msg){
-
-
+	// Don't merge from Deep
+	assert(FishingManager::mode() == FishingMode::Trolling);
 	assert (MessageFactory::doesCarrySync(msg->type));
 
 	// Log PeriodTime we fished sync, and log details

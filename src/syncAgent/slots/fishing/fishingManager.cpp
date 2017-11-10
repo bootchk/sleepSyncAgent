@@ -7,8 +7,12 @@
 
 
 namespace {
-	FishingMode mode = FishingMode::Trolling;
+	FishingMode fishingMode = FishingMode::Trolling;
 }
+
+
+FishingMode FishingManager::mode() { return fishingMode; }
+
 
 /*
  * Called many times (for repetitive Merge class msgs), but only restarts on the first.
@@ -19,16 +23,16 @@ namespace {
  */
 // XXX Check , and chose high priority?
 void FishingManager::switchToDeepFishing(DeltaTime deltaToSyncPointOfFish, Callback aCallback) {
-	if (mode != FishingMode::DeepFishing) {
+	if (fishingMode != FishingMode::DeepFishing) {
 		Logger::log("\nto deep ");
-		mode = FishingMode::DeepFishing;
+		fishingMode = FishingMode::DeepFishing;
 		DeepFishingPolicy::restart(deltaToSyncPointOfFish, aCallback);
 	}
 }
 
 void FishingManager::switchToTrolling() {
 	Logger::log("\nto troll ");
-	mode = FishingMode::Trolling;
+	fishingMode = FishingMode::Trolling;
 }
 
 void FishingManager::restartTrollingMode() {
@@ -41,7 +45,7 @@ void FishingManager::restartTrollingMode() {
 
 void FishingManager::checkFishingDone() {
 	// Delegate to current fishing mode
-	switch(mode){
+	switch(fishingMode){
 	case FishingMode::Trolling:
 		// It never returns true, don't care
 		(void) SyncRecoveryTrollingPolicy::checkDone();
@@ -59,7 +63,7 @@ LongTime FishingManager::getStartTimeToFish(){
 
 	LongTime result;
 
-	switch(mode){
+	switch(fishingMode){
 	case FishingMode::Trolling:
 		result = SyncRecoveryTrollingPolicy::getStartTimeToFish();
 		break;
@@ -77,7 +81,7 @@ DeltaTime FishingManager::getFishSessionDuration(){
 
 	DeltaTime result;
 
-	switch(mode){
+	switch(fishingMode){
 	case FishingMode::Trolling:
 		result = SyncRecoveryTrollingPolicy::getFishSessionDuration();
 		break;
