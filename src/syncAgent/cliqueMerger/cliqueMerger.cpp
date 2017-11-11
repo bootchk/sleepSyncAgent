@@ -80,19 +80,44 @@ LongTime pastSyncPointOfCatch() {
  *
  * Calculated once, read each time we send MergeSync,
  * (An alternative design is to recalculate it if our Schedule is adjusted: not implemented.)
- *
- * Calculated in two steps:
- * - raw
- * - plus adjustments
  */
 
+
+/*
+ * Adjust time to transmit to allow for preflight (HFXO startup and send latency)
+ *
+ * Also clamp so it is not earlier than end of sync slot.
+ * (Alternatively, clamp it so it is not earlier than zero.
+ * Then when we schedule the merge xmit timeout at end of sync slot,
+ * it yields a timeout of zero and happens immediately.)
+ *
+ * If clamping makes it the wrong wall time relative to sync slot of other clique,
+ * it can't be helped, and is harmless: it just won't be heard by other clique members.
+ *
+ * This could happen if we fish very late (beyond the sync period).
+ * Then the rawTime modulo SyncPeriodDuration is near zero.
+ */
 DeltaTime adjustedRawTimeToMergeClique(DeltaTime rawTime) {
-	// Adjust time to transmit to get the time we should start MergeSlot
-	return rawTime - ScheduleParameters::PreflightDelta;
+	// assert rawTime < NormalSyncPeriodDuration
+
+	DeltaTime result;
+	static const int EarliestMergeTime = 2 * ScheduleParameters::VirtualSlotDuration + ScheduleParameters::PreflightDelta;
+
+	if (rawTime > EarliestMergeTime) {
+		result = rawTime - ScheduleParameters::PreflightDelta;
+	}
+	else {
+		result = EarliestMergeTime;
+	}
+	return result;
 }
 
 /*
- * Self will be sender to inferior former clique, self will be on schedule of Catch's superior clique
+ * Self will be sender to inferior former clique, self will be on schedule of Catch's superior clique.
+ *
+ * TODO Stinks.  Name says it is PeriodTime type but returns DeltaTime.
+ * Also Stinks: PeriodTime is not strong enough: must be in range of a type AcceptablePeriodTimeToScheduleEventUsingRadio.
+ * Which is after the sync slot, and before end of sync period minus preflight time.
  */
 DeltaTime periodTimeToMergeMyClique() {
 	/*
@@ -102,7 +127,11 @@ DeltaTime periodTimeToMergeMyClique() {
 	*/
 	DeltaTime rawTime = TimeMath::clampedTimeDifference(middleOfNextSyncSlotOfFisher(), pastSyncPointOfCatch())
 			% ScheduleParameters::NormalSyncPeriodDuration;
+	// assert rawTime is PeriodTime since % NormalSyncPeriodDuration is always in [0,NormalSyncPeriodDuration-1]
+
+
 	return adjustedRawTimeToMergeClique(rawTime);
+	// caller assigns to a PeriodTime, which may throw assertion
 }
 
 /*
@@ -115,6 +144,8 @@ DeltaTime periodTimeToMergeOtherClique() {
 	 */
 	DeltaTime rawTime =  TimeMath::clampedTimeDifference(middleOfNextSyncSlotOfCatch(), nextSyncPointOfFisher())
 		% ScheduleParameters::NormalSyncPeriodDuration;
+
+	// assert rawTime is a PeriodTime since it is modulo NormalSyncPeriodDuration
 
 	return adjustedRawTimeToMergeClique(rawTime);
 }
