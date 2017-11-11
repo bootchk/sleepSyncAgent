@@ -166,12 +166,10 @@ void initMergeMyClique(SyncMessage* msg){
 	else
 		kindOfMerger = MessageType::SlaveMergedAway;
 
-	// TODO this is probably a duplicate
-	CliqueHistory::add(superiorMasterID, 1 );	// TODO cliqueHistory
-
 	// FUTURE migrate this outside and return result to indicate it should be done
 	/*
 	 * After using current clique above, change my clique (new master and new schedule)
+	 * and add clique history
 	 */
 	owningClique->updateBySyncMessage(msg);
 

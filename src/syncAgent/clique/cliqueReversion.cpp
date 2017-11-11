@@ -82,7 +82,5 @@ void Clique::onMasterDropout() {
 	 */
 	Logger::logMasterDropout();
 
-	// FUTURE: history of masters, self assume mastership only if was most recent master, thus avoiding contention.
-	// grabMastership();
 	revertByCliqueHistory();
 }
