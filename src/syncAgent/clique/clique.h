@@ -24,8 +24,8 @@ class Clique {
 private:
 	// Self (with ID given by System::ID() ) is master of clique
 	static void setSelfMastership();
-	// Other is master
-	static void setOtherMastership(SystemID otherMasterID);
+	// Other is master.  Other might be self
+	static void updateMastership(SystemID otherMasterID);
 
 public:
 	static Schedule schedule;
@@ -48,15 +48,23 @@ public:
 	// Current design doesn't distinguish when this transition occurs
 	// static void mergeMastership();
 
-	static bool shouldTransmitSync();
 
 	/*
-	 * Methods for determining whether we lost sync (master dropped out, or other reasons.)
+	 * sync transmit
+	 */
+	static bool shouldTransmitSync();
+private:
+	static void resetTransmitSyncPolicy();
+public:
+
+	/*
+	 * Determining whether we lost sync (master dropped out, or other reasons.)
 	 */
 	static void heardSync();
 	static void checkMasterDroppedOut();
-	// Self as slave failed to hear sync from  Master
-	static void onMasterDropout();
+
+
+
 
 	/*
 	 * Update clique from heard SyncMessage:
@@ -68,8 +76,11 @@ public:
 
 private:
 	/*
-	 * Behaviors on failing to hear sync
+	 * Behaviors on lost sync (failing to hear)
 	 */
+	// Self as slave lost sync from  Master
+	static void onMasterDropout();
+
 	// Brute force: self assume mastership
 	static void grabMastership();
 

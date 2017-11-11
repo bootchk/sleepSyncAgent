@@ -9,6 +9,7 @@
 #include "../../config.h"
 
 #include "clique.h"
+#include "../cliqueHistory/cliqueHistory.h"
 
 #include "../logging/logger.h"
 
@@ -78,9 +79,13 @@ void Clique::setSelfMastership() {
  * then you can make the assertion:
  * assert(otherID != System::ID());	// we can't hear our own sync
  */
-void Clique::setOtherMastership(SystemID otherID) {
-	Logger::log("set other master\n");
-	masterID = otherID;
+void Clique::updateMastership(SystemID otherID) {
+	// assert otherID is superior or self
+	if (masterID != otherID) {
+		Logger::log("set other master\n");
+		masterID = otherID;
+		CliqueHistory::add(otherID, 1);	// TODO
+	}
 }
 
 bool Clique::isSelfMaster() { return masterID == System::ID(); }

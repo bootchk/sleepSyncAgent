@@ -46,9 +46,10 @@ enum class MessageType {
 	MasterSync = 17,	// Don't start at 0
 
 	// Merging
-	MasterMergedAway = 34,
-	SlaveMergedAway = 37,
-	EnticingInferior = 41,
+	EnticingInferior = 34,	// Was MergeSync
+	MasterMergedAway = 37,
+	SlaveMergedAway = 41,
+
 
 	AbandonMastership = 68,
 	/*

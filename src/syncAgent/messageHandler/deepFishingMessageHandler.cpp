@@ -29,14 +29,15 @@ HandlingResult FishSlotMessageHandler::handleCatchFromDeepFishing(SyncMessage* m
 		// Abort deep fishing
 		FishingManager::switchToTrolling();
 
-		// We can abort this FishSlot, it succeeded
+		// Abort slot, it succeeded
 		result = HandlingResult::StopListeningHeardMasterSync;
 	}
 	else { // Inferior
-		// Ignore it, continue this session and keep deep fishing for superior clique
+		// Unintended result
+		// Ignore msg, continue fish slot session and keep deep fishing for superior clique
 		result = HandlingResult::KeepListening;
 	}
 	// Schedule and FishingMode probably changed
 
-	// FIXME HandlingResult is
+	return result;
 }

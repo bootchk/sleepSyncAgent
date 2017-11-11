@@ -6,6 +6,9 @@
 #include "cliqueHistory.h"
 #include "cliqueRecord.h"
 
+#include "../logging/logger.h"
+
+
 namespace {
 
 static const unsigned int RecordCount = 6;
@@ -26,19 +29,24 @@ void CliqueHistory::init() {
 
 
 void CliqueHistory::add(SystemID newMasterID, DeltaTime offsetToNextClique) {
-	(void) newMasterID;
 
 	if (currentCliqueIndex < (RecordCount - 1)) {
+		Logger::log("Add cliq history.\n");
 		currentCliqueIndex++;
-		cliqueRecords[currentCliqueIndex].masterID = System::ID();
+		cliqueRecords[currentCliqueIndex].masterID = newMasterID;
+		// TODO offset goes in previous record
 		cliqueRecords[0].offsetToNextMastersSync = offsetToNextClique;
 	}
-	// else no more storage, history is flawed
+	else {
+		// history is flawed
+		Logger::log("Exhaust cliq history.\n");
+	}
 	// TODO update the offset of the last CliqueRecord to skip an intermediate clique
 }
 
 
 void CliqueHistory::setCurrentCliqueRecordToFormerClique() {
+	Logger::log("Subtract cliq history.\n");
 	assert(currentCliqueIndex > 0);
 	currentCliqueIndex--;
 }
