@@ -7,9 +7,6 @@
 
 //#include "../policy/masterXmitSyncPolicy.h"
 #include "../policy/syncPolicy/adaptiveXmitSyncPolicy.h"
-
-
-
 #include "../message/messageFactory.h"
 
 #include "../logging/logger.h"

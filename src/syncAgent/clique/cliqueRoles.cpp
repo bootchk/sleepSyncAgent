@@ -82,7 +82,7 @@ void Clique::setSelfMastership() {
 void Clique::updateMastership(SystemID otherID) {
 	// assert otherID is superior or self
 	if (masterID != otherID) {
-		Logger::log("set other master\n");
+		Logger::log("Set other master.\n");
 		masterID = otherID;
 		CliqueHistory::add(otherID, 1);	// TODO
 	}

@@ -52,6 +52,7 @@ void FishingManager::checkFishingDone() {
 		break;
 	case FishingMode::DeepFishing:
 		if (DeepFishingPolicy::checkDone()) {
+			// side effect of checkDone() was call callback.  See slot/fishing/fishingDoneCallbacks
 			switchToTrolling();
 		}
 		break;

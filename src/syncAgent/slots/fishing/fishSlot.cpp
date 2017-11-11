@@ -16,9 +16,6 @@
 #include "../../modules/syncPowerManager.h"
 #include "../../state/phase.h"
 
-#include "../../clique/clique.h"
-#include "../../globals.h"
-
 
 
 namespace {
@@ -95,24 +92,4 @@ void FishSlot::perform() {
 
 
 
-/*
- * Callbacks
- */
-void FishSlot::endDeepFishingWithNoAction() {
-	/*
-	 * Self stays in current clique.
-	 */
-	// FUTURE remember so we aren't continually fished to another.
-}
 
-void FishSlot::endDeepFishingWithRecoverMaster() {
-	/*
-	 * Master left.
-	 * Recover master if we haven't already heard another assuming mastership.
-	 */
-	/*
-	 * For now, many slaves may assume Mastership
-	 */
-	// FUTURE: bettery strategy
-	clique.assumeMastership();
-}
