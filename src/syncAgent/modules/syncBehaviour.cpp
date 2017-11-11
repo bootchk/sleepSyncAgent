@@ -12,18 +12,29 @@
 namespace {
 
 /*
- * Receive sync while already merging.
+ * Received sync while already merging.
  *
- * FUTURE: merge other clique to updated sync slot time
+ * Cases:
+ * - from my master, small adjustment
+ * - from another clique, large adjustment
  *
- * NOW: just abandon merging
+ * Ideally, they are both handled by adjusting the ongoing merger.
  */
-void handleSyncWhileMerging(SyncMessage* msg) {
+void handleSuperiorOrSameSyncWhileMerging(SyncMessage* msg) {
 	(void) msg;
 
-	// FUTURE: syncAgent.cliqueMerger.adjustMergerBySyncMsg(msg);
+	if (clique.isMsgFromMyClique(msg->masterID)) {
+		/*
+		 * Allow current merger to continue: we want to notify other clique members we departed.
+		 * Merger may drift since we aren't adjusting the merger.
+		 */
+	}
+	else {
+		// FUTURE: syncAgent.cliqueMerger.adjustMergerBySyncMsg(msg);
+		// NOW: just abandon merging
+		SyncAgent::stopMerger();
+	}
 
-	SyncAgent::stopMerger();
 }
 
 }
@@ -50,14 +61,14 @@ bool SyncBehaviour::filterSyncMsg(SyncMessage* msg){
 		 */
 		//log("Sync from my clique (master or slave)\n");
 		// WAS clique.changeBySyncMessage(msg);
-		handleSyncMsg(msg);
+		handleSuperiorOrSameSyncMsg(msg);
 		clique.heardSync();
 		doesMsgKeepSynch = true;
 	}
 	else if (clique.isOtherCliqueBetter(msg->masterID)) {
 		// Strictly better
 		//log("Better master\n");
-		handleSyncMsg(msg);
+		handleSuperiorOrSameSyncMsg(msg);
 		clique.heardSync();
 		// assert(! isSelfMaster());
 		doesMsgKeepSynch = true;
@@ -90,22 +101,20 @@ bool SyncBehaviour::shouldTransmitSync() {
 
 
 
-void SyncBehaviour::handleSyncMsg(SyncMessage* msg) {
+void SyncBehaviour::handleSuperiorOrSameSyncMsg(SyncMessage* msg) {
 	// assert current slot is Sync
+	// Assert the other clique is superior or my clique (msg from the master, or another slave in my clique.)
 	/*
 	 * assert( clique.isMsgFromMyClique(msg->masterID) || !clique.isMsgFromMyClique(msg->masterID) );
 	 * i.e. this does not assume the sync is from my current clique, or not from my current clique.
 	 * If it is from my current clique, my Master does not change, but schedule is adjusted (usually small.)
 	 * If it is from another clique, my Master does change, and schedule is adjusted.
-	 *
-	 * Assert the other clique is superior or my clique (msg from the master, or another slave in my clique.)
 	 */
-
 	clique.updateBySyncMessage(msg);
 	// assert endOfSyncPeriod changed or not changed
 
 	if (MergerFisherRole::isMerger()) {
-		handleSyncWhileMerging(msg);
+		handleSuperiorOrSameSyncWhileMerging(msg);
 	}
 }
 

@@ -55,7 +55,7 @@ public:
 	 *
 	 * Sync messages received in other slots (FishSlot) have different effects.
 	 */
-	static void handleSyncMsg(SyncMessage* msg);
+	static void handleSuperiorOrSameSyncMsg(SyncMessage* msg);
 
 
 	/*
