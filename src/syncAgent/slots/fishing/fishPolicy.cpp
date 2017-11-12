@@ -77,13 +77,39 @@ LongTime SyncRecoveryTrollingPolicy::getStartTimeToFish() {
 	return result;
 }
 
+
+
+
+/*
+ * Duration methods
+ */
+
 DeltaTime SyncRecoveryTrollingPolicy::getFishSessionDuration() {
 	// Variable with constant default
 	return durationFishSession;
 }
 
 void SyncRecoveryTrollingPolicy::incrementFishSessionDuration(unsigned int increment) {
+	Logger::log("Inc fish duration.\n");
 	// increment is in ticks
+	// TODO limit it.  For now assume it never gets larger than all of sync period.
 	durationFishSession += increment;
+}
+
+void SyncRecoveryTrollingPolicy::decrementFishSessionDuration(unsigned int decrement){
+	Logger::log("Dec fish duration.\n");
+
+	// Prevent unsigned subraction overflow (i.e. < zero)
+	if (durationFishSession > decrement)
+		durationFishSession -= decrement;
+
+	// Prevent less than minimum required by other code
+	if (durationFishSession < FishingParameters::TrollingFishSessionDurationTicks)
+		durationFishSession = FishingParameters::TrollingFishSessionDurationTicks;
+}
+
+
+void SyncRecoveryTrollingPolicy::setDurationToMinDuration() {
+	durationFishSession = FishingParameters::TrollingFishSessionDurationTicks;
 }
 

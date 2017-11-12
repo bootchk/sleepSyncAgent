@@ -119,6 +119,11 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 		 */
 	}
 	else {
+		/*
+		 * Someone else sent work (which carries sync)
+		 * so I don't send any sync at all.
+		 */
+		Logger::log("Heard work, omit send work.\n");
 		// assert heard work is relayed to app via callback
 		/*
 		 * FUTURE: work is distinct and mailbox holds many work

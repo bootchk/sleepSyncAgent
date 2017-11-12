@@ -71,8 +71,16 @@ public:
 	static DeltaTime getFishSessionDuration();
 	static void checkDone() {};
 
+	/*
+	 * Allow caller to set duration in ticks.
+	 * So duration might not be same duration as virtual slot.
+	 */
 	static void incrementFishSessionDuration(unsigned int increment);
-	// TODO dec
+	static void decrementFishSessionDuration(unsigned int decrement);
+	/*
+	* One slot.  SyncAgent will quit fishing altogether if not enough power.
+	*/
+	static void setDurationToMinDuration();
 };
 
 
