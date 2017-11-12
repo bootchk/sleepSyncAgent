@@ -18,11 +18,16 @@ Mailbox mailbox;
 
 
 void RemoteLogger::sendInfo(uint8_t item){
+	/*
+	 * !!! Send it now, performing a slot.
+	 */
 	InfoSlot::perform(item);
 }
 
-// define REMOTE_LOGGING to enable
+// define REMOTE_LOGGING to enable, usually defined in build config
 #ifdef REMOTE_LOGGING
+
+bool RemoteLogger::isEnabled() { return true; }
 
 void RemoteLogger::log(uint8_t item){
 	mailbox.tryPut(item);
@@ -46,7 +51,9 @@ void RemoteLogger::sendAnyFaults() {
 
 #else
 
+bool RemoteLogger::isEnabled() { return false; }
 void RemoteLogger::log(uint8_t item){(void) item; }
+// Since not enabled, always not send
 bool RemoteLogger::trySendingLog(){ return false; }
 void RemoteLogger::sendAnyFaults() {}
 

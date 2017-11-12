@@ -33,6 +33,8 @@ private:
 	static void sendInfo(uint8_t);
 
 public:
+	static bool isEnabled();
+
 	/*
 	 * log msg for later sending.
 	 * !!! Mailbox only holds one.

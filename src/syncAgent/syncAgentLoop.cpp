@@ -139,7 +139,7 @@ void SyncAgent::loop(){
 		 * Remote logging is high priority.
 		 * Do it regardless of mode and forego usual modal
 		 */
-		if (RemoteLogger::trySendingLog()) {
+		if (RemoteLogger::isEnabled() and RemoteLogger::trySendingLog()) {
 			// InfoSlot was performed, sleep remainder of SyncPeriod
 			sleepEntireSyncPeriod();
 		}
