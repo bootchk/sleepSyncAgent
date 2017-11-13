@@ -7,6 +7,8 @@
 #include "../state/phase.h"
 #include "../state/role.h"
 
+#include "../sleepers/syncSleeper.h"
+
 #include "../slots/syncing/syncWorkSlot.h"
 #include "../slots/fishing/fishSlot.h"
 #include "../slots/merging/mergeSlot.h"

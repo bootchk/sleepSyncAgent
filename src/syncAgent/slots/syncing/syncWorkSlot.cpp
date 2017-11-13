@@ -6,10 +6,10 @@
 #include "../../modules/syncSender.h"
 #include "../../modules/syncBehaviour.h"
 #include "../../modules/syncPowerManager.h"
+#include "../../sleepers/syncSleeper.h"
 
 #include "syncWorkSlot.h"
 #include "syncSlotSchedule.h"
-#include "../../messageHandler/messageHandler.h"
 #include "../../state/phase.h"
 #include "../../policy/workPolicy.h"
 #include "../../policy/workManager.h"
