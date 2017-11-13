@@ -10,7 +10,10 @@ enum RemoteLoggedEvent {
 	StopFish,
 	MasterDropOut,
 	BrownOut,
-	HardOrAssertionFault
+	HardOrAssertionFault,
+	FishDurationInc,
+	FishDurationDec,
+	FishDurationMin
 };
 
 
@@ -79,6 +82,9 @@ public:
 
 	static void logUnexpectedEventWhileListening();
 
+	static void logIncreaseFish();
+	static void logDecreaseFish();
+	static void logToMinFish();
 
 	/*
 	 * Normal details.

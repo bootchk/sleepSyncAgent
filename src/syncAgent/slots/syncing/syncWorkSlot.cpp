@@ -7,6 +7,7 @@
 #include "../../modules/syncBehaviour.h"
 #include "../../modules/syncPowerManager.h"
 #include "../../sleepers/syncSleeper.h"
+#include "../../sleepers/scheduleSleeper.h"
 
 #include "syncWorkSlot.h"
 #include "syncSlotSchedule.h"
@@ -149,15 +150,6 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 
 
 
-
-
-// Sleep with network shutdown for remainder of sync slot
-void SyncWorkSlot::sleepSlotRemainder() {
-	//assert(!netork->isInUse());
-	SyncSleeper::sleepUntilTimeout(SyncSlotSchedule::deltaToThisSyncSlotEnd);
-}
-
-
 /*
  * listen for sync the whole period.
  */
@@ -249,7 +241,7 @@ void SyncWorkSlot::tryPerform() {
 		Logger::logNoPowerToStartSyncSlot();
 
 		// Busted SyncSlot, no listen, no send sync
-		sleepSlotRemainder();
+		ScheduleSleeper::sleepSyncSlotRemainder();
 
 		// Continuation will be sleep to FishSlot
 

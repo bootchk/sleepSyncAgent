@@ -172,6 +172,21 @@ void Logger::logStopFish() {
 	RemoteLogger::log(RemoteLoggedEvent::StopFish);
 }
 
+
+void Logger::logIncreaseFish() {
+	localLogger.log("\nIncrease fishing duration. ");
+	RemoteLogger::log(RemoteLoggedEvent::FishDurationInc);
+}
+void Logger::logDecreaseFish() {
+	localLogger.log("\nDecrease fishing duration. ");
+	RemoteLogger::log(RemoteLoggedEvent::FishDurationDec);
+}
+void Logger::logToMinFish() {
+	localLogger.log("\nTo min fishing duration. ");
+	RemoteLogger::log(RemoteLoggedEvent::FishDurationMin);
+}
+//
+
 /*
  * Using sniffer: a slave doesn't transmit.
  * You can tell a slave suffers master dropout when it might resume mastership and resume transmitting.

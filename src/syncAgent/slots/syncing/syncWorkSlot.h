@@ -53,8 +53,6 @@ private:
 	static void doSlaveSyncWorkSlot();
 	
 	static void perform();
-	
-	static void sleepSlotRemainder();
 
 public:
 	static void tryPerform();

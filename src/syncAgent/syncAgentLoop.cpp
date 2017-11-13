@@ -11,7 +11,7 @@
 
 #include "state/syncMode.h"
 
-#include "sleepers/syncSleeper.h"
+#include "sleepers/scheduleSleeper.h"
 #include "state/phase.h"
 
 #include "policy/workManager.h"
@@ -33,20 +33,12 @@
 
 namespace {
 
-
-
-void sleepEntireSyncPeriod() {
-	Phase::set(PhaseEnum::SleepEntireSyncPeriod);
-	SyncSleeper::sleepUntilTimeout(clique.schedule.deltaNowToNextSyncPoint);
-}
-
-
 // Obsolete alternative SimpleSyncPeriod
 
 void doModalSyncPeriod() {
 	switch(SyncModeManager::mode()) {
 	case SyncMode::Maintain:
-		sleepEntireSyncPeriod();
+		ScheduleSleeper::sleepEntireSyncPeriod();
 		break;
 
 	/*
@@ -141,7 +133,7 @@ void SyncAgent::loop(){
 		 */
 		if (RemoteLogger::isEnabled() and RemoteLogger::trySendingLog()) {
 			// InfoSlot was performed, sleep remainder of SyncPeriod
-			sleepEntireSyncPeriod();
+			ScheduleSleeper::sleepEntireSyncPeriod();
 		}
 		else {
 			// Measure power and set mode

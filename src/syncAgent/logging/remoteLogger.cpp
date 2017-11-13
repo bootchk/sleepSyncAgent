@@ -12,7 +12,7 @@
 
 namespace {
 
-Mailbox mailbox;
+Mailbox infoMailbox;
 
 }
 
@@ -30,14 +30,14 @@ void RemoteLogger::sendInfo(uint8_t item){
 bool RemoteLogger::isEnabled() { return true; }
 
 void RemoteLogger::log(uint8_t item){
-	mailbox.tryPut(item);
+	infoMailbox.tryPut(item);
 }
 
 bool RemoteLogger::trySendingLog(){
 	bool result = false;
 
-	if (mailbox.isMail()) {
-		sendInfo(mailbox.fetch());
+	if (infoMailbox.isMail()) {
+		sendInfo(infoMailbox.fetch());
 		result = true;
 	}
 	return result;

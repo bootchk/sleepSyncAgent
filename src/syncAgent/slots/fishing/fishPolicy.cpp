@@ -90,14 +90,14 @@ DeltaTime SyncRecoveryTrollingPolicy::getFishSessionDuration() {
 }
 
 void SyncRecoveryTrollingPolicy::incrementFishSessionDuration(unsigned int increment) {
-	Logger::log("Inc fish duration.\n");
+	//"Inc fish duration.\n");
 	// increment is in ticks
 	// TODO limit it.  For now assume it never gets larger than all of sync period.
 	durationFishSession += increment;
 }
 
 void SyncRecoveryTrollingPolicy::decrementFishSessionDuration(unsigned int decrement){
-	Logger::log("Dec fish duration.\n");
+	Logger::logDecreaseFish();
 
 	// Prevent unsigned subraction overflow (i.e. < zero)
 	if (durationFishSession > decrement)
@@ -110,6 +110,7 @@ void SyncRecoveryTrollingPolicy::decrementFishSessionDuration(unsigned int decre
 
 
 void SyncRecoveryTrollingPolicy::setDurationToMinDuration() {
+	Logger::logToMinFish();
 	durationFishSession = FishingParameters::TrollingFishSessionDurationTicks;
 }
 

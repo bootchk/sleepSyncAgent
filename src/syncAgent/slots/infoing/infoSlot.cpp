@@ -4,19 +4,11 @@
 #include <ensemble/ensemble.h>
 
 #include "../../modules/syncSender.h"
-#include "../../sleepers/syncSleeper.h"
+#include "../../sleepers/scheduleSleeper.h"
 
-#include "../syncing/syncSlotSchedule.h"
 
-namespace {
 
-void sleepUntilSyncSlotMiddle() {
-	SyncSleeper::sleepUntilTimeout(
-			SyncSlotSchedule::deltaToThisSyncSlotMiddleSubslot
-	);
-}
 
-}
 
 
 
@@ -32,16 +24,21 @@ void InfoSlot::perform(uint8_t item) {
 	//Phase::set(PhaseEnum::SleepTilMerge);
 
 	/*
+	 * Transmit in middle of sync slot to maximize likelihood of success.
+	 *
+	 * First deep sleep half a slot (requires ensemble shutdown.)
+	 * Then sleep a slot during ensemble startup.
+	 * Result is that xmit is in middle of real slot.
+	 */
+	ScheduleSleeper::sleepUntilSyncSlotMiddle();
+
+	/*
 	 * Must succeed even if Ensemble already started.
 	 *
 	 * Blocking sleep.
 	 */
-	// TODO check that ensemble can be started twice
 	Ensemble::startup();
 	// Ensemble ready but not in use (not receiving.)
-
-	// Transmit in middle of sync slot to maximize likelihood of success.
-	sleepUntilSyncSlotMiddle();
 
 	//Phase::set(PhaseEnum::Merge);
 	//Logger::logMsgTime();
