@@ -42,7 +42,7 @@ void SyncAgent::initSleepers() {
 	// assert longClock was init
 	// assert counter is perpetually running
 	// assert counter interrupt enabled for overflow
-	// assert RTC0_IRQ is enabled (for Counter overflow and any Timers)
+	// assert RTCx_IRQ is enabled (for Counter overflow and any Timers)
 
 	Sleeper::setSaneTimeout(ScheduleParameters::TimeoutWaitingForSyncPowerSleeper);
 
