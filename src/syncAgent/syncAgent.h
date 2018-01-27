@@ -76,7 +76,11 @@ public:
 	// Sleep until enough power to start syncing
 	static void sleepUntilSyncPower();
 
+	// execute protocol
+	// without provisioning
 	static void loop() __attribute__ ((noreturn));
+	// with provisioning (multiProtocol)
+	static void loopProvisioned() __attribute__ ((noreturn));
 
 
 	// These  methods are called from below (friends?)
