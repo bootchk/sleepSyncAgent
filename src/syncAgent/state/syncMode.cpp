@@ -4,6 +4,7 @@
 #include "role.h"
 #include "../modules/syncPowerManager.h"
 #include "../logging/logger.h"
+#include "../policy/provisionManager.h"
 
 // Actions for transitions
 #include "../syncAgent.h"
@@ -26,6 +27,17 @@ void pauseSync() {
 }
 #endif
 
+
+void toSyncOnly() {
+	_mode = SyncMode::SyncOnly;
+	SyncAgent::ToNoFishingFromOther();
+}
+
+
+void toSyncAndProvision() {
+	_mode = SyncMode::SyncAndProvision;
+}
+
 }
 
 
@@ -46,7 +58,7 @@ SyncMode SyncModeManager::mode() { return _mode; }
  * State diagram is linear:  Maintain<=>SyncOnly<=>SyncAndFishMerge
  * There are no transitions directly from low to high mode, must step up and down through modes.
  */
-void SyncModeManager::tryTransitions(){
+void SyncModeManager::checkPowerAndTryModeTransitions(){
 	switch(_mode) {
 	case SyncMode::Maintain:
 		/*
@@ -84,13 +96,33 @@ void SyncModeManager::tryTransitions(){
 		// to lower level?
 		if ( ! SyncPowerManager::isPowerForFishMode() ) {
 			Logger::logStopFish();
-			_mode = SyncMode::SyncOnly;
-			SyncAgent::ToNoFishingFromOther();
+			toSyncOnly();
 		}
-		// else no change to mode
+		else {
+#ifdef BLE_PROVISIONED
+		// TODO occasionally to SyncAndProvision
+		if (ProvisionManager::shouldProvision()) {
+			toSyncAndProvision();
+		}
+#else
+		// no change to mode
+#endif
+		}
 		break;
 		// No higher level
 
+	case SyncMode::SyncAndProvision:
+
+		// We only stay in this mode for one sync period
+		// TODO this is hacky, should be a policy class for this
+		if ( ! SyncPowerManager::isPowerForFishMode() ) {
+			toSyncOnly();
+		}
+		else {
+			_mode = SyncMode::SyncAndFishMerge;
+		}
+
+		break;
 		// XXX higher level is excess power, do more fishing or power shedding
 	}
 

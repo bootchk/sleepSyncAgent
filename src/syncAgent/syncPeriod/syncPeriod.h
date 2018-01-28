@@ -37,3 +37,12 @@ class CombinedSyncPeriod{
 public:
 	static void doSlotSequence();
 };
+
+
+/*
+ * Keeping sync but provisioning instead of fishing.
+ */
+class ProvisioningSyncPeriod{
+public:
+	static void doSlotSequence();
+};

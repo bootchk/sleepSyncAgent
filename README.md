@@ -149,6 +149,7 @@ Different Eclipse build configurations:
     - Debug: builds and links for the host architecture with stubs for platform libs.
     - ArchiveArmM4: builds static lib for ARM M4 architecture leaving undefined references to platform libs
     - ArchiveArmM0: " for M0
+    - DebugProvisioned: same as ArchiveArmM4 but with BLE provisioning (dependent on Nordic Softdevice)
     
 CFLAGS are defined in the configurations, e.g. for M0  -mthumb -mcpu=cortex-m0 -mabi=aapcs -mfloat-abi=soft  These must match the app that you are linking to.
 

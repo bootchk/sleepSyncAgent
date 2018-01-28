@@ -7,13 +7,11 @@
 #include "../state/phase.h"
 #include "../state/role.h"
 
-#include "../sleepers/syncSleeper.h"
+#include "../sleepers/scheduleSleeper.h"
 
 #include "../slots/syncing/syncWorkSlot.h"
 #include "../slots/fishing/fishSlot.h"
 #include "../slots/merging/mergeSlot.h"
-
-#include "../clique/clique.h"
 
 #include "../policy/fishWaitingPolicy.cpp"
 
@@ -24,9 +22,7 @@ FishSlot fishSlot;
 MergeSlot mergeSlot;
 
 
-void sleepRemainderOfSyncPeriod() {
-	SyncSleeper::sleepUntilTimeout(clique.schedule.deltaNowToNextSyncPoint);
-}
+
 
 void tryFishOrMerge() {
 	/*
@@ -87,7 +83,7 @@ void CombinedSyncPeriod::doSlotSequence() {
 	assert(Ensemble::isLowPower());	// For remainder of sync period
 
 	Phase::set(PhaseEnum::SleepRemainder);
-	sleepRemainderOfSyncPeriod();
+	ScheduleSleeper::sleepRemainderOfSyncPeriod();
 
 	// Sync period (slot sequence) completed
 }

@@ -17,7 +17,11 @@ enum class SyncMode {
 	 * actively syncing and also fishing for other cliques and merging them
 	 * Two slots active.
 	 */
-	SyncAndFishMerge
+	SyncAndFishMerge,
+	/*
+	 * Sync and provision.
+	 */
+	SyncAndProvision
 };
 
 
@@ -27,8 +31,5 @@ public:
 
 	static SyncMode mode();
 
-	/*
-	 * Check power levels and possibly transition to other modes.
-	 */
-	static void tryTransitions();
+	static void checkPowerAndTryModeTransitions();
 };

@@ -50,6 +50,14 @@ void doModalSyncPeriod() {
 	case SyncMode::SyncAndFishMerge:
 		CombinedSyncPeriod::doSlotSequence();
 		break;
+
+	case SyncMode::SyncAndProvision:
+#ifdef BLE_PROVISIONED
+		ProvisioningSyncPeriod::doSlotSequence();
+#else
+		assert(false);	// illegal to be in this state when not built for provisioning
+#endif
+			break;
 	}
 }
 
@@ -136,8 +144,7 @@ void SyncAgent::loop(){
 			ScheduleSleeper::sleepEntireSyncPeriod();
 		}
 		else {
-			// Measure power and set mode
-			SyncModeManager::tryTransitions();
+			SyncModeManager::checkPowerAndTryModeTransitions();
 			doModalSyncPeriod();
 		}
 
@@ -145,4 +152,6 @@ void SyncAgent::loop(){
 	}
 	// never returns
 }
+
+
 

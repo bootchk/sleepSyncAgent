@@ -24,3 +24,11 @@ void ScheduleSleeper::sleepSyncSlotRemainder() {
 	//assert(!ensemble->isInUse());
 	SyncSleeper::sleepUntilTimeout(SyncSlotSchedule::deltaToThisSyncSlotEnd);
 }
+
+void ScheduleSleeper::sleepRemainderOfSyncPeriod() {
+	SyncSleeper::sleepUntilTimeout(clique.schedule.deltaNowToNextSyncPoint);
+}
+
+void ScheduleSleeper::sleepUntilProvisionSlot() {
+	// TODO random sleep time
+}

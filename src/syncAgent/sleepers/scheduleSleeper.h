@@ -13,8 +13,10 @@
 class ScheduleSleeper {
 public:
 	static void sleepUntilSyncSlotMiddle();
-	// sleep until end of sync period
-	static void sleepEntireSyncPeriod();
-	// sleep until end of sync slot
 	static void sleepSyncSlotRemainder();
+
+	static void sleepEntireSyncPeriod();
+	static void sleepRemainderOfSyncPeriod();
+
+	static void sleepUntilProvisionSlot();
 };
