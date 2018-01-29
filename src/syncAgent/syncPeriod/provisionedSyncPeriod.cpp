@@ -7,6 +7,7 @@
 #include "../slots/syncing/syncWorkSlot.h"
 #include "../sleepers/scheduleSleeper.h"
 #include "../logging/logger.h"
+#include "../syncAgent.h"
 
 #include <provisioner.h>
 
@@ -15,13 +16,13 @@ namespace {
 SyncWorkSlot syncWorkSlot;
 
 void provisioningFailedCallback() {
-	Logger::log("provision fail");
+	Logger::log("\nprovision fail");
 }
 
 
 void provisioningSuccededCallback() {
 	// TODO pass the provisioned value
-	Logger::log("provision succeed");
+	Logger::log("\nprovision succeed");
 	// TODO do something with provisioned value
 }
 
@@ -31,7 +32,17 @@ void tryProvision() {
 	// Init on each session.  TODO init once.
 	Provisioner::init(provisioningSuccededCallback, provisioningFailedCallback);
 
-	Provisioner::provisionWithSleep();
+	// low-power blocks for duration of provisioning session
+	bool result = Provisioner::provisionWithSleep();
+	if (result)
+		Logger::log("\n  WAS PROVISIONED");
+	else
+		Logger::log("\n  NOT PROVISIONED");
+
+	/*
+	 * Since Provisioner reconfigured radio, restore to SleepSync configuration.
+	 */
+	SyncAgent::initEnsembleProtocol();
 
 	// TODO
 	// assert a provisioning session is not longer than syncPeriod

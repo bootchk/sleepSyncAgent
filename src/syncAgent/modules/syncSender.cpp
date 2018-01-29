@@ -25,11 +25,18 @@
 namespace {
 
 /*
- * Convert SyncMessage object into a byte array, and xmit OTA.
+ * Implementation:
+ *   - serialize SyncMessage object into a byte array
+ *   - xmit byte array
  */
 static void sendMessage(SyncMessage* msgPtr) {
 	// assert caller created valid message
 	// assert Ensemble startup was done
+
+#ifndef TEST_LATENCY
+	// Don't log if testing latency, logging affects measurement
+	Logger::logSend(msgPtr);
+#endif
 
 	/*
 	 * Time to serialize is a component of SendLatency.
@@ -41,11 +48,6 @@ static void sendMessage(SyncMessage* msgPtr) {
 
 	// Takes time: RampupDelay + MsgOverTheAirTimeInTicks
 	Ensemble::transmitStaticSynchronously();
-
-#ifndef TEST_LATENCY
-	// Don't log if testing latency, logging affects measurement
-	Logger::logSend(msgPtr);
-#endif
 	}
 
 

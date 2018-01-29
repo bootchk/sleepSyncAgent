@@ -73,6 +73,9 @@ public:
 			void (*onSyncPoint)()
 			);
 
+	// Init Ensemble to hardcoded one of possibly many protocols
+	static void initEnsembleProtocol();
+
 	// Sleep until enough power to start syncing
 	static void sleepUntilSyncPower();
 

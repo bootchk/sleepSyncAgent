@@ -82,7 +82,10 @@ void SyncAgent::initSyncObjects(
 	 * Initialize members (Radio, HfClock, DCDC) of ensemble.
 	 * Connect radio IRQ to syncSleeper so it knows reason for wake
 	 */
-	Ensemble::init(SyncSleeper::getMsgReceivedCallback(), &radioUseCaseSleepSync);
+	Ensemble::init(SyncSleeper::getMsgReceivedCallback());
+
+	initEnsembleProtocol();
+
 
 #ifdef LOW_XMIT_POWER
 	// TEMP: testing range with lower xmit power
@@ -149,6 +152,13 @@ uint32_t SyncAgent::getPhase() { return (uint32_t) Phase::get(); }
 uint32_t SyncAgent::getReasonForWake() { return (uint32_t) Sleeper::getReasonForWake(); }
 
 
+void SyncAgent::initEnsembleProtocol() {
+	/*
+	 * Only the radio needs configuration.
+	 * The LF clock is always running.
+	 */
+	Ensemble::setRadioUseCase(&radioUseCaseSleepSync);
+}
 
 
 #ifdef OBSOLETE
