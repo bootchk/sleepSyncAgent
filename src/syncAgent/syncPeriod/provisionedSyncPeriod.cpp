@@ -20,9 +20,13 @@ void provisioningFailedCallback() {
 }
 
 
-void provisioningSuccededCallback() {
+void provisioningSuccededCallback(uint8_t provisionedValue) {
 	// TODO pass the provisioned value
 	Logger::log("\nprovision succeed");
+
+	// uint8_t value = Provisioner::getProvisionedValue();
+	Logger::log(provisionedValue);
+
 	// TODO do something with provisioned value
 }
 
