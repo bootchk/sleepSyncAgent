@@ -36,7 +36,7 @@ void FishSlot::tryPerform() {
 
 	// Sleep ultra low-power across normally sleeping slots to start of fish slot.
 	// Note sleep might have assertions on power condition
-	FishSchedule::initStartTime();
+	FishSchedule::setSlotTimes();
 
 	Phase::set(PhaseEnum::SleepTilFish);
 	sleepUntilFishSlotStart();

@@ -17,15 +17,21 @@
  */
 class FishSchedule {
 public:
-	static void initStartTime();
+	// Calculate and remember start and end times
+	static void setSlotTimes();
 
-
+	/*
+	 * These may be called many times for each fish slot;
+	 * because sleeper may be woken for other events.
+	 */
 	static DeltaTime deltaToSlotStart();
 	static DeltaTime deltaToSlotEnd();
 
-	static LongTime timeOfThisFishSlotEnd();
+
 
 private:
 	static void memoizeTimeOfThisFishSlotStart();
+	static void memoizeTimeOfThisFishSlotEnd();
+	static LongTime timeOfThisFishSlotEnd();
 
 };

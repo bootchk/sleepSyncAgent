@@ -17,17 +17,18 @@
 
 namespace {
 
-// Remembered at start of fish slot
+// Calculated once, referenced often
 LongTime _memoStartTimeOfFishSlot;
+LongTime _memoEndTimeOfFishSlot;
 
 } // namespace
 
 
 
 
-void FishSchedule::initStartTime() {
-	// Calculate the start once, memoize it
+void FishSchedule::setSlotTimes() {
 	memoizeTimeOfThisFishSlotStart();
+	memoizeTimeOfThisFishSlotEnd();
 }
 
 DeltaTime FishSchedule::deltaToSlotStart(){
@@ -35,7 +36,8 @@ DeltaTime FishSchedule::deltaToSlotStart(){
 }
 
 DeltaTime FishSchedule::deltaToSlotEnd(){
-	return TimeMath::clampedTimeDifferenceFromNow(timeOfThisFishSlotEnd());
+	// WAS return TimeMath::clampedTimeDifferenceFromNow(timeOfThisFishSlotEnd());
+	return TimeMath::clampedTimeDifferenceFromNow(_memoEndTimeOfFishSlot);
 }
 
 
@@ -50,7 +52,7 @@ DeltaTime FishSchedule::deltaToSlotEnd(){
  */
 void FishSchedule::memoizeTimeOfThisFishSlotStart() {
 
-	LongTime result = FishingManager::getStartTimeToFish();
+	LongTime scheduledStartTime = FishingManager::getStartTimeToFish();
 	/*
 	 * result is wild, i.e. could be:
 	 * - in past
@@ -69,7 +71,10 @@ void FishSchedule::memoizeTimeOfThisFishSlotStart() {
 	 * Result too far in future:
 	 * See Schedule::clampTimeBeforeLatestSlotMark() for explanation.
 	 */
-	result = clique.schedule.clampTimeBeforeLatestSlotMark(result);
+	LongTime clampedResult = clique.schedule.clampTimeBeforeLatestSlotMark(scheduledStartTime);
+
+	if (clampedResult != scheduledStartTime)
+		Logger::log("\nFish slot start too late");
 
 	/*
 	 * Only ensure start time.
@@ -81,9 +86,13 @@ void FishSchedule::memoizeTimeOfThisFishSlotStart() {
 	 * User of start time probably should ensure that if the schedule changes,
 	 * timeout to start time is still in range.
 	 */
-	_memoStartTimeOfFishSlot = result;
+	_memoStartTimeOfFishSlot = clampedResult;
 }
 
+
+void FishSchedule::memoizeTimeOfThisFishSlotEnd() {
+	_memoEndTimeOfFishSlot = timeOfThisFishSlotEnd();
+}
 
 
 LongTime FishSchedule::timeOfThisFishSlotEnd() {
@@ -91,18 +100,19 @@ LongTime FishSchedule::timeOfThisFishSlotEnd() {
 	 * Fish session duration from FishingManager, may vary.
 	 * Next, clamp end time of long session started near end of sync period.
 	 */
-	LongTime result = _memoStartTimeOfFishSlot
+	LongTime scheduledEndTime = _memoStartTimeOfFishSlot
 			+ FishingManager::getFishSessionDuration();
 
 	/*
 	 * Fish session started near end of SyncPeriod
 	 * should not end after end of SyncPeriod (next SyncPoint)
 	 */
-	result = clique.schedule.clampTimeBeforeLatestSlotMark(result);
-
+	LongTime clampedResult = clique.schedule.clampTimeBeforeLatestSlotMark(scheduledEndTime);
+	if (clampedResult != scheduledEndTime)
+			Logger::log("\nFish slot end too late");
 	/*
 	 * result may be < nowTime() i.e. in the past
 	 * in which case subsequently computed delta will be 0 and sleepUntilTimeout(delta) will timeout immediately.
 	 */
-	return result;
+	return clampedResult;
 }
