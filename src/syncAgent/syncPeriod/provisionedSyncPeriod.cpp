@@ -30,7 +30,7 @@ void provisioningSuccededCallback(
 	// uint8_t value = Provisioner::getProvisionedValue();
 	Logger::log(provisionedValue);
 	Logger::log("\nrssi: ");
-	Logger::log(provisionedValue);
+	Logger::log((uint8_t)rssi);
 
 	// TODO do something with provisioned value
 }
