@@ -87,14 +87,14 @@ public:
 	static void logToMinFish();
 
 	/*
-	 * Normal details.
+	 * Normal details of algorithm.
 	 */
+	// Message related
 	static void logReceivedMsg(SyncMessage* msg);
 	static void logSend(SyncMessage* msg);
 	static void logMsgDetail(SyncMessage* msg);
 
-	// A msg sent or received, log PeriodTime
-	static void logMsgTime();
+	static void logTicksSinceStartSyncPeriod();
 
 	static void logInferiorCliqueSyncSlotOfMaster();
 	static void logInferiorCliqueSyncSlotOfSlave();
@@ -125,4 +125,6 @@ public:
 	static unsigned int logBrownout();
 
 	static void logReceivedInfo(uint8_t);
+
+	static void logResult(char const* label, bool result);
 };

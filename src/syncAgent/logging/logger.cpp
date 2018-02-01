@@ -37,7 +37,6 @@ void Logger::logSystemInfo() {
 
 
 void Logger::logStartSyncPeriod(LongTime now) {
-	return;
 	localLogger.log(now);
 	localLogger.log("<Sync\n");
 }
@@ -87,7 +86,7 @@ void Logger::logWakeIRQFoundNoEvent() {
 
 
 void Logger::logReceivedMsg(SyncMessage* msg){
-	logMsgTime();
+	logTicksSinceStartSyncPeriod();
 	localLogger.log("\nRX ");
 	localLogger.log(SyncMessage::representation(msg));
 	localLogger.log(":");
@@ -115,8 +114,7 @@ void Logger::logMsgDetail(SyncMessage* msg){
 	localLogger.log(msg->deltaToNextSyncPoint.get());
 }
 
-// A msg sent or received, log PeriodTime
-void Logger::logMsgTime() {
+void Logger::logTicksSinceStartSyncPeriod() {
 	localLogger.log("\nPT:");
 	localLogger.log(Schedule::deltaPastSyncPointToNow());
 }
@@ -210,6 +208,14 @@ unsigned int Logger::logBrownout() {
 	return 1;	// dummy value to be recorded to UICR
 }
 
+
+void Logger::logResult(char const* label, bool result) {
+	log(label); log(": ");
+	if (result)
+		log("Y\n");
+	else
+		log("N\n");
+}
 
 /*
  * Leading \n loses some data???

@@ -116,3 +116,8 @@ LongTime FishSchedule::timeOfThisFishSlotEnd() {
 	 */
 	return clampedResult;
 }
+
+
+void FishSchedule::logParameters() {
+	Logger::log("Fish duration "); Logger::logInt(FishingManager::getFishSessionDuration());
+}

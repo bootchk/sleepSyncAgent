@@ -42,7 +42,7 @@ public:
 	 * A fish session can be many slots.
 	 * If power is unlimited, achieve sync faster with longer trolling fish session.
 	 *
-
+	 * These are the min/max values.
 	 *
 	 * Duration includes one HFXOStartup and one or many VirtualSlotDurations
 	 */
@@ -50,9 +50,16 @@ public:
 				ScheduleParameters::HFXOStartup
 				+ ScheduleParameters::VirtualSlotDuration;
 
-	static const DeltaTime TrollingFishSessionDurationTicks =
+	static const DeltaTime MinTrollingRealFishSessionDurationTicks =
 					ScheduleParameters::HFXOStartup
 					+ SlotsTrollingFishedPerPeriod * ScheduleParameters::VirtualSlotDuration;
 
+	// TODO calculate from syncperiod and active slots
+	static const DeltaTime MaxTrollingRealFishSessionDurationTicks = 1000;
+
+
+	/*
+	 * The number of syncPeriods we deep fish.
+	 */
 	static const unsigned int CountFishingsPerDeepFishing = 6;
 };

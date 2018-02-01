@@ -21,10 +21,11 @@ typedef uint32_t DeltaTime;
 
 
 /*
- * Used in scheduling to count slots and periods.
+ * Index of slot within syncPeriod.
+ * Used in scheduling.
  */
-// FUTURE since we aren't enforcing this, we might as well use native int
-typedef uint16_t SlotCount;
+// FUTURE enforce not exceed CountSlots
+typedef uint32_t SlotCount;
 
 
 /*

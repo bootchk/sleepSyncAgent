@@ -73,7 +73,7 @@ LongTime FishingManager::getStartTimeToFish(){
 		break;
 	}
 	/*
-	 * Not ensure is in future nor beyond end of sync period.
+	 * Not ensure is in future nor before end of sync period.
 	 */
 	return result;
 }

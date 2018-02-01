@@ -5,6 +5,8 @@
 #include "../../logging/logger.h"
 #include "utils.h"
 
+
+
 using namespace Fishing;
 
 namespace {
@@ -35,7 +37,7 @@ namespace {
 	bool direction = true;
 
 	// Default value
-	DeltaTime durationFishSession = FishingParameters::TrollingFishSessionDurationTicks;
+	DeltaTime dynamicFishSessionDuration = FishingParameters::MinTrollingRealFishSessionDurationTicks;
 }
 
 
@@ -65,6 +67,9 @@ SlotCount SyncRecoveryTrollingPolicy::nextFishSlotOrdinal() {
 	direction = ! direction;	// reverse direction, i.e. counter to return next call
 
 	assert(result >=FishingParameters::FirstSlotOrdinalToFish && result <= FishingParameters::LastSlotOrdinalToFish);
+
+	Logger::log("\nTroll ");  Logger::logInt(result);
+
 	return result;
 }
 
@@ -82,35 +87,50 @@ LongTime SyncRecoveryTrollingPolicy::getStartTimeToFish() {
 
 /*
  * Duration methods
+ *
+ * inc/dec unit is ticks
+ * Fishing need not be in is units of slots.
  */
 
 DeltaTime SyncRecoveryTrollingPolicy::getFishSessionDuration() {
 	// Variable with constant default
-	return durationFishSession;
+	return dynamicFishSessionDuration;
 }
 
 void SyncRecoveryTrollingPolicy::incrementFishSessionDuration(unsigned int increment) {
-	//"Inc fish duration.\n");
-	// increment is in ticks
-	// TODO limit it.  For now assume it never gets larger than all of sync period.
-	durationFishSession += increment;
+	// TEMP, until I revise this
+	// the problem is that I need to offset the startTime by the duration
+	// so that I don't log late end time of fishing
+	return;
+
+	Logger::logIncreaseFish();  Logger::logInt(increment);
+
+	DeltaTime trialResult = dynamicFishSessionDuration += increment;
+
+	// Not larger than all of sync period.
+	if (trialResult > FishingParameters::MaxTrollingRealFishSessionDurationTicks) {
+		Logger::log("!!!Try overflow fish duration\n");
+		return;
+	}
+	else
+		dynamicFishSessionDuration = trialResult;
 }
 
 void SyncRecoveryTrollingPolicy::decrementFishSessionDuration(unsigned int decrement){
 	Logger::logDecreaseFish();
 
 	// Prevent unsigned subraction overflow (i.e. < zero)
-	if (durationFishSession > decrement)
-		durationFishSession -= decrement;
+	if (dynamicFishSessionDuration > decrement)
+		dynamicFishSessionDuration -= decrement;
 
 	// Prevent less than minimum required by other code
-	if (durationFishSession < FishingParameters::TrollingFishSessionDurationTicks)
-		durationFishSession = FishingParameters::TrollingFishSessionDurationTicks;
+	if (dynamicFishSessionDuration < FishingParameters::MinTrollingRealFishSessionDurationTicks)
+		dynamicFishSessionDuration = FishingParameters::MinTrollingRealFishSessionDurationTicks;
 }
 
 
 void SyncRecoveryTrollingPolicy::setDurationToMinDuration() {
 	Logger::logToMinFish();
-	durationFishSession = FishingParameters::TrollingFishSessionDurationTicks;
+	dynamicFishSessionDuration = FishingParameters::MinTrollingRealFishSessionDurationTicks;
 }
 

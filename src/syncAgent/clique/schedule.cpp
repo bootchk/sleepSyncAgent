@@ -277,6 +277,14 @@ LongTime Schedule::adjustedEndTimeFromCliqueHistoryOffset(DeltaTime offset) {
 LongTime Schedule::startTimeOfSyncPeriod(){ return _startTimeOfSyncPeriod; }
 LongTime Schedule::endTimeOfSyncPeriod(){ return _endTimeOfSyncPeriod; }
 
+/*
+ * SyncPoint is not necessarily the start/end of the SyncPeriod.
+ * SyncPoint is the time in the SyncPeriod when we callback onSyncPoint() to the app.
+ * See where the callback is invoked.
+ */
+LongTime Schedule::timeOfNextSyncPoint() {
+	return _endTimeOfSyncPeriod;
+}
 
 
 
@@ -314,13 +322,6 @@ DeltaTime  Schedule::deltaPastSyncPointToNow() {
 	return result;
 }
 
-
-
-
-// Next
-LongTime Schedule::timeOfNextSyncPoint() {
-	return _endTimeOfSyncPeriod;
-}
 
 
 /*
@@ -363,6 +364,9 @@ LongTime Schedule::clampTimeBeforeLatestSlotMark(LongTime proposedTime) {
 
 	if (result > cutoffTime) {
 		Logger::log("Clamp time before latest slot\n");
+		Logger::log(proposedTime);
+		Logger::log(" ");
+		Logger::log(cutoffTime);
 		result = cutoffTime;
 	}
 	return result;

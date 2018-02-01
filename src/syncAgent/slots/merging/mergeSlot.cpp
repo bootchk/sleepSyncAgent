@@ -75,7 +75,7 @@ void MergeSlot::perform() {
 	 * now() is aligned with middle of a mergee sync slots (same wall time as fished sync from mergee.)
 	 */
 	Phase::set(PhaseEnum::Merge);
-	Logger::logMsgTime();
+	Logger::logTicksSinceStartSyncPeriod();
 	SyncSender::sendMergeSync();	// Synchronous
 
 	// Radio is not in use.  Ensemble::shutdown requires it

@@ -32,16 +32,16 @@ void provisioningSuccededCallback(uint8_t provisionedValue) {
 
 void tryProvision() {
 	ScheduleSleeper::sleepUntilProvisionSlot();
-
+	Logger::logTicksSinceStartSyncPeriod();
 	// Init on each session.  TODO init once.
 	Provisioner::init(provisioningSuccededCallback, provisioningFailedCallback);
 
-	// low-power blocks for duration of provisioning session
+	// blocks low-power for duration of provisioning session
 	bool result = Provisioner::provisionWithSleep();
-	if (result)
-		Logger::log("\n  WAS PROVISIONED");
-	else
-		Logger::log("\n  NOT PROVISIONED");
+
+	Logger::logTicksSinceStartSyncPeriod();
+
+	Logger::logResult("provisioned", result);
 
 	/*
 	 * Since Provisioner reconfigured radio, restore to SleepSync configuration.

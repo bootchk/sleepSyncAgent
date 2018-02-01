@@ -27,7 +27,7 @@ public:
 	static DeltaTime deltaToSlotStart();
 	static DeltaTime deltaToSlotEnd();
 
-
+	static void logParameters();
 
 private:
 	static void memoizeTimeOfThisFishSlotStart();

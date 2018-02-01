@@ -16,6 +16,8 @@
 
 #include "policy/workManager.h"
 
+#include "slots/fishing/fishSchedule.h"	// logging
+
 #include "logging/logger.h"
 #include "logging/remoteLogger.h"
 
@@ -87,8 +89,8 @@ void SyncAgent::loop(){
 	assert(!Ensemble::isRadioInUse());
 
 	Logger::init();
-
 	Logger::logSystemInfo();
+	FishSchedule::logParameters();
 
 	// Set sane timeout for SyncPeriod calculations, different from that used by SyncPowerSleeper
 	Sleeper::setSaneTimeout( ScheduleParameters::MaxSaneTimeoutSyncSleeper );

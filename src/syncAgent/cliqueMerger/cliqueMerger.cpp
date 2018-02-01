@@ -279,8 +279,7 @@ void CliqueMerger::initFromMsg(SyncMessage* msg){
 	assert(FishingManager::mode() == FishingMode::Trolling);
 	assert (MessageFactory::doesCarrySync(msg->type));
 
-	// Log PeriodTime we fished sync, and log details
-	Logger::logMsgTime();
+	Logger::logTicksSinceStartSyncPeriod();
 	Logger::logMsgDetail(msg);
 
 	if (owningClique->isOtherCliqueBetter(msg->masterID)) {
