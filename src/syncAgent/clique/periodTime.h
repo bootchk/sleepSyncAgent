@@ -27,4 +27,6 @@ public:
 
 	// Preflight check value not out of range
 	static bool isValidValue(DeltaTime value);
+
+	static DeltaTime convertTickOffset(uint32_t);
 };

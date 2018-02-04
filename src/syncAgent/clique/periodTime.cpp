@@ -22,3 +22,13 @@ void PeriodTime::set(DeltaTime value) {
 
 bool PeriodTime::isValidValue(DeltaTime value) { return value <= ScheduleParameters::NormalSyncPeriodDuration; }
 
+
+DeltaTime PeriodTime::convertTickOffset(uint32_t offset) {
+	/*
+	 * Offset can be forward or backward in time.
+	 * Offset is relative to nowTime().
+	 *
+	 * TODO caller should adjust for OTA latency.
+	 */
+	return ScheduleParameters::NormalSyncPeriodDuration - (offset % ScheduleParameters::NormalSyncPeriodDuration);
+}

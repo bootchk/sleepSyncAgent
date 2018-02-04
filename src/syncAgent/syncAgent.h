@@ -39,6 +39,16 @@
 extern SyncRecoveryFishPolicy fishPolicy;
  */
 
+
+/*
+ * Parameter type is general and obscures real type,
+ * which may be uint8_t.
+ * Sleep sync may convert units and types before callback.
+ */
+typedef void (*ProvisionCallback)(uint32_t);
+
+
+
 class SyncAgent {
 
 // Some of data members: see also anon namespaces for other owned objects
@@ -59,12 +69,19 @@ private:
 	static void (*onWorkMsgCallback)(WorkPayload);
 	static void (*onSyncPointCallback)();
 	// FUTURE static void (*onSyncingPausedCallback)();	// callback to app when syncing is paused
+	static ProvisionCallback onProvisionedCallback;
 
-
-
-
-// methods
+	// methods
 public:
+
+	// Upstream communication to app
+	static void relayHeardWorkToApp(WorkPayload work);
+
+	static void subscribeProvisioning(ProvisionCallback);
+	static void notifyProvisionObservers(uint32_t provisionedValue, int8_t rssi);
+
+
+
 	static void initSleepers();
 
 	static void initSyncObjects(
@@ -84,9 +101,6 @@ public:
 	static void loop() __attribute__ ((noreturn));
 
 
-	// These  methods are called from below (friends?)
-	static void relayHeardWorkToApp(WorkPayload work);
-
 	/*
 	 * Actions for state/mode/role transitions
 	 */
@@ -99,14 +113,13 @@ public:
 	 */
 	static void stopMerger();
 
-
-
 	// Is self Master of some clique (for now, only one clique.  Future: hops)
 	static bool isSelfMaster();
 
-
 	static uint32_t getPhase();
 	static uint32_t getReasonForWake();
+
+
 };
 
 /*

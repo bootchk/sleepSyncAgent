@@ -26,9 +26,6 @@ CliqueMerger SyncAgent::cliqueMerger;
 // A statistic we can include in certain messages
 WorkPayload SyncAgent::countMergeSyncHeard;
 
-void (*SyncAgent::onWorkMsgCallback)(WorkPayload);
-void (*SyncAgent::onSyncPointCallback)();
-
 RadioUseCase radioUseCaseSleepSync;
 
 
@@ -132,17 +129,7 @@ void SyncAgent::initSyncObjects(
 bool SyncAgent::isSelfMaster() { return clique.isSelfMaster(); }
 
 
-void SyncAgent::relayHeardWorkToApp(WorkPayload work) {
-	/*
-	 * Alternatives are:
-	 * - queue to worktask (unblock it)
-	 * - onWorkMsgCallback(msg);  (callback)
-	 *
-	 * Here we do the latter: the app maintains a In queue, not SyncAgent.
-	 * The app should do the work later, since now is at imprecise time is a slot.
-	 */
-	onWorkMsgCallback(work);	// call callback
-}
+
 
 
 /*

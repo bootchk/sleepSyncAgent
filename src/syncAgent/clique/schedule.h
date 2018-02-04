@@ -11,8 +11,6 @@
  */
 #include "../message/message.h"	// SyncMessage, DeltaSync
 
-#include "periodTime.h"
-
 
 /*
  * Schedule is infinite sequence of periods, aligned with global clock of clique.

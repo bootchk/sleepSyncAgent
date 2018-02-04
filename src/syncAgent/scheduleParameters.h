@@ -43,6 +43,11 @@
 class ScheduleParameters {
 public:	// for assertions
 
+
+	static const DeltaTime TicksPerSecond = 32768;
+
+
+
 /*
  * Slot duration and duty cycle.
  */
