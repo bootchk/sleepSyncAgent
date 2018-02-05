@@ -1,18 +1,18 @@
 
 #include <cassert>
 #include "syncAgent.h"
-#include "globals.h"	// clique
-#include "cliqueHistory/cliqueHistory.h"
-#include "scheduleParameters.h"
-#include "sleepers/syncPowerSleeper.h"
-#include "sleepers/syncSleeper.h"
-#include "sleepers/oversleepMonitor.h"
-#include "message/serializer.h"
+#include "../globals.h"	// clique
+#include "../cliqueHistory/cliqueHistory.h"
+#include "../scheduleParameters.h"
+#include "../sleepers/syncPowerSleeper.h"
+#include "../sleepers/syncSleeper.h"
+#include "../sleepers/oversleepMonitor.h"
+#include "../message/serializer.h"
 #include "state/phase.h"
 #include "state/role.h"
 
-#include "policy/workManager.h"
-#include "logging/logger.h"
+#include "../policy/workManager.h"
+#include "../logging/logger.h"
 
 
 // SyncSleeper, Sleeper pure classes

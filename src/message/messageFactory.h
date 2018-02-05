@@ -2,7 +2,7 @@
 
 #include "message.h"
 
-#include "../syncAgent.h"	// Testing
+#include "../syncAgent/syncAgent.h"	// Testing
 
 namespace {
 

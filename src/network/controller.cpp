@@ -1,4 +1,4 @@
-#include "controller.h"
+#include "../network/controller.h"
 
 #include <radioSoC.h>
 

@@ -8,7 +8,7 @@
 #include "../logging/flashIndex.h"
 #include "../logging/logger.h"
 #include "../scheduleParameters.h"
-#include "../syncAgent.h"
+#include "../syncAgent/syncAgent.h"
 #include "syncSleeper.h"
 
 namespace {

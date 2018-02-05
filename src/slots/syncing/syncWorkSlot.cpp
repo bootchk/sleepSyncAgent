@@ -11,7 +11,7 @@
 
 #include "syncWorkSlot.h"
 #include "syncSlotSchedule.h"
-#include "../../state/phase.h"
+#include "../../syncAgent/state/phase.h"
 #include "../../policy/workPolicy.h"
 #include "../../policy/workManager.h"
 #include "../../logging/logger.h"

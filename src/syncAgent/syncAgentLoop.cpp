@@ -2,24 +2,24 @@
 
 #include <cassert>
 
-#include "globals.h"	// clique
+#include "../globals.h"	// clique
 #include "syncAgent.h"
-#include "scheduleParameters.h"
+#include "../scheduleParameters.h"
 
-#include "modules/syncPowerManager.h"
-#include "syncPeriod/syncPeriod.h"
+#include "../modules/syncPowerManager.h"
+#include "../syncPeriod/syncPeriod.h"
 
 #include "state/syncMode.h"
 
-#include "sleepers/scheduleSleeper.h"
+#include "../sleepers/scheduleSleeper.h"
 #include "state/phase.h"
 
-#include "policy/workManager.h"
+#include "../policy/workManager.h"
 
-#include "slots/fishing/fishSchedule.h"	// logging
+#include "../slots/fishing/fishSchedule.h"	// logging
 
-#include "logging/logger.h"
-#include "logging/remoteLogger.h"
+#include "../logging/logger.h"
+#include "../logging/remoteLogger.h"
 
 /*
  * SyncAgent is a task(thread) that is infinite sequence of sync periods.

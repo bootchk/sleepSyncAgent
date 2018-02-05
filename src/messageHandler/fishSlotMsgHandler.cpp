@@ -4,8 +4,8 @@
 #include "messageHandler.h"
 
 #include "../logging/logger.h"
-#include "../state/role.h"
-#include "../syncAgent.h"
+#include "../syncAgent/state/role.h"
+#include "../syncAgent/syncAgent.h"
 #include "../slots/fishing/fishingManager.h"
 
 

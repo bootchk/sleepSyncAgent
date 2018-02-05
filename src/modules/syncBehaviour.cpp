@@ -5,7 +5,7 @@
 #include "../globals.h"  // clique
 
 #include "../message/messageFactory.h"
-#include "../state/role.h"
+#include "../syncAgent/state/role.h"
 #include "../logging/logger.h"
 
 

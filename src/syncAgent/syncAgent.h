@@ -1,8 +1,8 @@
 
 #pragma once
 
-#include "cliqueMerger/cliqueMerger.h"
-#include "message/message.h"
+#include "../cliqueMerger/cliqueMerger.h"
+#include "../message/message.h"
 #include "provisioningPublisher.h"
 
 

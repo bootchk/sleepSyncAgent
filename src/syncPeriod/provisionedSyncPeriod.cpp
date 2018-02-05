@@ -3,13 +3,13 @@
 #include "syncPeriod.h"
 
 // implementation
-#include "../state/phase.h"
+#include "../syncAgent/state/phase.h"
 #include "../slots/syncing/syncWorkSlot.h"
 #include "../sleepers/scheduleSleeper.h"
 #include "../logging/logger.h"
-#include "../syncAgent.h"
 
-#include "../provisioningPublisher.h"
+#include "../syncAgent/syncAgent.h"
+#include "../syncAgent/provisioningPublisher.h"
 
 // libBLEProvisionee
 #include <provisioner.h>

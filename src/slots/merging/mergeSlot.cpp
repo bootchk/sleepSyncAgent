@@ -6,12 +6,12 @@
 
 #include "../../modules/syncSender.h"
 #include "../../sleepers/syncSleeper.h"
-#include "../../state/phase.h"
-#include "../../syncAgent.h"
+#include "../../syncAgent/state/phase.h"
+#include "../../syncAgent/syncAgent.h"
 #include "../../scheduleParameters.h"
 
 // For debugging
-#include "../../state/role.h"
+#include "../../syncAgent/state/role.h"
 #include "../../logging/logger.h"
 
 

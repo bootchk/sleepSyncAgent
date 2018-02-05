@@ -1,8 +1,8 @@
 
 #include "messageHandler.h"
 
-#include "../control/controller.h"
 #include "../logging/logger.h"
+#include "../network/controller.h"
 
 /*
  * No matter what slot heard in,

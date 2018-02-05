@@ -2,9 +2,9 @@
 #include "syncMode.h"
 
 #include "role.h"
-#include "../modules/syncPowerManager.h"
-#include "../logging/logger.h"
-#include "../policy/provisionManager.h"
+#include "../../modules/syncPowerManager.h"
+#include "../../logging/logger.h"
+#include "../../policy/provisionManager.h"
 
 // Actions for transitions
 #include "../syncAgent.h"

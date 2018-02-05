@@ -6,7 +6,7 @@
  * - self's Master/Slave role in Clique
  */
 
-#include "../../config.h"
+#include "../config.h"
 
 #include "clique.h"
 #include "../cliqueHistory/cliqueHistory.h"

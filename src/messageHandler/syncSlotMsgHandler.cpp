@@ -6,7 +6,7 @@
 #include "../policy/workManager.h"
 #include "../modules/syncBehaviour.h"
 #include "../logging/logger.h"
-#include "../syncAgent.h"
+#include "../syncAgent/syncAgent.h"
 #include "../scheduleParameters.h"
 
 #include "../slots/fishing/fishingManager.h"

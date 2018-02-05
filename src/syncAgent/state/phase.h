@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../logging/flashIndex.h"
+#include "../../logging/flashIndex.h"
 
 #include <radioSoC.h>	// CustomFlash
 

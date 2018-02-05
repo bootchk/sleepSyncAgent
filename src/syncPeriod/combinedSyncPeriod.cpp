@@ -4,8 +4,8 @@
 #include "../globals.h"	// clique
 #include "syncPeriod.h"
 
-#include "../state/phase.h"
-#include "../state/role.h"
+#include "../syncAgent/state/phase.h"
+#include "../syncAgent/state/role.h"
 
 #include "../sleepers/scheduleSleeper.h"
 

@@ -3,8 +3,8 @@
 #include "provisioningPublisher.h"
 
 // For conversions implementation
-#include "scheduleParameters.h"
-#include "clique/periodTime.h"
+#include "../scheduleParameters.h"
+#include "../clique/periodTime.h"
 
 #include <cassert>
 

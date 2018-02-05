@@ -2,10 +2,10 @@
 #include <cassert>
 
 #include "syncAgent.h"
-
-#include "message/messageFactory.h"
 #include "state/role.h"
-#include "slots/merging/mergePolicy.h"
+
+#include "../message/messageFactory.h"
+#include "../slots/merging/mergePolicy.h"
 
 
 /*
