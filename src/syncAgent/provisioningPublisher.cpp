@@ -31,6 +31,7 @@ DeltaTime calculatePeriodTime(uint8_t offsetTime) {
 	return PeriodTime::convertTickOffset(ticksBeforeNowOfButtonPush);
 }
 
+
 }
 
 
@@ -51,25 +52,34 @@ void ProvisioningPublisher::notify(
 	// Don't callback if provisioner was virtually out of range.
 	// TODO (provisionedValue, provisionedVirtualRange), rssi
 
-	// Dispatch to conversion routines
+
+	uint32_t convertedValue = 0;
+
+	/*
+	 * Dispatch conversions.
+	 * Provisioning on BLE crams all value types into uint8_t to cross the network.
+	 * provisionedValue is raw from the network.
+	 * Reverse the type conversion here.
+	 */
 	switch(propertyIndex){
 
 	// work time
-	case 1: {
-		uint32_t convertedValue = calculatePeriodTime(provisionedValue);
-		provisioningCallbacks[1](convertedValue);
-		}
+	case 0:
+		convertedValue = calculatePeriodTime(provisionedValue);
 		break;
 
 	// work freq
-	case 2: {
-		// No conversion
-		provisioningCallbacks[2](provisionedValue);
-	}
-	break;
+	case 1:
+		/*
+		 *  No conversion or type checking.
+		 *  The callback should enforce requirements.
+		 */
+		convertedValue = provisionedValue;
+		break;
 
 	default:
 		;
 	}
-
+	assert(propertyIndex < 4);
+    provisioningCallbacks[propertyIndex](convertedValue);
 }
