@@ -65,6 +65,8 @@ public:
 
 
 
+// TODO, update workTime so that we continue to flash
+// at same wall time of clique
 
 	/*
 	 * Update clique from heard SyncMessage:

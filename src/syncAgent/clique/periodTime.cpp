@@ -29,6 +29,9 @@ DeltaTime PeriodTime::convertTickOffset(uint32_t offset) {
 	 * Offset is relative to nowTime().
 	 *
 	 * TODO caller should adjust for OTA latency.
+	 * Not important since any error will be the same for all units.
+	 * Only important to user, who may notice the discrepancy
+	 * (between button push, and work e.g. LED flash.)
 	 */
 	return ScheduleParameters::NormalSyncPeriodDuration - (offset % ScheduleParameters::NormalSyncPeriodDuration);
 }
