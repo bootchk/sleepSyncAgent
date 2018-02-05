@@ -3,6 +3,7 @@
 
 #include "cliqueMerger/cliqueMerger.h"
 #include "message/message.h"
+#include "provisioningPublisher.h"
 
 
 
@@ -40,12 +41,6 @@ extern SyncRecoveryFishPolicy fishPolicy;
  */
 
 
-/*
- * Parameter type is general and obscures real type,
- * which may be uint8_t.
- * Sleep sync may convert units and types before callback.
- */
-typedef void (*ProvisionCallback)(uint32_t);
 
 
 
@@ -69,6 +64,7 @@ private:
 	static void (*onWorkMsgCallback)(WorkPayload);
 	static void (*onSyncPointCallback)();
 	// FUTURE static void (*onSyncingPausedCallback)();	// callback to app when syncing is paused
+
 	static ProvisionCallback onProvisionedCallback;
 
 	// methods
@@ -77,10 +73,7 @@ public:
 	// Upstream communication to app
 	static void relayHeardWorkToApp(WorkPayload work);
 
-	static void subscribeProvisioning(ProvisionCallback);
-	static void notifyProvisionObservers(uint32_t provisionedValue, int8_t rssi);
-
-
+	static void subscribeProvisioning(PropertyIndex, ProvisionCallback);
 
 	static void initSleepers();
 

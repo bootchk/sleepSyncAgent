@@ -1,5 +1,6 @@
 
 #include "syncAgent.h"
+#include "provisioningPublisher.h"
 
 
 /*
@@ -9,10 +10,6 @@
 
 void (*SyncAgent::onWorkMsgCallback)(WorkPayload);
 void (*SyncAgent::onSyncPointCallback)();
-
-ProvisionCallback SyncAgent::onProvisionedCallback;
-
-
 
 
 
@@ -29,15 +26,10 @@ void SyncAgent::relayHeardWorkToApp(WorkPayload work) {
 }
 
 
-void SyncAgent::subscribeProvisioning(ProvisionCallback aCallback) {
-	onProvisionedCallback = aCallback;
+void SyncAgent::subscribeProvisioning(PropertyIndex index, ProvisionCallback aCallback) {
+	ProvisioningPublisher::subscribe(index, aCallback); // onProvisionedCallback = aCallback;
 }
 
 
 
-void SyncAgent::notifyProvisionObservers(uint32_t provisionedValue, int8_t rssi) {
-	// TODO filter by rssi
-	// Don't callback if provisioner was virtually out of range.
 
-	onProvisionedCallback(provisionedValue);
-}

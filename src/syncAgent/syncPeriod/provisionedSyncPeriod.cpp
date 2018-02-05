@@ -8,7 +8,8 @@
 #include "../sleepers/scheduleSleeper.h"
 #include "../logging/logger.h"
 #include "../syncAgent.h"
-#include "../scheduleParameters.h"
+
+#include "../provisioningPublisher.h"
 
 // libBLEProvisionee
 #include <provisioner.h>
@@ -24,22 +25,6 @@ void provisioningFailedCallback() {
 }
 
 
-DeltaTime calculatePeriodTime(uint8_t offsetTime) {
-	/*
-	 * offsetTime is a numerator of fraction (having denominator 255) of 10 seconds
-	 * Convert to ticks without loss of precsion i.e. multiply before divide
-	 */
-
-	unsigned int ticksBeforeNowOfButtonPush = (10 * offsetTime * ScheduleParameters::TicksPerSecond) / 255;
-
-	/*
-	 * Period time  when button was pushed (if periods have not changed recently.
-	 */
-	return PeriodTime::convertTickOffset(ticksBeforeNowOfButtonPush);
-}
-
-
-
 void provisioningSuccededCallback(
 		uint8_t provisionedValue,
 		int8_t rssi
@@ -52,8 +37,8 @@ void provisioningSuccededCallback(
 	Logger::log("\nrssi: ");
 	Logger::log((uint8_t)rssi);
 
-	// Observer pattern
-	SyncAgent::notifyProvisionObservers(calculatePeriodTime(provisionedValue), rssi);
+	// For testing, change index 0,1,2,3
+	ProvisioningPublisher::notify(1, provisionedValue, rssi);
 }
 
 
