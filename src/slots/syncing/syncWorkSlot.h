@@ -49,11 +49,15 @@ private:
 	 * Not local because they refer to superclass dispatcher i.e. this
 	 */
 	static void doSendingWorkSyncWorkSlot();
+	static void doSendingControlSyncWorkSlot();
 	static void doMasterSyncWorkSlot();
 	static void doSlaveSyncWorkSlot();
 	
 	static void dispatchSyncSlotKind();
 	static void perform();
+
+	// Result of first half
+	static bool didFirstHalfHearSync(HandlingResult firstHalfResult);
 
 public:
 	static void tryPerform();

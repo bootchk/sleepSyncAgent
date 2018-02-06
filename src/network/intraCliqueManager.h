@@ -16,4 +16,9 @@ public:
 
 	static void doUpstreamScatter();
 	static void doDownstreamScatter();
+
+	/*
+	 * Are we sending control upstream or down?
+	 */
+	static bool isNeedSend();
 };
