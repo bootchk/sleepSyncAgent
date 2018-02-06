@@ -2,6 +2,8 @@
 
 #include <platformTypes.h>
 
+#include "../message/message.h"
+
 
 
 /*
@@ -30,7 +32,9 @@ public:
 	 * since reduces range of master's messages.
 	 * !!! Cliques may lose and seek new masters.
 	 */
-	static void setXmitPower(WorkPayload);
+	//static void setXmitPower(WorkPayload);
 
 	static bool isMsgInVirtualRange(int8_t rssi);
+
+	static void setGranularity(SyncMessage* msg);
 };

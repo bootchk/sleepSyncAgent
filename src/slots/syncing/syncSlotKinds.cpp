@@ -57,6 +57,12 @@ void SyncWorkSlot::dispatchSyncSlotKind() {
 }
 
 
+void SyncWorkSlot::doSendingControlSyncWorkSlot() {
+
+}
+
+
+
 /*
  * Transmit WorkSync in middle.
  * App has queued work to be sent.

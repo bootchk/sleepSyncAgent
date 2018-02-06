@@ -12,7 +12,7 @@ void NetworkTopology::subscribeToProvisionings() {
 	ProvisioningPublisher::subscribe(3, NetworkTopology::handleScatterProvisioning);
 }
 
-
+/*
 void NetworkTopology::setXmitPower(WorkPayload xmitPowerValue) {
 	// Requires radio not in use, required by Radio::
 
@@ -23,6 +23,7 @@ void NetworkTopology::setXmitPower(WorkPayload xmitPowerValue) {
 
 	// Ensure xmit power set, ensured by Radio::
 }
+*/
 
 
 

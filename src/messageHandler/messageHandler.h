@@ -88,7 +88,8 @@ private:
 class CommonMessageHandler {
 public:
 	static HandlingResult handleInfoMessage(SyncMessage* msg);
-	static HandlingResult handleControlMessage(SyncMessage* msg);
+	static HandlingResult handleControlMessageScatter(SyncMessage* msg);
+	static HandlingResult handleControlMessageSetGranularity(SyncMessage* msg);
 };
 
 

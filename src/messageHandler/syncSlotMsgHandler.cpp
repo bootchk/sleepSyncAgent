@@ -164,8 +164,10 @@ HandlingResult SyncSlotMessageHandler::handle(SyncMessage* msg){
 		handlingResult = CommonMessageHandler::handleInfoMessage(msg);
 		break;
 	case MessageType::ControlSetXmitPower:
+		handlingResult = CommonMessageHandler::handleControlMessageScatter(msg);
+		break;
 	case MessageType::ControlScatterClique:
-		handlingResult = CommonMessageHandler::handleControlMessage(msg);
+		handlingResult = CommonMessageHandler::handleControlMessageSetGranularity(msg);
 		break;
 	}
 

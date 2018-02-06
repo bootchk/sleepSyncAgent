@@ -76,8 +76,11 @@ HandlingResult FishSlotMessageHandler::handle(SyncMessage* msg){
 		break;
 
 	case MessageType::ControlSetXmitPower:
+		handlingResult = CommonMessageHandler::handleControlMessageSetGranularity(msg);
+		break;
+
 	case MessageType::ControlScatterClique:
-		handlingResult = CommonMessageHandler::handleControlMessage(msg);
+		handlingResult = CommonMessageHandler::handleControlMessageScatter(msg);
 		break;
 	}
 

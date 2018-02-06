@@ -9,8 +9,6 @@
 #include "../../sleepers/scheduleSleeper.h"
 
 #include "../../syncAgent/state/phase.h"
-//#include "../../policy/workPolicy.h"
-//#include "../../policy/workManager.h"
 #include "../../logging/logger.h"
 
 #include "../../clique/clique.h"

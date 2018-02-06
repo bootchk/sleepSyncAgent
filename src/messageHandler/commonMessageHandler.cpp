@@ -15,7 +15,12 @@ HandlingResult CommonMessageHandler::handleInfoMessage(SyncMessage* msg){
 }
 
 
-HandlingResult CommonMessageHandler::handleControlMessage(SyncMessage* msg){
-	NetworkTopology::setXmitPower(msg->work);
+HandlingResult CommonMessageHandler::handleControlMessageSetGranularity(SyncMessage* msg){
+	NetworkTopology::setGranularity(msg);
+	return HandlingResult::KeepListening;
+}
+
+HandlingResult CommonMessageHandler::handleControlMessageScatter(SyncMessage* msg){
+
 	return HandlingResult::KeepListening;
 }

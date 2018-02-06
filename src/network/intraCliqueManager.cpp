@@ -7,6 +7,12 @@
  *
  */
 
+
+bool IntraCliqueManager::isNeedSend() {
+	return true;
+}
+
+
 void IntraCliqueManager::doUpstreamCliqueSizeChange(NetGranularity aGranularity) {
 
 }
