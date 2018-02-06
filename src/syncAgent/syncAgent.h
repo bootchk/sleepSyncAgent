@@ -65,7 +65,6 @@ private:
 	static void (*onSyncPointCallback)();
 	// FUTURE static void (*onSyncingPausedCallback)();	// callback to app when syncing is paused
 
-	static ProvisionCallback onProvisionedCallback;
 
 	// methods
 public:
@@ -73,6 +72,11 @@ public:
 	// Upstream communication to app
 	static void relayHeardWorkToApp(WorkPayload work);
 
+	/*
+	 * Called by:
+	 *  - external app (work provisioning)
+	 *  - internal (network topology provisioning)
+	 */
 	static void subscribeProvisioning(PropertyIndex, ProvisionCallback);
 
 	static void initSleepers();

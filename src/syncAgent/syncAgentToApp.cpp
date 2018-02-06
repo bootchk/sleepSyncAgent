@@ -25,7 +25,11 @@ void SyncAgent::relayHeardWorkToApp(WorkPayload work) {
 	onWorkMsgCallback(work);	// call callback
 }
 
-
+/*
+ * No checking:
+ * - that index is not also used internally.
+ * - that index is in range
+ */
 void SyncAgent::subscribeProvisioning(PropertyIndex index, ProvisionCallback aCallback) {
 	ProvisioningPublisher::subscribe(index, aCallback); // onProvisionedCallback = aCallback;
 }

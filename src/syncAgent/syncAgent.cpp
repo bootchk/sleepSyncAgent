@@ -1,6 +1,9 @@
 
 #include <cassert>
 #include "syncAgent.h"
+#include "state/phase.h"
+#include "state/role.h"
+
 #include "../globals.h"	// clique
 #include "../cliqueHistory/cliqueHistory.h"
 #include "../scheduleParameters.h"
@@ -8,8 +11,8 @@
 #include "../sleepers/syncSleeper.h"
 #include "../sleepers/oversleepMonitor.h"
 #include "../message/serializer.h"
-#include "state/phase.h"
-#include "state/role.h"
+#include "../network/topology.h"
+
 
 #include "../policy/workManager.h"
 #include "../logging/logger.h"
@@ -83,6 +86,7 @@ void SyncAgent::initSyncObjects(
 
 	initEnsembleProtocol();
 
+	NetworkTopology::subscribeToProvisionings();
 
 #ifdef LOW_XMIT_POWER
 	// TEMP: testing range with lower xmit power

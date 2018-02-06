@@ -4,7 +4,7 @@
 #include "../../globals.h"	// clique
 
 #include "../../modules/syncSender.h"
-#include "../../modules/syncBehaviour.h"
+
 #include "../../modules/syncPowerManager.h"
 #include "../../sleepers/syncSleeper.h"
 #include "../../sleepers/scheduleSleeper.h"
@@ -264,32 +264,7 @@ void SyncWorkSlot::perform() {
 
 	// assert network is started
 
-	// Call shouldTransmitSync every time, since it needs calls side effect reset itself
-	bool needXmitSync = SyncBehaviour::shouldTransmitSync();
-
-	/*
-	 * Work is higher priority than ordinary sync.
-	 * Work must be rare, lest it flood airwaves and destroy sync.
-	 * (colliding too often with MergeSync or MasterSync.)
-	 *
-	 * Owner of SyncAgent decides policy and conveys  (queues) work to be sent.
-	 * OBSOLETE: WorkPolicy::shouldXmitWorkSync() and
-	 */
-	if (WorkManager::isNeedSendWork()) {
-		// This satisfies needXmitSync
-		doSendingWorkSyncWorkSlot();
-	}
-	else {
-		// No work to send, maintain sync if master
-		if (needXmitSync)
-			doMasterSyncWorkSlot();
-		else
-			/*
-			 * isSlave
-			 * OR (isMaster and not xmitting (coin flip))
-			 */
-			doSlaveSyncWorkSlot();
-	}
+	dispatchSyncSlotKind();
 
 	/*
 	 * This may be late, when message receive thread delays this.

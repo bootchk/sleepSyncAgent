@@ -2,7 +2,7 @@
 #include "messageHandler.h"
 
 #include "../logging/logger.h"
-#include "../network/controller.h"
+#include "../network/topology.h"
 
 /*
  * No matter what slot heard in,
@@ -16,6 +16,6 @@ HandlingResult CommonMessageHandler::handleInfoMessage(SyncMessage* msg){
 
 
 HandlingResult CommonMessageHandler::handleControlMessage(SyncMessage* msg){
-	Controller::setXmitPower(msg->work);
+	NetworkTopology::setXmitPower(msg->work);
 	return HandlingResult::KeepListening;
 }
