@@ -25,6 +25,11 @@ public:
 	 * Are we sending control upstream or down?
 	 */
 	static bool isNeedSend();
+	/*
+	 * If we have fulfilled need to send, perform action.
+	 */
+	static void checkDoneAndEnactControl();
+
 
 	static MessageType currentMsgType();
 	static WorkPayload currentPayload();

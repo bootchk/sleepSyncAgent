@@ -15,6 +15,10 @@
  * Hides a policy (how many times to repeat.)
  *
  * Remembers what message type to send
+ *
+ * Repeats a certain number of times.
+ *
+ * Calls back when done repeating.
  */
 
 
@@ -22,9 +26,12 @@
 
 class SendRepeater {
 public:
-	static void start(MessageType, uint8_t value);
+	static void start(MessageType,
+			uint8_t value,
+			Callback doneCallback);
 	static bool isActive();
 	static bool shouldSend();
+	static void checkDoneAndEnactControl();
 	static void stop();
 
 	static MessageType currentMsgType();

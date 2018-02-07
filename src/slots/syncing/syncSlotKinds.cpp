@@ -30,6 +30,7 @@ void SyncWorkSlot::dispatchSyncSlotKind() {
 	 */
 	if (IntraCliqueManager::isNeedSend()) {
 		doSendingControlSyncWorkSlot();
+		IntraCliqueManager::checkDoneAndEnactControl();
 	}
 	/*
 	 * Work is higher priority than ordinary sync.
