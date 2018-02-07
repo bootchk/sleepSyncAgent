@@ -3,6 +3,38 @@
 #include "messageDispatcher.h"
 
 
+namespace {
+
+
+HandlingResult handleValidMessageAndSetContinuation(SyncMessage* msg, MessageHandler msgHandler) {
+	HandlingResult handlingResult;
+
+	handlingResult = msgHandler(msg);
+
+	// Set continuation
+	if (handlingResult!=HandlingResult::KeepListening) {
+		// Remainder of duration radio not used (low power) but HFXO is still on.
+		// TODO this assertion should be at beginning of routine
+		assert(!Ensemble::isRadioInUse());
+
+		// continuation is sleep
+		// assert since radio not in use, next reason for wake can only be timeout and will then exit loop
+	}
+	else {
+		/*
+		 * Dispatched message was not of desired type (but we could have done work, or other state changes.)
+		 * restart receive, remain in loop, sleep until next message
+		 */
+		Ensemble::startReceiving();
+		// continuation is sleep with radio on
+	}
+	return handlingResult;
+}
+
+}
+
+
+
 /*
  * Filter invalid messages.
  * Return result of dispatching valid messages.
@@ -17,28 +49,16 @@ HandlingResult MessageDispatcher::dispatch( MessageHandler msgHandler) { // Slot
 		SyncMessage* msg = Serializer::unserialize();
 		if (msg != nullptr) {
 			// assert msg->type valid
-
-			handlingResult = msgHandler(msg);
-			if (handlingResult!=HandlingResult::KeepListening) {
-				// Remainder of duration radio not used (low power) but HFXO is still on.
-				// TODO this assertion should be at beginning of routine
-				assert(!Ensemble::isRadioInUse());
-
-				// continuation is sleep
-				// assert since radio not in use, next reason for wake can only be timeout and will then exit loop
-			}
-			else {
-				/*
-				 * Dispatched message was not of desired type (but we could have done work, or other state changes.)
-				 * restart receive, remain in loop, sleep until next message
-				 */
-				Ensemble::startReceiving();
-				// continuation is sleep with radio on
-			}
+			handlingResult = handleValidMessageAndSetContinuation(msg, msgHandler);
+			// assert receiver is on or off
 			// assert msg queue is empty (since we received and didn't restart receiver)
 		}
 		else {
-			// Ignore garbled type or offset
+			/*
+			 * Message is physically correct but garbled semantically
+			 * (e.g. type or offset are invalid.)
+			 * Ignore.
+			 */
 			Logger::log(Logger::Garbled);
 			// continuation is wait for another message
 			Ensemble::startReceiving();
