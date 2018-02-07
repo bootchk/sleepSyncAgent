@@ -1,6 +1,8 @@
 
 #include "granularity.h"
 
+#include "../message/message.h"
+
 //#include <radioSoC.h>
 
 

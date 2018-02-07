@@ -3,6 +3,7 @@
 
 #include <radioSoC.h>	// LongTime, SystemID, WorkPayload
 #include "../modules/deltaSync.h"
+#include "../network/granularity.h"
 
 
 /*
@@ -126,6 +127,8 @@ public:
 	DeltaSync deltaToNextSyncPoint;	// forward in time
 	SystemID masterID;
 	WorkPayload work;	// work always allocated/transmitted, but often empty/null
+
+	NetGranularity transmittedSignalStrength;
 };
 
 

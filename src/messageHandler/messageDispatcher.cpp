@@ -2,6 +2,10 @@
 
 #include "messageDispatcher.h"
 
+// radioSoC Ensemble.h is in scope
+
+#include "../network/granularity.h"	// hopped network granularity
+
 
 namespace {
 
@@ -48,9 +52,19 @@ HandlingResult MessageDispatcher::dispatch( MessageHandler msgHandler) { // Slot
 	if (Ensemble::isPacketCRCValid()) {
 		SyncMessage* msg = Serializer::unserialize();
 		if (msg != nullptr) {
-			// assert msg->type valid
-			handlingResult = handleValidMessageAndSetContinuation(msg, msgHandler);
-			// assert receiver is on or off
+			unsigned int rssi = Ensemble::getRSSI();
+			NetGranularity tssi = msg->transmittedSignalStrength;
+			if (Granularity::isMsgInVirtualRange(rssi, tssi)) {
+				// assert no CRC errors and is valid and in range
+				handlingResult = handleValidMessageAndSetContinuation(msg, msgHandler);
+				// assert receiver is on or off
+			}
+			else {
+				// Sender out of range, ignore
+				Logger::log("out of range");
+				// continuation is wait for another message
+				Ensemble::startReceiving();
+			}
 			// assert msg queue is empty (since we received and didn't restart receiver)
 		}
 		else {

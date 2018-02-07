@@ -1,14 +1,18 @@
 
 #pragma once
 
-#include "../message/message.h"
-
+// Used by message.h
 enum class NetGranularity {
 	Small,
 	Medium,
 	Large
 };
 
+
+
+
+
+//#include "../message/message.h"
 
 /*
  * Knows granularity.
@@ -35,5 +39,4 @@ public:
 		unsigned int receivedSignalStrength,
 		NetGranularity transmittedSignalStrength
 		);
-		// TODO caller of this
 };
