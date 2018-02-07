@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "netTypes.h"
+#include "granularity.h"
 #include "../message/message.h"
 
 /*

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <platformTypes.h>
-
 #include "../message/message.h"
 
 
@@ -15,11 +13,14 @@
  *  - set xmit power according to granularity of network
  */
 class NetworkTopology {
-	private:
+
+private:
 	/*
 	 * Signatures: ProvisionCallback
+	 *
+	 * Called from publisher, on notify
 	 */
-	static void handleCliqueSizeProvisioning(uint32_t);
+	static void handleNetGranularityProvisioning(uint32_t);
 	static void handleScatterProvisioning(uint32_t);
 
 
@@ -27,14 +28,6 @@ public:
 
 	static void subscribeToProvisionings();
 
-	/*
-	 * Effectively reducing size of cliques,
-	 * since reduces range of master's messages.
-	 * !!! Cliques may lose and seek new masters.
-	 */
-	//static void setXmitPower(WorkPayload);
-
-	static bool isMsgInVirtualRange(int8_t rssi);
-
-	static void setGranularity(SyncMessage* msg);
+	static void handleNetGranularityMessage(SyncMessage* msg);
+	static void handleScatterMessage(SyncMessage* msg);
 };

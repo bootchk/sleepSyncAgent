@@ -26,7 +26,7 @@ void SyncWorkSlot::dispatchSyncSlotKind() {
 	bool needXmitSync = SyncBehaviour::shouldTransmitSync();
 
 	/*
-	 * Control is higher priority than work.
+	 * Order is important: priority: Control, work, regular sync.
 	 */
 	if (IntraCliqueManager::isNeedSend()) {
 		doSendingControlSyncWorkSlot();
