@@ -14,17 +14,26 @@ enum class NetGranularity {
  * Knows granularity.
  * A property of a clique.
  *
+ * AKA diameter of cliques or subnetworks in a hopping/mesh network.
+ *
+ * Implemented by:
+ * - reducing xmit power
+ * - filtering messages on virtual range
+ *
+ * Any change may result in:
+ * - Decrease: cliques lose master and seek new master.
+ * - Increase: cliques merge
  */
 class Granularity {
 public:
-	/*
-		 * Effectively reducing size of cliques,
-		 * since reduces range of master's messages.
-		 * !!! Cliques may lose and seek new masters.
-		 */
-		//static void setXmitPower(WorkPayload);
 	static void setGranularity(NetGranularity granularity);
 
-	static bool isMsgInVirtualRange(int8_t rssi);
+	/*
+	 * Is distance to sender within radius of my granularity.
+	 */
+	static bool isMsgInVirtualRange(
+		unsigned int receivedSignalStrength,
+		NetGranularity transmittedSignalStrength
+		);
 		// TODO caller of this
 };

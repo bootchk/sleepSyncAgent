@@ -2,6 +2,10 @@
 
 #include "../message/message.h"
 
+#include "../message/serializer.h"
+#include "../logging/logger.h"
+
+#include <cassert>
 
 /*
  * Slot owns MessageHandler.

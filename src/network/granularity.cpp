@@ -46,9 +46,31 @@ void Granularity::setGranularity(NetGranularity granularity) {
 	_granularity = granularity;
 
 	Radio::configureXmitPower(xmitPowerForGranularity(granularity));
+
 	// Ensure xmit power set, ensured by Radio::
 }
 
-bool Granularity::isMsgInVirtualRange(int8_t rssi) {
 
+bool Granularity::isMsgInVirtualRange(
+		unsigned int rssi,	// receivedSignalStrength,
+		NetGranularity transmittedSignalStrength)
+{
+	bool result;
+
+	switch(_granularity) {
+	case NetGranularity::Small:
+		// high power senders with moderate received signals are out of range
+		// medium power senders with weak received signals are out of range
+		result = not ( (transmittedSignalStrength == NetGranularity::Large and rssi < 750)
+		             or (transmittedSignalStrength == NetGranularity::Medium and rssi < 60) );
+		break;
+	case NetGranularity::Medium:
+		// Only high power senders with weak received signals are out of range
+		result =  not (transmittedSignalStrength == NetGranularity::Large and rssi < 60);
+		break;
+	case NetGranularity::Large:
+		// Any one I hear is in range.
+		result = true;
+	}
+	return result;
 }
