@@ -15,6 +15,8 @@
 
 #include "../physicalParameters.h"
 
+#include "../network/intraCliqueManager.h"
+
 
 /*
  * Offset should be calculated as close to OTA time as possible.
@@ -144,8 +146,15 @@ void SyncSender::sendInfo(WorkPayload work) {
 	sendMessage(msgPtr);
 }
 
-void SyncSender::sendControlSetXmitPower(WorkPayload work) {
-	SyncMessage* msgPtr = MessageFactory::initControlSetXmitPowerMessage( clique.getMasterID(), work );
+void SyncSender::sendControlSync() { // SetXmitPower(WorkPayload work) {
+
+	/*
+	 * Build message from what IntraCliqueManager tells us
+	 */
+	SyncMessage* msgPtr = MessageFactory::initControlMessage(
+			clique.getMasterID(),
+			IntraCliqueManager::currentMsgType(),
+			IntraCliqueManager::currentPayload());
 	sendMessage(msgPtr);
 }
 

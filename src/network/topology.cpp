@@ -13,8 +13,15 @@ void NetworkTopology::subscribeToProvisionings() {
 }
 
 /*
-void NetworkTopology::setXmitPower(WorkPayload xmitPowerValue) {
+ * Current design: we don't care if it is from master or slave
+ * but we do care that it is from our clique.
+ */
+void NetworkTopology::setGranularity(SyncMessage* msg) {
+
+	// WAS void NetworkTopology::setXmitPower(WorkPayload xmitPowerValue) {
 	// Requires radio not in use, required by Radio::
+
+	WorkPayload xmitPowerValue = msg->work;
 
 	// Check validity of OTA value
 	if (Radio::isValidXmitPower(static_cast<TransmitPowerdBm>(xmitPowerValue))) {
@@ -23,7 +30,7 @@ void NetworkTopology::setXmitPower(WorkPayload xmitPowerValue) {
 
 	// Ensure xmit power set, ensured by Radio::
 }
-*/
+
 
 
 

@@ -1,8 +1,14 @@
 
 #include "messageHandler.h"
 
+#include "../globals.h"  // clique
+
 #include "../logging/logger.h"
 #include "../network/topology.h"
+
+#include "../clique/clique.h"
+
+
 
 /*
  * No matter what slot heard in,
@@ -16,11 +22,13 @@ HandlingResult CommonMessageHandler::handleInfoMessage(SyncMessage* msg){
 
 
 HandlingResult CommonMessageHandler::handleControlMessageSetGranularity(SyncMessage* msg){
-	NetworkTopology::setGranularity(msg);
+	if (clique.isMsgFromMyClique(msg->masterID)) {
+		NetworkTopology::setGranularity(msg);
+	}
 	return HandlingResult::KeepListening;
 }
 
 HandlingResult CommonMessageHandler::handleControlMessageScatter(SyncMessage* msg){
-
+	// TODO
 	return HandlingResult::KeepListening;
 }

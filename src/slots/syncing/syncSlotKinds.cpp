@@ -58,7 +58,12 @@ void SyncWorkSlot::dispatchSyncSlotKind() {
 
 
 void SyncWorkSlot::doSendingControlSyncWorkSlot() {
+	(void) doListenHalfSyncWorkSlot(SyncSlotSchedule::deltaToThisSyncSlotMiddleSubslot);
 
+	// SyncSender accesses IntraCliqueManager for message
+	SyncSender::sendControlSync();
+
+	(void) doListenHalfSyncWorkSlot(SyncSlotSchedule::deltaToThisSyncSlotEnd);
 }
 
 

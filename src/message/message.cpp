@@ -50,8 +50,8 @@ char const * SyncMessage::representation(SyncMessage* msg) {
 		case MessageType::WorkScatterTime:
 			result = " WSca";
 			break;
-		case MessageType::ControlSetXmitPower:
-			result = " XPow";
+		case MessageType::ControlNetGranularity:
+			result = " CGra";
 			break;
 		case MessageType::ControlScatterClique:
 			result = " CSca";

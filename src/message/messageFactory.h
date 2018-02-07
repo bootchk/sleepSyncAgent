@@ -42,7 +42,7 @@ public:
 
 		case MessageType::WorkSetProximity:
 		case MessageType::WorkScatterTime:
-		case MessageType::ControlSetXmitPower:
+		case MessageType::ControlNetGranularity:
 		case MessageType::ControlScatterClique:
 			result = true;
 		}
@@ -93,7 +93,7 @@ public:
 		case MessageType::AbandonMastership:
 		case MessageType::WorkSetProximity:
 		case MessageType::WorkScatterTime:
-		case MessageType::ControlSetXmitPower:
+		case MessageType::ControlNetGranularity:
 		case MessageType::ControlScatterClique:
 		case MessageType::Info:
 			result = false;
@@ -144,10 +144,22 @@ public:
 		initNonSyncMessage(MessageType::Info, aMasterID, workPayload);
 		return &message;
 	}
+/*
 	static SyncMessage* initControlSetXmitPowerMessage(SystemID aMasterID, WorkPayload workPayload) {
 		initNonSyncMessage(MessageType::ControlSetXmitPower, aMasterID, workPayload);
 		return &message;
 	}
+*/
+	static SyncMessage* initControlMessage(
+			SystemID aMasterID,
+			MessageType aType,
+			WorkPayload workPayload)
+	{
+		// TODO control message is non-sync?
+		initNonSyncMessage(aType, aMasterID, workPayload);
+		return &message;
+	}
+
 	static SyncMessage* initNonSyncMessage(MessageType msgType, SystemID aMasterID, WorkPayload workPayload) {
 		message.type = msgType;
 		message.deltaToNextSyncPoint.set(0);

@@ -62,7 +62,7 @@ enum class MessageType {
 	/*
 	 * Link and network control from app to SleepSync
 	 */
-	ControlSetXmitPower = 171,
+	ControlNetGranularity = 171,
 	ControlScatterClique = 174,
 
 	Info = 231
