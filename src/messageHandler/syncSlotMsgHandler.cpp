@@ -159,8 +159,8 @@ HandlingResult SyncSlotMessageHandler::handle(SyncMessage* msg){
 		handlingResult = handleAbandonMastershipMessage(msg);
 		break;
 	case MessageType::Info:
-	case MessageType::WorkSetProximity:
-	case MessageType::WorkScatterTime:
+	//case MessageType::WorkSetProximity:
+	//case MessageType::WorkScatterTime:
 		handlingResult = CommonMessageHandler::handleInfoMessage(msg);
 		break;
 	case MessageType::ControlNetGranularity:
@@ -169,6 +169,9 @@ HandlingResult SyncSlotMessageHandler::handle(SyncMessage* msg){
 	case MessageType::ControlScatterClique:
 		handlingResult = CommonMessageHandler::handleControlMessageSetGranularity(msg);
 		break;
+	case  MessageType::Invalid:
+		Logger::log("Invalid type");
+		handlingResult = HandlingResult::KeepListening;
 	}
 
 	return handlingResult;

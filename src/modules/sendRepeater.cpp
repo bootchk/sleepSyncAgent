@@ -3,6 +3,7 @@
 
 #include <random.h>	// randBool
 #include <cassert>
+#include "../policy/policyParameters.h"
 
 
 namespace {
@@ -45,7 +46,7 @@ void SendRepeater::start(
 
 
 MessageType SendRepeater::currentMsgType() { return _messageType; }
-WorkPayload SendRepeater::currentPayload(){ return _aValue; }
+WorkPayload SendRepeater::currentPayload() { return _aValue; }
 
 bool SendRepeater::isActive() { return _isActive; }
 
@@ -65,20 +66,20 @@ bool SendRepeater::shouldSend() {
 	return result;
 }
 
-// TODO parameter
+
 void SendRepeater::checkDoneAndEnactControl() {
 	// require only call when has been started and shouldSend returned true
 	// sanity on state
 	assert(_isActive);
 
-	if (counter > 4 ) {
+	if (counter > Policy::CountRepeatsPerControlSync ) {
 		_isActive = false;
-
+		counter = 0;
 		_onDoneCallback();
 	}
 }
 
 
 void SendRepeater::stop() {
-
+	// TODO
 }

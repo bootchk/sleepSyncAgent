@@ -9,9 +9,6 @@
 #include "../slots/fishing/fishingManager.h"
 
 
-// assertions
-#include "../message/messageFactory.h"
-
 /*
  * Another unit said a superior exists where we are deep fishing
  * We might have caught it.
@@ -19,7 +16,7 @@
 HandlingResult FishSlotMessageHandler::handleCatchFromDeepFishing(SyncMessage* msg){
 	HandlingResult result;
 
-	assert (MessageFactory::doesCarrySync(msg->type));
+	assert (SyncMessage::doesCarrySync(msg->type));
 	if (clique.isOtherCliqueBetter(msg->masterID)) {
 		// Intended result of deep fishing: found a superior clique.
 

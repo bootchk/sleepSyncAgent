@@ -4,7 +4,7 @@
 
 #include "../globals.h"  // clique
 
-#include "../message/messageFactory.h"	// assertions
+//#include "../message/messageFactory.h"	// assertions
 
 #include "../syncAgent/state/role.h"
 #include "../syncAgent/syncAgent.h"
@@ -45,7 +45,7 @@ void handleSuperiorOrSameSyncWhileMerging(SyncMessage* msg) {
 
 bool SyncBehaviour::filterSyncMsg(SyncMessage* msg){
 
-	assert (MessageFactory::doesCarrySync(msg->type));
+	assert (SyncMessage::doesCarrySync(msg->type));
 
 	// assert sync not from self (xmitter and receiver are exclusive)
 	// assert self.isMaster || self.isSlave i.e. this code doesn't require any particular role

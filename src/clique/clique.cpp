@@ -7,7 +7,6 @@
 
 //#include "../policy/masterXmitSyncPolicy.h"
 #include "../policy/syncPolicy/adaptiveXmitSyncPolicy.h"
-#include "../message/messageFactory.h"
 
 #include "../logging/logger.h"
 
@@ -103,7 +102,7 @@ void Clique::checkMasterDroppedOut() {
  */
 void Clique::updateBySyncMessage(SyncMessage* msg) {
 	// assert (in Sync or Fish slot)
-	assert (MessageFactory::doesCarrySync(msg->type));
+	assert (SyncMessage::doesCarrySync(msg->type));
 
 	// 1) update master and history of masters
 	updateMastership(msg->masterID);

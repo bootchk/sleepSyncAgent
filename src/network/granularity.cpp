@@ -10,6 +10,9 @@ namespace {
 
 NetGranularity _granularity;
 
+}
+
+
 /*
  * Plus4 = 0x04,
 	// Plus3 = 0x03,	// Not available on nrf51
@@ -22,7 +25,7 @@ NetGranularity _granularity;
 	Minus40 = -40
  */
 
-TransmitPowerdBm xmitPowerForGranularity(NetGranularity granularity) {
+TransmitPowerdBm Granularity::xmitPowerForGranularity(NetGranularity granularity) {
 	TransmitPowerdBm result;
 
 	switch(granularity) {
@@ -38,6 +41,26 @@ TransmitPowerdBm xmitPowerForGranularity(NetGranularity granularity) {
 	return result;
 }
 
+
+
+
+NetGranularity Granularity::getFromRaw(unsigned char rawTSS){
+	// rawTSS is OTA and could have bit errors
+	NetGranularity result;
+
+	switch (rawTSS) {
+	case 0:  result = NetGranularity::Large; break;
+	case 1:  result = NetGranularity::Medium; break;
+	case 2:  result = NetGranularity::Small; break;
+	/*
+	 * Other values are invalid.
+	 * But say it is small.
+	 * We likely will filter the message because its signal is too weak for small granularity.
+	 * If not, the rest of the message might be actionable.
+	 */
+	default: result = NetGranularity::Small; break;
+	}
+	return result;
 }
 
 

@@ -70,8 +70,8 @@ HandlingResult FishSlotMessageHandler::handle(SyncMessage* msg){
 
 
 	case MessageType::Info:
-	case MessageType::WorkSetProximity:
-	case MessageType::WorkScatterTime:
+	//case MessageType::WorkSetProximity:
+	//case MessageType::WorkScatterTime:
 		handlingResult = CommonMessageHandler::handleInfoMessage(msg);
 		break;
 

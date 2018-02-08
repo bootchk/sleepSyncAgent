@@ -278,7 +278,7 @@ void CliqueMerger::deactivate(){ isActive = false; }
 void CliqueMerger::initFromMsg(SyncMessage* msg){
 	// We don't merge from Deep (see state diagram.)
 	assert(FishingManager::mode() == FishingMode::Trolling);
-	assert (MessageFactory::doesCarrySync(msg->type));
+	assert (SyncMessage::doesCarrySync(msg->type));
 
 	Logger::logTicksSinceStartSyncPeriod();
 	Logger::logMsgDetail(msg);

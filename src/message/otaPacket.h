@@ -8,6 +8,8 @@ class OTAPayload {
 public:
 
 	// Message.type hardcoded to index 0, length 1
+	static const int TypeTSSIIndex = 0;
+	static const int TypeTSSILength = 1;
 
 	static const int MasterIndex = 1;
 	static const int MasterIDLength = 6;

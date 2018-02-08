@@ -16,6 +16,10 @@
 
 class Policy {
 public:
+	// After SyncRepeater sends this count of controlSync, done
+	static const int CountRepeatsPerControlSync = 4;
+
+
 	// After role Merger xmits this count of MergeSync, revert to role Fisher
 	static const int CountSyncsPerMerger = 6;
 

@@ -43,6 +43,55 @@ uint8_t radioBufferSize;
 #pragma GCC diagnostic ignored "-Wpointer-arith"
 
 
+/*
+ * Matched pairs for each field
+ */
+
+
+/*
+ * This byte is packed.
+ * This MIGHT allow old code to work
+ * message from old code (where TransmitSignalStrength was not defined and zero)
+ * except that types are greater than 2^6
+ */
+void unserializeTypeAndTSSInto(SyncMessage* msgPtr) {
+	uint8_t raw;
+
+	memcpy( (void*) &(raw),	// dest
+			(void*) radioBufferPtr + OTAPayload::TypeTSSIIndex,	// src
+			OTAPayload::TypeTSSILength);
+
+	/*
+	 * Not use static_cast because theoretically it could throw exception.
+	 */
+	//  Mask all but lower two bits.
+	uint8_t rawTSS = raw & 0x3;
+	msgPtr->transmittedSignalStrength = Granularity::getFromRaw(rawTSS);
+
+	uint8_t rawType;
+	// Shift away lower two bits
+	rawType = raw >> 2;
+	msgPtr->type = SyncMessage::messageTypeFromRaw(rawType);
+}
+
+
+void serializeTypeAndTSSCommonIntoStream(SyncMessage* msgPtr){
+	uint8_t raw;
+
+	// Shift MsgType left, leaving two bits for TSS
+	raw = static_cast <uint8_t> (msgPtr->type);
+	raw = raw << 6;
+
+	// Or in two bits of TSS
+	raw = raw || (static_cast <uint8_t>(msgPtr->transmittedSignalStrength) & 0x3);
+
+	memcpy( (void*) radioBufferPtr + OTAPayload::TypeTSSIIndex, 	// dest
+			(void*) &(raw),	// src
+			OTAPayload::TypeTSSILength);
+}
+
+
+
 void unserializeWorkInto(SyncMessage* msgPtr) {
 	memcpy( (void*) &(msgPtr->work),	// dest
 			(void*) radioBufferPtr + OTAPayload::WorkIndex,	// src
@@ -54,7 +103,9 @@ void serializeWorkCommonIntoStream(SyncMessage* msgPtr){
 			OTAPayload::WorkLength);
 }
 
-// Matched pairs
+
+
+
 void unserializeMasterIDInto(SyncMessage* msgPtr) {
 	assert(sizeof(msgPtr->masterID)>=OTAPayload::MasterIDLength);
 	msgPtr->masterID = 0; // ensure MSB two bytes are zero.
@@ -125,7 +176,7 @@ SyncMessage* getPointerToMessageOfOTAType(MessageType receivedMsgType) {
 	}
 	return msgPtr;
 }
-#endif
+
 
 
 // FUTURE only unserializeOffset() once
@@ -160,6 +211,9 @@ bool isOTABufferAlgorithmicallyValid() {
 
 	return result;
 }
+#endif
+
+
 
 }	// namespace
 
@@ -181,7 +235,35 @@ void Serializer::init(BufferPointer aRadioBuffer, uint8_t aBufferSize)
 
 
 
+SyncMessage* Serializer::unserialize() {
+	// require validCRC  data in radioBuffer, of proper length
 
+	// Reuse common message
+	SyncMessage* result = MessageFactory::getMessagePtr();
+
+	// radioBufferPtr is volatile, which prevents compiler from optimizing repeated references.
+
+	unserializeTypeAndTSSInto(result);
+
+	// if msg type valid
+	/*
+	 * Structure does not depend on valid type, but protocol behaviour does.
+	 */
+	if (result->type != MessageType::Invalid) {
+		// unserialize other fields
+		unserializeOTAFieldsIntoMessageFields(result->type, result);
+	}
+	else {
+		result = nullptr;
+	}
+
+	// assert result is pointer to valid SleepSyncMessage, or nullptr
+	// !!!Offset is not checked until later
+	// TODO
+	return result;
+}
+
+#ifdef OLD
 SyncMessage* Serializer::unserialize() {
 	// require validCRC  data in radioBuffer, of proper length
 	SyncMessage* result = nullptr;
@@ -198,13 +280,14 @@ SyncMessage* Serializer::unserialize() {
 	// assert result is pointer to valid SyncMessage, or nullptr
 	return result;
 }
+#endif
 
-
+#ifdef OLD
 bool Serializer::bufferIsSane(){
 	// FUTURE other validity checks?
 	return MessageFactory::isReceivedTypeASyncType(radioBufferPtr[0]);
 }
-
+#endif
 
 
 void Serializer::serializeSyncMessageIntoRadioBuffer(SyncMessage* msgPtr) {

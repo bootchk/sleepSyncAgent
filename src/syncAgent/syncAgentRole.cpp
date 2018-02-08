@@ -4,7 +4,6 @@
 #include "syncAgent.h"
 #include "state/role.h"
 
-#include "../message/messageFactory.h"
 #include "../slots/merging/mergePolicy.h"
 
 
@@ -41,7 +40,7 @@ void SyncAgent::ToNoFishingFromOther() {
  */
 void SyncAgent::toMergerFromFisher(SyncMessage* msg){
 	// assert slot is fishSlot
-	assert (MessageFactory::doesCarrySync(msg->type));
+	assert (SyncMessage::doesCarrySync(msg->type));
 	assert(MergerFisherRole::isFisher());
 
 	MergerFisherRole::toMerger();

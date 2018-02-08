@@ -1,18 +1,18 @@
 
 #pragma once
 
+#include <radioSoC.h>	// TransmitPowerdBm
+
+
+
 // Used by message.h
 enum class NetGranularity {
-	Small,
+	Large =0,
 	Medium,
-	Large
+	Small,
 };
 
 
-
-
-
-//#include "../message/message.h"
 
 /*
  * Knows granularity.
@@ -29,7 +29,22 @@ enum class NetGranularity {
  * - Increase: cliques merge
  */
 class Granularity {
+private:
+	static TransmitPowerdBm xmitPowerForGranularity(NetGranularity granularity);
+
 public:
+	/*
+	 * Record granularity of self's clique.
+	 *
+	 * I will begin filtering messages by granularity.
+	 *
+	 * Other member's of clique should be xmitting with same granularity.
+	 *
+	 * This happens:
+	 * - after provisioning, on receiving SyncControl message
+	 * - when I detect that my master is xmitting with different granularity.
+	 */
+	// TODO check incoming messages from master and others.
 	static void setGranularity(NetGranularity granularity);
 
 	/*
@@ -39,4 +54,9 @@ public:
 		unsigned int receivedSignalStrength,
 		NetGranularity transmittedSignalStrength
 		);
+
+	/*
+	 * Validate raw OTA value and convert to default if invalid.
+	 */
+	static NetGranularity getFromRaw(unsigned char rawTSS);
 };

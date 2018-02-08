@@ -41,7 +41,7 @@ void IntraCliqueManager::checkDoneAndEnactControl() {
 }
 
 
-// TODO for optimality, when slave hears a granularity message, stop repeating to the master.
+// XXX for optimality, when slave hears a granularity message, stop repeating to the master.
 // another slave may be repeating upstream too?
 
 /*
@@ -97,3 +97,5 @@ void IntraCliqueManager::doDownstreamScatter() {
 
 MessageType IntraCliqueManager::currentMsgType() { return SendRepeater::currentMsgType(); }
 WorkPayload IntraCliqueManager::currentPayload() { return SendRepeater::currentPayload(); }
+
+

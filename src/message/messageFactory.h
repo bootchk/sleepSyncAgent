@@ -26,83 +26,7 @@ public:
 	// Get pointer to singleton instance
 	static SyncMessage* getMessagePtr(){ return &message; }
 
-	// Does an OTA received byte seem like a MessageType?
-	static bool isReceivedTypeASyncType(uint8_t receivedType) {
-		// cast it
-		MessageType castType = (MessageType) receivedType;
 
-		// check cast was valid
-		bool result = false;
-
-		switch(castType) {
-		case MessageType::Info:
-		case MessageType::MasterSync:
-		case MessageType::MasterMergedAway:
-		case MessageType::SlaveMergedAway:
-		case MessageType::EnticingInferior:
-		case MessageType::AbandonMastership:
-		case MessageType::WorkSync:
-
-		case MessageType::WorkSetProximity:
-		case MessageType::WorkScatterTime:
-		case MessageType::ControlNetGranularity:
-		case MessageType::ControlScatterClique:
-			result = true;
-		}
-
-		return result;
-	}
-
-	/*
-	 * Is message related to merging?
-	 */
-	// NOT USED?
-	static bool doesCarryOffsetToOtherClique(MessageType type) {
-		bool result;
-		switch (type){
-		case MessageType::MasterSync:
-		case MessageType::EnticingInferior:
-		case MessageType::WorkSync:
-			result = true;
-			break;
-		default:
-			result = false;
-		}
-		return result;
-	}
-
-
-	/*
-	 * Does this message type have property "carries sync":
-	 * - non-null offset?
-	 * - non-null MasterID
-	 *
-	 * AbandonMastership may have null offset
-	 */
-	static bool doesCarrySync(MessageType type) {
-		bool result;
-		switch (type){
-		case MessageType::MasterSync:
-		case MessageType::WorkSync:
-			result = true;
-			break;
-
-		// Carry offset, but for DeepFishing
-		case MessageType::MasterMergedAway:
-		case MessageType::SlaveMergedAway:
-		case MessageType::EnticingInferior:
-
-		// Offset field not used?
-		case MessageType::AbandonMastership:
-		case MessageType::WorkSetProximity:
-		case MessageType::WorkScatterTime:
-		case MessageType::ControlNetGranularity:
-		case MessageType::ControlScatterClique:
-		case MessageType::Info:
-			result = false;
-		}
-		return result;
-	}
 
 #ifdef OLD
 	static SyncMessage* initMasterSyncMessage(DeltaTime aDeltaToNextSyncPoint, SystemID aMasterID) {
@@ -194,7 +118,7 @@ public:
 			WorkPayload workPayload) {
 
 		// ensure msg type is proper
-		assert(doesCarrySync(msgType));
+		assert(SyncMessage::doesCarrySync(msgType));
 
 		message.type = msgType;
 		message.work = workPayload;

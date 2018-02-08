@@ -40,33 +40,26 @@
  * Encoding for OTA type
  */
 enum class MessageType {
-	/*
-	 * Subclass SyncMessage
-	 * Only in lower layers
-	 */
-	MasterSync = 17,	// Don't start at 0
+	// Carry sync
+	MasterSync = 1,	// Don't start at 0
+	WorkSync,
+	ControlNetGranularity,
+	ControlScatterClique,
 
-	// Merging
-	EnticingInferior = 34,	// Was MergeSync
-	MasterMergedAway = 37,
-	SlaveMergedAway = 41,
+	// Merging, also carrying an offset
+	EnticingInferior,	//  5  Was MergeSync
+	MasterMergedAway,
+	SlaveMergedAway,
 
+	AbandonMastership,	// 8
 
-	AbandonMastership = 68,
-	/*
-	 * App layer
-	 */
-	WorkSync = 136,
 	// From app controller
-	WorkSetProximity = 139,
-	WorkScatterTime = 151,
-	/*
-	 * Link and network control from app to SleepSync
-	 */
-	ControlNetGranularity = 171,
-	ControlScatterClique = 174,
+	//WorkSetProximity = 139,
+	//WorkScatterTime = 151,
 
-	Info = 231
+	Info,
+
+	Invalid
 };
 
 
@@ -129,6 +122,17 @@ public:
 	WorkPayload work;	// work always allocated/transmitted, but often empty/null
 
 	NetGranularity transmittedSignalStrength;
+
+	static MessageType messageTypeFromRaw(unsigned char);
+
+	/*
+	 * Does this message type have property "carries sync":
+	 * - non-null offset?
+	 * - non-null MasterID
+	 *
+	 * AbandonMastership may have null offset
+	 */
+	static bool doesCarrySync(MessageType type);
 };
 
 
