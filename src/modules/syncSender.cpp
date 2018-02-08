@@ -10,12 +10,14 @@
 #include "../message/serializer.h"
 #include "../message/messageFactory.h"
 
+#include "../modules/syncOffset.h"
+
 #include "../globals.h"	// clique
 #include "../logging/logger.h"
 
-#include "../physicalParameters.h"
-
 #include "../network/intraCliqueManager.h"
+
+#include "../syncAgent/syncAgent.h"
 
 
 /*
@@ -40,9 +42,6 @@ static void sendMessage(SyncMessage* msgPtr) {
 	Logger::logSend(msgPtr);
 #endif
 
-	/*
-	 * Time to serialize is a component of SendLatency.
-	 */
 	Serializer::serializeSyncMessageIntoRadioBuffer(msgPtr);
 
 	// Use for extreme testing, but affects latency
@@ -56,40 +55,23 @@ static void sendMessage(SyncMessage* msgPtr) {
 }  // namespace
 
 
+
+
 void SyncSender::sendMasterSync() {
 	/*
 	 * Make MasterSyncMessage, having:
 	 * - type MasterSync
 	 * - forwardOffset unsigned delta now to next SyncPoint
 	 * - self ID
-	 *
-	 * Since we are in sync slot near front of sync period, offset should (0, NormalSyncPeriodDuration)
-	 * Type DeltaSync ensures that.
 	 */
-	DeltaTime rawOffset = clique.schedule.deltaNowToNextSyncPoint();
-
 	/*
-	 * Sender specific send latency
-	 * The offset will be correct to receiver at the time receiver receives last bit.
-	 *
-	 * Susceptible to breakpoints: If breakpointed, nextSyncPoint is in past and forwardOffset is zero.
-	 * Here we use clampedSubtraction to insure clock subtraction not yield large number.
-	 * An alternative design it discussed below: perform simple subtraction and just not send the message
-	 * if the result is greater than one SyncPeriodDuration from now.
-	 * Again, this situation usually results from debugging.
+	 OLD
+	 DeltaTime sendLatencyAdjustedOffset = SyncOffset::calculate();
+	 SyncMessage* msgPtr = MessageFactory::initMasterSyncMessage(sendLatencyAdjustedOffset, System::ID());
 	 */
-	DeltaTime sendLatencyAdjustedOffset = TimeMath::clampedSubtraction(rawOffset, PhysicalParameters::SendLatency);
-
-	// XXX robust code: check sendLatencyAdjustedOffset in range now and return if not
-	// XXX rawOffset greater than zero except when breakpointed
-
-	// XXX assert we are not xmitting sync past end of syncSlot?
-	// i.e. calculations are rapid and sync slot not too short?
-
-	/*
-	 * Time to create message is component of SendLatency.
-	 */
-	SyncMessage* msgPtr = MessageFactory::initMasterSyncMessage(sendLatencyAdjustedOffset, System::ID());
+	SyncMessage* msgPtr = MessageFactory::initSyncMessage(
+			MessageType::MasterSync,
+			SyncAgent::countMergeSyncHeard );	// debugging content, not required
 	sendMessage(msgPtr);
 
 #ifdef TEST_LATENCY
@@ -106,18 +88,21 @@ void SyncSender::sendMergeSync() {
 
 
 
-void SyncSender::sendWorkSync(WorkPayload work) {
-	/*
+/*
 	 * The app sends work OUT only when there is enough power for self to do work,
 	 * which is more than is required to send the workSync.
 	 * The listener may choose to ignore it if they lack power.
 	 * But we must send this workSync because it carries sync.
 	 */
+void SyncSender::sendWorkSync(WorkPayload work) {
+	SyncMessage* msgPtr = MessageFactory::initSyncMessage(
+				MessageType::WorkSync,
+				work );
+	sendMessage(msgPtr);
+}
 
-	// Temp suppress warning not using work while debugging
-	(void) work;
 
-
+#ifdef OLD
 	DeltaTime forwardOffset = clique.schedule.deltaNowToNextSyncPoint();
 	SyncMessage* msgPtr = MessageFactory::initWorkSyncMessage(
 			forwardOffset,
@@ -134,6 +119,8 @@ void SyncSender::sendWorkSync(WorkPayload work) {
 	 */
 	sendMessage(msgPtr);
 }
+#endif
+
 
 void SyncSender::sendAbandonMastership() {
 	assert( clique.isSelfMaster);	// Only master can abandon
@@ -146,13 +133,12 @@ void SyncSender::sendInfo(WorkPayload work) {
 	sendMessage(msgPtr);
 }
 
-void SyncSender::sendControlSync() { // SetXmitPower(WorkPayload work) {
 
+void SyncSender::sendControlSync() {
 	/*
 	 * Build message from what IntraCliqueManager tells us
 	 */
-	SyncMessage* msgPtr = MessageFactory::initControlMessage(
-			clique.getMasterID(),
+	SyncMessage* msgPtr = MessageFactory::initSyncMessage(
 			IntraCliqueManager::currentMsgType(),
 			IntraCliqueManager::currentPayload());
 	sendMessage(msgPtr);

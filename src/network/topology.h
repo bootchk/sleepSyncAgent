@@ -5,7 +5,9 @@
 
 
 /*
- * Knows diameter of clique i.e. granularity of hopped network.
+ * Manages changing of network topology:
+ * - granularity of hopped network
+ * - scatter
  *
  * Responsibilities:
  *  - accept provisioning (control) of granularity

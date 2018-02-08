@@ -63,7 +63,7 @@ void tryProvision() {
 	 */
 	SyncAgent::initEnsembleProtocol();
 
-	// TODO
+	// XXX
 	// assert a provisioning session is not longer than syncPeriod
 	// assert we are not past end of syncPeriod
 }

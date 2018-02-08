@@ -65,7 +65,7 @@ bool SendRepeater::shouldSend() {
 	return result;
 }
 
-// TODO call
+// TODO parameter
 void SendRepeater::checkDoneAndEnactControl() {
 	// require only call when has been started and shouldSend returned true
 	// sanity on state

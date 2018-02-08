@@ -9,6 +9,7 @@
 #include "../message/messageFactory.h"
 
 #include "../cliqueHistory/cliqueHistory.h"
+#include "../syncAgent/syncAgent.h"
 
 // Debugging
 #include "../slots/fishing/fishingManager.h"

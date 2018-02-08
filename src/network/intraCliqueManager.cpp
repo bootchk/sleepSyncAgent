@@ -10,9 +10,13 @@ namespace {
 NetGranularity _granularity;
 
 void onDoneGranularityWithAction() {
-	// TODO
 	/*
-	 * set my own granularity with granularity we remembered
+	 * set my own granularity with granularity we remembered.
+	 *
+	 * Assert self is master.
+	 *
+	 * After this, clique often disturbed:
+	 * hearing more or fewer others.
 	 */
 	Granularity::setGranularity(_granularity);
 }
@@ -22,7 +26,7 @@ void onDoneGranularityWithNoAction() {
 }
 
 void onDoneScatter() {
-	// TODO
+	// TODO scatter
 }
 
 }
@@ -45,7 +49,7 @@ void IntraCliqueManager::checkDoneAndEnactControl() {
  * upstream and downstream messages not distinguished.
  * Both have MasterID of the clique.
  * Master who hears it will start relaying.
- * Slave who hear it will act as if it came from slave.
+ * Slave who hear it will act as if it came from master (even if from slave).
  */
 
 

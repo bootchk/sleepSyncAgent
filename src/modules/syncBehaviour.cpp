@@ -4,8 +4,10 @@
 
 #include "../globals.h"  // clique
 
-#include "../message/messageFactory.h"
+#include "../message/messageFactory.h"	// assertions
+
 #include "../syncAgent/state/role.h"
+#include "../syncAgent/syncAgent.h"
 #include "../logging/logger.h"
 
 
