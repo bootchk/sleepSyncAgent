@@ -24,7 +24,10 @@ public:
 	/*
 	 * Are we sending control upstream or down?
 	 */
-	static bool isNeedSend();
+	static bool isActive();
+
+	static void abort();
+
 	/*
 	 * If we have fulfilled need to send, perform action.
 	 */

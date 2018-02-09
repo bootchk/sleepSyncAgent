@@ -31,6 +31,20 @@ void masterTellCliqueMembers(NetGranularity granularity) {
 	// TODO what if master changes during this?
 }
 
+/*
+ * Received a controlsync.
+ * If we are a slave upstreaming the same controlsync we can quit,
+ * since either:
+ * - master received it and is downstreaming to us
+ * - or another slave member is also upstreaming.
+ */
+void cancelAnyUpstreamingInProgress() {
+	// If not master and isActive, is upstreaming
+	if (( ! SyncAgent::isSelfMaster()) and IntraCliqueManager::isActive())
+		IntraCliqueManager::abort();
+}
+
+
 }
 
 
@@ -94,6 +108,7 @@ void NetworkTopology::handleNetGranularityMessage(SyncMessage* msg) {
 			masterTellCliqueMembers(granularity);
 		}
 		else {
+			cancelAnyUpstreamingInProgress();
 			Granularity::setGranularity(granularity);
 		}
 	}

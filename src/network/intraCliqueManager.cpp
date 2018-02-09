@@ -32,8 +32,12 @@ void onDoneScatter() {
 }
 
 
-bool IntraCliqueManager::isNeedSend() {
+bool IntraCliqueManager::isActive() {
 	return SendRepeater::isActive();
+}
+
+void IntraCliqueManager::abort() {
+	return SendRepeater::stop();
 }
 
 void IntraCliqueManager::checkDoneAndEnactControl() {

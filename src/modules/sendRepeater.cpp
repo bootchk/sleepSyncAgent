@@ -4,6 +4,7 @@
 #include <random.h>	// randBool
 #include <cassert>
 #include "../policy/policyParameters.h"
+#include "../logging/logger.h"
 
 
 namespace {
@@ -81,5 +82,6 @@ void SendRepeater::checkDoneAndEnactControl() {
 
 
 void SendRepeater::stop() {
-	// TODO
+	Logger::log("Abort send repeater");
+	_isActive = false;
 }
