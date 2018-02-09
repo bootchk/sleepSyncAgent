@@ -7,9 +7,9 @@
 class OTAPayload {
 public:
 
-	// Message.type hardcoded to index 0, length 1
-	static const int TypeTSSIIndex = 0;
-	static const int TypeTSSILength = 1;
+	// Type and TSS packed in first byte
+	static const int TypeTSSIndex = 0;
+	static const int TypeTSSLength = 1;
 
 	static const int MasterIndex = 1;
 	static const int MasterIDLength = 6;

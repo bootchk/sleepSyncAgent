@@ -68,7 +68,7 @@ SlotCount SyncRecoveryTrollingPolicy::nextFishSlotOrdinal() {
 
 	assert(result >=FishingParameters::FirstSlotOrdinalToFish && result <= FishingParameters::LastSlotOrdinalToFish);
 
-	Logger::log("\nTroll ");  Logger::logInt(result);
+	Logger::log(" Troll ");  Logger::logInt(result);
 
 	return result;
 }

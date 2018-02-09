@@ -58,8 +58,8 @@ void unserializeTypeAndTSSInto(SyncMessage* msgPtr) {
 	uint8_t raw;
 
 	memcpy( (void*) &(raw),	// dest
-			(void*) radioBufferPtr + OTAPayload::TypeTSSIIndex,	// src
-			OTAPayload::TypeTSSILength);
+			(void*) radioBufferPtr + OTAPayload::TypeTSSIndex,	// src
+			OTAPayload::TypeTSSLength);
 
 	/*
 	 * Not use static_cast because theoretically it could throw exception.
@@ -70,7 +70,8 @@ void unserializeTypeAndTSSInto(SyncMessage* msgPtr) {
 
 	uint8_t rawType;
 	// Shift away lower two bits
-	rawType = raw >> 2;
+	// Cast the shift result from int to unsigned char.  C says shift operands always promoted to int.
+	rawType = static_cast <unsigned char> (raw >> 2);
 	msgPtr->type = SyncMessage::messageTypeFromRaw(rawType);
 }
 
@@ -79,15 +80,17 @@ void serializeTypeAndTSSCommonIntoStream(SyncMessage* msgPtr){
 	uint8_t raw;
 
 	// Shift MsgType left, leaving two bits for TSS
+	// Cast to avoid compiler warning about int result from shift
+	// assert type < 2^6
 	raw = static_cast <uint8_t> (msgPtr->type);
-	raw = raw << 6;
+	raw = static_cast <unsigned char> (raw << 6);
 
 	// Or in two bits of TSS
 	raw = raw || (static_cast <uint8_t>(msgPtr->transmittedSignalStrength) & 0x3);
 
-	memcpy( (void*) radioBufferPtr + OTAPayload::TypeTSSIIndex, 	// dest
+	memcpy( (void*) radioBufferPtr + OTAPayload::TypeTSSIndex, 	// dest
 			(void*) &(raw),	// src
-			OTAPayload::TypeTSSILength);
+			OTAPayload::TypeTSSLength);
 }
 
 
@@ -245,7 +248,7 @@ SyncMessage* Serializer::unserialize() {
 
 	unserializeTypeAndTSSInto(result);
 
-	// if msg type valid
+
 	/*
 	 * Structure does not depend on valid type, but protocol behaviour does.
 	 */
@@ -294,7 +297,7 @@ void Serializer::serializeSyncMessageIntoRadioBuffer(SyncMessage* msgPtr) {
 	// requires init() called previously
 	assert(radioBufferPtr != nullptr);
 
-	radioBufferPtr[0] = (uint8_t) msgPtr->type;	// 1
+	serializeTypeAndTSSCommonIntoStream(msgPtr);	// 1 byte
 	serializeMasterIDCommonIntoStream(msgPtr);	// 6
 	serializeOffsetCommonIntoStream(msgPtr);	// 3
 	serializeWorkCommonIntoStream(msgPtr);	// 1

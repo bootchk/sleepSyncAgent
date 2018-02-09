@@ -37,8 +37,12 @@ void Logger::logSystemInfo() {
 
 
 void Logger::logStartSyncPeriod(LongTime now) {
+#ifdef FULL_LOGGING
 	localLogger.log(now);
 	localLogger.log("<Sync\n");
+#else
+	(void) now;
+#endif
 }
 
 
