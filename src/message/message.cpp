@@ -17,11 +17,15 @@ LongTime SyncMessage::timeOfTransmittal() {
 
 
 
-
+// Overloaded
 char const * SyncMessage::representation(SyncMessage* msg) {
+	return SyncMessage::representation(msg->type);
+}
+
+char const * SyncMessage::representation(MessageType msgType) {
 	char const * result;
 
-	switch(msg->type) {
+	switch(msgType) {
 		case MessageType::MasterSync:  result = "MastS"; break;
 		case MessageType::WorkSync:    result = "WorkS"; break;
 		case MessageType::ControlNetGranularity: result = " CGra"; break;
@@ -41,7 +45,7 @@ char const * SyncMessage::representation(SyncMessage* msg) {
 
 
 // Does an OTA received byte seem like a MessageType?
-MessageType SyncMessage::messageTypeFromRaw(uint8_t receivedType) {
+MessageType SyncMessage::messageTypeFromRaw(unsigned char receivedType) {
 	MessageType result;
 
 	switch(receivedType) {

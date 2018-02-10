@@ -113,6 +113,7 @@ public:
 	 */
 	static LongTime timeOfTransmittal();
 	static char const * representation(SyncMessage*);
+	static char const * representation(MessageType);
 
 
 	// These fields are sent over the air OTA
