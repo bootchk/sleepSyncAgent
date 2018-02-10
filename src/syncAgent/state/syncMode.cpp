@@ -33,10 +33,12 @@ void toSyncOnly() {
 	SyncAgent::ToNoFishingFromOther();
 }
 
-
+#ifdef BLE_PROVISIONED
 void toSyncAndProvision() {
 	_mode = SyncMode::SyncAndProvision;
 }
+#endif
+
 
 }
 

@@ -6,6 +6,8 @@
 #include "../scheduleParameters.h"
 #include "../clique/periodTime.h"
 
+#include "../logging/logger.h"
+
 #include <cassert>
 
 
@@ -31,8 +33,13 @@ DeltaTime calculatePeriodTime(uint8_t offsetTime) {
 	return PeriodTime::convertTickOffset(ticksBeforeNowOfButtonPush);
 }
 
-
+bool shouldFilter(int8_t rssi) {
+	// TODO also need tss, use NetGranularity
+	(void) rssi;
+	return false;
 }
+
+}  // namespace
 
 
 void ProvisioningPublisher::subscribe(PropertyIndex propertyIndex, ProvisionCallback aCallback){
@@ -47,11 +54,12 @@ void ProvisioningPublisher::notify(
 		PropertyIndex propertyIndex,
 		uint8_t provisionedValue,
 		int8_t rssi
-		) {
-	// TODO filter by rssi
-	// Don't callback if provisioner was virtually out of range.
-	// TODO (provisionedValue, provisionedVirtualRange), rssi
-
+		)
+{
+	if (shouldFilter(rssi)) {
+		Logger::log("Discard weak prov\n");
+		return;
+	}
 
 	uint32_t convertedValue = 0;
 

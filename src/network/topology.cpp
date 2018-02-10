@@ -118,6 +118,7 @@ void NetworkTopology::handleNetGranularityMessage(SyncMessage* msg) {
 
 void NetworkTopology::handleScatterMessage(SyncMessage* msg) {
 	// TODO
+	(void) msg;
 }
 
 

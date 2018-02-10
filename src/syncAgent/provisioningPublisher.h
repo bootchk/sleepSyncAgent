@@ -15,17 +15,15 @@ typedef unsigned int PropertyIndex;
 
 
 /*
- * Observer pattern i.e. publish/subscribe or subscribe/notify
+ *Responsibilities:
+ * - Observer pattern i.e. publish/subscribe or subscribe/notify
+ * - Convert type of transported (Bluetooth) provisioned values (uint8_t) to types expected by subscribers.
+ * - Filter provisioning event by virtualRange (inverse rssi)
  *
- * Understands:
+ * understands subscribers more than it should since it knows their types
+ *
+ * Knows:
  * - set of provisioning properties.
- *
- * - How to convert provisioned values (uint8_t)
- * to values expected by subscribers.
- *
- * - How to filter provisioning event by virtualRange (inverse rssi)
- *
- * I.E. understands subscribers more than it should.
  */
 
 /*

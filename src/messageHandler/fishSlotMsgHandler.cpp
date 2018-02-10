@@ -50,38 +50,24 @@ HandlingResult FishSlotMessageHandler::handle(SyncMessage* msg){
 	Logger::logReceivedMsg(msg);
 
 	switch(msg->type) {
-	case MessageType::MasterSync:
-		handlingResult = handleMasterSyncMessage(msg);
-		break;
-	case MessageType::WorkSync:
-		handlingResult = handleWorkSyncMessage(msg);
-		break;
+
+	// Specialized handling
+	case MessageType::MasterSync: handlingResult = handleMasterSyncMessage(msg); break;
+
+	case MessageType::WorkSync: handlingResult = handleWorkSyncMessage(msg); break;
 
 	case MessageType::MasterMergedAway:
 	case MessageType::SlaveMergedAway:
-	case MessageType::EnticingInferior:
-		handlingResult = handleMergeSyncMessage(msg);
-		break;
+	case MessageType::EnticingInferior: handlingResult = handleMergeSyncMessage(msg); break;
 
-	case MessageType::AbandonMastership:
-		handlingResult = handleAbandonMastershipMessage(msg);
-		break;
+	case MessageType::AbandonMastership: handlingResult = handleAbandonMastershipMessage(msg); break;
 
 
-
-	case MessageType::Info:
-	//case MessageType::WorkSetProximity:
-	//case MessageType::WorkScatterTime:
-		handlingResult = CommonMessageHandler::handleInfoMessage(msg);
-		break;
-
-	case MessageType::ControlNetGranularity:
-		handlingResult = CommonMessageHandler::handleControlMessageSetGranularity(msg);
-		break;
-
-	case MessageType::ControlScatterClique:
-		handlingResult = CommonMessageHandler::handleControlMessageScatter(msg);
-		break;
+	// General handling
+	case MessageType::Info: handlingResult = CommonMessageHandler::handleInfoMessage(msg); break;
+	case MessageType::ControlNetGranularity: handlingResult = CommonMessageHandler::handleControlMessageSetGranularity(msg); break;
+	case MessageType::ControlScatterClique: handlingResult = CommonMessageHandler::handleControlMessageScatter(msg); break;
+	case MessageType::Invalid: handlingResult = HandlingResult::KeepListening;
 	}
 
 	return handlingResult;
