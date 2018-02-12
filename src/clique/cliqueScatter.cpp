@@ -12,11 +12,4 @@ void Clique::scatterSync(){
 	 * Grabbing does not change schedule, so do that now
 	 */
 	schedule.adjustWithRandomAddedTime();
-
-	// TODO
-	// randomize syncPoint
-
-	// scatter work
-
-	// scatter syncmode
 }

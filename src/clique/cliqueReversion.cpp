@@ -36,6 +36,9 @@ void Clique::grabMastership() {
 	 */
 	FishingManager::restartTrollingMode();
 	// WAS SyncRecoveryFishPolicy::reset();
+
+	// DropoutMonitor::reset() is not necessary since only slaves use it
+	// It will get reset when we become a slave.
 }
 
 

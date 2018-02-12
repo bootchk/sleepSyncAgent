@@ -11,7 +11,7 @@ Role _role;
 }
 
 
-void MergerFisherRole::init() { _role = Role::Fisher; }
+void MergerFisherRole::init() { toNoFishing(); }
 
 Role MergerFisherRole::role() { return _role; }
 

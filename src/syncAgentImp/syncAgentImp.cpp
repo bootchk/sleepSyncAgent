@@ -15,7 +15,7 @@
 #include "../policy/workManager.h"
 #include "../logging/logger.h"
 #include "../syncAgentImp/state/phase.h"
-#include "../syncAgentImp/state/role.h"
+#include "../syncAgentImp/state/syncMode.h"
 
 
 // SyncSleeper, Sleeper pure classes
@@ -68,7 +68,7 @@ void SyncAgentImp::initSyncObjects(
 	 * RADIO->POWER is set at POR reset, but it means 'was reset', not 'is using power'.
 	 */
 
-	MergerFisherRole::init();
+	SyncModeManager::resetToModeMaintain();
 	WorkManager::init(aMailbox);
 
 	// Temp: test power consumption when all sleep
@@ -122,7 +122,7 @@ void SyncAgentImp::initSyncObjects(
 	// not assert LongClock running assert(aLCT->isOSClockRunning());
 
 	// ensure initial state of SyncAgentImp
-	assert(MergerFisherRole::isFisher());
+	// assert(MergerFisherRole::isFisher());
 	assert(clique.isSelfMaster());
 	assert(!Ensemble::isRadioInUse());
 	assert(Ensemble::isConfigured());
@@ -133,7 +133,40 @@ void SyncAgentImp::initSyncObjects(
 bool SyncAgentImp::isSelfMaster() { return clique.isSelfMaster(); }
 
 
+void SyncAgentImp::scatter() {
+	/*
+	 * Reset to initial conditions.
+	 * In general, reset all state, all policies.
+	 *
+	 * Abort any merging in progress.
+	 * Abort any work messages received.
+	 */
 
+	/*
+	 * Clique resets several monitors and policies.
+	 */
+	clique.scatterSync();
+
+	// Mode and submode not fish/merging
+	SyncModeManager::resetToModeMaintain();
+
+	// scatter work exchange protocol
+	WorkManager::resetState();
+
+	/*
+	 * The app, if it is working autonomously (but in sync with other work)
+	 * will now work out of sync, since clique schedule is scattered.
+	 * We don't need to tell the app to scatter its work.
+	 */
+
+	/*
+	 * Not reset:
+	 * - the clique history???
+	 * - network topology
+	 */
+
+	// TODO assertions on state of all policies and other state
+}
 
 
 /*

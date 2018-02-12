@@ -92,4 +92,9 @@ public:
 
 	static uint32_t getPhase();
 	static uint32_t getReasonForWake();
+
+	/*
+	 * More or less: reset to starting conditions.
+	 */
+	static void scatter();
 };
