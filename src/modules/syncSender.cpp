@@ -94,7 +94,7 @@ void SyncSender::sendMergeSync() {
 	 * The listener may choose to ignore it if they lack power.
 	 * But we must send this workSync because it carries sync.
 	 */
-void SyncSender::sendWorkSync(WorkPayload work) {
+void SyncSender::sendWorkSync(Payload work) {
 	SyncMessage* msgPtr = MessageFactory::initSyncMessage(
 				MessageType::WorkSync,
 				work );
@@ -128,7 +128,7 @@ void SyncSender::sendAbandonMastership() {
 	sendMessage(msgPtr);
 }
 
-void SyncSender::sendInfo(WorkPayload work) {
+void SyncSender::sendInfo(Payload work) {
 	SyncMessage* msgPtr = MessageFactory::initInfoMessage( clique.getMasterID(), work );
 	sendMessage(msgPtr);
 }

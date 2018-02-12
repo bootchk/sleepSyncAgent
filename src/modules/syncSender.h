@@ -1,6 +1,7 @@
 #pragma once
 
-#include <platformTypes.h>
+
+#include "../message/message.h"
 
 /*
  * Knows how to fabricate and transmit/broadcast a flavor of Sync msg.
@@ -19,10 +20,10 @@ class SyncSender {
 public:
 
 	static void sendMasterSync();
-	static void sendWorkSync(WorkPayload work);
+	static void sendWorkSync(Payload work);
 	static void sendMergeSync();
 	static void sendAbandonMastership();
-	static void sendInfo(WorkPayload work);
+	static void sendInfo(Payload work);
 
 	static void sendControlSync();
 };

@@ -27,7 +27,7 @@
 CliqueMerger SyncAgentImp::cliqueMerger;
 
 // A statistic we can include in certain messages
-WorkPayload SyncAgentImp::countMergeSyncHeard;
+unsigned char SyncAgentImp::countMergeSyncHeard;
 
 RadioUseCase radioUseCaseSleepSync;
 
@@ -57,7 +57,7 @@ void SyncAgentImp::sleepUntilSyncPower(){
 
 void SyncAgentImp::initSyncObjects(
 		Mailbox* aMailbox,
-		void (*aOnWorkMsgCallback)(WorkPayload),
+		void (*aOnWorkMsgCallback)(unsigned char),
 		void (*aOnSyncPointCallback)()
 	)
 {

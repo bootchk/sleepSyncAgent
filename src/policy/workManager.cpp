@@ -30,6 +30,6 @@ bool WorkManager::isNeedSendWork() {
  return workOutMailbox->isMail();
 }
 
-WorkPayload WorkManager::fetch() {
+MailContents WorkManager::fetch() {
 	return workOutMailbox->fetch();
 }

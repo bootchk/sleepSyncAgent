@@ -106,6 +106,6 @@ void IntraCliqueManager::doDownstreamScatter() {
 }
 
 MessageType IntraCliqueManager::currentMsgType() { return SendRepeater::currentMsgType(); }
-WorkPayload IntraCliqueManager::currentPayload() { return SendRepeater::currentPayload(); }
+Payload IntraCliqueManager::currentPayload() { return SendRepeater::currentPayload(); }
 
 

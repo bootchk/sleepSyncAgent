@@ -47,7 +47,7 @@ void SendRepeater::start(
 
 
 MessageType SendRepeater::currentMsgType() { return _messageType; }
-WorkPayload SendRepeater::currentPayload() { return _aValue; }
+Payload SendRepeater::currentPayload() { return _aValue; }
 
 bool SendRepeater::isActive() { return _isActive; }
 

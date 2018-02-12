@@ -13,7 +13,7 @@ void SyncAgent::subscribeProvisioning(PropertyIndex propertyIndex, ProvisionCall
 
 void SyncAgent::initSyncObjects(
 			Mailbox* mailbox,
-			void (*onWorkMsg)(WorkPayload),
+			void (*onWorkMsg)(unsigned char),
 			void (*onSyncPoint)()
 			) {
 	SyncAgentImp::initSyncObjects(mailbox, onWorkMsg, onSyncPoint);

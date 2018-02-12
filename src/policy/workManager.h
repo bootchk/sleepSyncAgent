@@ -16,7 +16,7 @@ public:
 	static void init(Mailbox*);
 
 	static bool isNeedSendWork();
-	static WorkPayload fetch();
+	static MailContents fetch();
 
 	static void resetState();
 	static void hearWork();

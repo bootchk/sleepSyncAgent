@@ -97,7 +97,7 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 	 * Also, this knows that we bounce out work back to app.
 	 */
 	// Fetch work from app
-	WorkPayload work = WorkManager::fetch();
+	MailContents work = WorkManager::fetch();
 	if (! WorkManager::isHeardWork() ) {
 		Phase::set(PhaseEnum::SyncXmitWorkSync);
 		SyncSender::sendWorkSync(work);

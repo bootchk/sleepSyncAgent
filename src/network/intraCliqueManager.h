@@ -35,5 +35,5 @@ public:
 
 
 	static MessageType currentMsgType();
-	static WorkPayload currentPayload();
+	static Payload currentPayload();
 };

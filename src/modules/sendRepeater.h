@@ -35,5 +35,5 @@ public:
 	static void stop();
 
 	static MessageType currentMsgType();
-	static WorkPayload currentPayload();
+	static Payload currentPayload();
 };

@@ -2,7 +2,6 @@
 #pragma once
 
 #include "../cliqueMerger/cliqueMerger.h"
-//#include "../message/message.h"
 #include "../syncAgentImp/provisioningPublisher.h"
 
 
@@ -30,7 +29,7 @@ public:
 
 		static void initSyncObjects(
 				Mailbox* mailbox,
-				void (*onWorkMsg)(WorkPayload),
+				void (*onWorkMsg)(MailContents),
 				void (*onSyncPoint)()
 				);
 
@@ -62,13 +61,13 @@ private:
 public:	// to SyncSlot mainly
 	static CliqueMerger cliqueMerger;
 
-	static WorkPayload countMergeSyncHeard ;
+	static MailContents countMergeSyncHeard ;
 
 private:
 	// syncPeriod local to syncAgentLoop.c
 
 	// Interface towards app
-	static void (*onWorkMsgCallback)(WorkPayload);
+	static void (*onWorkMsgCallback)(MailContents);
 	static void (*onSyncPointCallback)();
 	// FUTURE static void (*onSyncingPausedCallback)();	// callback to app when syncing is paused
 
@@ -77,7 +76,7 @@ private:
 public:
 
 	// Upstream communication to app
-	static void relayHeardWorkToApp(WorkPayload work);
+	static void relayHeardWorkToApp(Payload work);
 
 	/*
 	 * Actions for state/mode/role transitions

@@ -8,12 +8,12 @@
  */
 
 
-void (*SyncAgentImp::onWorkMsgCallback)(WorkPayload);
+void (*SyncAgentImp::onWorkMsgCallback)(unsigned char);
 void (*SyncAgentImp::onSyncPointCallback)();
 
 
 
-void SyncAgentImp::relayHeardWorkToApp(WorkPayload work) {
+void SyncAgentImp::relayHeardWorkToApp(unsigned char work) {
 	/*
 	 * Alternatives are:
 	 * - queue to worktask (unblock it)

@@ -40,7 +40,7 @@ public:
 	}
 
 
-	static SyncMessage* initWorkSyncMessage(DeltaTime aDeltaToNextSyncPoint, SystemID aMasterID, WorkPayload workPayload) {
+	static SyncMessage* initWorkSyncMessage(DeltaTime aDeltaToNextSyncPoint, SystemID aMasterID, Payload workPayload) {
 			message.type = MessageType::WorkSync;
 			message.deltaToNextSyncPoint.set(aDeltaToNextSyncPoint);	// throws assertion if out of range
 			message.masterID = aMasterID;
@@ -51,7 +51,7 @@ public:
 
 	static SyncMessage* initControlMessage(
 				MessageType aType,
-				WorkPayload workPayload)
+				Payload workPayload)
 		{
 			initSyncMessage(aType, workPayload);
 			return &message;
@@ -69,7 +69,7 @@ public:
 		message.masterID = superiorMasterID;
 
 		// Work is normally unused, sent as zero.  For testing: send lower two bytes of inferior
-		message.work = (WorkPayload) inferiorMasterID;
+		message.work = (Payload) inferiorMasterID;
 		return &message;
 	}
 
@@ -86,7 +86,7 @@ public:
 	}
 
 
-	static SyncMessage* initInfoMessage(SystemID aMasterID, WorkPayload workPayload) {
+	static SyncMessage* initInfoMessage(SystemID aMasterID, Payload workPayload) {
 		initNonSyncMessage(MessageType::Info, aMasterID, workPayload);
 		return &message;
 	}
@@ -95,7 +95,7 @@ public:
 	static SyncMessage* initNonSyncMessage(
 			MessageType msgType,
 			SystemID aMasterID,
-			WorkPayload workPayload) {
+			Payload workPayload) {
 		message.type = msgType;
 		message.deltaToNextSyncPoint.set(0);
 		message.masterID = aMasterID;
@@ -115,7 +115,7 @@ public:
 	 */
 	static SyncMessage* initSyncMessage(
 			MessageType msgType,
-			WorkPayload workPayload) {
+			Payload workPayload) {
 
 		// ensure msg type is proper
 		assert(SyncMessage::doesCarrySync(msgType));

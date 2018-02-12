@@ -62,7 +62,7 @@ enum class MessageType {
 	Invalid
 };
 
-
+typedef unsigned char Payload;
 
 /*
  *  Message data.  Just a struct, no methods.
@@ -120,7 +120,7 @@ public:
 	MessageType type;
 	DeltaSync deltaToNextSyncPoint;	// forward in time
 	SystemID masterID;
-	WorkPayload work;	// work always allocated/transmitted, but often empty/null
+	Payload work;	// work always allocated/transmitted, but often empty/null
 
 	NetGranularity transmittedSignalStrength;
 

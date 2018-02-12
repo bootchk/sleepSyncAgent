@@ -1,8 +1,8 @@
 
 #pragma once
 
-// TODO eliminate dependence on type WorkPayload
-#include "../message/message.h"	// WorkPayload
+// radioSoC
+#include <services/mailbox.h>
 
 // TODO eliminate this include
 // SyncAgent callbacks for provisioning
@@ -56,7 +56,7 @@ public:
 
 	static void initSyncObjects(
 			Mailbox* mailbox,
-			void (*onWorkMsg)(WorkPayload),
+			void (*onWorkMsg)(unsigned char),
 			void (*onSyncPoint)()
 			);
 
