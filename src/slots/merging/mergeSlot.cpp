@@ -6,13 +6,13 @@
 
 #include "../../modules/syncSender.h"
 #include "../../sleepers/syncSleeper.h"
-#include "../../syncAgent/state/phase.h"
-#include "../../syncAgent/syncAgent.h"
 #include "../../scheduleParameters.h"
 
 // For debugging
-#include "../../syncAgent/state/role.h"
 #include "../../logging/logger.h"
+#include "../../syncAgentImp/state/phase.h"
+#include "../../syncAgentImp/state/role.h"
+#include "../../syncAgentImp/syncAgentImp.h"
 
 
 
@@ -29,7 +29,7 @@ namespace {
 DeltaTime timeoutUntilMergeSlotStart() {
 
 	// Pass PeriodTime from my SyncPoint to when self should start MergeSlot
-	return MergeSchedule::deltaToThisMergeStart(SyncAgent::cliqueMerger.getPeriodTimeToMergeSlotStart());
+	return MergeSchedule::deltaToThisMergeStart(SyncAgentImp::cliqueMerger.getPeriodTimeToMergeSlotStart());
 }
 
 } // namespace
@@ -82,7 +82,7 @@ void MergeSlot::perform() {
 	Ensemble::shutdown();
 
 	if (mergePolicy.checkCompletionOfMergerRole()){
-		SyncAgent::stopMerger();
+		SyncAgentImp::stopMerger();
 	}
 	// else continue in role Merger
 }

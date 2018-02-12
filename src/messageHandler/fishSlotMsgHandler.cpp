@@ -4,9 +4,9 @@
 #include "messageHandler.h"
 
 #include "../logging/logger.h"
-#include "../syncAgent/state/role.h"
-#include "../syncAgent/syncAgent.h"
 #include "../slots/fishing/fishingManager.h"
+#include "../syncAgentImp/state/role.h"
+#include "../syncAgentImp/syncAgentImp.h"
 
 
 
@@ -22,7 +22,7 @@ HandlingResult FishSlotMessageHandler::doFishedSyncMsg(SyncMessage* msg){
 
 	switch(FishingManager::mode()){
 	case FishingMode::Trolling:
-		SyncAgent::toMergerFromFisher(msg);
+		SyncAgentImp::toMergerFromFisher(msg);
 
 		// Stop listening: self can't handle more than one, or slot is busy with another merge
 		result = HandlingResult::StopListeningHeardMasterSync;

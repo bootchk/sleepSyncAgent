@@ -92,8 +92,13 @@ public:
 	static void adjustBySyncMsg(SyncMessage* msg);
 	static void adjustByCliqueHistoryOffset(DeltaTime offset);
 
+	// Set endTime beyond current end time by a random offset
+	static void adjustWithRandomAddedTime();
+
 private:
+	// Set endTime to given time    ??? why is it called offset, it is a LongTime
 	static void adjust(LongTime offset);
+
 	static LongTime adjustedSyncPeriodEndTimeFromMsg(const SyncMessage* msg);
 	static LongTime adjustedEndTimeFromCliqueHistoryOffset(DeltaTime);
 

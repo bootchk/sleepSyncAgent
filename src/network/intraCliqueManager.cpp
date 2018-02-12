@@ -1,6 +1,8 @@
 
 #include "intraCliqueManager.h"
 
+#include "scatter.h"
+
 #include "../modules/sendRepeater.h"
 #include "../message/message.h"
 
@@ -21,12 +23,16 @@ void onDoneGranularityWithAction() {
 	Granularity::setGranularity(_granularity);
 }
 
-void onDoneGranularityWithNoAction() {
+/*
+ * No action because we are slave, upstreaming,
+ * and we wait to hear from master, downstream.
+ */
+void onDoneRepeatingUpstream() {
 	;	// null action
 }
 
 void onDoneScatter() {
-	// TODO scatter
+	Scatter::scatter();
 }
 
 }
@@ -65,7 +71,7 @@ void IntraCliqueManager::checkDoneAndEnactControl() {
 void IntraCliqueManager::doUpstreamCliqueSizeChange(NetGranularity aGranularity) {
 	SendRepeater::start(MessageType::ControlNetGranularity,
 			static_cast <uint8_t> (aGranularity),
-			onDoneGranularityWithNoAction);
+			onDoneRepeatingUpstream);
 }
 
 /*
@@ -89,7 +95,7 @@ void IntraCliqueManager::doUpstreamScatter() {
 	// 1 is dummy parameter, assert receiver ignores it
 	SendRepeater::start(MessageType::ControlScatterClique,
 			1,
-			onDoneScatter);
+			onDoneRepeatingUpstream);
 }
 
 

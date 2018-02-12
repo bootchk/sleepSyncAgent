@@ -9,11 +9,9 @@
 #include "../message/messageFactory.h"
 
 #include "../cliqueHistory/cliqueHistory.h"
-#include "../syncAgent/syncAgent.h"
-
-// Debugging
 #include "../slots/fishing/fishingManager.h"
 #include "../logging/logger.h"
+#include "../syncAgentImp/syncAgentImp.h"
 
 
 namespace {
@@ -193,7 +191,7 @@ void initMergeMyClique(SyncMessage* msg){
 	superiorMasterID = msg->masterID;
 	inferiorMasterID = owningClique->getMasterID();
 
-	if (SyncAgent::isSelfMaster() )
+	if (SyncAgentImp::isSelfMaster() )
 		kindOfMerger = MessageType::MasterMergedAway;
 	else
 		kindOfMerger = MessageType::SlaveMergedAway;

@@ -3,26 +3,24 @@
 #include <cassert>
 
 #include "../globals.h"	// clique
-#include "syncAgent.h"
 #include "../scheduleParameters.h"
 
 #include "../modules/syncPowerManager.h"
 #include "../syncPeriod/syncPeriod.h"
 
-#include "state/syncMode.h"
-
 #include "../sleepers/scheduleSleeper.h"
-#include "state/phase.h"
-
 #include "../policy/workManager.h"
 
 #include "../slots/fishing/fishSchedule.h"	// logging
 
 #include "../logging/logger.h"
 #include "../logging/remoteLogger.h"
+#include "../syncAgentImp/state/phase.h"
+#include "../syncAgentImp/state/syncMode.h"
+#include "../syncAgentImp/syncAgentImp.h"
 
 /*
- * SyncAgent is a task(thread) that is infinite sequence of sync periods.
+ * SyncAgentImp is a task(thread) that is infinite sequence of sync periods.
  *
  * Sync periods are active (using radio) if enough power.
  * In inactive sync periods, schedule advances.
@@ -73,7 +71,7 @@ void doModalSyncPeriod() {
 // FUTURE, we could check power again before each slot, namely fishing slot
 
 
-void SyncAgent::loop(){
+void SyncAgentImp::loop(){
 	/*
 	 * Assertions on enter loop:
 	 * - self is master of its own clique
@@ -106,7 +104,7 @@ void SyncAgent::loop(){
 	 */
 	RemoteLogger::sendAnyFaults();
 
-	SyncModeManager::init();
+	SyncModeManager::resetToModeMaintain();
 	// assert in Maintain mode and
 	// assert(MergerFisherRole::role()==Role::Waiting);
 

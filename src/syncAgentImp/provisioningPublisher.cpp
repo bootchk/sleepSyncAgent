@@ -1,8 +1,7 @@
 
 
-#include "provisioningPublisher.h"
+#include "../syncAgentImp/provisioningPublisher.h"
 
-// For conversions implementation
 #include "../scheduleParameters.h"
 #include "../clique/periodTime.h"
 

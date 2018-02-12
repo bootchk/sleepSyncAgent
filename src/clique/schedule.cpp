@@ -6,6 +6,8 @@
 #include "../logging/logger.h"
 #include "../scheduleParameters.h"	// probably already included by MergeOffset
 
+#include <random.h>
+
 
 namespace {
 
@@ -152,6 +154,23 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 	 */
 	adjust(adjustedSyncPeriodEndTimeFromMsg(msg));
 }
+
+
+void Schedule::adjustWithRandomAddedTime(){
+	LongTime newEndTime;
+	// Random offset less than syncPeriod
+	DeltaTime randomOffset = randUnsignedInt(0, ScheduleParameters::NormalSyncPeriodDuration);
+	/*
+	 * Add to start time plus syncPeriodDuration.
+	 * !!! Not to end time, which already may be adjusted out of range.
+	 */
+
+	newEndTime = _startTimeOfSyncPeriod + ScheduleParameters::NormalSyncPeriodDuration + randomOffset;
+
+	// Assert newEndTime < startTime + 2* syncPeriodDuration
+	adjust(newEndTime);
+}
+
 
 
 void Schedule::adjust(LongTime newEndTime) {

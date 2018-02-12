@@ -6,9 +6,9 @@
 
 //#include "../message/messageFactory.h"	// assertions
 
-#include "../syncAgent/state/role.h"
-#include "../syncAgent/syncAgent.h"
 #include "../logging/logger.h"
+#include "../syncAgentImp/state/role.h"
+#include "../syncAgentImp/syncAgentImp.h"
 
 
 namespace {
@@ -32,9 +32,9 @@ void handleSuperiorOrSameSyncWhileMerging(SyncMessage* msg) {
 		 */
 	}
 	else {
-		// FUTURE: syncAgent.cliqueMerger.adjustMergerBySyncMsg(msg);
+		// FUTURE: SyncAgentImp.cliqueMerger.adjustMergerBySyncMsg(msg);
 		// NOW: just abandon merging
-		SyncAgent::stopMerger();
+		SyncAgentImp::stopMerger();
 	}
 
 }

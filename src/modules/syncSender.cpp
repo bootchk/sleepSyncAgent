@@ -17,7 +17,7 @@
 
 #include "../network/intraCliqueManager.h"
 
-#include "../syncAgent/syncAgent.h"
+#include "../syncAgentImp/syncAgentImp.h"
 
 
 /*
@@ -71,7 +71,7 @@ void SyncSender::sendMasterSync() {
 	 */
 	SyncMessage* msgPtr = MessageFactory::initSyncMessage(
 			MessageType::MasterSync,
-			SyncAgent::countMergeSyncHeard );	// debugging content, not required
+			SyncAgentImp::countMergeSyncHeard );	// debugging content, not required
 	sendMessage(msgPtr);
 
 #ifdef TEST_LATENCY

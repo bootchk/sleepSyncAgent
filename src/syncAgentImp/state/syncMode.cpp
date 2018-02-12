@@ -1,18 +1,18 @@
 
-#include "syncMode.h"
+#include "../../syncAgentImp/state/syncMode.h"
 
-#include "role.h"
 #include "../../modules/syncPowerManager.h"
 #include "../../logging/logger.h"
 #include "../../policy/provisionManager.h"
 
 // Actions for transitions
-#include "../syncAgent.h"
+#include "../../syncAgentImp/state/role.h"
+#include "../../syncAgentImp/syncAgentImp.h"
 
 
 namespace {
 
-SyncMode _mode;
+SyncMode _mode = SyncMode::Maintain;
 
 #ifdef FUTURE
 /*
@@ -30,7 +30,7 @@ void pauseSync() {
 
 void toSyncOnly() {
 	_mode = SyncMode::SyncOnly;
-	SyncAgent::ToNoFishingFromOther();
+	SyncAgentImp::ToNoFishingFromOther();
 }
 
 #ifdef BLE_PROVISIONED
@@ -43,7 +43,7 @@ void toSyncAndProvision() {
 }
 
 
-void SyncModeManager::init() {
+void SyncModeManager::resetToModeMaintain() {
 	_mode = SyncMode::Maintain;
 
 	// sub mode
@@ -85,14 +85,14 @@ void SyncModeManager::checkPowerAndTryModeTransitions(){
 			if ( SyncPowerManager::isPowerForFishMode() ) {
 				Logger::logStartFish();
 				_mode = SyncMode::SyncAndFishMerge;
-				SyncAgent::toFisherFromNoFishing();
+				SyncAgentImp::toFisherFromNoFishing();
 			}
 		// else no change to mode
 		break;
 
 	case SyncMode::SyncAndFishMerge:
 		/*
-		 * Here, SyncAgent adjusts sub mode: MergerFisherRole
+		 * Here, SyncAgentImp adjusts sub mode: MergerFisherRole
 		 */
 
 		// to lower level?

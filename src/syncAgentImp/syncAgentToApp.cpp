@@ -1,6 +1,6 @@
 
-#include "syncAgent.h"
-#include "provisioningPublisher.h"
+#include "../syncAgentImp/provisioningPublisher.h"
+#include "../syncAgentImp/syncAgentImp.h"
 
 
 /*
@@ -8,18 +8,18 @@
  */
 
 
-void (*SyncAgent::onWorkMsgCallback)(WorkPayload);
-void (*SyncAgent::onSyncPointCallback)();
+void (*SyncAgentImp::onWorkMsgCallback)(WorkPayload);
+void (*SyncAgentImp::onSyncPointCallback)();
 
 
 
-void SyncAgent::relayHeardWorkToApp(WorkPayload work) {
+void SyncAgentImp::relayHeardWorkToApp(WorkPayload work) {
 	/*
 	 * Alternatives are:
 	 * - queue to worktask (unblock it)
 	 * - onWorkMsgCallback(msg);  (callback)
 	 *
-	 * Here we do the latter: the app maintains a In queue, not SyncAgent.
+	 * Here we do the latter: the app maintains a In queue, not SyncAgentImp.
 	 * The app should do the work later, since now is at imprecise time is a slot.
 	 */
 	onWorkMsgCallback(work);	// call callback
@@ -30,7 +30,7 @@ void SyncAgent::relayHeardWorkToApp(WorkPayload work) {
  * - that index is not also used internally.
  * - that index is in range
  */
-void SyncAgent::subscribeProvisioning(PropertyIndex index, ProvisionCallback aCallback) {
+void SyncAgentImp::subscribeProvisioning(PropertyIndex index, ProvisionCallback aCallback) {
 	ProvisioningPublisher::subscribe(index, aCallback); // onProvisionedCallback = aCallback;
 }
 

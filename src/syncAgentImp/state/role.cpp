@@ -1,6 +1,6 @@
-#include <cassert>
+#include "../../syncAgentImp/state/role.h"
 
-#include "role.h"
+#include <cassert>
 
 #include "../../logging/logger.h"
 

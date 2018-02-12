@@ -84,7 +84,8 @@ void Clique::updateMastership(SystemID otherID) {
 	if (masterID != otherID) {
 		Logger::log("Set other master.\n");
 		masterID = otherID;
-		CliqueHistory::add(otherID, 1);	// TODO
+		CliqueHistory::add(otherID, 1);
+		// TODO add()
 	}
 }
 

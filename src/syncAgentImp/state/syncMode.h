@@ -27,7 +27,11 @@ enum class SyncMode {
 
 class SyncModeManager {
 public:
-	static void init();
+	/*
+	 * To least power-hungry, least processing mode.
+	 * Every loop tries to transition from this state.
+	 */
+	static void resetToModeMaintain();
 
 	static SyncMode mode();
 

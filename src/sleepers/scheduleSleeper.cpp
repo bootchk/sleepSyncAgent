@@ -3,10 +3,9 @@
 
 #include "../slots/syncing/syncSlotSchedule.h"
 #include "syncSleeper.h"
-#include "../syncAgent/state/phase.h"
-
 #include "../globals.h"	// clique
 #include "../clique/clique.h"	// clique
+#include "../syncAgentImp/state/phase.h"
 
 
 void ScheduleSleeper::sleepUntilSyncSlotMiddle() {

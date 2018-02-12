@@ -8,7 +8,7 @@
 #include "../logging/flashIndex.h"
 #include "../logging/logger.h"
 #include "../scheduleParameters.h"
-#include "../syncAgent/syncAgent.h"
+#include "../syncAgentImp/syncAgentImp.h"
 #include "syncSleeper.h"
 
 namespace {
@@ -55,7 +55,7 @@ bool OverSleepMonitor::checkOverslept(){
 	 */
 	if ( actualSleepDuration > intendedSleepDuration + ScheduleParameters::OversleepMargin ) {
 		// Write global sync phase we were sleeping in, if not already written by brownout
-		CustomFlash::tryWriteIntAtIndex(PhaseBOIndex, SyncAgent::getPhase());
+		CustomFlash::tryWriteIntAtIndex(PhaseBOIndex, SyncAgentImp::getPhase());
 
 		CustomFlash::tryWriteIntAtIndex(IntendedSleepDuration, intendedSleepDuration);
 		CustomFlash::tryWriteIntAtIndex(OversleptDuration, actualSleepDuration);
@@ -90,7 +90,7 @@ unsigned int OverSleepMonitor::getPhaseAndReason() {
 	PhaseReason result;
 
 	// pack two short values into a 32-bit int
-	result.shorts[0] = (short unsigned int) SyncAgent::getPhase();
+	result.shorts[0] = (short unsigned int) SyncAgentImp::getPhase();
 	result.shorts[1] = (short unsigned int) SyncSleeper::getPriorReasonForWake();
 	return result.i;
 }

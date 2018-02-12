@@ -2,33 +2,42 @@
 #include "topology.h"
 
 #include "granularity.h"
+#include "scatter.h"
 
 #include "../globals.h"  // clique
 #include "intraCliqueManager.h"
 
-#include "../syncAgent/syncAgent.h"
-#include "../syncAgent/provisioningPublisher.h"
+#include "../syncAgentImp/provisioningPublisher.h"
 
 #include "../clique/clique.h"
+#include "../syncAgentImp/syncAgentImp.h"
 
 
 
 
 namespace {
 
-void masterTellCliqueMembers(NetGranularity granularity) {
+void masterTellCliqueGranularityChange(NetGranularity granularity) {
 
 	IntraCliqueManager::doDownstreamCliqueSizeChange(granularity);
 
-	// TODO
-	// Master set its own granularity later
 	/*
+	 * Master set its own granularity later
 	 * !!! We keep our current xmit power while we tell slaves,
-	 * and then reduce our own xmit power.
-	 * Spoofing.
+	 * and then change (dec or inc) our own xmit power.
+	 * Spoofing?
 	 */
 
 	// TODO what if master changes during this?
+}
+
+
+void masterTellCliqueToScatter() {
+	IntraCliqueManager::doDownstreamScatter();
+	/*
+	 * We stay in sync and master until later
+	 * OW we would not communicate with slaves.
+	 */
 }
 
 /*
@@ -40,7 +49,7 @@ void masterTellCliqueMembers(NetGranularity granularity) {
  */
 void cancelAnyUpstreamingInProgress() {
 	// If not master and isActive, is upstreaming
-	if (( ! SyncAgent::isSelfMaster()) and IntraCliqueManager::isActive())
+	if (( ! SyncAgentImp::isSelfMaster()) and IntraCliqueManager::isActive())
 		IntraCliqueManager::abort();
 }
 
@@ -69,13 +78,11 @@ void NetworkTopology::handleNetGranularityProvisioning(uint32_t provisionedValue
 	// cast raw OTA provisionedValue
 	NetGranularity granularity = static_cast<NetGranularity>(provisionedValue);
 
-	if (SyncAgent::isSelfMaster()) {
-		masterTellCliqueMembers(granularity);
+	if (SyncAgentImp::isSelfMaster()) {
+		masterTellCliqueGranularityChange(granularity);
 	}
 	else {
-		/*
-		 * We are slave, relay upstream to master.
-		 */
+		// We are slave, relay upstream to master.
 		IntraCliqueManager::doUpstreamCliqueSizeChange(granularity);
 	}
 
@@ -87,8 +94,8 @@ void NetworkTopology::handleScatterProvisioning(uint32_t  provisionedValue) {
 	 */
 	(void) provisionedValue;
 
-	if (SyncAgent::isSelfMaster()) {
-		// TODO same as above, don't scatter self until slaves told
+	if (SyncAgentImp::isSelfMaster()) {
+		// same as above, don't scatter self until slaves told
 		IntraCliqueManager::doDownstreamScatter();
 	}
 	else
@@ -104,8 +111,8 @@ void NetworkTopology::handleNetGranularityMessage(SyncMessage* msg) {
 		// cast raw OTA provisionedValue
 		NetGranularity granularity = static_cast<NetGranularity>(msg->work);
 
-		if (SyncAgent::isSelfMaster()) {
-			masterTellCliqueMembers(granularity);
+		if (SyncAgentImp::isSelfMaster()) {
+			masterTellCliqueGranularityChange(granularity);
 		}
 		else {
 			cancelAnyUpstreamingInProgress();
@@ -116,9 +123,33 @@ void NetworkTopology::handleNetGranularityMessage(SyncMessage* msg) {
 }
 
 
+
 void NetworkTopology::handleScatterMessage(SyncMessage* msg) {
-	// TODO
+	/*
+	 * Assert message is in range
+	 */
+
+	// msg content not used, is a signal
 	(void) msg;
+
+	/*
+	 * Same logic as for NetGranularity
+	 */
+	if (clique.isMsgFromMyClique(msg->masterID)) {
+			// assert msg from my clique (master or slave)
+
+			if (SyncAgentImp::isSelfMaster()) {
+				masterTellCliqueToScatter();
+			}
+			else {
+				// Assume upstreaming the same provisioned message: sactter
+				cancelAnyUpstreamingInProgress();
+
+				Scatter::scatter();
+			}
+		}
+		// else ignore
+
 }
 
 

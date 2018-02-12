@@ -4,9 +4,6 @@
 #include "../globals.h"	// clique
 #include "syncPeriod.h"
 
-#include "../syncAgent/state/phase.h"
-#include "../syncAgent/state/role.h"
-
 #include "../sleepers/scheduleSleeper.h"
 
 #include "../slots/syncing/syncWorkSlot.h"
@@ -14,6 +11,8 @@
 #include "../slots/merging/mergeSlot.h"
 
 #include "../policy/fishWaitingPolicy.cpp"
+#include "../syncAgentImp/state/phase.h"
+#include "../syncAgentImp/state/role.h"
 
 
 namespace {

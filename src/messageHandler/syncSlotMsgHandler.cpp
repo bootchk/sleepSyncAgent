@@ -6,11 +6,11 @@
 #include "../policy/workManager.h"
 #include "../modules/syncBehaviour.h"
 #include "../logging/logger.h"
-#include "../syncAgent/syncAgent.h"
 #include "../scheduleParameters.h"
 
 #include "../slots/fishing/fishingManager.h"
 #include "../slots/fishing/fishSlot.h"
+#include "../syncAgentImp/syncAgentImp.h"
 
 
 
@@ -141,15 +141,15 @@ HandlingResult SyncSlotMessageHandler::handle(SyncMessage* msg){
 	 */
 	case MessageType::EnticingInferior:
 		handlingResult = handleEnticingInferiorMessage(msg);
-		SyncAgent::countMergeSyncHeard++;
+		SyncAgentImp::countMergeSyncHeard++;
 		break;
 	case MessageType::MasterMergedAway:
 		handlingResult = handleMasterMergedAwayMessage(msg);
-		SyncAgent::countMergeSyncHeard++;
+		SyncAgentImp::countMergeSyncHeard++;
 		break;
 	case MessageType::SlaveMergedAway:
 		handlingResult = handleSlaveMergedAwayMessage(msg);
-		SyncAgent::countMergeSyncHeard++;
+		SyncAgentImp::countMergeSyncHeard++;
 		break;
 
 	case MessageType::WorkSync:
@@ -198,7 +198,7 @@ HandlingResult SyncSlotMessageHandler::handleWorkSyncMessage(SyncMessage* msg){
 	 * Doesn't matter which clique it came from, relay work.
 	 */
 	WorkManager::hearWork();	// keep work state for slot
-	SyncAgent::relayHeardWorkToApp(msg->work);
+	SyncAgentImp::relayHeardWorkToApp(msg->work);
 
 	/*
 	 * TODO revisit and consolidate these comments

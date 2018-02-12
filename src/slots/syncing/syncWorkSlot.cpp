@@ -8,10 +8,10 @@
 #include "../../modules/syncPowerManager.h"
 #include "../../sleepers/scheduleSleeper.h"
 
-#include "../../syncAgent/state/phase.h"
 #include "../../logging/logger.h"
 
 #include "../../clique/clique.h"
+#include "../../syncAgentImp/state/phase.h"
 
 
 

@@ -5,13 +5,13 @@
 #include "../../policy/workManager.h"
 #include "../../network/intraCliqueManager.h"
 
-#include "../../syncAgent/state/phase.h"
 #include "syncSlotSchedule.h"
 #include "../../modules/syncSender.h"
 #include "../../logging/logger.h"
 #include "../../sleepers/syncSleeper.h"
 
 #include <cassert>
+#include "../../syncAgentImp/state/phase.h"
 
 /*
  * Sub types of syncWorkSlot

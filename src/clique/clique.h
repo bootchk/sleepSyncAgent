@@ -63,7 +63,12 @@ public:
 	static void heardSync();
 	static void checkMasterDroppedOut();
 
-
+	/*
+	 * On provisioned to scatter,
+	 * This is strong alternative of scatter: become master of my own clique
+	 * and randomize my syncPoint (slightly or a lot)
+	 */
+	static void scatterSync();
 
 // TODO, update workTime so that we continue to flash
 // at same wall time of clique

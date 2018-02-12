@@ -1,10 +1,9 @@
 
 #include <cassert>
 
-#include "syncAgent.h"
-#include "state/role.h"
-
 #include "../slots/merging/mergePolicy.h"
+#include "../syncAgentImp/state/role.h"
+#include "../syncAgentImp/syncAgentImp.h"
 
 
 /*
@@ -21,11 +20,11 @@
  * Fishing order is only reset when master drops out.
  */
 
-void SyncAgent::toFisherFromNoFishing() {
+void SyncAgentImp::toFisherFromNoFishing() {
 	MergerFisherRole::toFisher();
 }
 
-void SyncAgent::ToNoFishingFromOther() {
+void SyncAgentImp::ToNoFishingFromOther() {
 	if (MergerFisherRole::isMerger()) {
 		// TODO MergePolicy::restart();
 		cliqueMerger.deactivate();
@@ -38,7 +37,7 @@ void SyncAgent::ToNoFishingFromOther() {
  * Was Fisher, caught another clique.
  * Begin role Merger.
  */
-void SyncAgent::toMergerFromFisher(SyncMessage* msg){
+void SyncAgentImp::toMergerFromFisher(SyncMessage* msg){
 	// assert slot is fishSlot
 	assert (SyncMessage::doesCarrySync(msg->type));
 	assert(MergerFisherRole::isFisher());
@@ -53,19 +52,19 @@ void SyncAgent::toMergerFromFisher(SyncMessage* msg){
 }
 
 
-void SyncAgent::stopMerger(){
+void SyncAgentImp::stopMerger(){
 	MergePolicy::restart();
 	/*
 	 * Go directly to Role::Fisher.
 	 * Self as a Merger has already suffered a random delay.
 	 */
-	SyncAgent::toFisherFromMerger();	// deactivates CliqueMerger
+	SyncAgentImp::toFisherFromMerger();	// deactivates CliqueMerger
 	// assert next SyncPeriod will schedule FishSlot
 	assert(MergerFisherRole::isFisher());
 }
 
 
-void SyncAgent::toFisherFromMerger(){
+void SyncAgentImp::toFisherFromMerger(){
 	MergerFisherRole::toFisher();
 	// role does not know about cliqueMerger
 	cliqueMerger.deactivate();

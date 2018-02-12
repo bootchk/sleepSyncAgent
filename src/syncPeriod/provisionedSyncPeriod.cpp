@@ -3,16 +3,16 @@
 #include "syncPeriod.h"
 
 // implementation
-#include "../syncAgent/state/phase.h"
 #include "../slots/syncing/syncWorkSlot.h"
 #include "../sleepers/scheduleSleeper.h"
 #include "../logging/logger.h"
 
-#include "../syncAgent/syncAgent.h"
-#include "../syncAgent/provisioningPublisher.h"
+#include "../syncAgentImp/provisioningPublisher.h"
 
 // libBLEProvisionee
 #include <provisioner.h>
+#include "../syncAgentImp/state/phase.h"
+#include "../syncAgentImp/syncAgentImp.h"
 
 
 
@@ -61,7 +61,7 @@ void tryProvision() {
 	/*
 	 * Since Provisioner reconfigured radio, restore to SleepSync configuration.
 	 */
-	SyncAgent::initEnsembleProtocol();
+	SyncAgentImp::initEnsembleProtocol();
 
 	// XXX
 	// assert a provisioning session is not longer than syncPeriod

@@ -14,7 +14,7 @@
 #include "../../messageHandler/messageHandler.h"
 #include "../../sleepers/syncSleeper.h"
 #include "../../modules/syncPowerManager.h"
-#include "../../syncAgent/state/phase.h"
+#include "../../syncAgentImp/state/phase.h"
 
 
 
