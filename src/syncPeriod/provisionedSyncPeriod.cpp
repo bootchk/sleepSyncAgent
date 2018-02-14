@@ -26,14 +26,18 @@ void provisioningFailedCallback() {
 
 
 void provisioningSuccededCallback(
-		uint8_t provisionedValue,
+		ProvisionedValueType provision,
 		int8_t rssi
 		) {
-	// TODO pass the provisioned index
 	Logger::log("\nprovision succeed");
 
 	// uint8_t value = Provisioner::getProvisionedValue();
-	Logger::log(provisionedValue);
+	Logger::log("\nindex: ");
+	Logger::log(provision.index);
+	Logger::log("\nvalue: ");
+	Logger::log(provision.value);
+	Logger::log("\noffset: ");
+	Logger::log(provision.offset);
 	Logger::log("\nrssi: ");
 	Logger::log((uint8_t)rssi);
 
@@ -41,7 +45,11 @@ void provisioningSuccededCallback(
 	// Currently provisioning is always: BlinkNow i.e. time since button push
 	// ProvisioningPublisher::notify(0, provisionedValue, rssi);
 	// Test work frequency: blink every period
-	ProvisioningPublisher::notify(1, 1, rssi);
+	// ProvisioningPublisher::notify(1, 1, rssi);
+
+	// Publish to subscriber provision.index
+	ProvisioningPublisher::notify(provision.index, provision, rssi);
+
 }
 
 

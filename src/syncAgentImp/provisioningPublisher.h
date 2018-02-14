@@ -3,6 +3,10 @@
 
 #include <inttypes.h>
 
+// libBLEProvisionee
+#include <provisioner.h>
+
+
 
 /*
  * Parameter type is general and obscures real type,
@@ -10,6 +14,15 @@
  * Sleep sync may convert units and types before callback.
  */
 typedef void (*ProvisionCallback)(uint32_t);
+
+#ifdef OLD
+enum class PropertyIndex {
+	WorkTime = 0,
+	WorkFrequency,
+	NetGranularity,
+	Scatter
+};
+#endif
 
 typedef unsigned int PropertyIndex;
 
@@ -38,7 +51,7 @@ public:
 	static void subscribe(PropertyIndex propertyIndex, ProvisionCallback aCallback);
 	static void notify(
 			PropertyIndex propertyIndex,
-			uint8_t provisionedValue,
+			ProvisionedValueType provisionedValue,
 			int8_t rssi
 			);
 };

@@ -11,6 +11,8 @@
 
 
 
+
+
 namespace {
 
 ProvisionCallback provisioningCallbacks[4];
@@ -38,6 +40,49 @@ bool shouldFilter(int8_t rssi) {
 	return false;
 }
 
+/*
+ * Understands what values handler callbacks want.
+ */
+uint32_t mangleProvisionedValue(ProvisionedValueType provisionedValue) {
+	/*
+	 * Dispatch conversions.
+	 * Provisioning on BLE serializes to cross the network in on BT characteristic.
+	 * provisionedValue is raw from the network.
+	 * Reverse the type conversions,
+	 * and perform other semantic twists.
+	 */
+	uint32_t result;
+
+	switch(provisionedValue.index){
+
+
+	case 0:	// work time
+		// Here we don't care about pv.value, but when it occurred
+		result = calculatePeriodTime(provisionedValue.offset);
+		break;
+
+
+	case 1:	// work freq
+	case 3: // net granularity
+		//  No conversion or type checking.  The callback should enforce further requirements.
+		result = provisionedValue.value;
+		break;
+
+
+	case 4: // scatter
+		// Handler ignores this value: the fact of provisioning is a signal
+		result = 99;
+		break;
+
+	default:
+		assert(false);
+		;
+	}
+	return result;
+
+}
+
+
 }  // namespace
 
 
@@ -51,42 +96,20 @@ void ProvisioningPublisher::subscribe(PropertyIndex propertyIndex, ProvisionCall
 
 void ProvisioningPublisher::notify(
 		PropertyIndex propertyIndex,
-		uint8_t provisionedValue,
+		ProvisionedValueType provisionedValue,
 		int8_t rssi
 		)
 {
+	assert(propertyIndex < 4);
+
 	if (shouldFilter(rssi)) {
 		Logger::log("Discard weak prov\n");
 		return;
 	}
 
-	uint32_t convertedValue = 0;
+	uint32_t convertedValue = mangleProvisionedValue(provisionedValue);
 
-	/*
-	 * Dispatch conversions.
-	 * Provisioning on BLE crams all value types into uint8_t to cross the network.
-	 * provisionedValue is raw from the network.
-	 * Reverse the type conversion here.
-	 */
-	switch(propertyIndex){
-
-	// work time
-	case 0:
-		convertedValue = calculatePeriodTime(provisionedValue);
-		break;
-
-	// work freq
-	case 1:
-		/*
-		 *  No conversion or type checking.
-		 *  The callback should enforce requirements.
-		 */
-		convertedValue = provisionedValue;
-		break;
-
-	default:
-		;
-	}
-	assert(propertyIndex < 4);
+	// Call callback
+	assert(provisioningCallbacks[propertyIndex] != nullptr);
     provisioningCallbacks[propertyIndex](convertedValue);
 }
