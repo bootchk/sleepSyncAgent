@@ -28,3 +28,4 @@ void SyncAgent::sleepUntilSyncPower() { SyncAgentImp::sleepUntilSyncPower(); }
 void SyncAgent::loop() { SyncAgentImp::loop(); }
 
 bool SyncAgent::isSelfMaster() { SyncAgentImp::isSelfMaster(); }
+bool SyncAgent::isSelfSlave() { return ! isSelfMaster(); }
