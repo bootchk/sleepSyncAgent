@@ -43,7 +43,9 @@ bool shouldFilter(int8_t rssi) {
 /*
  * Understands what values handler callbacks want.
  */
-uint32_t mangleProvisionedValue(ProvisionedValueType provisionedValue) {
+uint32_t mangleProvisionedValue(
+		ProvisionablePropertyIndex propertyIndex,
+		ProvisionedValueType provisionedValue) {
 	/*
 	 * Dispatch conversions.
 	 * Provisioning on BLE serializes to cross the network in on BT characteristic.
@@ -53,17 +55,17 @@ uint32_t mangleProvisionedValue(ProvisionedValueType provisionedValue) {
 	 */
 	uint32_t result;
 
-	switch(provisionedValue.index){
+	switch(propertyIndex){
 
-	case 0:	// work time
+	case ProvisionablePropertyIndex::WorkTime	:
 		// Here we don't care about pv.value, but when it occurred
 		result = calculatePeriodTime(provisionedValue.offset);
 		break;
 
-	case 1: // scatter
+	case ProvisionablePropertyIndex::Scatter:
 			// Handler ignores value: the fact of provisioning is a signal
-	case 2:	// work cycle
-	case 3: // net granularity i.e. cluster/clique size
+	case ProvisionablePropertyIndex::WorkCycle:
+	case ProvisionablePropertyIndex::NetGranularity: // i.e. cluster/clique size
 		//  No conversion or type checking.  The callback should enforce further requirements.
 		result = provisionedValue.value;
 		break;
@@ -81,32 +83,37 @@ uint32_t mangleProvisionedValue(ProvisionedValueType provisionedValue) {
 }  // namespace
 
 
-void ProvisioningPublisher::subscribe(PropertyIndex propertyIndex, ProvisionCallback aCallback){
-	assert(propertyIndex < 4);
-	provisioningCallbacks[propertyIndex] = aCallback;
+void ProvisioningPublisher::subscribe(ProvisionablePropertyIndex propertyIndex, ProvisionCallback aCallback){
+	RawPropertyIndex rawPropertyIndex = static_cast<RawPropertyIndex> (propertyIndex);
+	assert(rawPropertyIndex < 4);
+	provisioningCallbacks[rawPropertyIndex] = aCallback;
 }
 
 
 
 
-void ProvisioningPublisher::notify(
-		PropertyIndex propertyIndex,
+void ProvisioningPublisher::ProvisioningPublisher::notify(
+		ProvisionablePropertyIndex propertyIndex,
 		ProvisionedValueType provisionedValue,
 		int8_t rssi
 		)
 {
+	RawPropertyIndex rawPropertyIndex = static_cast<RawPropertyIndex> (propertyIndex);
 	Logger::log("Publisher notify\n");
-	Logger::logInt(propertyIndex);
-	assert(propertyIndex < 4);
+	//Logger::logInt(rawPropertyIndex);
 
 	if (shouldFilter(rssi)) {
 		Logger::log("Discard weak prov\n");
 		return;
 	}
 
-	uint32_t convertedValue = mangleProvisionedValue(provisionedValue);
+	uint32_t convertedValue = mangleProvisionedValue(propertyIndex, provisionedValue);
 
 	// Call callback
-	assert(provisioningCallbacks[propertyIndex] != nullptr);
-    provisioningCallbacks[propertyIndex](convertedValue);
+	assert(provisioningCallbacks[rawPropertyIndex] != nullptr);
+    provisioningCallbacks[rawPropertyIndex](convertedValue);
+}
+
+ProvisionablePropertyIndex ProvisioningPublisher::ppiFromRawPPI( RawPropertyIndex index) {
+	return static_cast<ProvisionablePropertyIndex> (index);
 }

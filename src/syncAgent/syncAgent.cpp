@@ -7,7 +7,7 @@
 
 // Each method simply delegates to the implementation SyncAgentImp
 
-void SyncAgent::subscribeProvisioning(PropertyIndex propertyIndex, ProvisionCallback provisionCallback) {
+void SyncAgent::subscribeProvisioning(ProvisionablePropertyIndex propertyIndex, ProvisionCallback provisionCallback) {
 		SyncAgentImp::subscribeProvisioning(propertyIndex, provisionCallback);
 	}
 

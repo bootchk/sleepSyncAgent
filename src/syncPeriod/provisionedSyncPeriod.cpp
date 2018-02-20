@@ -41,14 +41,11 @@ void provisioningSuccededCallback(
 	Logger::log("\nrssi: ");
 	Logger::log((uint8_t)rssi);
 
-	// For testing, change index 0..3
-	// Currently provisioning is always: BlinkNow i.e. time since button push
-	// ProvisioningPublisher::notify(0, provisionedValue, rssi);
-	// Test work frequency: blink every period
-	// ProvisioningPublisher::notify(1, 1, rssi);
-
-	// Publish to subscriber provision.index
-	ProvisioningPublisher::notify(provision.index, provision, rssi);
+	// provision.index was checked earlier, but convert to enum
+	ProvisionablePropertyIndex index = ProvisioningPublisher::ppiFromRawPPI(provision.index);
+	if ( index != ProvisionablePropertyIndex::Invalid) {
+		ProvisioningPublisher::notify(index, provision, rssi);
+	}
 
 }
 

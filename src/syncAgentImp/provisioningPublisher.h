@@ -15,16 +15,20 @@
  */
 typedef void (*ProvisionCallback)(uint32_t);
 
-#ifdef OLD
-enum class PropertyIndex {
-	WorkTime = 0,
-	WorkFrequency,
-	NetGranularity,
-	Scatter
-};
-#endif
 
-typedef unsigned int PropertyIndex;
+/*
+ * Int values must correspond to those defined by provisioning protocol i.e. implemented in client.
+ */
+enum class ProvisionablePropertyIndex {
+	WorkTime = 0,
+	Scatter,
+	WorkCycle,
+	NetGranularity,
+	Invalid
+};
+
+
+typedef unsigned int RawPropertyIndex;
 
 
 /*
@@ -48,9 +52,10 @@ typedef unsigned int PropertyIndex;
 class ProvisioningPublisher {
 public:
 
-	static void subscribe(PropertyIndex propertyIndex, ProvisionCallback aCallback);
+	static ProvisionablePropertyIndex ppiFromRawPPI( RawPropertyIndex index);
+	static void subscribe(ProvisionablePropertyIndex propertyIndex, ProvisionCallback aCallback);
 	static void notify(
-			PropertyIndex propertyIndex,
+			ProvisionablePropertyIndex propertyIndex,
 			ProvisionedValueType provisionedValue,
 			int8_t rssi
 			);

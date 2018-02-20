@@ -59,8 +59,12 @@ void cancelAnyUpstreamingInProgress() {
 
 
 void NetworkTopology::subscribeToProvisionings() {
-	ProvisioningPublisher::subscribe(2, NetworkTopology::handleNetGranularityProvisioning);
-	ProvisioningPublisher::subscribe(3, NetworkTopology::handleScatterProvisioning);
+	ProvisioningPublisher::subscribe(
+			ProvisionablePropertyIndex::NetGranularity,
+			NetworkTopology::handleNetGranularityProvisioning);
+	ProvisioningPublisher::subscribe(
+			ProvisionablePropertyIndex::Scatter,
+			NetworkTopology::handleScatterProvisioning);
 }
 
 

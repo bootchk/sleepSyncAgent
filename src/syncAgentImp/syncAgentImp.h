@@ -23,7 +23,7 @@ public:
 		 *  - external app (work provisioning)
 		 *  - internal (network topology provisioning)
 		 */
-		static void subscribeProvisioning(PropertyIndex, ProvisionCallback);
+		static void subscribeProvisioning(ProvisionablePropertyIndex, ProvisionCallback);
 
 		static void initSleepers();
 

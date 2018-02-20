@@ -30,7 +30,7 @@ void SyncAgentImp::relayHeardWorkToApp(unsigned char work) {
  * - that index is not also used internally.
  * - that index is in range
  */
-void SyncAgentImp::subscribeProvisioning(PropertyIndex index, ProvisionCallback aCallback) {
+void SyncAgentImp::subscribeProvisioning(ProvisionablePropertyIndex index, ProvisionCallback aCallback) {
 	ProvisioningPublisher::subscribe(index, aCallback); // onProvisionedCallback = aCallback;
 }
 
