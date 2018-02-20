@@ -55,31 +55,26 @@ uint32_t mangleProvisionedValue(ProvisionedValueType provisionedValue) {
 
 	switch(provisionedValue.index){
 
-
 	case 0:	// work time
 		// Here we don't care about pv.value, but when it occurred
 		result = calculatePeriodTime(provisionedValue.offset);
 		break;
 
-
-	case 1:	// work freq
-	case 3: // net granularity
+	case 1: // scatter
+			// Handler ignores value: the fact of provisioning is a signal
+	case 2:	// work cycle
+	case 3: // net granularity i.e. cluster/clique size
 		//  No conversion or type checking.  The callback should enforce further requirements.
 		result = provisionedValue.value;
 		break;
 
-
-	case 4: // scatter
-		// Handler ignores this value: the fact of provisioning is a signal
-		result = 99;
-		break;
-
 	default:
+		// Index is OTA and could be garbled.
+		// But we checked earlier that index was in range
+		// Generate a hard fault and reset.
 		assert(false);
-		;
 	}
 	return result;
-
 }
 
 
@@ -100,6 +95,8 @@ void ProvisioningPublisher::notify(
 		int8_t rssi
 		)
 {
+	Logger::log("Publisher notify\n");
+	Logger::logInt(propertyIndex);
 	assert(propertyIndex < 4);
 
 	if (shouldFilter(rssi)) {
