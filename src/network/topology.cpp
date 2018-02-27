@@ -7,7 +7,7 @@
 #include "../globals.h"  // clique
 #include "intraCliqueManager.h"
 
-#include "../syncAgentImp/provisioningPublisher.h"
+#include "../provisioning/provisioningPublisher.h"
 
 #include "../clique/clique.h"
 #include "../syncAgentImp/syncAgentImp.h"

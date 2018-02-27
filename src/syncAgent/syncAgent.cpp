@@ -7,10 +7,6 @@
 
 // Each method simply delegates to the implementation SyncAgentImp
 
-void SyncAgent::subscribeProvisioning(ProvisionablePropertyIndex propertyIndex, ProvisionCallback provisionCallback) {
-		SyncAgentImp::subscribeProvisioning(propertyIndex, provisionCallback);
-	}
-
 void SyncAgent::initSyncObjects(
 			Mailbox* mailbox,
 			void (*onWorkMsg)(unsigned char),

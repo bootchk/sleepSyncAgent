@@ -1,5 +1,5 @@
 
-#include "../syncAgentImp/provisioningPublisher.h"
+#include "../provisioning/provisioningPublisher.h"
 #include "../syncAgentImp/syncAgentImp.h"
 
 
@@ -24,16 +24,3 @@ void SyncAgentImp::relayHeardWorkToApp(unsigned char work) {
 	 */
 	onWorkMsgCallback(work);	// call callback
 }
-
-/*
- * No checking:
- * - that index is not also used internally.
- * - that index is in range
- */
-void SyncAgentImp::subscribeProvisioning(ProvisionablePropertyIndex index, ProvisionCallback aCallback) {
-	ProvisioningPublisher::subscribe(index, aCallback); // onProvisionedCallback = aCallback;
-}
-
-
-
-

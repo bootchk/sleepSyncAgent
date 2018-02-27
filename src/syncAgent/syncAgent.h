@@ -6,7 +6,7 @@
 
 // TODO eliminate this include
 // SyncAgent callbacks for provisioning
-#include "../syncAgentImp/provisioningPublisher.h"
+// #include "../syncAgentImp/provisioningPublisher.h"
 
 
 
@@ -44,13 +44,6 @@
 
 class SyncAgent {
 public:
-
-	/*
-	 * Called by:
-	 *  - external app (work provisioning)
-	 *  - internal (network topology provisioning)
-	 */
-	static void subscribeProvisioning(ProvisionablePropertyIndex, ProvisionCallback);
 
 	static void initSleepers();
 

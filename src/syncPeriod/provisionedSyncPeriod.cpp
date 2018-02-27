@@ -7,7 +7,7 @@
 #include "../sleepers/scheduleSleeper.h"
 #include "../logging/logger.h"
 
-#include "../syncAgentImp/provisioningPublisher.h"
+#include "../provisioning/provisioningPublisher.h"
 
 // libBLEProvisionee
 #include <provisioner.h>

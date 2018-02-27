@@ -46,13 +46,19 @@ typedef unsigned int RawPropertyIndex;
 /*
  * Subscribers:
  * - app	(configure work)
- * - network (configure clique size, scatter)
+ * - syncAgent (configure network: clique size, scatter)
  */
 
 class ProvisioningPublisher {
 public:
 
 	static ProvisionablePropertyIndex ppiFromRawPPI( RawPropertyIndex index);
+
+	/*
+	 * Called by:
+	 *  - external app (work provisioning)
+	 *  - internal (network topology provisioning)
+	 */
 	static void subscribe(ProvisionablePropertyIndex propertyIndex, ProvisionCallback aCallback);
 	static void notify(
 			ProvisionablePropertyIndex propertyIndex,

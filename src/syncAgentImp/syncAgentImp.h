@@ -2,7 +2,7 @@
 #pragma once
 
 #include "../cliqueMerger/cliqueMerger.h"
-#include "../syncAgentImp/provisioningPublisher.h"
+#include "../provisioning/provisioningPublisher.h"
 
 
 // TODO ?? fishPolicy should be owned by SyncAgent.  fishPolicy used by clique and fishSchedule
@@ -18,46 +18,40 @@ class SyncAgentImp {
  * Expose external API to SyncAgent class, which delegates here.
  */
 public:
+
+	static void initSleepers();
+
+	static void initSyncObjects(
+			Mailbox* mailbox,
+			void (*onWorkMsg)(MailContents),
+			void (*onSyncPoint)()
+	);
+
+	// Init Ensemble to hardcoded one of possibly many protocols
+	static void initEnsembleProtocol();
+
+	// Sleep until enough power to start syncing
+	static void sleepUntilSyncPower();
+
+	// execute protocol
+	// with or without provisioning, according to build config
+	static void loop() __attribute__ ((noreturn));
+
+	// Is self Master of some clique (for now, only one clique.  Future: hops)
+	static bool isSelfMaster();
+
+
 	/*
-		 * Called by:
-		 *  - external app (work provisioning)
-		 *  - internal (network topology provisioning)
-		 */
-		static void subscribeProvisioning(ProvisionablePropertyIndex, ProvisionCallback);
-
-		static void initSleepers();
-
-		static void initSyncObjects(
-				Mailbox* mailbox,
-				void (*onWorkMsg)(MailContents),
-				void (*onSyncPoint)()
-				);
-
-		// Init Ensemble to hardcoded one of possibly many protocols
-		static void initEnsembleProtocol();
-
-		// Sleep until enough power to start syncing
-		static void sleepUntilSyncPower();
-
-		// execute protocol
-		// with or without provisioning, according to build config
-		static void loop() __attribute__ ((noreturn));
-
-		// Is self Master of some clique (for now, only one clique.  Future: hops)
-		static bool isSelfMaster();
+	 * Internal API
+	 */
 
 
-/*
- * Internal API
- */
-
-
-// Some of data members: see also anon namespaces for other owned objects
+	// Some of data members: see also anon namespaces for other owned objects
 private:
 	// DYNAMIC static uint8_t receiveBuffer[Radio::MaxMsgLength];
 	// FIXED: Radio owns fixed length buffer
 
-// FUTURE: global instead of public?
+	// FUTURE: global instead of public?
 public:	// to SyncSlot mainly
 	static CliqueMerger cliqueMerger;
 

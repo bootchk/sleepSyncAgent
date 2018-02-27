@@ -1,6 +1,6 @@
 
 
-#include "../syncAgentImp/provisioningPublisher.h"
+#include "provisioningPublisher.h"
 
 #include "../scheduleParameters.h"
 #include "../clique/periodTime.h"
@@ -83,6 +83,10 @@ uint32_t mangleProvisionedValue(
 }  // namespace
 
 
+/*
+ * No checking:
+ * - that index is not subscribed to many times
+ */
 void ProvisioningPublisher::subscribe(ProvisionablePropertyIndex propertyIndex, ProvisionCallback aCallback){
 	RawPropertyIndex rawPropertyIndex = static_cast<RawPropertyIndex> (propertyIndex);
 	assert(rawPropertyIndex < 4);
