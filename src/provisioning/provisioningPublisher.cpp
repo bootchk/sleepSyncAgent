@@ -34,6 +34,19 @@ DeltaTime calculatePeriodTime(uint8_t offsetTime) {
 	return PeriodTime::convertTickOffset(ticksBeforeNowOfButtonPush);
 }
 
+unsigned int calculateElapsedSyncPeriods(uint8_t offsetTime) {
+	/*
+	 * offsetTime is a numerator of fraction (having denominator 255) of 10 seconds
+	 */
+	unsigned int ticksElapsed = (10 * offsetTime * ScheduleParameters::TicksPerSecond) / 255;
+
+	unsigned int result = ticksElapsed / ScheduleParameters::NormalSyncPeriodDuration;
+
+	Logger::log("\nPeriods elapsed: ");
+	Logger::logInt(result);
+	return result;
+}
+
 bool shouldFilter(int8_t rssi) {
 	// TODO also need tss, use NetGranularity
 	(void) rssi;
@@ -59,7 +72,10 @@ uint32_t mangleProvisionedValue(
 
 	case ProvisionablePropertyIndex::WorkTime	:
 		// Here we don't care about pv.value, but when it occurred
-		result = calculatePeriodTime(provisionedValue.offset);
+
+		// TODO we actually need both of these: periods elapsed and offset in current period.
+		//result = calculatePeriodTime(provisionedValue.offset);
+		result = calculateElapsedSyncPeriods(provisionedValue.offset);
 		break;
 
 	case ProvisionablePropertyIndex::Scatter:
