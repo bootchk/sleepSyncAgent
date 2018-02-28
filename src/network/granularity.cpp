@@ -3,6 +3,9 @@
 
 #include "../message/message.h"
 
+#include "../logging/logger.h"
+
+
 //#include <radioSoC.h>
 
 
@@ -68,11 +71,16 @@ void Granularity::setGranularity(NetGranularity granularity) {
 
 	// Requires radio not in use, required by Radio::
 
+	Logger::log("Xmit power before: ");
+	Logger::log(XmitPower::repr(Radio::getXmitPower()));
+
 	_granularity = granularity;
 
 	Radio::configureXmitPower(xmitPowerForGranularity(granularity));
 
 	// Ensure xmit power set, ensured by Radio::
+
+	Logger::log(XmitPower::repr(Radio::getXmitPower()));
 }
 
 
@@ -97,5 +105,8 @@ bool Granularity::isMsgInVirtualRange(
 		// Any one I hear is in range.
 		result = true;
 	}
+
+	result ? Logger::log("Msg IN range\n") : Logger::log("Msg OUT range\n");
+
 	return result;
 }

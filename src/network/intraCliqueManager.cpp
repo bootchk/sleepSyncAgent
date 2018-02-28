@@ -6,11 +6,19 @@
 #include "../modules/sendRepeater.h"
 #include "../message/message.h"
 
+#include "../syncAgent/syncAgent.h"
+#include "../logging/logger.h"
+#include <cassert>
 
 namespace {
 
 NetGranularity _granularity;
 
+
+/*
+ * Delayed actions, taken after a Master has informed clique.
+ * Action must be delayed, because can't inform clique aftwerward, since clique is changed by these actions.
+ */
 void onDoneGranularityWithAction() {
 	/*
 	 * set my own granularity with granularity we remembered.
@@ -20,6 +28,7 @@ void onDoneGranularityWithAction() {
 	 * After this, clique often disturbed:
 	 * hearing more or fewer others.
 	 */
+	assert(SyncAgent::isSelfMaster());
 	Granularity::setGranularity(_granularity);
 }
 
@@ -28,10 +37,12 @@ void onDoneGranularityWithAction() {
  * and we wait to hear from master, downstream.
  */
 void onDoneRepeatingUpstream() {
+	assert(SyncAgent::isSelfSlave());
 	;	// null action
 }
 
 void onDoneScatter() {
+	assert(SyncAgent::isSelfMaster());
 	Scatter::scatter();
 }
 
@@ -80,6 +91,8 @@ void IntraCliqueManager::doUpstreamCliqueSizeChange(NetGranularity aGranularity)
  * When done, set my own granularity.
  */
 void IntraCliqueManager::doDownstreamCliqueSizeChange(NetGranularity aGranularity) {
+	Logger::log("Start downstream granularity");
+
 	// Remember the granularity for later action
 	_granularity = aGranularity;
 
@@ -92,6 +105,8 @@ void IntraCliqueManager::doDownstreamCliqueSizeChange(NetGranularity aGranularit
  * Cannot scatter self until done repeating.
  */
 void IntraCliqueManager::doUpstreamScatter() {
+	Logger::log("Start downstream scatter");
+
 	// 1 is dummy parameter, assert receiver ignores it
 	SendRepeater::start(MessageType::ControlScatterClique,
 			1,

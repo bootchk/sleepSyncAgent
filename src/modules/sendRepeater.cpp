@@ -33,7 +33,7 @@ void SendRepeater::start(
 		 * Already repeating a control message.
 		 * We received a duplicate, or multiple controllers are provisioning us.
 		 */
-		// Logger::log("Busy repeating\n");
+		Logger::log("Busy repeating\n");
 	}
 	else {
 		_isActive = true;
