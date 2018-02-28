@@ -31,16 +31,12 @@ void SyncWorkSlot::dispatchSyncSlotKind() {
 	/*
 	 * Order is important: priority: Control, work, regular sync.
 	 */
-	if (IntraCliqueManager::isActive()) {
-		/*
-		 * Must call this to count down.
-		 */
-		bool shouldXmitControlSync = IntraCliqueManager::shouldSendControlSync();
-		if (needXmitSync or shouldXmitControlSync) {
-			// ControlSync satisfies needXmitSync
-			doSendingControlSyncWorkSlot();
-			IntraCliqueManager::checkDoneAndEnactControl();
-		}
+
+	// Must call shouldSendControlSync to count down
+	if (IntraCliqueManager::IntraCliqueManager::shouldSendControlSync()) {
+		// ControlSync satisfies needXmitSync
+		doSendingControlSyncWorkSlot();
+		IntraCliqueManager::checkDoneAndEnactControl();
 	}
 	/*
 	 * Work is higher priority than ordinary sync.
@@ -67,6 +63,9 @@ void SyncWorkSlot::dispatchSyncSlotKind() {
 			Logger::log(" Listens ");
 		}
 	}
+	/*
+	 * Assert some slot was done, either with a transmit or just listen.
+	 */
 }
 
 

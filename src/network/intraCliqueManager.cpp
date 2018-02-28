@@ -126,6 +126,8 @@ Payload IntraCliqueManager::currentPayload() { return SendRepeater::currentPaylo
 
 
 bool IntraCliqueManager::shouldSendControlSync() {
-	// Delegate
-	return SendRepeater::shouldSend();
+	if (isActive())
+		return SendRepeater::shouldSend();
+	else
+		return false;
 }
