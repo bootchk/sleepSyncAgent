@@ -124,3 +124,8 @@ MessageType IntraCliqueManager::currentMsgType() { return SendRepeater::currentM
 Payload IntraCliqueManager::currentPayload() { return SendRepeater::currentPayload(); }
 
 
+
+bool IntraCliqueManager::shouldSendControlSync() {
+	// Delegate
+	return SendRepeater::shouldSend();
+}

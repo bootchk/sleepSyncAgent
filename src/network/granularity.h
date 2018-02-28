@@ -5,11 +5,22 @@
 
 
 
-// Used by message.h
+/*
+ * Network cluster (clique) diameter.
+ *
+ * Used:
+ * - transmitted in messages as the TSS
+ * - transmitted in ControlSync granularity messages as a value to control other clique members
+ * - transmitted during Provisioning as a value
+ */
+/*
+ * The encoding should correspond to the one used by client provisioning app,
+ * which currently is Small=0, ...
+ */
 enum class NetGranularity {
-	Large =0,
+	Small = 0,
 	Medium,
-	Small,
+	Large
 };
 
 

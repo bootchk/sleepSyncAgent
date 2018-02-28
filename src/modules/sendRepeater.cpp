@@ -57,13 +57,13 @@ bool SendRepeater::shouldSend() {
 
 	// If previous call was the last
 
-
 	if (isActive()) {
 		if (randBool()) { // flip a coin
 			result = true;
 			counter++;
 		}
 	}
+	//Logger::log((unsigned char) result);
 	return result;
 }
 

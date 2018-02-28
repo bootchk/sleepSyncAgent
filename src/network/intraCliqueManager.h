@@ -26,6 +26,12 @@ public:
 	 */
 	static bool isActive();
 
+	/*
+	 * Throw dice (don't crowd out a sync slot.)
+	 * Counts down to end.
+	 */
+	static bool shouldSendControlSync();
+
 	static void abort();
 
 	/*

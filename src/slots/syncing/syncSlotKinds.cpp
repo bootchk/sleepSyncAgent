@@ -22,15 +22,25 @@
 
 void SyncWorkSlot::dispatchSyncSlotKind() {
 
-	// Call shouldTransmitSync every time, since it needs calls side effect reset itself
+	/*
+	 * Call shouldTransmitSync each sync slot: it ticks an alarming clock.
+	 * Result is true if alarm, meaning: need xmit sync to prevent long gaps in sync transmittals.
+	 */
 	bool needXmitSync = SyncBehaviour::shouldTransmitSync();
 
 	/*
 	 * Order is important: priority: Control, work, regular sync.
 	 */
 	if (IntraCliqueManager::isActive()) {
-		doSendingControlSyncWorkSlot();
-		IntraCliqueManager::checkDoneAndEnactControl();
+		/*
+		 * Must call this to count down.
+		 */
+		bool shouldXmitControlSync = IntraCliqueManager::shouldSendControlSync();
+		if (needXmitSync or shouldXmitControlSync) {
+			// ControlSync satisfies needXmitSync
+			doSendingControlSyncWorkSlot();
+			IntraCliqueManager::checkDoneAndEnactControl();
+		}
 	}
 	/*
 	 * Work is higher priority than ordinary sync.
@@ -48,12 +58,14 @@ void SyncWorkSlot::dispatchSyncSlotKind() {
 		// No work to send, maintain sync if master
 		if (needXmitSync)
 			doMasterSyncWorkSlot();
-		else
+		else {
 			/*
 			 * isSlave
 			 * OR (isMaster and not xmitting (coin flip))
 			 */
 			doSlaveSyncWorkSlot();
+			Logger::log(" Listens ");
+		}
 	}
 }
 

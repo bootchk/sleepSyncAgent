@@ -28,6 +28,10 @@ NetGranularity _granularity;
 	Minus40 = -40
  */
 
+/*
+ * Area of received signal is proportional to xmit power.
+ * i.e. small area equals less xmit power
+ */
 TransmitPowerdBm Granularity::xmitPowerForGranularity(NetGranularity granularity) {
 	TransmitPowerdBm result;
 
