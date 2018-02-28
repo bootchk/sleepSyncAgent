@@ -57,11 +57,15 @@ void tryProvision() {
 	Provisioner::init(provisioningSuccededCallback, provisioningFailedCallback);
 
 	// blocks low-power for duration of provisioning session
-	bool result = Provisioner::provisionWithSleep();
+	ProvisioningResult sessionResult = Provisioner::provisionWithSleep();
 
 	Logger::logTicksSinceStartSyncPeriod();
 
-	Logger::logResult("provisioned", result);
+	// Log severe error in provisioning
+	if (sessionResult == ProvisioningResult::SDError) {
+		Logger::log("SD error during provisioning");
+	}
+    // else logging of successful provisioning actions later
 
 	/*
 	 * Since Provisioner reconfigured radio, restore to SleepSync configuration.
