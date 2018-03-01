@@ -9,7 +9,7 @@
 #include "../syncPeriod/syncPeriod.h"
 
 #include "../sleepers/scheduleSleeper.h"
-#include "../policy/workManager.h"
+#include "../work/workIn.h"
 
 #include "../slots/fishing/fishSchedule.h"	// logging
 
@@ -133,7 +133,7 @@ void SyncAgentImp::loop(){
 
 		// app may have queued work
 
-		WorkManager::resetState();
+		WorkIn::resetState();
 
 		/*
 		 * Remote logging is high priority.

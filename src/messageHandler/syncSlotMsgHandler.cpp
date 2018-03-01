@@ -3,7 +3,6 @@
 
 #include "../globals.h"		// clique, etc.
 #include "messageHandler.h"
-#include "../policy/workManager.h"
 #include "../modules/syncBehaviour.h"
 #include "../logging/logger.h"
 #include "../scheduleParameters.h"
@@ -11,6 +10,8 @@
 #include "../slots/fishing/fishingManager.h"
 #include "../slots/fishing/fishSlot.h"
 #include "../syncAgentImp/syncAgentImp.h"
+#include "../work/workOut.h"
+#include "../work/workIn.h"
 
 
 
@@ -24,6 +25,31 @@
 
 
 namespace {
+
+void handleWorkAspectOfWorkCarryingMsg(SyncMessage* msg) {
+
+	if ( clique.isMsgFromMyClique(msg->masterID) ) {
+		// If we already heard one, mailbox will be full and complain
+		WorkIn::hearWork();	// keep state
+		SyncAgentImp::relayHeardWorkToApp(msg->work);
+	}
+	else {
+		/*
+		 * If other clique is superior, we must join that clique
+		 * before working with it.
+		 */
+		Logger::log(" Heard WorkSync from other clique.");
+	}
+#ifdef WORK_ON_DEMAND
+	/*
+	 * Doesn't matter which clique it came from, relay work.
+	 */
+	WorkIn::heardWork();	// keep state
+	SyncAgentImp::relayHeardWorkToApp(msg->work);
+#endif
+}
+
+
 
 /*
  * Sync carrying messages
@@ -193,12 +219,8 @@ HandlingResult SyncSlotMessageHandler::handleMergeSyncMessage(SyncMessage* msg){
 
 
 HandlingResult SyncSlotMessageHandler::handleWorkSyncMessage(SyncMessage* msg){
-	/*
-	 * Handle work aspect of message.
-	 * Doesn't matter which clique it came from, relay work.
-	 */
-	WorkManager::hearWork();	// keep work state for slot
-	SyncAgentImp::relayHeardWorkToApp(msg->work);
+
+	handleWorkAspectOfWorkCarryingMsg(msg);
 
 	/*
 	 * TODO revisit and consolidate these comments

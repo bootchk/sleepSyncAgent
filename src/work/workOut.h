@@ -5,11 +5,14 @@
 
 
 /*
- * Coordinates sending and receiving of work.
+ * Coordinates sending work.
  *
- * Pertinent to work strategy: "work on demand from other units" or "work on demand from master"
+ * Pertinent to work strategy:
+ * - "work on demand from other units"
+ * - or "work on demand from master"
+ * - or even distributed work, where "work" is just maintenance of
  *
- * app <-mailbox-> WorkManager <-OTA-> other units
+ * app mailbox-> WorkOut -> OTA-> other units-> onWorkMsg()
  *
  * The dance is complicated and there may be lags.
  * Work received OTA in last sync period
@@ -18,15 +21,10 @@
  * Work mailed by app is sent OTA this sync slot.
  */
 
-class WorkManager {
+class WorkOut {
 public:
 	static void init(Mailbox*);
 
 	static bool isNeedSendWork();
 	static MailContents fetch();
-
-	static void resetState();
-	static void hearWork();
-	static bool isHeardWork();
 };
-

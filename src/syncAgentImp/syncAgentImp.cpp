@@ -12,10 +12,11 @@
 #include "../network/topology.h"
 
 
-#include "../policy/workManager.h"
 #include "../logging/logger.h"
 #include "../syncAgentImp/state/phase.h"
 #include "../syncAgentImp/state/syncMode.h"
+#include "../work/workOut.h"
+#include "../work/workIn.h"
 
 
 // SyncSleeper, Sleeper pure classes
@@ -69,7 +70,7 @@ void SyncAgentImp::initSyncObjects(
 	 */
 
 	SyncModeManager::resetToModeMaintain();
-	WorkManager::init(aMailbox);
+	WorkOut::init(aMailbox);
 
 	// Temp: test power consumption when all sleep
 	// while(true) waitForOSClockAndToRecoverBootEnergy(aLCT);
@@ -150,8 +151,8 @@ void SyncAgentImp::scatter() {
 	// Mode and submode not fish/merging
 	SyncModeManager::resetToModeMaintain();
 
-	// scatter work exchange protocol
-	WorkManager::resetState();
+	// scatter work exchange protocol???? TODO
+	WorkIn::resetState();
 
 	/*
 	 * The app, if it is working autonomously (but in sync with other work)

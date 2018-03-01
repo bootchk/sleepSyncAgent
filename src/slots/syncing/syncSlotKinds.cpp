@@ -2,7 +2,6 @@
 #include "syncWorkSlot.h"
 
 #include "../../modules/syncBehaviour.h"
-#include "../../policy/workManager.h"
 #include "../../network/intraCliqueManager.h"
 
 #include "syncSlotSchedule.h"
@@ -12,6 +11,7 @@
 
 #include <cassert>
 #include "../../syncAgentImp/state/phase.h"
+#include "../../work/workOut.h"
 
 /*
  * Sub types of syncWorkSlot
@@ -45,7 +45,7 @@ void SyncWorkSlot::dispatchSyncSlotKind() {
 	 *
 	 * App (user of SyncAgent) decides policy and conveys  (queues) work to be sent.
 	 */
-	else if (WorkManager::isNeedSendWork()) {
+	else if (WorkOut::isNeedSendWork()) {
 		// This satisfies needXmitSync
 		doSendingWorkSyncWorkSlot();
 	}
@@ -84,51 +84,17 @@ void SyncWorkSlot::doSendingControlSyncWorkSlot() {
  * App has queued work to be sent.
  */
 void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
-	// not assert self is Master
+	// assert self is Master
 
 	Phase::set(PhaseEnum::SyncListenFirstHalf);
 	(void) doListenHalfSyncWorkSlot(SyncSlotSchedule::deltaToThisSyncSlotMiddleSubslot);
 	assert(!Ensemble::isRadioInUse());
 
-	/*
-	 * Even if I heard sync, need send Work.
-	 * assert self is Master or Slave.
-	 * Might have heard sync from:
-	 * - worse clique
-	 * - master
-	 * - better clique (and self if Master might have relinquished mastership.)
-	 *
-	 * Even if my clique changed, need to send workSync to it.
-	 */
+	// TODO if we heard a work sync??
 
-	/*
-	 * Design choice: all work is equivalent: don't send if others sent.
-	 *
-	 * Also, this knows that we bounce out work back to app.
-	 */
-	// Fetch work from app
-	MailContents work = WorkManager::fetch();
-	if (! WorkManager::isHeardWork() ) {
-		Phase::set(PhaseEnum::SyncXmitWorkSync);
-		SyncSender::sendWorkSync(work);
-		/*
-		 * App sent this work.  App also queues it in to itself if app wants to work as well as tell others to work.
-		 */
-	}
-	else {
-		/*
-		 * Someone else sent work (which carries sync)
-		 * so I don't send any sync at all.
-		 */
-		Logger::log("Heard work, omit send work.\n");
-		// assert heard work is relayed to app via callback
-		/*
-		 * FUTURE: work is distinct and mailbox holds many work
-		 * send distinct work
-		 * and queue another one from app back to app
-		 */
-	}
-
+	MailContents work = WorkOut::fetch();	// From app, WorkSyncMaintainer
+	Phase::set(PhaseEnum::SyncXmitWorkSync);
+	SyncSender::sendWorkSync(work);
 
 	/*
 	 * Keep listening for other better Masters or WorkSync.
@@ -213,3 +179,45 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 // XXX try doing part of the sync slot i.e. fail after the first half because power is exhausted.
 // XXX if we heard a MergeSync in the first half, no point in listening for the second half. (minor optimization.)
 
+
+#ifdef OLD
+When work is on demand, avoid sending work if already heard it
+
+/*
+	 * Even if I heard sync, need send Work.
+	 * assert self is Master or Slave.
+	 * Might have heard sync from:
+	 * - worse clique
+	 * - master
+	 * - better clique (and self if Master might have relinquished mastership.)
+	 *
+	 * Even if my clique changed, need to send workSync to it.
+	 */
+
+	/*
+	 * Design choice: all work is equivalent: don't send if others sent.
+	 *
+	 * Also, this knows that we bounce out work back to app.
+	 */
+
+if (! WorkManager::isHeardWork() ) {
+		Phase::set(PhaseEnum::SyncXmitWorkSync);
+		SyncSender::sendWorkSync(work);
+		/*
+		 * App sent this work.  App also queues it in to itself if app wants to work as well as tell others to work.
+		 */
+	}
+	else {
+		/*
+		 * Someone else sent work (which carries sync)
+		 * so I don't send any sync at all.
+		 */
+		Logger::log("Heard work, omit send work.\n");
+		// assert heard work is relayed to app via callback
+		/*
+		 * FUTURE: work is distinct and mailbox holds many work
+		 * send distinct work
+		 * and queue another one from app back to app
+		 */
+	}
+#endif
