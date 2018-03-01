@@ -43,8 +43,7 @@ void SyncWorkSlot::dispatchSyncSlotKind() {
 	 * Work must be rare, lest it flood airwaves and destroy sync.
 	 * (colliding too often with MergeSync or MasterSync.)
 	 *
-	 * Owner of SyncAgent decides policy and conveys  (queues) work to be sent.
-	 * OBSOLETE: WorkPolicy::shouldXmitWorkSync() and
+	 * App (user of SyncAgent) decides policy and conveys  (queues) work to be sent.
 	 */
 	else if (WorkManager::isNeedSendWork()) {
 		// This satisfies needXmitSync

@@ -67,9 +67,7 @@ void tryProvision() {
 	}
     // else logging of successful provisioning actions later
 
-	/*
-	 * Since Provisioner reconfigured radio, restore to SleepSync configuration.
-	 */
+	// Provisioner configured radio for BT, now configure for SleepSync protocol.
 	SyncAgentImp::initEnsembleProtocol();
 
 	// XXX

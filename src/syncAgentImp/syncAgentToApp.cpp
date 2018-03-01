@@ -19,8 +19,13 @@ void SyncAgentImp::relayHeardWorkToApp(unsigned char work) {
 	 * - queue to worktask (unblock it)
 	 * - onWorkMsgCallback(msg);  (callback)
 	 *
-	 * Here we do the latter: the app maintains a In queue, not SyncAgentImp.
-	 * The app should do the work later, since now is at imprecise time is a slot.
+	 * Here we do the latter: the app might maintain an In queue, not SyncAgentImp.
+	 * The app might work later, at a more precise time.
+	 *
+	 * Now is at imprecise time in a slot.
+	 *
+	 * !!! "work" is generic.
+	 * It might mean "work on demand" or it might maintain a distributed work clock.
 	 */
 	onWorkMsgCallback(work);	// call callback
 }

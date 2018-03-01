@@ -181,6 +181,8 @@ void SyncAgentImp::initEnsembleProtocol() {
 	 * Only the radio needs configuration.
 	 * The LF clock is always running.
 	 */
+	// For now, setting means apply to
+	// And it means configure radio prototocol, even though radioUseCase doesn't know it
 	Ensemble::setRadioUseCase(&radioUseCaseSleepSync);
 }
 
