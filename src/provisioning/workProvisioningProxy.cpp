@@ -10,27 +10,35 @@ namespace {
 ProvisionCallback finalWorkTimeProvisioningCallback = nullptr;
 ProvisionCallback finalWorkCycleProvisioningCallback = nullptr;
 
+ConverterFunc elapsedToAdvanceConverterFunc = nullptr;
+
+
+
+
 /*
  * Called at initial provisioning.
  * If Master, provision directly, else upstream to Master.
  */
 void provisionWorkTime(uint32_t  periodsElapsed) {
-	// TODO conversion
-	if (SyncAgent::isSelfMaster()) {
+	/*
+	 * Fix wall time periodsElapsed to clock advance on distributed work clock.
+	 * We must do this now, while periodsElapsed is not stale.
+	 * This is a conversion between clocks.
+	 */
+	uint32_t clockAdvance = elapsedToAdvanceConverterFunc(periodsElapsed);
 
-		finalWorkTimeProvisioningCallback(periodsElapsed);
+	if (SyncAgent::isSelfMaster()) {
+		finalWorkTimeProvisioningCallback(clockAdvance);
 	}
 	else {
 		// Upstream
-		IntraCliqueManager::doUpstreamWorkTime(periodsElapsed);
-		// TODO arrange final provisioning callback is null
+		IntraCliqueManager::doUpstreamWorkTime(clockAdvance);
 	}
 }
 
 
 void provisionWorkCycle(uint32_t workCycle) {
 	if (SyncAgent::isSelfMaster()) {
-
 		finalWorkCycleProvisioningCallback(workCycle);
 	}
 	else {
@@ -40,16 +48,22 @@ void provisionWorkCycle(uint32_t workCycle) {
 }
 
 
-}
+}	// namespace
+
+
+
 
 void WorkProvisioningProxy::setWorkTimeFinalProvisioningCallback(ProvisionCallback aCallback) {
 	finalWorkTimeProvisioningCallback = aCallback;
 }
 
-void WorkProvisioningProxy::setWorkCycleFinalProvisioningCallback(ProvisionCallback) {
+void WorkProvisioningProxy::setWorkCycleFinalProvisioningCallback(ProvisionCallback aCallback) {
 	finalWorkCycleProvisioningCallback = aCallback;
 }
 
+void WorkProvisioningProxy::setConverterFunc(ConverterFunc aConverterFunc) {
+	elapsedToAdvanceConverterFunc = aConverterFunc;
+}
 
 
 void WorkProvisioningProxy::subscribeToProvisionings() {

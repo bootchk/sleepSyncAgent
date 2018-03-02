@@ -96,6 +96,7 @@ void IntraCliqueManager::doDownstreamCliqueSizeChange(NetGranularity aGranularit
 	// Remember the granularity for later action
 	_granularity = aGranularity;
 
+	// TODO is message just WorkSync??
 	SendRepeater::start(MessageType::ControlNetGranularity,
 			static_cast <uint8_t> (aGranularity),
 			onDoneGranularityWithAction);
@@ -119,6 +120,19 @@ void IntraCliqueManager::doDownstreamScatter() {
 			1,
 			onDoneScatter);
 }
+
+
+void IntraCliqueManager::doUpstreamWorkTime(uint32_t clockAdvance) {
+	SendRepeater::start(MessageType::ControlWorkTime,
+			static_cast <uint8_t> (clockAdvance),
+			onDoneRepeatingUpstream);
+}
+void IntraCliqueManager::doUpstreamWorkCycle(uint32_t workCycle) {
+	SendRepeater::start(MessageType::ControlWorkCycle,
+			static_cast <uint8_t> (workCycle),
+			onDoneRepeatingUpstream);
+}
+
 
 MessageType IntraCliqueManager::currentMsgType() { return SendRepeater::currentMsgType(); }
 Payload IntraCliqueManager::currentPayload() { return SendRepeater::currentPayload(); }

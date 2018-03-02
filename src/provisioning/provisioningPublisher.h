@@ -15,6 +15,11 @@
  */
 typedef void (*ProvisionCallback)(uint32_t);
 
+/*
+ * Function provided by app
+ */
+typedef unsigned int (*ConverterFunc)(unsigned int);
+
 
 /*
  * Int values must correspond to those defined by provisioning protocol i.e. implemented in client.

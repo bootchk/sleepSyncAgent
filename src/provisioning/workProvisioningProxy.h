@@ -23,6 +23,8 @@ public:
 	static void setWorkCycleFinalProvisioningCallback(ProvisionCallback);
 
 	static void subscribeToProvisionings();
+
+	static void setConverterFunc(ConverterFunc aConverterFunc);
 };
 
 

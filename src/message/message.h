@@ -45,13 +45,15 @@ enum class MessageType {
 	WorkSync,
 	ControlNetGranularity,
 	ControlScatterClique,
+	ControlWorkTime,
+	ControlWorkCycle,
 
 	// Merging, also carrying an offset
-	EnticingInferior,	//  5  Was MergeSync
+	EnticingInferior,	// 7  Was MergeSync
 	MasterMergedAway,
 	SlaveMergedAway,
 
-	AbandonMastership,	// 8
+	AbandonMastership,	//10
 
 	// From app controller
 	//WorkSetProximity = 139,
