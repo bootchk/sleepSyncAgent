@@ -22,6 +22,12 @@ public:
 	static void doDownstreamScatter();
 
 	/*
+	 * No downstreaming: master distributes as WorkSync
+	 */
+	static void doUpstreamWorkTime(uint32_t periodsElapsed);
+	static void doUpstreamWorkCycle(uint32_t workCycle);
+
+	/*
 	 * Are we sending control upstream or down?
 	 */
 	static bool isActive();

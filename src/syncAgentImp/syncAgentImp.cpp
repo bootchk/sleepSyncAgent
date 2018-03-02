@@ -9,7 +9,11 @@
 #include "../sleepers/syncSleeper.h"
 #include "../sleepers/oversleepMonitor.h"
 #include "../message/serializer.h"
+
+// Provisioning
 #include "../network/topology.h"
+#include "../provisioning/workProvisioningProxy.h"
+
 
 
 #include "../logging/logger.h"
@@ -88,6 +92,7 @@ void SyncAgentImp::initSyncObjects(
 	initEnsembleProtocol();
 
 	NetworkTopology::subscribeToProvisionings();
+	WorkProvisioningProxy::subscribeToProvisionings();
 
 #ifdef LOW_XMIT_POWER
 	// TEMP: testing range with lower xmit power

@@ -4,7 +4,7 @@
 #include "scatter.h"
 
 #include "../modules/sendRepeater.h"
-#include "../message/message.h"
+//#include "../message/message.h"
 
 #include "../syncAgent/syncAgent.h"
 #include "../logging/logger.h"
