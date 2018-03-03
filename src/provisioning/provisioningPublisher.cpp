@@ -20,6 +20,7 @@ ProvisionCallback provisioningCallbacks[4];
 
 // Conversions
 
+#ifdef NOT_USED
 DeltaTime calculatePeriodTime(uint8_t offsetTime) {
 	/*
 	 * offsetTime is a numerator of fraction (having denominator 255) of 10 seconds
@@ -33,6 +34,7 @@ DeltaTime calculatePeriodTime(uint8_t offsetTime) {
 	 */
 	return PeriodTime::convertTickOffset(ticksBeforeNowOfButtonPush);
 }
+#endif
 
 unsigned int calculateElapsedSyncPeriods(uint8_t offsetTime) {
 	/*

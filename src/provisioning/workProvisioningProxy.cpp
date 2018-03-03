@@ -4,6 +4,8 @@
 #include "../network/intraCliqueManager.h"
 #include "../syncAgent/syncAgent.h"
 
+#include "../globals.h"
+#include "../clique/clique.h"
 
 namespace {
 
@@ -48,6 +50,13 @@ void provisionWorkCycle(uint32_t workCycle) {
 }
 
 
+bool isMsgForSelfAsMaster(SyncMessage* msg) {
+	return ( clique.isMsgFromMyClique(msg->masterID)
+			and SyncAgent::isSelfMaster()
+);
+}
+
+
 }	// namespace
 
 
@@ -77,4 +86,23 @@ void WorkProvisioningProxy::subscribeToProvisionings() {
 	ProvisioningPublisher::subscribe(
 			ProvisionablePropertyIndex::WorkCycle,
 			provisionWorkCycle);
+}
+
+
+
+void WorkProvisioningProxy::handleWorkTimeMessage(SyncMessage* msg) {
+	// TODO is network provisioning checking for masterID?
+	if ( isMsgForSelfAsMaster(msg) ) {
+		/*
+		 * Self owns master DistributedWorkClock.
+		 * Sync it and soon will start distributing it via WorkSync.
+		 */
+		// unsigned char silently coerced to unsigned int
+		finalWorkTimeProvisioningCallback(msg->work);
+	}
+}
+void WorkProvisioningProxy::handleWorkCycleMessage(SyncMessage* msg) {
+	if ( isMsgForSelfAsMaster(msg) ) {
+		finalWorkCycleProvisioningCallback(msg->work);
+	}
 }

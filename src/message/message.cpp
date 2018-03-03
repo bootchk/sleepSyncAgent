@@ -30,6 +30,8 @@ char const * SyncMessage::representation(MessageType msgType) {
 		case MessageType::WorkSync:    result = "WorkS"; break;
 		case MessageType::ControlNetGranularity: result = " CGra"; break;
 		case MessageType::ControlScatterClique:  result = " CSca"; break;
+		case MessageType::ControlWorkTime:       result = " CWTi"; break;
+		case MessageType::ControlWorkCycle:      result = " CWCy"; break;
 
 		case MessageType::EnticingInferior:      result = "MSEnt"; break;
 		case MessageType::MasterMergedAway:      result = "MSMAw"; break;

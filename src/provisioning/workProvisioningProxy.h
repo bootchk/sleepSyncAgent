@@ -4,6 +4,8 @@
 
 #include "provisioningPublisher.h"   // ProvisionCallback
 
+#include "../message/message.h"
+
 
 /*
  * Knows how to provision an app's work.
@@ -19,12 +21,21 @@
 
 class WorkProvisioningProxy {
 public:
+	/*
+	 * API from app to SleepSync
+	 */
 	static void setWorkTimeFinalProvisioningCallback(ProvisionCallback);
 	static void setWorkCycleFinalProvisioningCallback(ProvisionCallback);
 
 	static void subscribeToProvisionings();
 
 	static void setConverterFunc(ConverterFunc aConverterFunc);
+
+	/*
+	 * API from SleepSync to app
+	 */
+	static void handleWorkTimeMessage(SyncMessage* msg);
+	static void handleWorkCycleMessage(SyncMessage* msg);
 };
 
 

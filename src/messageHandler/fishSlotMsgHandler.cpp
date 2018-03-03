@@ -65,9 +65,15 @@ HandlingResult FishSlotMessageHandler::handle(SyncMessage* msg){
 
 	// General handling
 	case MessageType::Info: handlingResult = CommonMessageHandler::handleInfoMessage(msg); break;
-	case MessageType::ControlNetGranularity: handlingResult = CommonMessageHandler::handleControlMessageSetGranularity(msg); break;
-	case MessageType::ControlScatterClique: handlingResult = CommonMessageHandler::handleControlMessageScatter(msg); break;
-	case MessageType::Invalid: handlingResult = HandlingResult::KeepListening;
+
+	case MessageType::ControlNetGranularity:
+	case MessageType::ControlScatterClique:
+	case MessageType::ControlWorkTime:
+	case MessageType::ControlWorkCycle:
+		/* Ignore control messages fished. */
+
+	case MessageType::Invalid:
+		handlingResult = HandlingResult::KeepListening;
 	}
 
 	return handlingResult;

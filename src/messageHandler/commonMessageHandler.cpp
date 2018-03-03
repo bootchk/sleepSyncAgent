@@ -3,7 +3,7 @@
 
 #include "../logging/logger.h"
 #include "../network/topology.h"
-
+#include "../provisioning/workProvisioningProxy.h"
 
 
 
@@ -19,6 +19,8 @@ HandlingResult CommonMessageHandler::handleInfoMessage(SyncMessage* msg){
 }
 
 
+
+
 HandlingResult CommonMessageHandler::handleControlMessageSetGranularity(SyncMessage* msg){
 	NetworkTopology::handleNetGranularityMessage(msg);
 	return HandlingResult::KeepListening;
@@ -26,5 +28,18 @@ HandlingResult CommonMessageHandler::handleControlMessageSetGranularity(SyncMess
 
 HandlingResult CommonMessageHandler::handleControlMessageScatter(SyncMessage* msg){
 	NetworkTopology::handleScatterMessage(msg);
+	return HandlingResult::KeepListening;
+}
+
+
+
+
+HandlingResult CommonMessageHandler::handleControlMessageWorkTime(SyncMessage* msg){
+	WorkProvisioningProxy::handleWorkTimeMessage(msg);
+	return HandlingResult::KeepListening;
+}
+
+HandlingResult CommonMessageHandler::handleControlMessageWorkCycle(SyncMessage* msg){
+	WorkProvisioningProxy::handleWorkCycleMessage(msg);
 	return HandlingResult::KeepListening;
 }

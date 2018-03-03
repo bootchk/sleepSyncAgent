@@ -189,12 +189,20 @@ HandlingResult SyncSlotMessageHandler::handle(SyncMessage* msg){
 	//case MessageType::WorkScatterTime:
 		handlingResult = CommonMessageHandler::handleInfoMessage(msg);
 		break;
+
 	case MessageType::ControlNetGranularity:
-		handlingResult = CommonMessageHandler::handleControlMessageScatter(msg);
-		break;
-	case MessageType::ControlScatterClique:
 		handlingResult = CommonMessageHandler::handleControlMessageSetGranularity(msg);
 		break;
+	case MessageType::ControlScatterClique:
+		handlingResult = CommonMessageHandler::handleControlMessageScatter(msg);
+		break;
+	case MessageType::ControlWorkTime:
+		handlingResult = CommonMessageHandler::handleControlMessageWorkTime(msg);
+		break;
+	case MessageType::ControlWorkCycle:
+		handlingResult = CommonMessageHandler::handleControlMessageWorkCycle(msg);
+		break;
+
 	case  MessageType::Invalid:
 		Logger::log("Invalid type");
 		handlingResult = HandlingResult::KeepListening;
