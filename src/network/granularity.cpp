@@ -50,9 +50,14 @@ TransmitPowerdBm Granularity::xmitPowerForGranularity(NetGranularity granularity
 
 
 
-unsigned char Granularity::getRaw() {
-	return static_cast <unsigned char> (_granularity);
+unsigned char Granularity::getCliqueGranularityRaw() {
+	return getRaw(_granularity);
 }
+
+unsigned char Granularity::getRaw(NetGranularity aGranularity) {
+	return static_cast <unsigned char> (aGranularity);
+}
+
 
 
 NetGranularity Granularity::getFromRaw(unsigned char rawTSS){

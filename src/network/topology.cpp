@@ -119,10 +119,20 @@ void NetworkTopology::handleNetGranularityMessage(SyncMessage* msg) {
 			masterTellCliqueGranularityChange(granularity);
 		}
 		else {
-			// TODO if this is also an upstreaming message and we both cancel before master hears?
-			// Need a separate downstream msg type?
+			/*
+			 * Self is slave.
+			 * If upstream and downstream are both ControlSyncGranularity,
+			 * this could be another slave.
+			 * If only upstream is ControlSyncGranularity, this must be another slave upstreaming.
+			 *
+			 * If we hear each other in the same syncSlot, small possibility we both cancel
+			 * and we fail to upstream to master.
+			 * Since provisioning is probabilistic anyway, disregard that possibility.
+			 *
+			 * As slave, we wait to hear from master:
+			 * NOT Granularity::setGranularity(granularity);
+			 */
 			cancelAnyUpstreamingInProgress();
-			Granularity::setGranularity(granularity);
 		}
 	}
 	// else ignore

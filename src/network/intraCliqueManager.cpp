@@ -96,9 +96,17 @@ void IntraCliqueManager::doDownstreamCliqueSizeChange(NetGranularity aGranularit
 	// Remember the granularity for later action
 	_granularity = aGranularity;
 
-	// TODO is message just WorkSync??
-	SendRepeater::start(MessageType::ControlNetGranularity,
-			static_cast <uint8_t> (aGranularity),
+	/*
+	 * Possible designs:
+	 * - use same message type for downstreaming
+	 * - use MasterSync for downstreaming
+	 * - don't downstream at all but just send ordinary MasterSync with new granularity, and change my granularity later.
+	 */
+	/*
+	 * Send MasterSync with new granularity, using my current xmitPower.
+	 */
+	SendRepeater::start(MessageType::MasterSync,
+			Granularity::getRaw(aGranularity),
 			onDoneGranularityWithAction);
 }
 

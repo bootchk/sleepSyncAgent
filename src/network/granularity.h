@@ -75,7 +75,11 @@ public:
 	 */
 	static NetGranularity getFromRaw(unsigned char rawTSS);
 	/*
-	 * Get OTA encoding.
+	 * Get OTA encoding of clique's current granularity
 	 */
-	static unsigned char getRaw();
+	static unsigned char getCliqueGranularityRaw();
+	/*
+	 * OTA encoding of given granularity.
+	 */
+	static unsigned char getRaw(NetGranularity aGranularity);
 };

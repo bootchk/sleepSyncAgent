@@ -59,8 +59,7 @@ Payload getMasterSyncPayload() {
 	// OLD debugging content
 	// SyncAgentImp::countMergeSyncHeard
 
-	// Net granularity for this clique
-	return Granularity::getRaw();
+	return Granularity::getCliqueGranularityRaw();
 }
 
 
