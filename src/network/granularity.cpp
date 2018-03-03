@@ -36,51 +36,45 @@ TransmitPowerdBm Granularity::xmitPowerForGranularity(NetGranularity granularity
 	TransmitPowerdBm result;
 
 	switch(granularity) {
-	case NetGranularity::Small:
-		result = TransmitPowerdBm::Minus40;
-		break;
-	case NetGranularity::Medium:
-		result = TransmitPowerdBm::Minus12;
-		break;
-	case NetGranularity::Large:
-		result = TransmitPowerdBm::Plus0;
+	case NetGranularity::Small:  result = TransmitPowerdBm::Minus40; break;
+	case NetGranularity::Medium: result = TransmitPowerdBm::Minus12; break;
+	case NetGranularity::Large:  result = TransmitPowerdBm::Plus0;   break;
+	case NetGranularity::Invalid:
+		Logger::log(" Defaulting invalid granularity to low xmit powerl\n");
+		result = TransmitPowerdBm::Minus40;;
 	}
 	return result;
 }
 
 
-
-unsigned char Granularity::getCliqueGranularityRaw() {
-	return getRaw(_granularity);
-}
-
-unsigned char Granularity::getRaw(NetGranularity aGranularity) {
-	return static_cast <unsigned char> (aGranularity);
-}
-
+NetGranularity Granularity::getCliqueGranularity() { return _granularity; }
+unsigned char Granularity::getCliqueGranularityRaw() { return getRaw(_granularity); }
+unsigned char Granularity::getRaw(NetGranularity aGranularity) { return static_cast <unsigned char> (aGranularity); }
 
 
 NetGranularity Granularity::getFromRaw(unsigned char rawTSS){
-	// rawTSS is OTA and could have bit errors
+	// raw granularity (aka TSS) is OTA and could have bit errors
 	NetGranularity result;
 
 	switch (rawTSS) {
 	case 0:  result = NetGranularity::Large; break;
 	case 1:  result = NetGranularity::Medium; break;
 	case 2:  result = NetGranularity::Small; break;
-	/*
-	 * Other values are invalid.
-	 * But say it is small.
-	 * We likely will filter the message because its signal is too weak for small granularity.
-	 * If not, the rest of the message might be actionable.
-	 */
-	default: result = NetGranularity::Small; break;
+	// Other values are invalid, i.e. garbled
+	default:
+		result = NetGranularity::Invalid; break;
 	}
 	return result;
 }
 
 
-void Granularity::setGranularity(NetGranularity granularity) {
+void Granularity::trySetGranularity(NetGranularity granularity) {
+
+	if (granularity == NetGranularity::Invalid) {
+		// OTA granularity is garbled
+		// Already logged when decoded
+		return;
+	}
 
 	// Requires radio not in use, required by Radio::
 

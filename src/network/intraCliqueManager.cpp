@@ -28,7 +28,7 @@ void onDoneGranularityWithAction() {
 	 * hearing more or fewer others.
 	 */
 	assert(SyncAgent::isSelfMaster());
-	Granularity::setGranularity(_granularity);
+	Granularity::trySetGranularity(_granularity);
 }
 
 /*

@@ -12,7 +12,7 @@
 #include "../clique/clique.h"
 #include "../syncAgentImp/syncAgentImp.h"
 
-
+#include "../logging/logger.h"
 
 
 namespace {
@@ -79,14 +79,19 @@ void NetworkTopology::subscribeToProvisionings() {
 
 
 void NetworkTopology::handleNetGranularityProvisioning(uint32_t provisionedValue) {
-	// cast raw OTA provisionedValue
-	NetGranularity granularity = static_cast<NetGranularity>(provisionedValue);
+
+	NetGranularity granularity = Granularity::getFromRaw(static_cast<unsigned char> (provisionedValue));
+	if (granularity == NetGranularity::Invalid) {
+		Logger::log("Provisioned granularity invalid\n");
+		return;
+	}
 
 	if (SyncAgentImp::isSelfMaster()) {
 		masterTellCliqueGranularityChange(granularity);
 	}
 	else {
 		// We are slave, relay upstream to master.
+		// Will go OTA and could get garbled again.
 		IntraCliqueManager::doUpstreamCliqueSizeChange(granularity);
 	}
 
@@ -109,12 +114,14 @@ void NetworkTopology::handleScatterProvisioning(uint32_t  provisionedValue) {
 
 
 void NetworkTopology::handleNetGranularityMessage(SyncMessage* msg) {
+	NetGranularity granularity = Granularity::getFromRaw(msg->work);
+	if (granularity == NetGranularity::Invalid) {
+		// already logged during conversion
+		return;
+	}
+
 	if (clique.isMsgFromMyClique(msg->masterID)) {
-		// assert msg from my clique (master or slave)
-
-		// cast raw OTA provisionedValue
-		NetGranularity granularity = static_cast<NetGranularity>(msg->work);
-
+		// in most designs, is upstream from slave
 		if (SyncAgentImp::isSelfMaster()) {
 			masterTellCliqueGranularityChange(granularity);
 		}

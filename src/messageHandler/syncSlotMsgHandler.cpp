@@ -79,6 +79,15 @@ HandlingResult handleSyncAspectOfSyncCarryingMsg(SyncMessage* msg){
 }
 
 
+void handleGranularityAspectOfMasterSync(SyncMessage* msg){
+	NetGranularity newGranularity = Granularity::getFromRaw(msg->work);
+	// might be Invalid
+
+	if ( newGranularity != Granularity::getCliqueGranularity() ) {
+		// Master is changing granularity.
+		Granularity::trySetGranularity(newGranularity);
+	}
+}
 
 /*
  * Merge class of messages.
@@ -213,6 +222,10 @@ HandlingResult SyncSlotMessageHandler::handle(SyncMessage* msg){
 
 
 HandlingResult SyncSlotMessageHandler::handleMasterSyncMessage(SyncMessage* msg){
+	/*
+	 * ?? Handle sync first, it is time sensitive?  Or does TOA ensure that.
+	 */
+	handleGranularityAspectOfMasterSync(msg);
 	return handleSyncAspectOfSyncCarryingMsg(msg);
 }
 

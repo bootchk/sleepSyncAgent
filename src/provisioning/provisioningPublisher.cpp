@@ -106,6 +106,10 @@ uint32_t mangleProvisionedValue(
  * - that index is not subscribed to many times
  */
 void ProvisioningPublisher::subscribe(ProvisionablePropertyIndex propertyIndex, ProvisionCallback aCallback){
+	/*
+	 * ProvisionablePropertyIndex is enum class.
+	 * Must static_cast to use as an integral type for array indexing.
+	 */
 	RawPropertyIndex rawPropertyIndex = static_cast<RawPropertyIndex> (propertyIndex);
 	assert(rawPropertyIndex < 4);
 	provisioningCallbacks[rawPropertyIndex] = aCallback;
@@ -137,5 +141,6 @@ void ProvisioningPublisher::ProvisioningPublisher::notify(
 }
 
 ProvisionablePropertyIndex ProvisioningPublisher::ppiFromRawPPI( RawPropertyIndex index) {
+	// assert caller ensures index in range, and caller does not require result != PPI::Invalid (caller will check)
 	return static_cast<ProvisionablePropertyIndex> (index);
 }

@@ -20,7 +20,8 @@
 enum class NetGranularity {
 	Small = 0,
 	Medium,
-	Large
+	Large,
+	Invalid
 };
 
 
@@ -54,11 +55,13 @@ public:
 	 * This happens:
 	 * - after provisioning, on receiving SyncControl message
 	 * - when I detect that my master is xmitting MasterSync with different granularity.
+	 *
+	 * Try: reject garbled values
 	 */
-	// TODO check incoming messages from master and others.
-	static void setGranularity(NetGranularity granularity);
+	static void trySetGranularity(NetGranularity granularity);
+
 	// Get clique's granularity (is a cache, may not correspond with radio's XmitPower.)
-	static NetGranularity getGranularity();
+	static NetGranularity getCliqueGranularity();
 
 	/*
 	 * Is distance to sender within radius of my granularity.
