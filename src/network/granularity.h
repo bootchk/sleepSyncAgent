@@ -47,27 +47,35 @@ public:
 	/*
 	 * Record granularity of self's clique.
 	 *
-	 * I will begin filtering messages by granularity.
+	 * Effect granularity on my radio.
 	 *
 	 * Other member's of clique should be xmitting with same granularity.
 	 *
 	 * This happens:
 	 * - after provisioning, on receiving SyncControl message
-	 * - when I detect that my master is xmitting with different granularity.
+	 * - when I detect that my master is xmitting MasterSync with different granularity.
 	 */
 	// TODO check incoming messages from master and others.
 	static void setGranularity(NetGranularity granularity);
+	// Get clique's granularity (is a cache, may not correspond with radio's XmitPower.)
+	static NetGranularity getGranularity();
 
 	/*
 	 * Is distance to sender within radius of my granularity.
 	 */
+#ifdef NOT_USED
 	static bool isMsgInVirtualRange(
 		unsigned int receivedSignalStrength,
 		NetGranularity transmittedSignalStrength
 		);
+#endif
 
 	/*
 	 * Validate raw OTA value and convert to default if invalid.
 	 */
 	static NetGranularity getFromRaw(unsigned char rawTSS);
+	/*
+	 * Get OTA encoding.
+	 */
+	static unsigned char getRaw();
 };

@@ -35,7 +35,33 @@ HandlingResult handleValidMessageAndSetContinuation(SyncMessage* msg, MessageHan
 	return handlingResult;
 }
 
+//#define RANGE_FILTERING 1
+#ifdef RANGE_FILTERING
+/*
+ * Filter messages by reverse ranging.
+ */
+HandlingResult handleRangeFilteredMessage(SyncMessage* msg, MessageHandler msgHandler) {
+	HandlingResult handlingResult;
+
+	unsigned int rssi = Ensemble::getRSSI();
+	NetGranularity tssi = msg->transmittedSignalStrength;
+	if (Granularity::isMsgInVirtualRange(rssi, tssi)) {
+		// assert no CRC errors and is valid and in range
+		handlingResult = handleValidMessageAndSetContinuation(msg, msgHandler);
+		// assert receiver is on or off
+	}
+	else {
+		// Sender out of range, ignore
+		Logger::log("out of range");
+		// continuation is wait for another message
+		Ensemble::startReceiving();
+		handlingResult = HandlingResult::KeepListening;
+	}
+	return handlingResult;
 }
+#endif
+
+}	// namespace
 
 
 
@@ -52,19 +78,12 @@ HandlingResult MessageDispatcher::dispatch( MessageHandler msgHandler) { // Slot
 	if (Ensemble::isPacketCRCValid()) {
 		SyncMessage* msg = Serializer::unserialize();
 		if (msg != nullptr) {
-			unsigned int rssi = Ensemble::getRSSI();
-			NetGranularity tssi = msg->transmittedSignalStrength;
-			if (Granularity::isMsgInVirtualRange(rssi, tssi)) {
-				// assert no CRC errors and is valid and in range
-				handlingResult = handleValidMessageAndSetContinuation(msg, msgHandler);
-				// assert receiver is on or off
-			}
-			else {
-				// Sender out of range, ignore
-				Logger::log("out of range");
-				// continuation is wait for another message
-				Ensemble::startReceiving();
-			}
+
+#ifdef RANGE_FILTERING
+			handlingResult = handleRangeFilteredMessage(msg, msgHandler);
+#else
+			handlingResult = handleValidMessageAndSetContinuation(msg, msgHandler);
+#endif
 			// assert msg queue is empty (since we received and didn't restart receiver)
 		}
 		else {

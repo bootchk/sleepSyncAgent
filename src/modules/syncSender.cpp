@@ -52,18 +52,25 @@ static void sendMessage(SyncMessage* msgPtr) {
 	}
 
 
+/*
+ * Knows the payload content for MasterSync
+ */
+Payload getMasterSyncPayload() {
+	// OLD debugging content
+	// SyncAgentImp::countMergeSyncHeard
+
+	// Net granularity for this clique
+	return Granularity::getRaw();
+}
+
+
 }  // namespace
 
 
 
 
 void SyncSender::sendMasterSync() {
-	/*
-	 * Make MasterSyncMessage, having:
-	 * - type MasterSync
-	 * - forwardOffset unsigned delta now to next SyncPoint
-	 * - self ID
-	 */
+
 	/*
 	 OLD
 	 DeltaTime sendLatencyAdjustedOffset = SyncOffset::calculate();
@@ -71,7 +78,7 @@ void SyncSender::sendMasterSync() {
 	 */
 	SyncMessage* msgPtr = MessageFactory::initSyncMessage(
 			MessageType::MasterSync,
-			SyncAgentImp::countMergeSyncHeard );	// debugging content, not required
+			getMasterSyncPayload() );
 	sendMessage(msgPtr);
 
 #ifdef TEST_LATENCY

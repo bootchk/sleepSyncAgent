@@ -119,6 +119,8 @@ void NetworkTopology::handleNetGranularityMessage(SyncMessage* msg) {
 			masterTellCliqueGranularityChange(granularity);
 		}
 		else {
+			// TODO if this is also an upstreaming message and we both cancel before master hears?
+			// Need a separate downstream msg type?
 			cancelAnyUpstreamingInProgress();
 			Granularity::setGranularity(granularity);
 		}

@@ -19,7 +19,15 @@
 class SyncSender {
 public:
 
+	/*
+	 * Make MasterSyncMessage, having:
+	 * - type MasterSync
+	 * - self ID
+	 * - forwardOffset unsigned delta now to next SyncPoint
+	 * - work = net granularity !!!
+	 */
 	static void sendMasterSync();
+
 	static void sendWorkSync(Payload work);
 	static void sendMergeSync();
 	static void sendAbandonMastership();

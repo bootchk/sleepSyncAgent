@@ -48,6 +48,7 @@ uint8_t radioBufferSize;
  */
 
 
+#ifdef RANGE_FILTERING
 /*
  * This byte is packed.
  * This MIGHT allow old code to work
@@ -92,7 +93,28 @@ void serializeTypeAndTSSCommonIntoStream(SyncMessage* msgPtr){
 			(void*) &(raw),	// src
 			OTAPayload::TypeTSSLength);
 }
+#else
+void unserializeTypeInto(SyncMessage* msgPtr) {
+	uint8_t rawType;
 
+	memcpy( (void*) &(rawType),	// dest
+			(void*) radioBufferPtr + OTAPayload::TypeTSSIndex,	// src
+			OTAPayload::TypeTSSLength);
+
+	msgPtr->type = SyncMessage::messageTypeFromRaw(rawType);
+}
+
+
+void serializeTypeCommonIntoStream(SyncMessage* msgPtr){
+	uint8_t rawType;
+
+	rawType = static_cast <uint8_t> (msgPtr->type);
+
+	memcpy( (void*) radioBufferPtr + OTAPayload::TypeTSSIndex, 	// dest
+			(void*) &(rawType),	// src
+			OTAPayload::TypeTSSLength);
+}
+#endif
 
 
 void unserializeWorkInto(SyncMessage* msgPtr) {
@@ -246,7 +268,11 @@ SyncMessage* Serializer::unserialize() {
 
 	// radioBufferPtr is volatile, which prevents compiler from optimizing repeated references.
 
+#ifdef RANGE_FILTERING
 	unserializeTypeAndTSSInto(result);
+#else
+	unserializeTypeInto(result);
+#endif
 
 
 	/*
@@ -297,7 +323,11 @@ void Serializer::serializeSyncMessageIntoRadioBuffer(SyncMessage* msgPtr) {
 	// requires init() called previously
 	assert(radioBufferPtr != nullptr);
 
+#ifdef RANGE_FILTERING
 	serializeTypeAndTSSCommonIntoStream(msgPtr);	// 1 byte
+#else
+	serializeTypeCommonIntoStream(msgPtr);
+#endif
 	serializeMasterIDCommonIntoStream(msgPtr);	// 6
 	serializeOffsetCommonIntoStream(msgPtr);	// 3
 	serializeWorkCommonIntoStream(msgPtr);	// 1

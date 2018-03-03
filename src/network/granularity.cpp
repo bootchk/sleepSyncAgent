@@ -50,6 +50,10 @@ TransmitPowerdBm Granularity::xmitPowerForGranularity(NetGranularity granularity
 
 
 
+unsigned char Granularity::getRaw() {
+	return static_cast <unsigned char> (_granularity);
+}
+
 
 NetGranularity Granularity::getFromRaw(unsigned char rawTSS){
 	// rawTSS is OTA and could have bit errors
@@ -87,7 +91,7 @@ void Granularity::setGranularity(NetGranularity granularity) {
 	Logger::log(XmitPower::repr(Radio::getXmitPower()));
 }
 
-
+#ifdef NOT_USED
 bool Granularity::isMsgInVirtualRange(
 		unsigned int rssi,	// receivedSignalStrength,
 		NetGranularity transmittedSignalStrength)
@@ -114,3 +118,4 @@ bool Granularity::isMsgInVirtualRange(
 
 	return result;
 }
+#endif
