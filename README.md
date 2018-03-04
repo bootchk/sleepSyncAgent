@@ -211,6 +211,18 @@ See config.h
 
 Currently developing the last variant.
 
+Provisioning
+-
+
+One feature is provisioning using BT protocol.
+That requires Softdevice, called in sequential multiprotocol.
+Build configs without that feature do not build: networkProvisioner.cpp, workProvisioner.cpp, provisioningPublisher.cpp
+
+Provisioning is spread through a clique using the SleepSync protocol.  But provisioning control by a BT app uses the feature. Some units can be BT provisionable while other units get provisioned in a chain from a BT provisionable unit.
+
+Currently the nrf51 build configs don't use the feature, because the Nordic SDK has lost backward compatibility support for the nrf51.
+IOW, latest SD API is not supported on the nrf51.
+
 To Do
 =
 

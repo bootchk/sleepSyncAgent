@@ -7,8 +7,6 @@
 #include "../globals.h"  // clique
 #include "intraCliqueManager.h"
 
-#include "../provisioning/provisioningPublisher.h"
-
 #include "../clique/clique.h"
 #include "../syncAgentImp/syncAgentImp.h"
 
@@ -16,29 +14,6 @@
 
 
 namespace {
-
-void masterTellCliqueGranularityChange(NetGranularity granularity) {
-
-	IntraCliqueManager::doDownstreamCliqueSizeChange(granularity);
-
-	/*
-	 * Master set its own granularity later
-	 * !!! We keep our current xmit power while we tell slaves,
-	 * and then change (dec or inc) our own xmit power.
-	 * Spoofing?
-	 */
-
-	// TODO what if master changes during this?
-}
-
-
-void masterTellCliqueToScatter() {
-	IntraCliqueManager::doDownstreamScatter();
-	/*
-	 * We stay in sync and master until later
-	 * OW we would not communicate with slaves.
-	 */
-}
 
 /*
  * Received a controlsync.
@@ -54,62 +29,35 @@ void cancelAnyUpstreamingInProgress() {
 }
 
 
-}
-
-
-
-void NetworkTopology::subscribeToProvisionings() {
-	ProvisioningPublisher::subscribe(
-			ProvisionablePropertyIndex::NetGranularity,
-			NetworkTopology::handleNetGranularityProvisioning);
-	ProvisioningPublisher::subscribe(
-			ProvisionablePropertyIndex::Scatter,
-			NetworkTopology::handleScatterProvisioning);
-}
+}  // namespace
 
 
 
 
 
+void NetworkTopology::masterTellCliqueGranularityChange(NetGranularity granularity) {
 
-/*
- * Slaves do not set control clique directly,
- * but relay to Master and wait till Master tells them.
- */
+	IntraCliqueManager::doDownstreamCliqueSizeChange(granularity);
 
-
-void NetworkTopology::handleNetGranularityProvisioning(uint32_t provisionedValue) {
-
-	NetGranularity granularity = Granularity::getFromRaw(static_cast<unsigned char> (provisionedValue));
-	if (granularity == NetGranularity::Invalid) {
-		Logger::log("Provisioned granularity invalid\n");
-		return;
-	}
-
-	if (SyncAgentImp::isSelfMaster()) {
-		masterTellCliqueGranularityChange(granularity);
-	}
-	else {
-		// We are slave, relay upstream to master.
-		// Will go OTA and could get garbled again.
-		IntraCliqueManager::doUpstreamCliqueSizeChange(granularity);
-	}
-
-}
-
-void NetworkTopology::handleScatterProvisioning(uint32_t  provisionedValue) {
 	/*
-	 * provisionedValue is a signal: value not used.
+	 * Master set its own granularity later
+	 * !!! We keep our current xmit power while we tell slaves,
+	 * and then change (dec or inc) our own xmit power.
+	 * Spoofing?
 	 */
-	(void) provisionedValue;
 
-	if (SyncAgentImp::isSelfMaster()) {
-		// same as above, don't scatter self until slaves told
-		IntraCliqueManager::doDownstreamScatter();
-	}
-	else
-		IntraCliqueManager::doUpstreamScatter();
+	// TODO what if master changes during this?
 }
+
+
+void NetworkTopology::masterTellCliqueToScatter() {
+	IntraCliqueManager::doDownstreamScatter();
+	/*
+	 * We stay in sync and master until later
+	 * OW we would not communicate with slaves.
+	 */
+}
+
 
 
 

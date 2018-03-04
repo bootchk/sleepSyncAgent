@@ -10,10 +10,11 @@
 #include "../sleepers/oversleepMonitor.h"
 #include "../message/serializer.h"
 
+#ifdef SOFTDEVICE_PRESENT
 // Provisioning
 #include "../network/topology.h"
 #include "../provisioning/workProvisioningProxy.h"
-
+#endif
 
 
 #include "../logging/logger.h"
@@ -91,8 +92,10 @@ void SyncAgentImp::initSyncObjects(
 
 	initEnsembleProtocol();
 
+#ifdef SOFTDEVICE_PRESENT
 	NetworkTopology::subscribeToProvisionings();
 	WorkProvisioningProxy::subscribeToProvisionings();
+#endif
 
 #ifdef LOW_XMIT_POWER
 	// TEMP: testing range with lower xmit power

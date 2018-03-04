@@ -1,14 +1,13 @@
 
 #pragma once
 
-
-#include "provisioningPublisher.h"   // ProvisionCallback
-
 #include "../message/message.h"
 
 
+typedef void (*WorkControlCallback)(uint32_t);
+
 /*
- * Knows how to provision an app's work.
+ * Knows how to control an app's work.
  *
  * Responsibility:
  *
@@ -19,17 +18,15 @@
  * enact stages of provisioning
  */
 
-class WorkProvisioningProxy {
+class WorkControlProxy {
 public:
 	/*
 	 * API from app to SleepSync
 	 */
-	static void setWorkTimeFinalProvisioningCallback(ProvisionCallback);
-	static void setWorkCycleFinalProvisioningCallback(ProvisionCallback);
-
-	static void subscribeToProvisionings();
-
-	static void setConverterFunc(ConverterFunc aConverterFunc);
+	static void setWorkTimeControlCallback(WorkControlCallback);
+	static void setWorkCycleControlCallback(WorkControlCallback);
+	static WorkControlCallback getWorkTimeControlCallback();
+	static WorkControlCallback getWorkCycleControlCallback();
 
 	/*
 	 * API from SleepSync to app

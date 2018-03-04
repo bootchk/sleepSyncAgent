@@ -3,7 +3,7 @@
 
 #include "../logging/logger.h"
 #include "../network/topology.h"
-#include "../provisioning/workProvisioningProxy.h"
+#include "../provisioning/workControlProxy.h"
 
 
 
@@ -35,11 +35,11 @@ HandlingResult CommonMessageHandler::handleControlMessageScatter(SyncMessage* ms
 
 
 HandlingResult CommonMessageHandler::handleControlMessageWorkTime(SyncMessage* msg){
-	WorkProvisioningProxy::handleWorkTimeMessage(msg);
+	WorkControlProxy::handleWorkTimeMessage(msg);
 	return HandlingResult::KeepListening;
 }
 
 HandlingResult CommonMessageHandler::handleControlMessageWorkCycle(SyncMessage* msg){
-	WorkProvisioningProxy::handleWorkCycleMessage(msg);
+	WorkControlProxy::handleWorkCycleMessage(msg);
 	return HandlingResult::KeepListening;
 }
