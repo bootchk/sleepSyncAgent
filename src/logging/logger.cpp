@@ -119,7 +119,7 @@ void Logger::logMsgDetail(SyncMessage* msg){
 }
 
 void Logger::logTicksSinceStartSyncPeriod() {
-	localLogger.log("\nPT:");
+	localLogger.log(" PT:");
 	localLogger.log(Schedule::deltaPastSyncPointToNow());
 }
 
