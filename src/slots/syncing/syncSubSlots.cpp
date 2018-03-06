@@ -3,6 +3,7 @@
 
 #include "../../modules/syncPowerManager.h"
 #include "../../logging/logger.h"
+#include "../../logging/flashLogger.h"
 #include "../../sleepers/syncSleeper.h"
 
 /*
@@ -24,7 +25,7 @@ HandlingResult SyncWorkSlot::doListenHalfSyncWorkSlot(TimeoutFunc timeoutFunc) {
 		Ensemble::startReceiving();
 	}
 	else {
-		Logger::logNoPowerForHalfSyncSlot();
+		FlashLogger::logNoPowerForHalfSyncSlot();
 		// Note HFXO is still running
 		// Continue to sleep for half a slot: we may yet xmit sync, and/or listen for second half.
 	}

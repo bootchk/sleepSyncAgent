@@ -53,33 +53,15 @@ public:
 	static constexpr const char* CRC = "Msg CRC\n";
 
 
-
 	static void logSystemInfo();
 	static void logStartSyncPeriod(LongTime now);
 
 
-	// Functions write to flash memory (when not connected to debugger hw)
-	// FUTURE put this in some Handler to see?  But I already know what handlers are called.
-	//#include "app_util_platform.h"
-	// uint32_t ipsr = __get_IPSR();
-
-	// Exhausted power while executing slot sequence
-	static void logNoPowerToFish();
-	static void logNoPowerToStartSyncSlot();
-	static void logNoPowerForHalfSyncSlot();
-
 	/*
 	 * Unexpected, rare events.
 	 */
-	static void logOverslept();
-
-	// Only a timer running but it was not the reason for wake.
-	static void logUnexpectedWakeReason();
-
-	static void logUnexpectedMsg();
 	static void logWakeWithoutIRQSettingReason();
 	static void logWakeIRQFoundNoEvent();
-
 	static void logUnexpectedEventWhileListening();
 
 	static void logIncreaseFish();

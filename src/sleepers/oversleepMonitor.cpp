@@ -7,6 +7,8 @@
 
 #include "../logging/flashIndex.h"
 #include "../logging/logger.h"
+#include "../logging/flashLogger.h"
+
 #include "../scheduleParameters.h"
 #include "../syncAgentImp/syncAgentImp.h"
 #include "syncSleeper.h"
@@ -60,7 +62,7 @@ bool OverSleepMonitor::checkOverslept(){
 		CustomFlash::tryWriteIntAtIndex(IntendedSleepDuration, intendedSleepDuration);
 		CustomFlash::tryWriteIntAtIndex(OversleptDuration, actualSleepDuration);
 
-		Logger::logOverslept();
+		FlashLogger::logOverslept();
 
 		result = true;
 	}

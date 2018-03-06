@@ -93,9 +93,7 @@ HandlingResult determineHandlingResult(MessageHandler msgHandler) {
 		break;
 
 	case ReasonForWake::Cleared:
-		/*
-		 * Unexpected: WFE returned but no IRQ handler appears to have run.
-		 */
+		// Not unexpected.  Using PPI, events occur without an ISR running
 		Logger::logWakeWithoutIRQSettingReason();
 		break;
 

@@ -8,8 +8,6 @@
 #include <services/logger.h>
 #include "remoteLogger.h"
 
-#include "flashIndex.h"
-
 #include "../message/message.h"
 #include "../clique/schedule.h"
 
@@ -46,45 +44,16 @@ void Logger::logStartSyncPeriod(LongTime now) {
 }
 
 
+void Logger::logWakeWithoutIRQSettingReason() { localLogger.log("\nUnexpected wake, no IRQ reason."); }
 
-// Functions write to flash memory (when not connected to debugger hw)
-// FUTURE put this in some Handler to see?  But I already know what handlers are called.
-//#include "app_util_platform.h"
-// uint32_t ipsr = __get_IPSR();
-
-// Exhausted power while executing slot sequence
-void Logger::logNoPowerToFish() { CustomFlash::writeZeroAtIndex(NoPowerToFish); }
-void Logger::logNoPowerToStartSyncSlot() { CustomFlash::writeZeroAtIndex(NoPowerToStartSyncSlot); }
-void Logger::logNoPowerForHalfSyncSlot() { CustomFlash::writeZeroAtIndex(NoPowerToHalfSyncSlot); }
-void Logger::logOverslept() { CustomFlash::writeZeroAtIndex(OverSlept); }
-
-// Only a timer running but it was not the reason for wake.
-void Logger::logUnexpectedWakeReason() { CustomFlash::writeZeroAtIndex(UnexpectedWake); }
-
-void Logger::logUnexpectedMsg() { CustomFlash::writeZeroAtIndex(UnexpectedMsg); }
-
-void Logger::logUnexpectedEventWhileListening() {
-	localLogger.log("\nUnexpected clock event while listening.");
-}
-
-/*
- * All our IRQ's set reason.
- * Maybe a default IRQ ran (without setting reason)
- * or any other unexpected return from WFE.
- */
-void Logger::logWakeWithoutIRQSettingReason() {
-	localLogger.log("\nWake w/o known IRQ set reason.");
-	CustomFlash::writeZeroAtIndex(UnexpectedWakeWhileListen);
-}
+void Logger::logUnexpectedEventWhileListening() { localLogger.log("\nUnexpected clock event while listening."); }
 
 /*
  * One of our IRQ's was called but found no event flag
  * and set ReasonForWake::Unknown.
  * Not used?
  */
-void Logger::logWakeIRQFoundNoEvent() {
-	localLogger.log("\nWake IRQ returned reason Unknown.");
-}
+void Logger::logWakeIRQFoundNoEvent() { localLogger.log("\nWake IRQ returned reason Unknown."); }
 
 
 

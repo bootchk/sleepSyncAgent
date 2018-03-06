@@ -9,6 +9,8 @@
 #include "../../sleepers/scheduleSleeper.h"
 
 #include "../../logging/logger.h"
+#include "../../logging/flashLogger.h"
+
 
 #include "../../clique/clique.h"
 #include "../../syncAgentImp/state/phase.h"
@@ -38,7 +40,7 @@ void SyncWorkSlot::tryPerform() {
 	}
 	else {
 		Phase::set(PhaseEnum::SyncSkipSlot);
-		Logger::logNoPowerToStartSyncSlot();
+		FlashLogger::logNoPowerToStartSyncSlot();
 
 		// Busted SyncSlot, no listen, no send sync
 		ScheduleSleeper::sleepSyncSlotRemainder();
