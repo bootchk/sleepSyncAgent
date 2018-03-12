@@ -3,6 +3,14 @@
 
 
 /*
+ * These choose power levels.
+ * Two factors:
+ * - expected VocMax of solar cell
+ * - whether prioritizing work over sync
+ * - voltage reserve for starting sync algorithm
+ *
+ * EXPECTED VocMax:
+ *
  * Choose a set of levels corresponding to solar cell Voc
  * or for other testing reasons.
  *
@@ -11,8 +19,15 @@
  *
  * For low votage, require larger storage capacitor to contain same energy
  * (energy depends on voltage drop from storage capacitor.)
+ *
+ * PRIORITIZING WORK
+ *
+ * We usually want to maintain sync with highest priority (lowest voltage).
+ * Then we might choose between fishing and work.
+ * Usually we want to make work the lowest priority, with fishing higher priority.
  */
-#define LOW_VOLTAGE_SOLAR 1
+
+// TODO make this dynamic instead of compile time
 
 
 
@@ -37,18 +52,24 @@ bool SyncPowerManager::isPowerNearExcess() { return PowerManager::isPowerNearExc
  */
 
 
-#ifdef LOW_VOLTAGE_SOLAR
+// #ifdef LOW_VOLTAGE_SOLAR
+// #define LOW_VOLTAGE_SOLAR 1
 
-// Require more to start loop
+#define LOW_PRIORITY_WORK_Voc3_6	1
+
+
+#ifdef LOW_PRIORITY_WORK_Voc3_6
+
+/*
+ * Sync prioritized over fishing over work
+ */
 bool SyncPowerManager::isPowerForStartLoop() { return PowerManager::isPowerAboveMedium(); }	// > 2.5
 
-// Require more to work or fish
-bool SyncPowerManager::isPowerForWork()      { return PowerManager::isPowerAboveLow(); }	// > 2.3
+bool SyncPowerManager::isPowerForWork()      { return PowerManager::isPowerAboveHigh(); }	// > 2.7
 
 bool SyncPowerManager::isPowerForFishMode()  { return PowerManager::isPowerAboveMedium(); }	// > 2.5
 bool SyncPowerManager::isPowerForFishSlot()  { return PowerManager::isPowerAboveMedium(); } // > 2.5
 
-// Require less to maintain sync
 bool SyncPowerManager::isPowerForSyncMode()  { return PowerManager::isPowerAboveUltraLow(); } // > 2.1
 bool SyncPowerManager::isPowerForSyncSlot()  { return PowerManager::isPowerAboveUltraLow(); } // > 2.1
 
@@ -56,6 +77,9 @@ bool SyncPowerManager::isPowerForSyncSlot()  { return PowerManager::isPowerAbove
 
 #else
 
+/*
+ * For high Voc solar cells
+ */
 bool SyncPowerManager::isPowerForWork()      { return PowerManager::isPowerAboveMedium(); }	// > 2.5
 bool SyncPowerManager::isPowerForStartLoop() { return PowerManager::isPowerAboveHigh(); }	// > 2.7
 bool SyncPowerManager::isPowerForSyncMode()  { return PowerManager::isPowerAboveMedium(); }	// > 2.5

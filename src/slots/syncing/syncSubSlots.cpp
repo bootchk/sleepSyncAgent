@@ -60,14 +60,18 @@ HandlingResult SyncWorkSlot::doListenHalfSyncWorkSlot(TimeoutFunc timeoutFunc) {
 bool SyncWorkSlot::didFirstHalfHearSync(HandlingResult firstHalfResult){
 	bool result;
 	switch (firstHalfResult) {
-	case HandlingResult::TimedOut:
-	case HandlingResult::KeepListening:
-		result = false;
-		break;
+
 	case HandlingResult::StopListeningHeardMasterSync:
 	case HandlingResult::StopListeningHeardMergeSync:
 	case HandlingResult::StopListeningHeardWorkSync:
 		result = true;
+		break;
+
+	case HandlingResult::TimedOut:
+	case HandlingResult::KeepListening:
+	default:
+		result = false;
+		break;
 	}
 	return result;
 }

@@ -11,7 +11,10 @@
 
 namespace {
 
-NetGranularity _granularity;
+/*
+ * Radio defaults to corresponding XmitPower.
+ */
+NetGranularity _granularity = NetGranularity::Large;
 
 }
 
@@ -40,6 +43,7 @@ TransmitPowerdBm Granularity::xmitPowerForGranularity(NetGranularity granularity
 	case NetGranularity::Medium: result = TransmitPowerdBm::Minus12; break;
 	case NetGranularity::Large:  result = TransmitPowerdBm::Plus0;   break;
 	case NetGranularity::Invalid:
+	default:
 		Logger::log(" Defaulting invalid granularity to low xmit powerl\n");
 		result = TransmitPowerdBm::Minus40;;
 	}

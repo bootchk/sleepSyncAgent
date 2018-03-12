@@ -34,6 +34,7 @@ HandlingResult FishSlotMessageHandler::doFishedSyncMsg(SyncMessage* msg){
 	case FishingMode::DeepFishing:
 		result = FishSlotMessageHandler::handleCatchFromDeepFishing(msg);
 		break;
+
 	}
 
 	// assert my schedule might have changed

@@ -66,6 +66,7 @@ LongTime FishingManager::getStartTimeToFish(){
 
 	switch(fishingMode){
 	case FishingMode::Trolling:
+	default:
 		result = SyncRecoveryTrollingPolicy::getStartTimeToFish();
 		break;
 	case FishingMode::DeepFishing:
@@ -84,6 +85,7 @@ DeltaTime FishingManager::getFishSessionDuration(){
 
 	switch(fishingMode){
 	case FishingMode::Trolling:
+	default:
 		result = SyncRecoveryTrollingPolicy::getFishSessionDuration();
 		break;
 	case FishingMode::DeepFishing:

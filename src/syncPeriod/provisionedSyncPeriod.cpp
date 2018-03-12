@@ -49,6 +49,18 @@ void provisioningSuccededCallback(
 
 }
 
+void logProvisioningError(ProvisioningResult result) {
+	switch(result) {
+	case ProvisioningResult::SDError:
+	case ProvisioningResult::SDErrorOnSDEnable:
+	case ProvisioningResult::SDErrorOnBLEConfig:
+	case ProvisioningResult::SDErrorOnBLEEnable:
+	  Logger::log("SD error during provisioning"); break;
+	default:
+		// OK
+		break;
+	}
+}
 
 void tryProvision() {
 	ScheduleSleeper::sleepUntilProvisionSlot();
@@ -61,10 +73,7 @@ void tryProvision() {
 
 	Logger::logTicksSinceStartSyncPeriod();
 
-	// Log severe error in provisioning
-	if (sessionResult == ProvisioningResult::SDError) {
-		Logger::log("SD error during provisioning");
-	}
+	logProvisioningError(sessionResult);
     // else logging of successful provisioning actions later
 
 	// Provisioner configured radio for BT, now configure for SleepSync protocol.
