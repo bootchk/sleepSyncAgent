@@ -1,5 +1,5 @@
 
-#include "fishingParameters.h"
+#include "../fishPolicy/fishingParameters.h"
 
 namespace Fishing {
 

@@ -2,10 +2,12 @@
 #include "fishPolicy.h"
 #include "fishingParameters.h"
 
-#include "../../clique/clique.h"
-#include "../../globals.h"   // clique
+#include "../clique/clique.h"
+#include "../globals.h"   // clique
 
-#include "../../logging/logger.h"
+#include "../logging/logger.h"
+
+
 
 
 namespace {

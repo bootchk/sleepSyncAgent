@@ -1,5 +1,6 @@
 #pragma once
 
+#include "fishingMode.h"
 
 #include <radioSoC.h>  // LongTime
 #include "../../modules/deltaSync.h"  // DeltaSync
@@ -8,32 +9,14 @@
 
 
 /*
- * FishingMode is (roughly speaking) a subclass of MergerFisherRole::Fisher.
- * Each FishingMode is associated with a FishingPolicy
+ * Manages fishing modally according o current FishingMode
  *
- * Trolling continues indefinitely, wrapping around.
- * DeepFishing is finite, and generates an event on completion.
+ * Knows:
+ * - current FishingMode
+ * - schedule of FishSession by mode
+ * - episodic nature of fishing by mode
  *
- * Caller knows when fishing succeeds (fish another clique's Master.)
- * Generally that entails a switch to another FishingMode.
- *
- * When DeepFishing, another request to switchDeepFishing() might be equivalent,
- * and does not restart DeepFishing.
- * Otherwise, it restarts DeepFishing(internally)
- *
- */
-enum class FishingMode {
-	Trolling,	// Scanning across sync period, by slots.
-	DeepFishing	// Repetitively fishing one sub-period of sync period (not necessarily a slot.)
-};
-
-
-/*
- * Manages current FishingMode
- *
- * Knows current FishingMode
  * Switches mode on commmand, understands constraints.
- * Knows start time to fish
  */
 /*
  * Algebra: legal sequences:
@@ -58,24 +41,19 @@ public:
 	static FishingMode mode();
 
 	/*
-	 * If current mode is finite, check for completion and call callback for event.
+	 * Episode:
+	 * If current mode is episodic and finite, check for completion and call callback for event.
 	 */
 	static void checkFishingDone();
 
-	static void switchToTrolling();
-	static void switchToDeepFishing(DeltaTime, Callback);
+
+
 
 	/*
-	 * Get from current mode.
-	 *
-	 * Currently result is "wild": just what we were told by another unit via Merge msg.
-	 * Caller must ensure it meets other constraints.
+	 * FishingMode
 	 */
-	static LongTime getStartTimeToFish();
-
-
-	static DeltaTime getFishSessionDuration();
-
+	static void switchToTrolling();
+	static void switchToDeepFishing(DeltaTime, Callback);
 	/*
 	 * Restart trolling policy.
 	 *
@@ -86,4 +64,15 @@ public:
 	 * E.G. when master dropped out
 	 */
 	static void restartTrollingMode();
+
+
+
+	/*
+	 * FishSession schedule by current mode.
+	 *
+	 * Currently result is "wild": just what we were told by another unit via Merge msg.
+	 * Caller must ensure it meets other constraints.
+	 */
+	static LongTime getStartTimeToFish();
+	static DeltaTime getFishSessionDuration();
 };

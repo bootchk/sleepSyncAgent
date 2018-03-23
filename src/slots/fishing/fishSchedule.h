@@ -7,7 +7,7 @@
 /*
  * Schedule: returns times and deltas
  * For Fishing
- * Knows start and end times of Fish slot
+ * Knows start and end times of FishSession
  *
  * Initialized each sync period, before fishing, if role isFisher and SyncMode includes fishing
  *
@@ -18,20 +18,20 @@
 class FishSchedule {
 public:
 	// Calculate and remember start and end times
-	static void setSlotTimes();
+	static void setStartAndEndTimes();
 
 	/*
 	 * These may be called many times for each fish slot;
 	 * because sleeper may be woken for other events.
 	 */
-	static DeltaTime deltaToSlotStart();
-	static DeltaTime deltaToSlotEnd();
+	static DeltaTime deltaToFishSessionStart();
+	static DeltaTime deltaToFishSessionEnd();
 
 	static void logParameters();
 
 private:
-	static void memoizeTimeOfThisFishSlotStart();
-	static void memoizeTimeOfThisFishSlotEnd();
-	static LongTime timeOfThisFishSlotEnd();
+	static void memoTimeOfFishSessionStart();
+	static void memoTimeOfFishSessionEnd();
+	static LongTime timeOfFishSessionEnd();
 
 };

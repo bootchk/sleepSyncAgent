@@ -1,8 +1,7 @@
 
 #include "fishingManager.h"
-#include "fishPolicy.h"
-
 #include "../../logging/logger.h"
+#include "../../fishPolicy/fishPolicy.h"
 
 
 

@@ -2,13 +2,12 @@
 #include <cassert>
 
 #include "fishSchedule.h"
-
-#include "../../globals.h"  // clique
-#include "fishingParameters.h"
 #include "fishingManager.h"
 
-#include "../../logging/logger.h"
+#include "../../fishPolicy/fishingParameters.h"
 
+#include "../../globals.h"  // clique
+#include "../../logging/logger.h"
 #include "../../clique/clique.h"
 
 // FUTURE memoize end time also???
@@ -26,16 +25,16 @@ LongTime _memoEndTimeOfFishSlot;
 
 
 
-void FishSchedule::setSlotTimes() {
-	memoizeTimeOfThisFishSlotStart();
-	memoizeTimeOfThisFishSlotEnd();
+void FishSchedule::setStartAndEndTimes() {
+	memoTimeOfFishSessionStart();
+	memoTimeOfFishSessionEnd();
 }
 
-DeltaTime FishSchedule::deltaToSlotStart(){
+DeltaTime FishSchedule::deltaToFishSessionStart(){
 	return TimeMath::clampedTimeDifferenceFromNow(_memoStartTimeOfFishSlot);
 }
 
-DeltaTime FishSchedule::deltaToSlotEnd(){
+DeltaTime FishSchedule::deltaToFishSessionEnd(){
 	// WAS return TimeMath::clampedTimeDifferenceFromNow(timeOfThisFishSlotEnd());
 	return TimeMath::clampedTimeDifferenceFromNow(_memoEndTimeOfFishSlot);
 }
@@ -50,7 +49,7 @@ DeltaTime FishSchedule::deltaToSlotEnd(){
  *
  * startTimeOfFishSlot is calculated once, at end of sync slot, in FishSchedule.init()
  */
-void FishSchedule::memoizeTimeOfThisFishSlotStart() {
+void FishSchedule::memoTimeOfFishSessionStart() {
 
 	LongTime scheduledStartTime = FishingManager::getStartTimeToFish();
 	/*
@@ -90,12 +89,12 @@ void FishSchedule::memoizeTimeOfThisFishSlotStart() {
 }
 
 
-void FishSchedule::memoizeTimeOfThisFishSlotEnd() {
-	_memoEndTimeOfFishSlot = timeOfThisFishSlotEnd();
+void FishSchedule::memoTimeOfFishSessionEnd() {
+	_memoEndTimeOfFishSlot = timeOfFishSessionEnd();
 }
 
 
-LongTime FishSchedule::timeOfThisFishSlotEnd() {
+LongTime FishSchedule::timeOfFishSessionEnd() {
 	/*
 	 * Fish session duration from FishingManager, may vary.
 	 * Next, clamp end time of long session started near end of sync period.
