@@ -42,6 +42,10 @@ public:
 	/*
 	 * Is current fish session in given position in syncperiod.
 	 */
+	static bool isFishSlotStartSyncPeriod();
+	static bool isFishSlotEndSyncPeriod();
+
+private:
 	static bool isCoverFirstSleepingSlot();
 	static bool isAbutFirstSleepingSlot();
 	static bool isCoverLastSleepingSlot();
@@ -59,4 +63,6 @@ public:
 	static LongTime getStartTimeToFish();
 	static DeltaTime getFishSessionDuration();
 
+	static bool isFishSlotStartSyncPeriod();
+	static bool isFishSlotEndSyncPeriod();
 };

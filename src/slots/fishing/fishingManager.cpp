@@ -97,3 +97,34 @@ DeltaTime FishingManager::getFishSessionDuration(){
 	return result;
 }
 
+
+
+bool FishingManager::isFishSlotStartSyncPeriod() {
+	bool result;
+
+	switch(fishingMode){
+	case FishingMode::Trolling:
+	default:
+		result = SyncRecoveryTrollingPolicy::isFishSlotStartSyncPeriod();
+		break;
+	case FishingMode::DeepFishing:
+		result = DeepFishingPolicy::isFishSlotStartSyncPeriod();
+		break;
+	}
+	return result;
+}
+
+bool FishingManager::isFishSlotEndSyncPeriod() {
+bool result;
+
+	switch(fishingMode){
+	case FishingMode::Trolling:
+	default:
+		result = SyncRecoveryTrollingPolicy::isFishSlotEndSyncPeriod();
+		break;
+	case FishingMode::DeepFishing:
+		result = DeepFishingPolicy::isFishSlotEndSyncPeriod();
+		break;
+	}
+	return result;
+}

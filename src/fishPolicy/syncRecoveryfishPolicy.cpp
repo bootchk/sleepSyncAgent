@@ -77,6 +77,18 @@ DeltaTime SyncRecoveryTrollingPolicy::getFishSessionDuration() {
 }
 
 
+
+bool SyncRecoveryTrollingPolicy::isFishSlotStartSyncPeriod() {
+	return isCoverFirstSleepingSlot() or isAbutFirstSleepingSlot();
+}
+
+bool SyncRecoveryTrollingPolicy::isFishSlotEndSyncPeriod() {
+	return isCoverLastSleepingSlot() or isAbutLastSleepingSlot();
+}
+
+
+// Private
+
 bool SyncRecoveryTrollingPolicy::isCoverFirstSleepingSlot() {
 	return currentSlotOrdinal == FishingParameters::FirstSlotOrdinalToFish;
 }

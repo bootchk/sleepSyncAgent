@@ -3,6 +3,8 @@
 
 #include "syncWorkSlot.h"
 
+#include "../../schedule/radioPrelude.h"
+
 #include "../../globals.h"	// clique
 
 #include "../../modules/syncPowerManager.h"
@@ -10,7 +12,6 @@
 
 #include "../../logging/logger.h"
 #include "../../logging/flashLogger.h"
-
 
 #include "../../clique/clique.h"
 #include "../../syncAgentImp/state/phase.h"
@@ -31,6 +32,8 @@ void SyncWorkSlot::tryPerform() {
 	// Current:
 	//LongTime startTime = clique.schedule.nowTime();
 	Ensemble::startup();
+	// TODO
+	RadioPrelude::doIt();
 	//LongTime endTime = clique.schedule.nowTime();
 
 	// Starting network might have exhausted power.  Unlikely
@@ -82,6 +85,8 @@ void SyncWorkSlot::perform() {
 	if (!clique.isSelfMaster())
 		clique.checkMasterDroppedOut();
 
+	// TODO
+	(void) RadioPrelude::shouldUndoAfterSyncing();
 	Ensemble::shutdown();
 
 	assert(Ensemble::isLowPower());

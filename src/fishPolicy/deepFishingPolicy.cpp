@@ -84,3 +84,14 @@ bool DeepFishingPolicy::checkDone() {
 	}
 	return result;
 }
+
+
+bool DeepFishingPolicy::isFishSlotStartSyncPeriod() {
+	// TODO
+	// If start time is less than three slots from start of sync period
+}
+
+bool DeepFishingPolicy::isFishSlotEndSyncPeriod() {
+	// TODO
+	// if start time is less than two slots from end of sync period.
+}

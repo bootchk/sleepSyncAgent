@@ -75,4 +75,10 @@ public:
 	 */
 	static LongTime getStartTimeToFish();
 	static DeltaTime getFishSessionDuration();
+
+
+
+
+	static bool isFishSlotStartSyncPeriod();
+	static bool isFishSlotEndSyncPeriod();
 };
