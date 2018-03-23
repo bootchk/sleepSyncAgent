@@ -38,6 +38,14 @@ public:
 
 	static LongTime getStartTimeToFish();
 	static DeltaTime getFishSessionDuration();
+
+	/*
+	 * Is current fish session in given position in syncperiod.
+	 */
+	static bool isCoverFirstSleepingSlot();
+	static bool isAbutFirstSleepingSlot();
+	static bool isCoverLastSleepingSlot();
+	static bool isAbutLastSleepingSlot();
 };
 
 

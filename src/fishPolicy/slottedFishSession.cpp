@@ -6,9 +6,14 @@
 
 #include "../logging/logger.h"
 
+
+// TODO increment in slots * slotDuration
+
 namespace {
     // Default value
 	DeltaTime dynamicFishSessionDuration = FishingParameters::MinTrollingRealFishSessionDurationTicks;
+
+	unsigned int _slotDuration = 1;
 }
 
 
@@ -16,6 +21,9 @@ DeltaTime SlottedFishSession::duration() {
 	return dynamicFishSessionDuration;
 }
 
+unsigned int SlottedFishSession::slotDuration() {
+	return _slotDuration;
+}
 
 void SlottedFishSession::incrementFishSessionDuration(unsigned int increment) {
 	// TEMP, until I revise this

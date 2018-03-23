@@ -22,5 +22,8 @@ public:
 	 */
 	static void setDurationToMinDuration();
 
+	// Duration in units ticks
 	static DeltaTime duration();
+	// Duration in units slot
+	static unsigned int slotDuration();
 };
