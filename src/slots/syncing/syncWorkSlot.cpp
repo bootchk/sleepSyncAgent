@@ -47,6 +47,10 @@ void SyncWorkSlot::tryPerform() {
 
 		// Busted SyncSlot, no listen, no send sync
 		ScheduleSleeper::sleepSyncSlotRemainder();
+#ifdef TASKS
+		// TODO who turns ensemble off
+		// Schedule::syncSlotAfterNullSyncSlot();
+#endif
 
 		// Continuation will be sleep to FishSlot
 

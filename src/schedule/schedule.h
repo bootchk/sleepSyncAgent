@@ -7,5 +7,8 @@
  */
 class Schedule {
 public:
+	static void syncSlotAfterNullSyncSlot();
 	static void syncSlotAfterSyncSlot();
+	static void radioPreludeTaskWSync();
+	static void syncTaskFromPreludeStart();
 };

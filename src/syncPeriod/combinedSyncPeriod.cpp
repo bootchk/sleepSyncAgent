@@ -14,6 +14,7 @@
 #include "../syncAgentImp/state/phase.h"
 #include "../syncAgentImp/state/role.h"
 
+#include "../schedule/schedule.h"
 
 namespace {
 SyncWorkSlot syncWorkSlot;
@@ -52,6 +53,9 @@ void tryFishOrMerge() {
 		/*
 		 * Otherwise, do no fishing or merging.
 		 */
+#ifdef TASKS
+		Schedule::syncSlotAfterSyncSlot();
+#endif
 	}
 }
 
@@ -81,6 +85,7 @@ void CombinedSyncPeriod::doSlotSequence() {
 
 	assert(Ensemble::isLowPower());	// For remainder of sync period
 
+	// TODO old design
 	Phase::set(PhaseEnum::SleepRemainder);
 	ScheduleSleeper::sleepRemainderOfSyncPeriod();
 
