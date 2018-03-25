@@ -58,7 +58,7 @@ public:	// to SyncSlot mainly
 
 private:
 	static void preludeToLoop();
-	static void preludeToSyncSlot();
+
 
 	// Interface towards app
 	static void (*onWorkMsgCallback)(MailContents);
@@ -68,6 +68,8 @@ private:
 
 	// methods
 public:
+	// Miscellaneous bookkeeping at start of syncPeriod
+	static void preludeToSyncPeriod();
 
 	// Upstream communication to app
 	static void relayHeardWorkToApp(Payload work);

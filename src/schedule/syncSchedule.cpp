@@ -6,36 +6,33 @@
 #include <cassert>
 #include "syncSchedule.h"
 
+#include "../task/task.h"
 
 
 namespace {
-
-void radioPreludeTask() {
-	// Start radio prelude (task on peripheral HFXO finishes later, but in finite time)
-	RadioPrelude::doIt();
-}
-
-void syncTask() {
-	// rollover
-	// callbacks
-	// radio on
-}
 
 void theRadioPreludeTaskWSync() {
 	// Schedule next task from now
 	SyncSchedule::syncTaskFromPreludeStart();
 
-	radioPreludeTask();
+	SSTask::radioPrelude();
 }
 
 }	// namespace
 
 
+/*
+ * SyncPeriod without prior RadioPrelude
+ */
 void SyncSchedule::initialSyncPeriod() {
-	// now is before any real slot have been done, but clock and schedule are running.
-	// Just schedule a syncslot as if we just did one.
-	SyncSchedule::syncSlotAfterSyncSlot();
+	SyncSchedule::maintainSyncPeriodFromMaintainSyncPeriod();
 }
+
+void SyncSchedule::maintainSyncPeriod() {
+	SyncSchedule::maintainSyncPeriodFromMaintainSyncPeriod();
+}
+
+
 
 void SyncSchedule::syncSlotAfterSyncSlot() {
 	assert(!RadioPrelude::isDone());
@@ -48,8 +45,13 @@ void SyncSchedule::radioPreludeTaskWSync() {
 }
 
 void SyncSchedule::syncTaskFromPreludeStart() {
-	Timer::schedule(syncTask,
+	Timer::schedule(SSTask::startSyncSlotAfterPrelude,
 			SleepDuration::preludeTilSync());
+}
+
+void SyncSchedule::maintainSyncPeriodFromMaintainSyncPeriod() {
+	Timer::schedule(SSTask::startSyncSlotWithoutPrelude,
+			SleepDuration::nowTilSyncPoint());
 }
 
 

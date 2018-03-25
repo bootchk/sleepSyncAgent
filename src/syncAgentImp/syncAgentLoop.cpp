@@ -22,7 +22,7 @@
 #include "../syncAgentImp/state/syncMode.h"
 
 // temp
-#define TASKS
+//#define TASKS
 #ifdef TASKS
 #include <clock/mcuSleep.h>
 #include "../schedule/syncSchedule.h"
@@ -78,10 +78,9 @@ void SyncAgentImp::preludeToLoop() {
 }
 
 
-/*
- * Miscellaneous bookkeeping at start of syncPeriod
- */
-void SyncAgentImp::preludeToSyncSlot() {
+
+
+void SyncAgentImp::preludeToSyncPeriod() {
 	/*
 	 * Sync period over,
 	 * Assert now == timeAtStartOfSyncPeriod + syncPeriodDuration
@@ -120,7 +119,7 @@ void SyncAgentImp::loop(){
 #ifndef TASKS
 	while (true){
 
-		preludeToSyncSlot();
+		preludeToSyncPeriod();
 
 		/*
 		 * Remote logging is high priority.

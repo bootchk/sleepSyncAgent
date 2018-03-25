@@ -10,6 +10,7 @@ public:
 
 	// varies since now varies
 	static DeltaTime nowTilPreludeWSync();
+	static DeltaTime nowTilSyncPoint();
 
 	// Fixed
 	static DeltaTime preludeTilSync();
