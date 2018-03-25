@@ -55,3 +55,17 @@ void SyncSchedule::maintainSyncPeriodFromMaintainSyncPeriod() {
 }
 
 
+
+void SyncSchedule::syncSendTask() {
+	// TODO
+	Timer::schedule(SSTask::startSyncSlotWithoutPrelude,
+			SleepDuration::nowTilSyncPoint());
+}
+
+void SyncSchedule::syncSlotEndListen() {
+	// TODO
+	Timer::schedule(SSTask::startSyncSlotWithoutPrelude,
+			SleepDuration::nowTilSyncPoint());
+}
+
+

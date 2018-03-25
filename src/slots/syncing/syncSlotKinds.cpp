@@ -1,8 +1,10 @@
 
 #include "syncWorkSlot.h"
 
-#include "../../modules/syncBehaviour.h"
+#include "syncSlotProperty.h"
+
 #include "../../network/intraCliqueManager.h"
+#include "../../work/workOut.h"
 
 #include "syncSlotSchedule.h"
 #include "../../modules/syncSender.h"
@@ -11,7 +13,7 @@
 
 #include <cassert>
 #include "../../syncAgentImp/state/phase.h"
-#include "../../work/workOut.h"
+
 
 /*
  * Sub types of syncWorkSlot
@@ -22,49 +24,30 @@
 
 void SyncWorkSlot::dispatchSyncSlotKind() {
 
-	/*
-	 * Call shouldTransmitSync each sync slot: it ticks an alarming clock.
-	 * Result is true if alarm, meaning: need xmit sync to prevent long gaps in sync transmittals.
-	 */
-	bool needXmitSync = SyncBehaviour::shouldTransmitSync();
 
-	/*
-	 * Order is important: priority: Control, work, regular sync.
-	 */
+	SyncSlotKind kind = SyncSlotProperty::decideKind();
 
-	// Must call shouldSendControlSync to count down
-	if (IntraCliqueManager::IntraCliqueManager::shouldSendControlSync()) {
-		// ControlSync satisfies needXmitSync
+	switch(kind) {
+	case SyncSlotKind::sendControlSync:
+		// satisfies needXmitSync
 		doSendingControlSyncWorkSlot();
 		IntraCliqueManager::checkDoneAndEnactControl();
-	}
-	/*
-	 * Work is higher priority than ordinary sync.
-	 * Work must be rare, lest it flood airwaves and destroy sync.
-	 * (colliding too often with MergeSync or MasterSync.)
-	 *
-	 * App (user of SyncAgent) decides policy and conveys  (queues) work to be sent.
-	 */
-	else if (WorkOut::isNeedSendWork()) {
-		// This satisfies needXmitSync
+		break;
+	case SyncSlotKind::sendWorkSync:
+		// satisfies needXmitSync
 		doSendingWorkSyncWorkSlot();
+		break;
+	case SyncSlotKind::sendSync:
+		doMasterSyncWorkSlot();
+		break;
+	case SyncSlotKind::listen:
+		// isSlave OR (isMaster and not xmitting (coin flip))
+
+		doSlaveSyncWorkSlot();
+		Logger::log(" Listens ");
+		break;
 	}
-	else {
-		// No work to send, maintain sync if master
-		if (needXmitSync)
-			doMasterSyncWorkSlot();
-		else {
-			/*
-			 * isSlave
-			 * OR (isMaster and not xmitting (coin flip))
-			 */
-			doSlaveSyncWorkSlot();
-			Logger::log(" Listens ");
-		}
-	}
-	/*
-	 * Assert some slot was done, either with a transmit or just listen.
-	 */
+	// Assert some slot was done, either with a transmit or just listen.
 }
 
 

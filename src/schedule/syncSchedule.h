@@ -25,4 +25,8 @@ public:
 	static void syncSlotAfterSyncSlot();
 	static void radioPreludeTaskWSync();
 	static void syncTaskFromPreludeStart();
+
+	// Waypoints of SyncSlot
+	static void syncSendTask();
+	static void syncSlotEndListen();
 };

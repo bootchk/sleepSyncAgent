@@ -53,6 +53,7 @@ private:
 	static void doMasterSyncWorkSlot();
 	static void doSlaveSyncWorkSlot();
 	
+
 	static void dispatchSyncSlotKind();
 	static void perform();
 

@@ -7,7 +7,13 @@
 #include "../syncAgentImp/syncAgentImp.h"
 #include "../syncAgentImp/state/syncMode.h"
 
+#include "../slots/syncing/syncSlot.h"
+
 #include <cassert>
+
+
+
+
 
 
 /*
@@ -37,16 +43,8 @@ void SSTask::startSyncSlotAfterPrelude() {
 	case SyncMode::SyncOnly:
 	case SyncMode::SyncAndFishMerge:
 	case SyncMode::SyncAndProvision:
-
+		// Next task is sync slot of some kind, listen or send
+		SyncSlot::dispatchSyncSlotKind();
 		break;
 	}
-
-	// else decide what kind of sync slot, listen or send
-
-	// Set message handler
-
-	// Start radio
-
-	// Schedule end
-
 }
