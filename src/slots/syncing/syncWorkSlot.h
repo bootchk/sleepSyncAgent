@@ -64,4 +64,5 @@ public:
 	static void sendWorkSync();
 	static void sendSync();
 	static void sendControlSync();
+	static void endListen();
 };

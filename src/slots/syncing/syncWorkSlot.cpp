@@ -5,15 +5,12 @@
 
 #include "../../schedule/radioPrelude.h"
 
-#include "../../globals.h"	// clique
-
 #include "../../modules/syncPowerManager.h"
 #include "../../sleepers/scheduleSleeper.h"
 
 #include "../../logging/logger.h"
 #include "../../logging/flashLogger.h"
 
-#include "../../clique/clique.h"
 #include "../../syncAgentImp/state/phase.h"
 
 
@@ -83,16 +80,7 @@ void SyncWorkSlot::perform() {
 	 * Scheduling of subsequent events does not depend on timely this event.
 	 */
 
-	// Radio might be in use.  In use: we timeout'd while receiving
-	Ensemble::stopReceiving();
 
-	// FUTURE we could do this elsewhere, e.g. start of sync slot
-	if (!clique.isSelfMaster())
-		clique.checkMasterDroppedOut();
-
-	// TODO
-	(void) RadioPrelude::shouldUndoAfterSyncing();
-	Ensemble::shutdown();
 
 	assert(Ensemble::isLowPower());
 }

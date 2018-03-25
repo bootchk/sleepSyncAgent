@@ -15,6 +15,8 @@
 #include <cassert>
 #include "../../syncAgentImp/state/phase.h"
 
+#include "../../globals.h"	// clique
+#include "../../clique/clique.h"
 
 /*
  * Sub types of syncWorkSlot
@@ -72,7 +74,17 @@ void SyncWorkSlot::sendControlSync(){
 	SyncSender::sendControlSync();
 }
 
+void SyncWorkSlot::endListen(){
+	// Radio might be in use if we timeout'd while receiving
+	Ensemble::stopReceiving();
 
+	// FUTURE we could do this elsewhere, e.g. start of sync slot
+	if (!clique.isSelfMaster())
+		clique.checkMasterDroppedOut();
+
+	// TODO not correct for RTC Task
+	Ensemble::shutdown();
+}
 
 
 

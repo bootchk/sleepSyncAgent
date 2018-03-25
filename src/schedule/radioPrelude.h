@@ -30,6 +30,14 @@ public:
 	static bool isDone();
 
 	/*
+	 * If appropriate for next slot, undo.
+	 */
+	static bool tryUndoAfterSyncing();
+	static bool tryUndoAfterFishing();
+
+
+private:
+	/*
 	 * Whether the next slot is soon enough to merit leave prelude done.
 	 */
 	static bool shouldUndoAfterFishing();

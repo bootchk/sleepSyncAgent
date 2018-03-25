@@ -30,6 +30,26 @@ void  RadioPrelude::undo() {
 
 bool RadioPrelude::isDone() { return isStarted; }
 
+
+bool RadioPrelude::tryUndoAfterSyncing() {
+	bool result;
+
+	result = shouldUndoAfterSyncing();
+	if (result) undo();
+	return result;
+}
+
+bool RadioPrelude::tryUndoAfterFishing() {
+	bool result;
+
+	result = shouldUndoAfterFishing();
+	if (result) undo();
+	return result;
+}
+
+
+
+
 /*
  * These assume sync slot is always first in syncPeriod.
  * So at just completed fishing at end of syncPeriod is near next sync slot.

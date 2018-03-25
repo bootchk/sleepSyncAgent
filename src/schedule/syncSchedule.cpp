@@ -63,6 +63,11 @@ void SyncSchedule::syncSendTask() {
 }
 
 void SyncSchedule::syncSlotEndListen() {
+	Timer::schedule(SSTask::endListen,
+			SyncSlotSchedule::deltaToThisSyncSlotEnd());
+}
+
+void SyncSchedule::syncSlotEndSend() {
 	// TODO
 	Timer::schedule(SSTask::startSyncSlotWithoutPrelude,
 			SleepDuration::nowTilSyncPoint());

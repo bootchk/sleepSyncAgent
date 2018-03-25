@@ -28,5 +28,6 @@ public:
 
 	// Waypoints of SyncSlot
 	static void syncSendTask();
+	static void syncSlotEndSend();
 	static void syncSlotEndListen();
 };

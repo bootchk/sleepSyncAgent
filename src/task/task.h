@@ -10,4 +10,7 @@ public:
 	static void startSyncSlotWithoutPrelude();
 
 	static void sendSync();
+
+	static void endListen();
+	static void syncSlotEndSend();
 };

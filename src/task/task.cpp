@@ -11,8 +11,6 @@
 #include "../slots/sync/syncSlot.h"
 #include "../slots/syncing/syncWorkSlot.h"
 
-//#include "../modules/syncSender.h"
-
 #include <cassert>
 
 
@@ -36,10 +34,29 @@ void SSTask::sendSync() {
 
 	// Radio peripheral will send and power down
 
+	RadioPrelude::tryUndoAfterSyncing();
+
+	// Next task is syncSlotEnd since it has a callback to app
+	// Alternatively, we could schedule next fishing task.
+	SyncSchedule::syncSlotEndSend();
+}
+
+/*
+ * Listening sync slot is over, but radio might not be active.
+ */
+void SSTask::endListen() {
+	// stop receiving and other bookkeeping
+	SyncWorkSlot::endListen();
+
 	// TODO schedule next task
-	// TODO if don't need radio for next task, RadioPrelude::undo()
-	// switch on prelude shut down
-	// SyncSchedule::syncSlotEnd();
+}
+
+/*
+ * Radio not active.
+ */
+void SSTask::syncSlotEndSend() {
+	RadioPrelude::tryUndoAfterSyncing();
+	// TODO schedule next task
 }
 
 
