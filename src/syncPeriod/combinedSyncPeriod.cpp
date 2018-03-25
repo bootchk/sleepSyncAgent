@@ -11,10 +11,10 @@
 #include "../slots/merging/mergeSlot.h"
 
 #include "../policy/fishWaitingPolicy.cpp"
+#include "../schedule/syncSchedule.h"
 #include "../syncAgentImp/state/phase.h"
 #include "../syncAgentImp/state/role.h"
 
-#include "../schedule/schedule.h"
 
 namespace {
 SyncWorkSlot syncWorkSlot;

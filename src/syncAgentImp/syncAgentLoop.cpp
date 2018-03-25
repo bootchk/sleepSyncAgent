@@ -1,4 +1,7 @@
 
+#include "../syncAgentImp/syncAgentImp.h"
+
+#include "../syncPeriod/modalSyncPeriod.h"
 
 #include <cassert>
 
@@ -6,7 +9,7 @@
 #include "../scheduleParameters.h"
 
 #include "../modules/syncPowerManager.h"
-#include "../syncPeriod/syncPeriod.h"
+//#include "../syncPeriod/syncPeriod.h"
 
 #include "../sleepers/scheduleSleeper.h"
 #include "../work/workIn.h"
@@ -17,7 +20,13 @@
 #include "../logging/remoteLogger.h"
 #include "../syncAgentImp/state/phase.h"
 #include "../syncAgentImp/state/syncMode.h"
-#include "../syncAgentImp/syncAgentImp.h"
+
+// temp
+#define TASKS
+#ifdef TASKS
+#include <clock/mcuSleep.h>
+#include "../schedule/syncSchedule.h"
+#endif
 
 /*
  * SyncAgentImp is a task(thread) that is infinite sequence of sync periods.
@@ -31,58 +40,10 @@
  * Sync periods may also fish when enough power.
 */
 
-namespace {
-
-// Obsolete alternative SimpleSyncPeriod
-
-void doModalSyncPeriod() {
-	switch(SyncModeManager::mode()) {
-	case SyncMode::Maintain:
-		ScheduleSleeper::sleepEntireSyncPeriod();
-		break;
-
-	/*
-	 * CombinedSyncPeriod also checks FisherMergerRole (sub mode.)
-	 */
-	case SyncMode::SyncOnly:
-		CombinedSyncPeriod::doSlotSequence();
-		break;
-	case SyncMode::SyncAndFishMerge:
-		CombinedSyncPeriod::doSlotSequence();
-		break;
-
-	case SyncMode::SyncAndProvision:
-#ifdef BLE_PROVISIONED
-		ProvisioningSyncPeriod::doSlotSequence();
-#else
-		assert(false);	// illegal to be in this state when not built for provisioning
-#endif
-			break;
-	}
-}
-
-
-} // namespace
-
-
-
-
 
 // FUTURE, we could check power again before each slot, namely fishing slot
 
-
-void SyncAgentImp::loop(){
-	/*
-	 * Assertions on enter loop:
-	 * - self is master of its own clique
-	 * - not in sync yet
-	 * - radio power on
-	 * - radio not in use
-	 * - longClock is running but might not be accurate until LFXO is stable
-	 * - there was power for the radio before we called this (since may have been exhausted by cpu execution.)
-	 *
-	 * Note not necessary to have PowerForSync before call, this will sleep until there is.
-	 */
+void SyncAgentImp::preludeToLoop() {
 	assert(clique.isSelfMaster());
 	assert(!Ensemble::isRadioInUse());
 
@@ -114,26 +75,52 @@ void SyncAgentImp::loop(){
 	 * Here we need to restart schedule to ensure that startTimeOfPeriod == nowTime();
 	 */
 	clique.schedule.setEndTimeOfSyncPeriodToNow();
+}
 
+
+/*
+ * Miscellaneous bookkeeping at start of syncPeriod
+ */
+void SyncAgentImp::preludeToSyncSlot() {
+	/*
+	 * Sync period over,
+	 * Assert now == timeAtStartOfSyncPeriod + syncPeriodDuration
+	 * i.e. we must have slept the proper duration.
+	 * Advance schedule, even if not enough power to listen/send sync messages to maintain accuracy.
+	 */
+	clique.schedule.rollPeriodForward();
+
+	assert(Ensemble::isLowPower());	// After every sync period
+
+	// TODO move this to where it could not possible interfere with SyncSlot
+	Phase::set(PhaseEnum::SyncPointCallback);
+	onSyncPointCallback();	// call back app, which must return quickly
+
+	// app may have queued work
+
+	WorkIn::resetState();
+}
+
+
+/*
+ * Assertions on enter loop:
+ * - self is master of its own clique
+ * - not in sync yet
+ * - radio power on
+ * - radio not in use
+ * - longClock is running but might not be accurate until LFXO is stable
+ * - there was power for the radio before we called this (since may have been exhausted by cpu execution.)
+ *
+ * Note not necessary to have PowerForSync before call, this will sleep until there is.
+ */
+void SyncAgentImp::loop(){
+
+	preludeToLoop();
+
+#ifndef TASKS
 	while (true){
 
-		/*
-		 * Sync period over,
-		 * Assert now == timeAtStartOfSyncPeriod + syncPeriodDuration
-		 * i.e. we must have slept the proper duration.
-		 * Advance schedule, even if not enough power to listen/send sync messages to maintain accuracy.
-		 */
-		clique.schedule.rollPeriodForward();
-
-		assert(Ensemble::isLowPower());	// After every sync period
-
-		// TODO move this to where it could not possible interfere with SyncSlot
-		Phase::set(PhaseEnum::SyncPointCallback);
-		onSyncPointCallback();	// call back app, which must return quickly
-
-		// app may have queued work
-
-		WorkIn::resetState();
+		preludeToSyncSlot();
 
 		/*
 		 * Remote logging is high priority.
@@ -144,12 +131,23 @@ void SyncAgentImp::loop(){
 			ScheduleSleeper::sleepEntireSyncPeriod();
 		}
 		else {
-			SyncModeManager::checkPowerAndTryModeTransitions();
-			doModalSyncPeriod();
+			ModalSyncPeriod::perform();
 		}
 
 		// SyncPeriod over and next one starts.
 	}
+#else
+	/*
+	 * RTC tasks design.
+	 * Each task is RTC run-to-completion and is an ISR.
+	 * Invariant: task is running, or some task scheduled.
+	 * Main loop just sleeps, and all work is done in ISR's.
+	 */
+	SyncSchedule::initialSyncPeriod();
+	while (true) {
+		MCUSleep::untilAnyEvent();
+	}
+#endif
 	// never returns
 }
 

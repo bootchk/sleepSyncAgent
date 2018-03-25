@@ -57,7 +57,8 @@ public:	// to SyncSlot mainly
 	static MailContents countMergeSyncHeard ;
 
 private:
-	// syncPeriod local to syncAgentLoop.c
+	static void preludeToLoop();
+	static void preludeToSyncSlot();
 
 	// Interface towards app
 	static void (*onWorkMsgCallback)(MailContents);

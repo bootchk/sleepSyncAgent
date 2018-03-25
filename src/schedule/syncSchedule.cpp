@@ -1,11 +1,10 @@
 
-#include "schedule.h"
-
 #include "timer.h"
 #include "sleepDuration.h"
 #include "radioPrelude.h"
 
 #include <cassert>
+#include "syncSchedule.h"
 
 
 
@@ -24,7 +23,7 @@ void syncTask() {
 
 void theRadioPreludeTaskWSync() {
 	// Schedule next task from now
-	Schedule::syncTaskFromPreludeStart();
+	SyncSchedule::syncTaskFromPreludeStart();
 
 	radioPreludeTask();
 }
@@ -32,17 +31,23 @@ void theRadioPreludeTaskWSync() {
 }	// namespace
 
 
-void Schedule::syncSlotAfterSyncSlot() {
-	assert(!RadioPrelude::isDone());
-	radioPreludeTaskWSync();
+void SyncSchedule::initialSyncPeriod() {
+	// now is before any real slot have been done, but clock and schedule are running.
+	// Just schedule a syncslot as if we just did one.
+	SyncSchedule::syncSlotAfterSyncSlot();
 }
 
-void Schedule::radioPreludeTaskWSync() {
+void SyncSchedule::syncSlotAfterSyncSlot() {
+	assert(!RadioPrelude::isDone());
+	SyncSchedule::radioPreludeTaskWSync();
+}
+
+void SyncSchedule::radioPreludeTaskWSync() {
 	Timer::schedule(theRadioPreludeTaskWSync,
 			SleepDuration::nowTilPreludeWSync());
 }
 
-void Schedule::syncTaskFromPreludeStart() {
+void SyncSchedule::syncTaskFromPreludeStart() {
 	Timer::schedule(syncTask,
 			SleepDuration::preludeTilSync());
 }

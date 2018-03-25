@@ -32,8 +32,9 @@ void SyncWorkSlot::tryPerform() {
 	// Current:
 	//LongTime startTime = clique.schedule.nowTime();
 	Ensemble::startup();
-	// TODO
-	RadioPrelude::doIt();
+#ifdef TASKS
+	// RadioPrelude::doIt();
+#endif
 	//LongTime endTime = clique.schedule.nowTime();
 
 	// Starting network might have exhausted power.  Unlikely

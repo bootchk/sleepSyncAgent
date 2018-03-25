@@ -5,7 +5,7 @@
 
 #include "syncSleeper.h"
 
-// nRF5x lib
+// radioSoC lib
 #include <clock/sleeper.h>	// pure class Sleeper
 #include <exceptions/powerAssertions.h>
 #include <exceptions/resetAssertions.h>
