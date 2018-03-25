@@ -1,6 +1,7 @@
 
 #include "timer.h"
 #include "sleepDuration.h"
+#include "../slots/syncing/syncSlotSchedule.h"
 #include "radioPrelude.h"
 
 #include <cassert>
@@ -57,9 +58,8 @@ void SyncSchedule::maintainSyncPeriodFromMaintainSyncPeriod() {
 
 
 void SyncSchedule::syncSendTask() {
-	// TODO
-	Timer::schedule(SSTask::startSyncSlotWithoutPrelude,
-			SleepDuration::nowTilSyncPoint());
+	Timer::schedule(SSTask::sendSync,
+			SyncSlotSchedule::deltaToThisSyncSlotMiddleSubslot());
 }
 
 void SyncSchedule::syncSlotEndListen() {

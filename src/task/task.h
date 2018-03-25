@@ -8,4 +8,6 @@ public:
 	static void startSyncSlotAfterPrelude();
 
 	static void startSyncSlotWithoutPrelude();
+
+	static void sendSync();
 };

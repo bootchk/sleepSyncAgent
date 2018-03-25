@@ -8,24 +8,33 @@
 #include "../../work/workOut.h"
 
 #include "../../messageHandler/messageHandler.h"
+#include "../../radio/radio.h"
+
+
+namespace {
+	/*
+	 * State of sync slot: once we decide, we remember;
+	 */
+	SyncSlotKind _kind;
+}
+
+
+
+
+SyncSlotKind SyncSlot::kind() { return _kind; }
 
 
 
 void SyncSlot::beginListen() {
-	Ensemble::startReceivingWithHandler(SyncSlotMessageHandler::handle);
-	/*
-	 * Two possible tasks:
-	 * 1. Radio is listening. Events from radio handled by handlerTask.
-	 * 2. Soon to be scheduled syncSlotEnd task
-	 */
+	Radio2::startReceivingWithHandler(SyncSlotMessageHandler::handle);
 }
 
 
 
 void SyncSlot::dispatchSyncSlotKind() {
-	SyncSlotKind kind = SyncSlotProperty::decideKind();
+	_kind = SyncSlotProperty::decideKind();
 
-	switch(kind) {
+	switch(_kind) {
 	case SyncSlotKind::sendControlSync:
 		/*
 		 * For all these cases:
@@ -49,6 +58,11 @@ void SyncSlot::dispatchSyncSlotKind() {
 		beginListen();
 		//Logger::log(" Listens ");
 		SyncSchedule::syncSlotEndListen();
+		/*
+		 * Two possible tasks:
+		 * 1. Radio is listening. Events from radio handled by handlerTask.
+		 * 2. Scheduled syncSlotEnd task
+		 */
 		break;
 	}
 	// Assert some task is scheduled

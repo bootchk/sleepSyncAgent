@@ -7,13 +7,40 @@
 #include "../syncAgentImp/syncAgentImp.h"
 #include "../syncAgentImp/state/syncMode.h"
 
-#include "../slots/syncing/syncSlot.h"
+// TODO one is old design
+#include "../slots/sync/syncSlot.h"
+#include "../slots/syncing/syncWorkSlot.h"
+
+//#include "../modules/syncSender.h"
 
 #include <cassert>
 
 
 
 
+void SSTask::sendSync() {
+	switch(SyncSlot::kind()) {
+	case SyncSlotKind::sendWorkSync:
+		SyncWorkSlot::sendWorkSync();
+		break;
+	case SyncSlotKind::sendSync:
+		SyncWorkSlot::sendSync();
+		break;
+	case SyncSlotKind::sendControlSync:
+		SyncWorkSlot::sendControlSync();
+		break;
+	case SyncSlotKind::listen:
+		// should not happen
+		break;
+	}
+
+	// Radio peripheral will send and power down
+
+	// TODO schedule next task
+	// TODO if don't need radio for next task, RadioPrelude::undo()
+	// switch on prelude shut down
+	// SyncSchedule::syncSlotEnd();
+}
 
 
 /*

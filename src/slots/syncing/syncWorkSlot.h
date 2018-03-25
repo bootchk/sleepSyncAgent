@@ -52,7 +52,6 @@ private:
 	static void doSendingControlSyncWorkSlot();
 	static void doMasterSyncWorkSlot();
 	static void doSlaveSyncWorkSlot();
-	
 
 	static void dispatchSyncSlotKind();
 	static void perform();
@@ -62,4 +61,7 @@ private:
 
 public:
 	static void tryPerform();
+	static void sendWorkSync();
+	static void sendSync();
+	static void sendControlSync();
 };

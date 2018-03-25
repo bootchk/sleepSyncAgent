@@ -1,7 +1,8 @@
 
 #include "syncWorkSlot.h"
 
-#include "syncSlotProperty.h"
+// new RTC task design
+#include "../sync/syncSlotProperty.h"
 
 #include "../../network/intraCliqueManager.h"
 #include "../../work/workOut.h"
@@ -51,15 +52,35 @@ void SyncWorkSlot::dispatchSyncSlotKind() {
 }
 
 
-void SyncWorkSlot::doSendingControlSyncWorkSlot() {
-	(void) doListenHalfSyncWorkSlot(SyncSlotSchedule::deltaToThisSyncSlotMiddleSubslot);
 
-	// SyncSender accesses IntraCliqueManager for message
-	SyncSender::sendControlSync();
 
-	(void) doListenHalfSyncWorkSlot(SyncSlotSchedule::deltaToThisSyncSlotEnd);
+
+// Task
+void SyncWorkSlot::sendWorkSync(){
+	MailContents work = WorkOut::fetch();	// From app, WorkSyncMaintainer
+	Phase::set(PhaseEnum::SyncXmitWorkSync);
+	SyncSender::sendWorkSync(work);
 }
 
+void SyncWorkSlot::sendSync(){
+	Phase::set(PhaseEnum::SyncXmit);
+	SyncSender::sendMasterSync();
+}
+
+void SyncWorkSlot::sendControlSync(){
+	// SyncSender accesses IntraCliqueManager for message
+	SyncSender::sendControlSync();
+}
+
+
+
+
+
+void SyncWorkSlot::doSendingControlSyncWorkSlot() {
+	(void) doListenHalfSyncWorkSlot(SyncSlotSchedule::deltaToThisSyncSlotMiddleSubslot);
+	sendControlSync();
+	(void) doListenHalfSyncWorkSlot(SyncSlotSchedule::deltaToThisSyncSlotEnd);
+}
 
 
 /*
@@ -74,10 +95,7 @@ void SyncWorkSlot::doSendingWorkSyncWorkSlot(){
 	assert(!Ensemble::isRadioInUse());
 
 	// TODO if we heard a work sync??
-
-	MailContents work = WorkOut::fetch();	// From app, WorkSyncMaintainer
-	Phase::set(PhaseEnum::SyncXmitWorkSync);
-	SyncSender::sendWorkSync(work);
+	sendWorkSync();
 
 	/*
 	 * Keep listening for other better Masters or WorkSync.
@@ -142,8 +160,7 @@ void SyncWorkSlot::doMasterSyncWorkSlot() {
 		/*
 		 * Self is still master.
 		 */
-		Phase::set(PhaseEnum::SyncXmit);
-		SyncSender::sendMasterSync();
+		sendSync();
 	}
 
 	/*
