@@ -10,9 +10,12 @@ public:
 
 	// varies since now varies
 	static DeltaTime nowTilPreludeWSync();
+	static DeltaTime nowTilPreludeWFish();
+
 	static DeltaTime nowTilSyncPoint();
+	static DeltaTime nowTilFishStart();
 
 	// Fixed
-	static DeltaTime preludeTilSync();
+	static DeltaTime preludeTilNextTask();
 
 };

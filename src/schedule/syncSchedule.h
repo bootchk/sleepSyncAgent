@@ -19,10 +19,12 @@ public:
 	 */
 	static void maintainSyncPeriod();
 
-
+	// to SyncSlot
 	static void maintainSyncPeriodFromMaintainSyncPeriod();
+	static void startSyncSlotWithoutScheduledPrelude();
 	static void syncSlotAfterNullSyncSlot();
 	static void syncSlotAfterSyncSlot();
+	static void syncSlotAfterFishSlot();
 	static void radioPreludeTaskWSync();
 	static void syncTaskFromPreludeStart();
 
@@ -30,4 +32,16 @@ public:
 	static void syncSendTask();
 	static void syncSlotEndSend();
 	static void syncSlotEndListen();
+
+	// to slots in normally sleeping slots
+	static void omitNonsyncSlot();
+	static void fishing();
+	static void radioPreludeTaskWFish();
+	static void fishTaskFromPreludeStart();
+	static void fishSlotStart();
+	static void fishSlotEnd();
+	static void provisionStart();
+	static void merger();
+
+
 };

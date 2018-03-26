@@ -29,6 +29,7 @@ void SyncSlot::beginListen() {
 	Radio2::startReceivingWithHandler(SyncSlotMessageHandler::handle);
 }
 
+// TODO slots/syncing/?  endListen() is old and not for RTC Task
 
 
 void SyncSlot::dispatchSyncSlotKind() {

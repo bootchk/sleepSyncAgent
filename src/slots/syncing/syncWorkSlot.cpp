@@ -80,7 +80,7 @@ void SyncWorkSlot::perform() {
 	 * Scheduling of subsequent events does not depend on timely this event.
 	 */
 
-
+	endListen();
 
 	assert(Ensemble::isLowPower());
 }

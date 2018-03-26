@@ -4,11 +4,21 @@
 #include "../scheduleParameters.h"
 
 
-
-DeltaTime SleepDuration::nowTilPreludeWSync() {
+DeltaTime SleepDuration::nowTilSyncPoint() {
 
 }
 
+DeltaTime SleepDuration::nowTilFishStart() {
+
+}
+
+DeltaTime SleepDuration::nowTilPreludeWSync() {
+	return nowTilSyncPoint() - preludeTilNextTask();
+}
+
+DeltaTime SleepDuration::nowTilPreludeWFish() {
+	return nowTilFishStart() - preludeTilNextTask();
+}
 
 /*
  * Prelude takes less time, but is convenient to sleep a whole slot.
@@ -17,6 +27,6 @@ DeltaTime SleepDuration::nowTilPreludeWSync() {
  * If it is not complete, the radio won't work, but we carry on as if it is working.
  * Another design would get an event from prelude completed.
  */
-DeltaTime SleepDuration::preludeTilSync() {
+DeltaTime SleepDuration::preludeTilNextTask() {
 	return ScheduleParameters::RealSlotDuration;
 }
