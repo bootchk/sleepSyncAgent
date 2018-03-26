@@ -19,7 +19,8 @@ public:
 	static void startSyncSlotWithoutScheduledPrelude();
 
 	static void tryFishOrMerge();
-	static void scheduleFishSlot();
+
+
 	static void fishSlotStart();
 	static void fishSlotEnd();
 

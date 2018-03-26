@@ -18,7 +18,10 @@ void onMsgReceived() {
 	/*
 	 * Not using result.
 	 *
-	 * Radio may still be receiving.
+	 * Radio may still be receiving, MessageDispatcher can leave it off or on.
+	 *
+	 * TODO if radio not receiving, might also RadioPrelude::undo()
+	 * For now, waste a little energy.
 	 */
 	(void) result;
 }

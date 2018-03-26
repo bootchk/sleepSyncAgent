@@ -17,6 +17,12 @@
 
 #include <cassert>
 
+
+
+/*
+ * Not scheduled, called at endSyncSlot
+ */
+
 /*
  * Try means: may lack power.
  * Variation: next event (if any) occurs within a large sleeping time (lots of 'slots').
@@ -59,16 +65,12 @@ void SSTask::tryFishOrMerge() {
 
 
 
-void SSTask::scheduleFishSlot() {
-	if (RadioPrelude::isDone()) {
-		SyncSchedule::fishSlotStart();
-	}
-	else {
-		SyncSchedule::radioPreludeTaskWFish();
-	}
-}
 
 
+
+/*
+ * Scheduled tasks
+ */
 
 void SSTask::fishSlotStart() {
 	assert(RadioPrelude::isDone());
@@ -80,11 +82,16 @@ void SSTask::fishSlotStart() {
 void SSTask::fishSlotEnd() {
 	// received message might RadioPrelude::undo() ?
 
+	assert(RadioPrelude::isDone());	// because sync slot might abut
+
 	// Possible change role
 	FishingManager::checkFishingDone();
 
 	SyncSchedule::syncSlotAfterFishSlot();
 }
+
+
+
 
 void SSTask::provisionStart() {
 }

@@ -6,8 +6,8 @@
 /*
  * Constants used by FishPolicy.
  *
- * Now, because of HFXO startup delay, we don't fish every sleeping slot.
- * TODO, improve the design so that we fish every sleeping slot.
+ * In an old design, because of HFXO startup delay, we don't fish every sleeping slot.
+ * The new design, using RadioPrelude, should fish even in slots abutting the sync slot.
  */
 /*
  * Deficient design:

@@ -3,7 +3,6 @@
 
 #include "fishingParameters.h"
 
-
 #include "../logging/logger.h"
 
 
