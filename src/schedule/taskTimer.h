@@ -6,7 +6,7 @@
 typedef void (*Task)(void);
 
 
-class Timer {
+class TaskTimer {
 public:
 	static void schedule(Task task, DeltaTime duration);
 };

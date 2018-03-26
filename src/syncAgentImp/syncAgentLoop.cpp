@@ -22,7 +22,7 @@
 #include "../syncAgentImp/state/syncMode.h"
 
 // temp
-//#define TASKS
+#define TASKS
 #ifdef TASKS
 #include <clock/mcuSleep.h>
 #include "../schedule/syncSchedule.h"

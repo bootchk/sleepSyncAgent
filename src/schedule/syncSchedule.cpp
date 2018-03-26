@@ -1,5 +1,4 @@
 
-#include "timer.h"
 #include "sleepDuration.h"
 #include "../slots/syncing/syncSlotSchedule.h"
 #include "radioPrelude.h"
@@ -8,6 +7,7 @@
 #include "syncSchedule.h"
 
 #include "../task/task.h"
+#include "taskTimer.h"
 
 
 namespace {
@@ -53,39 +53,39 @@ void SyncSchedule::syncSlotAfterSyncSlot() {
 }
 
 void SyncSchedule::radioPreludeTaskWSync() {
-	Timer::schedule(theRadioPreludeTaskWSync,
+	TaskTimer::schedule(theRadioPreludeTaskWSync,
 			SleepDuration::nowTilPreludeWSync());
 }
 
 void SyncSchedule::syncTaskFromPreludeStart() {
-	Timer::schedule(SSTask::startSyncSlotAfterPrelude,
+	TaskTimer::schedule(SSTask::startSyncSlotAfterPrelude,
 			SleepDuration::preludeTilNextTask());
 }
 
 void SyncSchedule::maintainSyncPeriodFromMaintainSyncPeriod() {
 	// Sleeping almost entire period without sync slot
-	Timer::schedule(SSTask::startSyncPeriodMaintain,
+	TaskTimer::schedule(SSTask::startSyncPeriodMaintain,
 			SleepDuration::nowTilSyncPoint());
 }
 
 // Prelude still done, don't need to schedule it
 void SyncSchedule::startSyncSlotWithoutScheduledPrelude() {
-	Timer::schedule(SSTask::startSyncSlotWithoutScheduledPrelude,
+	TaskTimer::schedule(SSTask::startSyncSlotWithoutScheduledPrelude,
 				SleepDuration::nowTilSyncPoint());
 }
 
 void SyncSchedule::syncSendTask() {
-	Timer::schedule(SSTask::sendSync,
+	TaskTimer::schedule(SSTask::sendSync,
 			SyncSlotSchedule::deltaToThisSyncSlotMiddleSubslot());
 }
 
 void SyncSchedule::syncSlotEndListen() {
-	Timer::schedule(SSTask::endSyncSlotListen,
+	TaskTimer::schedule(SSTask::endSyncSlotListen,
 			SyncSlotSchedule::deltaToThisSyncSlotEnd());
 }
 
 void SyncSchedule::syncSlotEndSend() {
-	Timer::schedule(SSTask::endSyncSlotSend,
+	TaskTimer::schedule(SSTask::endSyncSlotSend,
 			SyncSlotSchedule::deltaToThisSyncSlotEnd());
 }
 
@@ -117,24 +117,24 @@ void SyncSchedule::fishing() {
 }
 
 void SyncSchedule::radioPreludeTaskWFish() {
-	Timer::schedule(theRadioPreludeTaskWFish,
+	TaskTimer::schedule(theRadioPreludeTaskWFish,
 			SleepDuration::nowTilPreludeWFish());
 }
 
 void SyncSchedule::fishTaskFromPreludeStart() {
-	Timer::schedule(SSTask::fishSlotStart,
+	TaskTimer::schedule(SSTask::fishSlotStart,
 			SleepDuration::preludeTilNextTask());
 }
 
 void SyncSchedule::fishSlotStart() {
 	assert(RadioPrelude::isDone());
 	// But we are not necessarily at end of RadioPrelude task
-	Timer::schedule(SSTask::fishSlotStart,
+	TaskTimer::schedule(SSTask::fishSlotStart,
 				SyncSlotSchedule::deltaToThisSyncSlotEnd());	// TODO proper time
 }
 
 void SyncSchedule::fishSlotEnd() {
-	Timer::schedule(SSTask::fishSlotEnd,
+	TaskTimer::schedule(SSTask::fishSlotEnd,
 				SyncSlotSchedule::deltaToThisSyncSlotEnd());	// TODO proper time
 }
 
@@ -143,11 +143,11 @@ void SyncSchedule::fishSlotEnd() {
 
 
 void SyncSchedule::provisionStart() {
-	Timer::schedule(SSTask::provisionStart,
+	TaskTimer::schedule(SSTask::provisionStart,
 					SyncSlotSchedule::deltaToThisSyncSlotEnd());	// TODO proper time
 }
 
 void SyncSchedule::merger() {
-	Timer::schedule(SSTask::mergerStart,
+	TaskTimer::schedule(SSTask::mergerStart,
 					SyncSlotSchedule::deltaToThisSyncSlotEnd());	// TODO proper time
 }
