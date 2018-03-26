@@ -138,7 +138,11 @@ void SyncSchedule::fishSlotEnd() {
 				SyncSlotSchedule::deltaToThisSyncSlotEnd());	// TODO proper time
 }
 
-
+void SyncSchedule::syncSlotAfterFishSlot() {
+	// TODO
+	// if need prelude else
+	// if (RadioPrelude::tryUndoAfterFishing
+}
 
 
 

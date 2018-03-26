@@ -2,7 +2,7 @@
 
 #include "fishingMode.h"
 
-#include <radioSoC.h>  // LongTime
+#include <clock/longClock.h>  // LongTime
 #include "../../modules/deltaSync.h"  // DeltaSync
 
 

@@ -3,8 +3,8 @@
 
 #include "../slots/fishing/fishingManager.h"
 
-// radioSoC
-#include <ensemble/ensemble.h>
+// Not using radioSoC Ensemble, because it sleeps during prelude
+#include <clock/clockFacilitator.h>
 
 
 
@@ -17,13 +17,13 @@ namespace {
 }
 
 void  RadioPrelude::doIt() {
-	Ensemble::startup();
+	ClockFacilitator::startHFXONoWait();
 	isStarted = true;
 }
 
 
 void  RadioPrelude::undo() {
-	Ensemble::shutdown();
+	ClockFacilitator::stopHFXO();
 	isStarted = false;
 }
 
