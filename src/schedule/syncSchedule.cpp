@@ -139,9 +139,13 @@ void SyncSchedule::fishSlotEnd() {
 }
 
 void SyncSchedule::syncSlotAfterFishSlot() {
-	// TODO
-	// if need prelude else
-	// if (RadioPrelude::tryUndoAfterFishing
+	if (RadioPrelude::tryUndoAfterFishing()) {
+		assert(not RadioPrelude::isDone());
+		SyncSchedule::radioPreludeTaskWSync();
+	}
+	else {
+		SyncSchedule::startSyncSlotWithoutScheduledPrelude();
+	}
 }
 
 

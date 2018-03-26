@@ -1,7 +1,10 @@
 
 #pragma once
 
-#include <radioSoC.h>	// LongTime, SystemID, WorkPayload
+// radioSoC
+#include <clock/longClock.h>	// LongTime
+// ??? SystemID, WorkPayload
+
 #include "../modules/deltaSync.h"
 #include "../network/granularity.h"
 

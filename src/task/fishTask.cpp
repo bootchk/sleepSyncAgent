@@ -78,6 +78,7 @@ void SSTask::fishSlotStart() {
 }
 
 void SSTask::fishSlotEnd() {
+	// received message might RadioPrelude::undo() ?
 
 	// Possible change role
 	FishingManager::checkFishingDone();

@@ -8,7 +8,7 @@
 #include "../../work/workOut.h"
 
 #include "../../messageHandler/messageHandler.h"
-#include "../../radio/radio.h"
+#include "../../receiver/receiver.h"
 
 
 namespace {
@@ -26,7 +26,7 @@ SyncSlotKind SyncSlot::kind() { return _kind; }
 
 
 void SyncSlot::beginListen() {
-	Radio2::startReceivingWithHandler(SyncSlotMessageHandler::handle);
+	Receiver::startWithHandler(SyncSlotMessageHandler::handle);
 }
 
 // TODO slots/syncing/?  endListen() is old and not for RTC Task

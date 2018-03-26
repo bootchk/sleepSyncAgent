@@ -31,6 +31,7 @@ public:
 
 	/*
 	 * If appropriate for next slot, undo.
+	 * Returns true if RadioPrelude was undone
 	 */
 	static bool tryUndoAfterSyncing();
 	static bool tryUndoAfterFishing();

@@ -2,11 +2,11 @@
 #include "fishSlot.h"
 
 #include "../../messageHandler/messageHandler.h"
-#include "../../radio/radio.h"
+#include "../../receiver/receiver.h"
 
 
 void FishSlot::beginListen() {
-	Radio2::startReceivingWithHandler(FishSlotMessageHandler::handle);
+	Receiver::startWithHandler(FishSlotMessageHandler::handle);
 }
 
 
