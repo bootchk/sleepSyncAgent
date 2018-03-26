@@ -3,13 +3,22 @@
 
 #include "../scheduleParameters.h"
 
+// clique knows sync slot timing
+#include "../clique/clique.h"
+#include "../globals.h"  // clique
+
+// fishSchedule knows fish slot timing
+#include "../slots/fishing/fishSchedule.h"
+
+
+
 
 DeltaTime SleepDuration::nowTilSyncPoint() {
-
+	return clique.schedule.deltaNowToNextSyncPoint();
 }
 
 DeltaTime SleepDuration::nowTilFishStart() {
-
+	return FishSchedule::deltaToFishSessionStart();
 }
 
 DeltaTime SleepDuration::nowTilPreludeWSync() {

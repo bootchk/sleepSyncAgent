@@ -87,11 +87,13 @@ bool DeepFishingPolicy::checkDone() {
 
 
 bool DeepFishingPolicy::isFishSlotStartSyncPeriod() {
-	// TODO
+	// TODO Task
 	// If start time is less than three slots from start of sync period
+	return false;	// TEMP
 }
 
 bool DeepFishingPolicy::isFishSlotEndSyncPeriod() {
-	// TODO
+	// TODO Task
 	// if start time is less than two slots from end of sync period.
+	return false;	// TEMP
 }

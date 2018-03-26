@@ -14,6 +14,7 @@
 // in old design?
 #include "../slots/merging/mergePolicy.h"
 #include "../slots/fishing/fishingManager.h"
+#include "../slots/fishing/fishSchedule.h"
 
 #include <cassert>
 
@@ -45,6 +46,7 @@ void SSTask::tryFishOrMerge() {
 		 * Check power early, not just before fishing.
 		 */
 		if (SyncPowerManager::isPowerForFishSlot()) {
+			FishSchedule::setStartAndEndTimes();	// !!! calculate times for scheduling
 			SyncSchedule::fishing();
 		}
 		else SyncSchedule::omitNonsyncSlot();
