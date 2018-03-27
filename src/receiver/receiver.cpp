@@ -38,5 +38,10 @@ void Receiver::startWithHandler(MessageHandler handler) {
 	Radio::setMsgReceivedCallback(onMsgReceived);
 
 	// Start task on peripheral
-	Ensemble::startReceiving();
+	// TODO Ensemble has more assertions:  Ensemble::startReceiving();
+	Radio::receiveStatic();
+}
+
+void Receiver::stop() {
+	Radio::stopReceive();
 }

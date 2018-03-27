@@ -89,7 +89,11 @@ void SyncAgentImp::preludeToSyncPeriod() {
 	 */
 	clique.schedule.rollPeriodForward();
 
-	assert(Ensemble::isLowPower());	// After every sync period
+	/*
+	 * Earlier design, HFXO and radio off: Ensemble::isLowPower()
+	 * Now, radio is off but HFXO might still be on.
+	 */
+	assert(not Ensemble::isRadioInUse());	// After every sync period
 
 	// TODO move this to where it could not possible interfere with SyncSlot
 	Phase::set(PhaseEnum::SyncPointCallback);

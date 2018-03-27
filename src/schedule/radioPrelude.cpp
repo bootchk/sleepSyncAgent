@@ -6,6 +6,7 @@
 // Not using radioSoC Ensemble, because it sleeps during prelude
 #include <clock/clockFacilitator.h>
 
+#include "../logging/logger.h"
 
 
 /*
@@ -23,6 +24,7 @@ void  RadioPrelude::doIt() {
 
 
 void  RadioPrelude::undo() {
+	Logger::log(" RP::undo.");
 	ClockFacilitator::stopHFXO();
 	isStarted = false;
 }
@@ -55,5 +57,5 @@ bool RadioPrelude::tryUndoAfterFishing() {
  * So at just completed fishing at end of syncPeriod is near next sync slot.
  * And about to be done fishing near beginning of syncPeriod is just after sync slot.
  */
-bool RadioPrelude::shouldUndoAfterFishing() { return FishingManager::isFishSlotEndSyncPeriod(); }
-bool RadioPrelude::shouldUndoAfterSyncing() { return FishingManager::isFishSlotStartSyncPeriod(); }
+bool RadioPrelude::shouldUndoAfterFishing() { return not FishingManager::isFishSlotEndSyncPeriod(); }
+bool RadioPrelude::shouldUndoAfterSyncing() { return not FishingManager::isFishSlotStartSyncPeriod(); }

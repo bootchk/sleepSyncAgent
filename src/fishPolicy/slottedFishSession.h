@@ -15,15 +15,16 @@ public:
 	 * Allow caller to set duration in ticks.
 	 * So duration might not be same duration as virtual slot.
 	 */
-	static void incrementFishSessionDuration(unsigned int increment);
-	static void decrementFishSessionDuration(unsigned int decrement);
+	static void incrementFishSessionDuration(SlotCount increment);
+	static void decrementFishSessionDuration(SlotCount decrement);
 	/*
 	 * One slot.  SyncAgent will quit fishing altogether if not enough power.
 	 */
 	static void setDurationToMinDuration();
 
-	// Duration in units ticks
-	static DeltaTime duration();
-	// Duration in units slot
-	static unsigned int slotDuration();
+
+	static DeltaTime durationInTicks();
+	static SlotCount durationInSlots();
+
+	static SlotCount lastSlotOrdinal();
 };

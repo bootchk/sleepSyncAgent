@@ -41,8 +41,12 @@ public:
 	static FishingMode mode();
 
 	/*
-	 * Episode:
-	 * If current mode is episodic and finite, check for completion and call callback for event.
+	 * Mark that fishing was done.
+	 * Proceeds to another spot if trolling.
+	 * Possible change mode, Deep=>Trolling when Deep is done
+	 *
+	 * Deep is episodic and finite.
+	 * Check for completion, call callback for event, and switch mode to Trolling.
 	 */
 	static void checkFishingDone();
 

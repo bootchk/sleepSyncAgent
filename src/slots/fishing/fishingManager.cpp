@@ -105,7 +105,7 @@ bool FishingManager::isFishSlotStartSyncPeriod() {
 	switch(fishingMode){
 	case FishingMode::Trolling:
 	default:
-		result = SyncRecoveryTrollingPolicy::isFishSlotStartSyncPeriod();
+		result = SyncRecoveryTrollingPolicy::isFishSessionNearStartSyncPeriod();
 		break;
 	case FishingMode::DeepFishing:
 		result = DeepFishingPolicy::isFishSlotStartSyncPeriod();
@@ -120,7 +120,7 @@ bool result;
 	switch(fishingMode){
 	case FishingMode::Trolling:
 	default:
-		result = SyncRecoveryTrollingPolicy::isFishSlotEndSyncPeriod();
+		result = SyncRecoveryTrollingPolicy::isFishSessionNearEndSyncPeriod();
 		break;
 	case FishingMode::DeepFishing:
 		result = DeepFishingPolicy::isFishSlotEndSyncPeriod();

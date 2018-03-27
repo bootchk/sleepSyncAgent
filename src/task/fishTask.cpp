@@ -75,18 +75,26 @@ void SSTask::tryFishOrMerge() {
  */
 
 void SSTask::fishSlotStart() {
+	/*
+	 * Trolling or Deep
+	 * Scheduling fishSlotEnd is polymorphic on mode.
+	 */
 	assert(RadioPrelude::isDone());
 	SyncSchedule::fishSlotEnd();
 	FishSlot::beginListen();
 	// Two tasks active: radio and timer
 }
 
-void SSTask::fishSlotEnd() {
-	// received message might RadioPrelude::undo() ?
 
+void SSTask::fishSlotEnd() {
+	// Trolling or Deep
+
+	// Enhance: received message might already radio off and prelude off?
+	// RadioPrelude::undo() ?
+
+	FishSlot::endListen();	// Receiver::stop();
 	assert(RadioPrelude::isDone());	// because sync slot might abut
 
-	// Possible change role
 	FishingManager::checkFishingDone();
 
 	SyncSchedule::syncSlotAfterFishSlot();
@@ -96,9 +104,10 @@ void SSTask::fishSlotEnd() {
 
 
 void SSTask::provisionStart() {
+	// TODO unimp
 }
 
 
 void SSTask::mergerStart() {
-
+	// TODO unimp
 }

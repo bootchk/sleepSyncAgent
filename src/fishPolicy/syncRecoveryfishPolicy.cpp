@@ -6,6 +6,7 @@
 
 #include "../clique/clique.h"
 #include "../globals.h"   // clique
+
 #include "../logging/logger.h"
 
 
@@ -22,9 +23,17 @@ namespace {
 	SlotCount downCounter = FishingParameters::FirstSlotOrdinalToFish;
 	bool direction = true;
 
-	SlotCount currentSlotOrdinal;
+	SlotCount currentSlotOrdinal = FishingParameters::FirstSlotOrdinalToFish;
 }
 
+
+
+
+SlotCount SyncRecoveryTrollingPolicy::currentSessionStartSlotOrdinal() {
+	assert(currentSlotOrdinal >= FishingParameters::FirstSlotOrdinalToFish
+			and currentSlotOrdinal <= FishingParameters::LastSlotOrdinalToFish);
+	return currentSlotOrdinal;
+}
 
 
 // !!! This should be the same as above compile time initialization.
@@ -37,29 +46,43 @@ void SyncRecoveryTrollingPolicy::restart() {
 	// next generated ordinal will be first sleeping slot
 }
 
-SlotCount SyncRecoveryTrollingPolicy::nextFishSlotOrdinal() {
-	SlotCount result;
+
+// TODO if session duration is changed before starting, the above values are not right
+
+
+bool SyncRecoveryTrollingPolicy::checkDone() {
+	/*
+	 * A trolling fish session has been done.  Move to next one.
+	 */
+	proceedToNextFishSlotOrdinal();
+	return false;	// Never done trolling
+}
+
+
+/*
+ * This must only be called once per sync period.
+ */
+void SyncRecoveryTrollingPolicy::proceedToNextFishSlotOrdinal() {
+	SlotCount next;
 
 	if (direction) {
 		incrementCounterModuloSleepingSlots(&upCounter);
-		result = upCounter;
+		next = upCounter;
 	}
 	else {
 		decrementCounterModuloSleepingSlots(&downCounter);
-		result = downCounter;
+		next = downCounter;
 	}
 
 	direction = ! direction;	// reverse direction, i.e. counter to return next call
 
-	assert(result >=FishingParameters::FirstSlotOrdinalToFish && result <= FishingParameters::LastSlotOrdinalToFish);
+	Logger::log(" Troll ");  Logger::logInt(next);
 
-	Logger::log(" Troll ");  Logger::logInt(result);
-
-	return result;
+	currentSlotOrdinal = next;	// Validity checked on retrieval
 }
 
+
 LongTime SyncRecoveryTrollingPolicy::getStartTimeToFish() {
-	currentSlotOrdinal = nextFishSlotOrdinal();
 
 	// minus 1: convert ordinal to zero-based duration multiplier
 	LongTime result = clique.schedule.startTimeOfSyncPeriod() +  (currentSlotOrdinal - 1) * ScheduleParameters::VirtualSlotDuration;
@@ -73,16 +96,16 @@ LongTime SyncRecoveryTrollingPolicy::getStartTimeToFish() {
 // delegate to fishSession
 DeltaTime SyncRecoveryTrollingPolicy::getFishSessionDuration() {
 	// Variable with constant default
-	return SlottedFishSession::duration();
+	return SlottedFishSession::durationInTicks();
 }
 
 
 
-bool SyncRecoveryTrollingPolicy::isFishSlotStartSyncPeriod() {
+bool SyncRecoveryTrollingPolicy::isFishSessionNearStartSyncPeriod() {
 	return isCoverFirstSleepingSlot() or isAbutFirstSleepingSlot();
 }
 
-bool SyncRecoveryTrollingPolicy::isFishSlotEndSyncPeriod() {
+bool SyncRecoveryTrollingPolicy::isFishSessionNearEndSyncPeriod() {
 	return isCoverLastSleepingSlot() or isAbutLastSleepingSlot();
 }
 
@@ -92,13 +115,15 @@ bool SyncRecoveryTrollingPolicy::isFishSlotEndSyncPeriod() {
 bool SyncRecoveryTrollingPolicy::isCoverFirstSleepingSlot() {
 	return currentSlotOrdinal == FishingParameters::FirstSlotOrdinalToFish;
 }
+
 bool SyncRecoveryTrollingPolicy:: isAbutFirstSleepingSlot() {
 	return currentSlotOrdinal == FishingParameters::FirstSlotOrdinalToFish + 1;
 }
+
 bool SyncRecoveryTrollingPolicy::isCoverLastSleepingSlot() {
-	// TODO not right
-	return ( currentSlotOrdinal + SlottedFishSession::slotDuration() ) >  FishingParameters::LastSlotOrdinalToFish ;
+	return SlottedFishSession::lastSlotOrdinal() >=  FishingParameters::LastSlotOrdinalToFish ;
 }
+
 bool SyncRecoveryTrollingPolicy::isAbutLastSleepingSlot() {
-	return true;
+	return SlottedFishSession::lastSlotOrdinal() == FishingParameters::LastSlotOrdinalToFish - 1;
 }

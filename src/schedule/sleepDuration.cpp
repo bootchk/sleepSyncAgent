@@ -10,6 +10,9 @@
 // fishSchedule knows fish slot timing
 #include "../slots/fishing/fishSchedule.h"
 
+// lib embeddedMath
+#include <timeMath.h>
+
 
 
 
@@ -22,11 +25,11 @@ DeltaTime SleepDuration::nowTilFishStart() {
 }
 
 DeltaTime SleepDuration::nowTilPreludeWSync() {
-	return nowTilSyncPoint() - preludeTilNextTask();
+	return TimeMath::deltaSubtraction( nowTilSyncPoint(), preludeTilNextTask());
 }
 
 DeltaTime SleepDuration::nowTilPreludeWFish() {
-	return nowTilFishStart() - preludeTilNextTask();
+	return TimeMath::deltaSubtraction(nowTilFishStart(), preludeTilNextTask());
 }
 
 /*
@@ -37,5 +40,5 @@ DeltaTime SleepDuration::nowTilPreludeWFish() {
  * Another design would get an event from prelude completed.
  */
 DeltaTime SleepDuration::preludeTilNextTask() {
-	return ScheduleParameters::RealSlotDuration;
+	return ScheduleParameters::VirtualSlotDuration;
 }

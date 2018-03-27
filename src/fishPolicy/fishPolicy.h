@@ -30,20 +30,30 @@
  * That is where a drifted master is most likely to be.
  */
 class SyncRecoveryTrollingPolicy {
-private:
-	static SlotCount nextFishSlotOrdinal();
 public:
+	static void proceedToNextFishSlotOrdinal();
+
 	static void restart();
-	static void checkDone() {};
+	static bool checkDone();
+
+	/*
+	 * There is no init.
+	 * currentSessionStartSlotOrdinal and isFish<Foo> are valid even without a call to proceedToNextFishSlotOrdinal().
+	 * Said methods are usually called before getStartTimeToFish,
+	 */
+	static SlotCount currentSessionStartSlotOrdinal();
+	/*
+	 * Is current fish session in given position in syncperiod.
+	 * Near means: within one slot
+	 */
+	static bool isFishSessionNearStartSyncPeriod();
+	static bool isFishSessionNearEndSyncPeriod();
+
 
 	static LongTime getStartTimeToFish();
 	static DeltaTime getFishSessionDuration();
 
-	/*
-	 * Is current fish session in given position in syncperiod.
-	 */
-	static bool isFishSlotStartSyncPeriod();
-	static bool isFishSlotEndSyncPeriod();
+
 
 private:
 	static bool isCoverFirstSleepingSlot();

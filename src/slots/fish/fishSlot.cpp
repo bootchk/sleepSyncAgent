@@ -9,3 +9,7 @@ void FishSlot::beginListen() {
 	// Handler handles all fishing modes (Trolling and Deep)
 	Receiver::startWithHandler(FishSlotMessageHandler::handle);
 }
+
+void FishSlot::endListen() {
+	Receiver::stop();
+}
