@@ -68,7 +68,7 @@ void SSTask::sendSync() {
 
 	// Next task is syncSlotEnd since it has a callback to app
 	// Alternatively, we could schedule next fishing task.
-	SyncSchedule::syncSlotEndSend();
+	SyncSchedule::syncSlotEndFromSend();
 }
 
 
@@ -77,7 +77,7 @@ void SSTask::sendSync() {
  */
 void SSTask::endSyncSlotListen() {
 	// stop receiving and other bookkeeping
-	SyncWorkSlot::endListen();
+	SyncSlot::endListen();
 
 	scheduleNonSyncTask();
 }
@@ -85,7 +85,9 @@ void SSTask::endSyncSlotListen() {
 
 
 void SSTask::endSyncSlotSend() {
-	// Radio not active.
+	/*
+	 * Radio not active, no events/tasks expected from it.
+	 */
 	scheduleNonSyncTask();
 }
 

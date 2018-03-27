@@ -14,5 +14,7 @@ public:
 	static SyncSlotKind kind();
 
 	static void dispatchSyncSlotKind();
+
 	static void beginListen();
+	static void endListen();
 };

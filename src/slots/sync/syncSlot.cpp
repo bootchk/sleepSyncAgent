@@ -10,6 +10,10 @@
 #include "../../messageHandler/messageHandler.h"
 #include "../../receiver/receiver.h"
 
+#include "../../globals.h"	// clique
+#include "../../clique/clique.h"
+
+
 
 namespace {
 	/*
@@ -26,8 +30,21 @@ SyncSlotKind SyncSlot::kind() { return _kind; }
 
 
 void SyncSlot::beginListen() {
+	Logger::log(" Listen ");
 	Receiver::startWithHandler(SyncSlotMessageHandler::handle);
 }
+
+// Some duplication w old SyncWorkSlot::endListen
+void SyncSlot::endListen() {
+	// Radio might be in use if we timeout'd while receiving
+	Receiver::stop();
+
+	// FUTURE we could do this elsewhere, e.g. start of sync slot
+	if (!clique.isSelfMaster())
+		clique.checkMasterDroppedOut();
+}
+
+
 
 // TODO slots/syncing/?  endListen() is old and not for RTC Task
 
@@ -57,8 +74,7 @@ void SyncSlot::dispatchSyncSlotKind() {
 		// isSlave OR (isMaster and not xmitting (coin flip))
 
 		beginListen();
-		//Logger::log(" Listens ");
-		SyncSchedule::syncSlotEndListen();
+		SyncSchedule::syncSlotEndFromListen();
 		/*
 		 * Two possible tasks:
 		 * 1. Radio is listening. Events from radio handled by handlerTask.

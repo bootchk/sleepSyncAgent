@@ -27,7 +27,7 @@ public:
  * This affects the default;
  */
 
-	static const SlotCount SlotsTrollingFishedPerPeriod = 1;
+	static const SlotCount MinSlotsTrollingFishedPerPeriod = 1;
 
 	/*
 	 * Subtract to account for HFXO Startup.
@@ -35,7 +35,7 @@ public:
 	 * because it would overlap the next SyncSlot.
 	 */
 	static const SlotCount LastSlotOrdinalToFish = ScheduleParameters::CountSlots
-			- SlotsTrollingFishedPerPeriod;	// !!!
+			- MinSlotsTrollingFishedPerPeriod;	// !!!
 	static const SlotCount FirstSlotOrdinalToFish = ScheduleParameters::FirstSleepingSlotOrdinal;
 
 	/*
@@ -52,7 +52,10 @@ public:
 
 	static const DeltaTime MinTrollingRealFishSessionDurationTicks =
 					ScheduleParameters::HFXOStartup
-					+ SlotsTrollingFishedPerPeriod * ScheduleParameters::VirtualSlotDuration;
+					+ MinSlotsTrollingFishedPerPeriod * ScheduleParameters::VirtualSlotDuration;
+
+	static const DeltaTime MinTrollingFishSessionDurationTicks =
+			MinSlotsTrollingFishedPerPeriod * ScheduleParameters::VirtualSlotDuration;
 
 	// TODO calculate from syncperiod and active slots
 	static const DeltaTime MaxTrollingRealFishSessionDurationTicks = 1000;

@@ -53,9 +53,6 @@ void tryFishOrMerge() {
 		/*
 		 * Otherwise, do no fishing or merging.
 		 */
-#ifdef TASKS
-		Schedule::syncSlotAfterSyncSlot();
-#endif
 	}
 }
 

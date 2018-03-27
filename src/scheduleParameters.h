@@ -231,6 +231,8 @@ static const DeltaTime RealSlotDuration = VirtualSlotDuration + HFXOStartup;
 
 static const DeltaTime DeltaSyncPointToSyncSlotMiddle = HalfSlotDuration + HFXOStartup - PhysicalParameters::SendLatency;
 
+static const DeltaTime DeltaSyncSlotStartToSyncSlotXmit = HalfSlotDuration - PhysicalParameters::SendLatency;
+
 
 
 /*

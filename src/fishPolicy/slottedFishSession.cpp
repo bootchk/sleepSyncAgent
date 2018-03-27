@@ -14,8 +14,10 @@ namespace {
     // Default values
 
 	// The design is: change these together
-	DeltaTime _dynamicFishSessionDuration = FishingParameters::MinTrollingRealFishSessionDurationTicks;
-	SlotCount _sessionDurationInSlots = 1;
+
+	// !!! Not old design "real" but "virtual" slots.  TODO, when abandon old design, discard these comments
+	DeltaTime _dynamicFishSessionDuration = FishingParameters::MinTrollingFishSessionDurationTicks;
+	SlotCount _sessionDurationInSlots = 1;	// TODO symbolic FishingParameters::MinTrollingFishSessionDurationSlots
 }
 
 

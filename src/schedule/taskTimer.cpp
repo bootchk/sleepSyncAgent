@@ -4,6 +4,9 @@
 // radioSoC
 #include <clock/timer.h>
 
+#include "../logging/logger.h"
+
+
 
 // TODO eliminate wrapper
 
@@ -23,6 +26,9 @@ void timerCallback(TimerInterruptReason reason) {
 
 void TaskTimer::schedule(Task task, DeltaTime duration) {
 	aTask = task;
+
+	// Usually name of task is logged just ahead of this
+	Logger::log(":"); Logger::logInt(duration);
 
 	Timer::start(
 			First,

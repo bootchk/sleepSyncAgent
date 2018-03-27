@@ -74,6 +74,8 @@ void SyncWorkSlot::sendControlSync(){
 	SyncSender::sendControlSync();
 }
 
+
+
 void SyncWorkSlot::endListen(){
 	// Radio might be in use if we timeout'd while receiving
 	Ensemble::stopReceiving();
@@ -82,7 +84,6 @@ void SyncWorkSlot::endListen(){
 	if (!clique.isSelfMaster())
 		clique.checkMasterDroppedOut();
 
-	// TODO not correct for RTC Task
 	Ensemble::shutdown();
 }
 

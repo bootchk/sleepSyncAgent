@@ -30,8 +30,8 @@ public:
 
 	// Waypoints of SyncSlot
 	static void syncSendTask();
-	static void syncSlotEndSend();
-	static void syncSlotEndListen();
+	static void syncSlotEndFromSend();
+	static void syncSlotEndFromListen();
 
 	// to slots in normally sleeping slots
 	static void omitNonsyncSlot();
