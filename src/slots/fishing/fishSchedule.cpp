@@ -31,10 +31,10 @@ void FishSchedule::setStartAndEndTimes() {
 
 	Logger::log(" Fish:");
 	Logger::logInt(FishingManager::currentSessionStartSlotOrdinal());
-	Logger::log(" ");
-	Logger::log(_memoStartTimeOfFishSlot);
-	Logger::log(" ");
-	Logger::log(_memoEndTimeOfFishSlot);
+	//Logger::log(" ");
+	//Logger::log(_memoStartTimeOfFishSlot);
+	//Logger::log(" ");
+	//Logger::log(_memoEndTimeOfFishSlot);
 
 }
 

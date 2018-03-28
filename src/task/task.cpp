@@ -4,7 +4,6 @@
 #include "../schedule/radioPrelude.h"
 #include "../schedule/syncSchedule.h"
 
-#include "../syncAgentImp/syncAgentImp.h"
 #include "../syncAgentImp/state/syncMode.h"
 
 // TODO one is old design
@@ -103,10 +102,13 @@ void SSTask::radioPrelude() {
 
 void SSTask::startSyncPeriodMaintain() {
 	assert(not RadioPrelude::isDone());
-	// bookkeeping
-	SyncAgentImp::preludeToSyncPeriod();
 
-	SyncModeManager::checkPowerAndTryModeTransitions();
+	/*
+	 * Call back app and try transition
+	 */
+	SyncSlot::bookkeepingAtPreludeToSyncSlot();
+
+	SyncSlot::bookkeepingAtStartSyncSlot();
 
 	/*
 	 * We can't do this syncperiod, because RadioPrelude not done for SyncSlot.
@@ -136,12 +138,11 @@ void SSTask::startSyncSlotWithoutScheduledPrelude() {
 
 
 void SSTask::startSyncSlotAfterPrelude() {
-	Logger::log("\nStart sync slot ");
+	Logger::log("\nSyncPt ");
 	assert(RadioPrelude::isDone());
-	// bookkeeping
-	SyncAgentImp::preludeToSyncPeriod();
 
-	SyncModeManager::checkPowerAndTryModeTransitions();
+
+	SyncSlot::bookkeepingAtStartSyncSlot();
 
 	switch(SyncModeManager::mode()) {
 	case SyncMode::Maintain:

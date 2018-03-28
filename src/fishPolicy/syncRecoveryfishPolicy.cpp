@@ -84,8 +84,6 @@ void SyncRecoveryTrollingPolicy::proceedToNextFishSlotOrdinal() {
 
 	direction = ! direction;	// reverse direction, i.e. counter to return next call
 
-	Logger::log(" Troll ");  Logger::logInt(next);
-
 	currentSlotOrdinal = next;	// Validity checked on retrieval
 }
 

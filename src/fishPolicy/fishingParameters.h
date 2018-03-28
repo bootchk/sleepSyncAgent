@@ -22,7 +22,7 @@ class FishingParameters {
 public:
 
 /*
- * Certain build configurations (Debug52 running on NRF52DK USB powered)
+ * Certain build configurations (Debug52 running on nrf52DK USB powered)
  * calls to increment duration.
  * This affects the default;
  */

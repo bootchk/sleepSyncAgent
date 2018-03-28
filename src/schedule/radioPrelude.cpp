@@ -18,14 +18,14 @@ namespace {
 }
 
 void  RadioPrelude::doIt() {
-	Logger::log(" RP::do ");
+	Logger::log(" RP^ ");
 	ClockFacilitator::startHFXONoWait();
 	isStarted = true;
 }
 
 
 void  RadioPrelude::undo() {
-	Logger::log(" RP::undo ");
+	Logger::log(" RPv ");
 	ClockFacilitator::stopHFXO();
 	isStarted = false;
 }

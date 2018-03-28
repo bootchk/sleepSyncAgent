@@ -31,24 +31,26 @@ public:
  * but we just measure the total.
  *
  */
-#ifdef NRF52
+#if defined( NRF52 )
 	/*
 	 * 2 rampup + 2 OTA + ? SW overhead
 	 *
 	 * SW overhead appears to be about 1 tick
 	 *
-	 * 4 measured July 2017 no optimization, logging enable, asserts enabled, gcc 6, NRF52DK
+	 * 4 measured July 2017 no optimization, logging enable, asserts enabled, gcc 6, nrf52DK
 	 */
 	static const DeltaTime SendLatency = 4;
-#else // NRF51
+#elif defined( NRF51)
 	/*
 	 * 4 rampup + 2 OTA + ? SW overhead
 	 *
 	 * SW overhead appears to be about 4 ticks, i.e. 4x nrf52
 	 *
-	 * 10 measured July 2017 no optimization, logging enable, asserts enabled, gcc 6, Waveshare Core to NRF52DK
+	 * 10 measured July 2017 no optimization, logging enable, asserts enabled, gcc 6, Waveshare Core
 	 */
 	static const DeltaTime SendLatency = 10;
+#else
+#error "NRFxx not defined"
 #endif
 
 

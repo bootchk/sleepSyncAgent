@@ -68,6 +68,8 @@ private:
 
 	// methods
 public:
+	static void callbackAppPreSync();
+
 	// Miscellaneous bookkeeping at start of syncPeriod
 	static void preludeToSyncPeriod();
 

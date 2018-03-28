@@ -78,7 +78,10 @@ void SyncAgentImp::preludeToLoop() {
 }
 
 
-
+void SyncAgentImp::callbackAppPreSync() {
+	//Phase::set(PhaseEnum::SyncPointCallback);
+	onSyncPointCallback();	// call back app, which must return quickly
+}
 
 void SyncAgentImp::preludeToSyncPeriod() {
 	/*
@@ -94,10 +97,6 @@ void SyncAgentImp::preludeToSyncPeriod() {
 	 * Now, radio is off but HFXO might still be on.
 	 */
 	assert(not Ensemble::isRadioInUse());	// After every sync period
-
-	// TODO move this to where it could not possible interfere with SyncSlot
-	Phase::set(PhaseEnum::SyncPointCallback);
-	onSyncPointCallback();	// call back app, which must return quickly
 
 	// app may have queued work
 
@@ -124,6 +123,7 @@ void SyncAgentImp::loop(){
 	while (true){
 
 		preludeToSyncPeriod();
+
 
 		/*
 		 * Remote logging is high priority.

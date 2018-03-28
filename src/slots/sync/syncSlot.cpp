@@ -13,6 +13,8 @@
 #include "../../globals.h"	// clique
 #include "../../clique/clique.h"
 
+#include "../../syncAgentImp/syncAgentImp.h"
+#include "../../syncAgentImp/state/syncMode.h"
 
 
 namespace {
@@ -26,6 +28,25 @@ namespace {
 
 
 SyncSlotKind SyncSlot::kind() { return _kind; }
+
+
+
+
+/*
+ * Do least possible, since it shortens the sync listen.
+ *
+ * Older design calledBack app and transitioned mode here.
+ * Now, that is moved to the RadioPrelude slot before the SyncSlot.
+ */
+void SyncSlot::bookkeepingAtStartSyncSlot() {
+	SyncAgentImp::preludeToSyncPeriod();
+}
+
+
+void SyncSlot::bookkeepingAtPreludeToSyncSlot() {
+	SyncAgentImp::callbackAppPreSync();
+	SyncModeManager::checkPowerAndTryModeTransitions();
+}
 
 
 

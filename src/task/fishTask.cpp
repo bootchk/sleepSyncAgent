@@ -109,6 +109,4 @@ void SSTask::provisionStart() {
 }
 
 
-void SSTask::mergerStart() {
-	// TODO unimp
-}
+
