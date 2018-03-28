@@ -4,6 +4,7 @@
 #include "../../fishPolicy/fishPolicy.h"
 
 
+// TODO most of this goes away if FishingPolicy is a class instance
 
 namespace {
 	FishingMode fishingMode = FishingMode::Trolling;
@@ -57,6 +58,22 @@ void FishingManager::checkFishingDone() {
 		break;
 	}
 }
+
+SlotCount FishingManager::currentSessionStartSlotOrdinal(){
+	SlotCount result;
+
+	switch(fishingMode){
+	case FishingMode::Trolling:
+	default:
+		result = SyncRecoveryTrollingPolicy::currentSessionStartSlotOrdinal();
+		break;
+	case FishingMode::DeepFishing:
+		result = DeepFishingPolicy::currentSessionStartSlotOrdinal();
+		break;
+	}
+	return result;
+}
+
 
 
 LongTime FishingManager::getStartTimeToFish(){

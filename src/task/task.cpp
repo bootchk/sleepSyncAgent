@@ -136,6 +136,7 @@ void SSTask::startSyncSlotWithoutScheduledPrelude() {
 
 
 void SSTask::startSyncSlotAfterPrelude() {
+	Logger::log("\nStart sync slot ");
 	assert(RadioPrelude::isDone());
 	// bookkeeping
 	SyncAgentImp::preludeToSyncPeriod();

@@ -97,3 +97,10 @@ bool DeepFishingPolicy::isFishSlotEndSyncPeriod() {
 	// if start time is less than two slots from end of sync period.
 	return false;	// TEMP
 }
+
+
+SlotCount DeepFishingPolicy::currentSessionStartSlotOrdinal() {
+	// Not used except for logging.
+	// We could decide what slot the fishing time is in.
+	return 0;
+}

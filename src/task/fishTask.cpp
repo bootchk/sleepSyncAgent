@@ -95,6 +95,7 @@ void SSTask::fishSlotEnd() {
 	FishSlot::endListen();	// Receiver::stop();
 	assert(RadioPrelude::isDone());	// because sync slot might abut
 
+	// Advances to next trolling slot or ends deep
 	FishingManager::checkFishingDone();
 
 	SyncSchedule::syncSlotAfterFishSlot();

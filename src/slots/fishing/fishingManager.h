@@ -70,6 +70,7 @@ public:
 	static void restartTrollingMode();
 
 
+	static SlotCount currentSessionStartSlotOrdinal();
 
 	/*
 	 * FishSession schedule by current mode.

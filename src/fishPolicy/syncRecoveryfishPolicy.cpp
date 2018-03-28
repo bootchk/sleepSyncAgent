@@ -13,18 +13,37 @@
 using namespace Fishing;	// utils.h
 
 
+// TODO, should be an init function and not duplicate code below
+
 namespace {
 
 /*
- * !!! upCounter initialized to  last slot, the first call after reset increments,
+ * In the old design, we advanced just before fishing.
+ * In new design, we advance after fishing.
+ *
+ * In old design upCounter initialized to  last slot, the first call after reset increments,
  * and the first result is FirstSleepingSlotOrdinal.
  */
-	SlotCount upCounter = FishingParameters::LastSlotOrdinalToFish;
-	SlotCount downCounter = FishingParameters::FirstSlotOrdinalToFish;
-	bool direction = true;
-
+	SlotCount upCounter = FishingParameters::FirstSlotOrdinalToFish ;
+	SlotCount downCounter = FishingParameters::LastSlotOrdinalToFish;
 	SlotCount currentSlotOrdinal = FishingParameters::FirstSlotOrdinalToFish;
+	bool direction = true;
 }
+
+// !!! This should be the same as above compile time initialization.
+/*
+ * Restart is called after a sync slot finds that sync was not received for a long time.
+ * The next trolling fishing will be first fishing slot (abut sync slot.)
+ */
+void SyncRecoveryTrollingPolicy::restart() {
+	Logger::log("reset FishPolicy\n");
+
+	upCounter = FishingParameters::FirstSlotOrdinalToFish;
+	downCounter = FishingParameters::LastSlotOrdinalToFish;
+	currentSlotOrdinal = FishingParameters::FirstSlotOrdinalToFish;
+	direction = true;
+}
+
 
 
 
@@ -33,17 +52,6 @@ SlotCount SyncRecoveryTrollingPolicy::currentSessionStartSlotOrdinal() {
 	assert(currentSlotOrdinal >= FishingParameters::FirstSlotOrdinalToFish
 			and currentSlotOrdinal <= FishingParameters::LastSlotOrdinalToFish);
 	return currentSlotOrdinal;
-}
-
-
-// !!! This should be the same as above compile time initialization.
-void SyncRecoveryTrollingPolicy::restart() {
-	Logger::log("reset FishPolicy\n");
-
-	upCounter = FishingParameters::FirstSlotOrdinalToFish;
-	downCounter = FishingParameters::LastSlotOrdinalToFish;
-	direction = true;
-	// next generated ordinal will be first sleeping slot
 }
 
 

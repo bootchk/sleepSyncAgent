@@ -28,6 +28,14 @@ LongTime _memoEndTimeOfFishSlot;
 void FishSchedule::setStartAndEndTimes() {
 	memoTimeOfFishSessionStart();
 	memoTimeOfFishSessionEnd();
+
+	Logger::log(" Fish:");
+	Logger::logInt(FishingManager::currentSessionStartSlotOrdinal());
+	Logger::log(" ");
+	Logger::log(_memoStartTimeOfFishSlot);
+	Logger::log(" ");
+	Logger::log(_memoEndTimeOfFishSlot);
+
 }
 
 DeltaTime FishSchedule::deltaToFishSessionStart(){
