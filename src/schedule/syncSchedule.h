@@ -25,6 +25,7 @@ public:
 	static void syncSlotAfterNullSyncSlot();
 	static void syncSlotAfterSyncSlot();
 	static void syncSlotAfterFishSlot();
+	static void syncSlotAfterMerging();
 	static void radioPreludeTaskWSync();
 	static void startSyncSlotFromPreludeStart();
 
@@ -40,8 +41,7 @@ public:
 	static void startFishSlotFromPreludeStart();
 	static void fishSlotStart();
 	static void fishSlotEnd();
+
 	static void provisionStart();
 	static void merger();
-
-
 };

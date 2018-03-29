@@ -62,8 +62,7 @@ void SSTask::sendSync() {
 	}
 
 	// Radio peripheral will send and power down
-
-	RadioPrelude::tryUndoAfterSyncing();
+	// FUTURE we can do this now, earlier than what is coded now:  RadioPrelude::tryUndoAfterSyncing();
 
 	// Next task is syncSlotEnd since it has a callback to app
 	// Alternatively, we could schedule next fishing task.
@@ -85,8 +84,10 @@ void SSTask::endSyncSlotListen() {
 
 void SSTask::endSyncSlotSend() {
 	/*
-	 * Radio not active, no events/tasks expected from it.
+	 * Radio not active, no events/tasks expected from radio.
+	 * But RP is active.  (FUTURE, turn it off earlier.)
 	 */
+	assert(RadioPrelude::isDone());
 	scheduleNonSyncTask();
 }
 

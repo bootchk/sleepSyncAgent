@@ -1,5 +1,5 @@
 
-// Part of SSTask class implementation, specific to fishing
+// Part of SSTask class implementation, specific to <fishing>
 #include "task.h"
 
 #include "../schedule/radioPrelude.h"
@@ -100,13 +100,3 @@ void SSTask::fishSlotEnd() {
 
 	SyncSchedule::syncSlotAfterFishSlot();
 }
-
-
-
-
-void SSTask::provisionStart() {
-	// TODO unimp
-}
-
-
-

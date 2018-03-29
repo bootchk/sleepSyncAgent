@@ -82,8 +82,6 @@ public:
 	static DeltaTime getFishSessionDuration();
 
 
-
-
 	static bool isFishSlotStartSyncPeriod();
 	static bool isFishSlotEndSyncPeriod();
 };

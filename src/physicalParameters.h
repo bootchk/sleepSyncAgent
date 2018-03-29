@@ -116,7 +116,7 @@ static const DeltaTime GuessedSendLatency = 10;
 // 2 Mbit bitrate, 128bit message, 32kHz   yields .064mSec == 64uSec = 2 ticks
 // 2 Mbit, 120 bits, 32kHz yields 1.8 ticks
 
-// NOT USED: static const DeltaTime MsgOverTheAirTimeInTicks = 2;
+static const DeltaTime MsgOverTheAirTimeInTicks = 2;
 
 
 /*

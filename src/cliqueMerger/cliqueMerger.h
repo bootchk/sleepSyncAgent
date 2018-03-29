@@ -48,4 +48,6 @@ public:
 
 	// const pointer to const PeriodTime
 	static const PeriodTime* getPeriodTimeToMergeSlotStart();
+
+	static DeltaTime deltaMergeSlotEndToSyncPoint();
 };

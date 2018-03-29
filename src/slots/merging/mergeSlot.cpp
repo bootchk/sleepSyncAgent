@@ -6,33 +6,15 @@
 
 #include "../../modules/syncSender.h"
 #include "../../sleepers/syncSleeper.h"
-#include "../../scheduleParameters.h"
+#include "../../syncAgentImp/syncAgentImp.h"
 
 // For debugging
 #include "../../logging/logger.h"
 #include "../../syncAgentImp/state/phase.h"
 #include "../../syncAgentImp/state/role.h"
-#include "../../syncAgentImp/syncAgentImp.h"
 
 
 
-namespace {
-
-
-/*
- * Partial application:
- * Convert function of one arg into function of no args.
- *
- * A method that whenever called, returns time remaining until time to start merge slot.
- * !!! This time is before actual start transmit end time, accounting for various preflight.
- */
-DeltaTime timeoutUntilMergeSlotStart() {
-
-	// Pass PeriodTime from my SyncPoint to when self should start MergeSlot
-	return MergeSchedule::deltaToThisMergeStart(SyncAgentImp::cliqueMerger.getPeriodTimeToMergeSlotStart());
-}
-
-} // namespace
 
 
 
@@ -61,7 +43,7 @@ void MergeSlot::perform() {
 	 * sleep without radio until MergeSlotStartTime.
 	 * Pass to SyncSleeper a function to calculate MergeSlotStartTime
 	 */
-	SyncSleeper::sleepUntilTimeout(timeoutUntilMergeSlotStart);
+	SyncSleeper::sleepUntilTimeout(MergeSchedule::deltaToThisMergeStart);
 
 	/*
 	 * MergeSlotStartTime.

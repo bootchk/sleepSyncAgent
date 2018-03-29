@@ -117,7 +117,8 @@ static const unsigned int  DutyCycleInverse = 800;
 
 static const DeltaTime     HalfSlotDuration = VirtualSlotDuration / 2;
 
-
+static const DeltaTime     ThreeSlotDuration = VirtualSlotDuration * 3;
+static const DeltaTime     TwoSlotDuration = VirtualSlotDuration * 3;
 
 
 
@@ -190,6 +191,21 @@ static const DeltaTime HFXOStartup = VirtualSlotDuration;
 // static const DeltaTime PreflightDelta = HFXOStartup + RampupDelay + MsgOverTheAirTimeInTicks;
 static const DeltaTime PreflightDelta = HFXOStartup + PhysicalParameters::SendLatency;
 // TODO plus other parts of ensemble startup?
+
+
+/*
+ * To send one message:
+ * - sendLatency
+ * -- code
+ * -- device rampup
+ * - OTA time
+ *
+ * This does not include any radio prelude
+ */
+static const DeltaTime SendDuration = PhysicalParameters::MsgOverTheAirTimeInTicks + PhysicalParameters::SendLatency;
+
+
+
 
 /*
  * Duration of 'normal' SyncPeriod in units ticks.

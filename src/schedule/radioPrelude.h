@@ -35,6 +35,7 @@ public:
 	 */
 	static bool tryUndoAfterSyncing();
 	static bool tryUndoAfterFishing();
+	static bool tryUndoAfterMerging();
 
 
 private:
@@ -43,4 +44,6 @@ private:
 	 */
 	static bool shouldUndoAfterFishing();
 	static bool shouldUndoAfterSyncing();
+	static bool shouldUndoAfterMerging();
+	// Provisioning does not use RadioPrelude
 };

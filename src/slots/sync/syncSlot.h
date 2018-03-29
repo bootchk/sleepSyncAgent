@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "syncSlotProperty.h"
+#include "syncSlotProperty.h"	// SyncSlotKind
 
 
 

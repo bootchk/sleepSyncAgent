@@ -7,10 +7,16 @@
  * Schedule for MergeSlot
  */
 class MergeSchedule {
+private:
+	static LongTime timeOfThisMergeStart(DeltaTime offset);
+	static DeltaTime deltaToThisMergeStart(const PeriodTime* const offset);
+
 public:
 	/*
-	 * DeltaTime remaining from time of call to time to start MergeSlot
+	 * DeltaTime from now to time to start MergeSlot
 	 */
-	static DeltaTime deltaToThisMergeStart(const PeriodTime* const offset);	 // <<<<
-	static LongTime timeOfThisMergeStart(DeltaTime offset);
+	static DeltaTime deltaToThisMergeStart();
+
+	static bool isMergerStartSyncPeriod();
+	static bool isMergerEndSyncPeriod();
 };

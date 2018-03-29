@@ -27,6 +27,6 @@ public:
 	static void provisionStart();
 	static void provisionEnd();
 
-	static void mergerStart();
-	static void mergerEnd();
+	static void mergerStartAndEnd();
+	// FUTURE static void mergerEnd();
 };

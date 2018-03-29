@@ -361,3 +361,13 @@ SyncMessage* CliqueMerger::makeMergeMsg(){
 const PeriodTime * CliqueMerger::getPeriodTimeToMergeSlotStart() {
 	return &periodTimeToMergeSlotStart;
 }
+
+DeltaTime CliqueMerger::deltaMergeSlotEndToSyncPoint() {
+	DeltaTime deltaSyncPointToMergeSlotStart = periodTimeToMergeSlotStart.get();
+	// Merge slot is one transmission time long
+	DeltaTime deltaSyncPointToMergeSlotEnd = deltaSyncPointToMergeSlotStart + ScheduleParameters::SendDuration;
+	DeltaTime result = TimeMath::clampedSubtraction(
+			ScheduleParameters::NormalSyncPeriodDuration,
+			deltaSyncPointToMergeSlotEnd);
+	return result;
+}

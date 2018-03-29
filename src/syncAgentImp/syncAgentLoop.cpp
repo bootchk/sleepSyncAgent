@@ -148,7 +148,8 @@ void SyncAgentImp::loop(){
 	 */
 	SyncSchedule::initialSyncPeriod();
 	while (true) {
-		MCUSleep::untilAnyEvent();
+		// MCUSleep::untilAnyEvent();
+		MCUSleep::untilInterrupt();
 	}
 #endif
 	// never returns

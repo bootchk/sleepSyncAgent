@@ -11,6 +11,7 @@
 #include "taskTimer.h"
 
 #include "../slots/fishing/fishingManager.h"
+#include "../slots/merging/mergeSchedule.h"
 
 #include "../logging/logger.h"
 
@@ -176,6 +177,8 @@ void SyncSchedule::fishSlotEnd() {
 			FishingManager::getFishSessionDuration());
 }
 
+
+
 void SyncSchedule::syncSlotAfterFishSlot() {
 	if (RadioPrelude::tryUndoAfterFishing()) {
 		assert(not RadioPrelude::isDone());
@@ -187,6 +190,16 @@ void SyncSchedule::syncSlotAfterFishSlot() {
 }
 
 
+void SyncSchedule::syncSlotAfterMerging() {
+	if (RadioPrelude::tryUndoAfterMerging()) {
+		assert(not RadioPrelude::isDone());
+		SyncSchedule::radioPreludeTaskWSync();
+	}
+	else {
+		SyncSchedule::startSyncSlotWithoutScheduledPrelude();
+	}
+}
+
 
 void SyncSchedule::provisionStart() {
 	Logger::log(" Provision");
@@ -196,6 +209,6 @@ void SyncSchedule::provisionStart() {
 
 void SyncSchedule::merger() {
 	Logger::log(" Merger");
-	TaskTimer::schedule(SSTask::mergerStart,
-					SyncSlotSchedule::deltaToThisSyncSlotEnd());	// TODO proper time LOW
+	TaskTimer::schedule(SSTask::mergerStartAndEnd,
+					MergeSchedule::deltaToThisMergeStart());
 }

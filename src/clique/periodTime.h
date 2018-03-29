@@ -30,8 +30,7 @@ public:
 
 	/*
 	 * Convenience (not a method on instance value.)
-	 * From an event's offset in ticks from now, return the periodTime (ticks since start of syncPeriod)
-	 * of the event.
+	 * From an event's offset in ticks from now, return the periodTime (ticks since start of syncPeriod) of the event.
 	 */
 	static DeltaTime convertTickOffset(uint32_t);
 };
