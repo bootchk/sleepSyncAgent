@@ -40,6 +40,8 @@ public:
 	 * Said methods are usually called before getStartTimeToFish,
 	 */
 	static SlotCount currentSessionStartSlotOrdinal();
+	static SlotCount currentSessionEndSlotOrdinal();
+
 	/*
 	 * Is current fish session in given position in syncperiod.
 	 * Near means: within one slot
@@ -56,6 +58,8 @@ public:
 	 */
 	static void proceedToNextFishSlotOrdinal();
 
+	static SlotCount getInitialUpCounter();
+	static SlotCount getInitialDownCounter();
 
 private:
 	static bool isCoverFirstSleepingSlot();
@@ -73,6 +77,7 @@ public:
 	static bool checkDone();
 
 	static SlotCount currentSessionStartSlotOrdinal();
+	static SlotCount currentSessionEndSlotOrdinal();
 
 	static LongTime getStartTimeToFish();
 	static DeltaTime getFishSessionDuration();

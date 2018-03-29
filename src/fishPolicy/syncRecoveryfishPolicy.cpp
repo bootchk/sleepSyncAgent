@@ -30,6 +30,11 @@ namespace {
 	bool direction = true;
 }
 
+
+SlotCount SyncRecoveryTrollingPolicy::getInitialUpCounter() { return FishingParameters::FirstSlotOrdinalToFish; }
+SlotCount SyncRecoveryTrollingPolicy::getInitialDownCounter() { return FishingParameters::LastSlotOrdinalToFish - SlottedFishSession::durationInSlots() + 1; }
+
+
 // !!! This should be the same as above compile time initialization.
 /*
  * Restart is called after a sync slot finds that sync was not received for a long time.
@@ -38,10 +43,13 @@ namespace {
 void SyncRecoveryTrollingPolicy::restart() {
 	Logger::log("reset FishPolicy\n");
 
-	upCounter = FishingParameters::FirstSlotOrdinalToFish;
-	downCounter = FishingParameters::LastSlotOrdinalToFish;
-	currentSlotOrdinal = FishingParameters::FirstSlotOrdinalToFish;
+	upCounter = getInitialUpCounter();
+	downCounter =  getInitialDownCounter();
+	currentSlotOrdinal = upCounter;
 	direction = true;
+
+	Logger::log("Up:"); Logger::logInt(upCounter);
+	Logger::log("Down:"); Logger::logInt(downCounter);
 }
 
 
@@ -52,6 +60,10 @@ SlotCount SyncRecoveryTrollingPolicy::currentSessionStartSlotOrdinal() {
 	assert(currentSlotOrdinal >= FishingParameters::FirstSlotOrdinalToFish
 			and currentSlotOrdinal <= FishingParameters::LastSlotOrdinalToFish);
 	return currentSlotOrdinal;
+}
+
+SlotCount SyncRecoveryTrollingPolicy::currentSessionEndSlotOrdinal() {
+	return currentSessionStartSlotOrdinal() + SlottedFishSession::durationInSlots();
 }
 
 
@@ -127,9 +139,9 @@ bool SyncRecoveryTrollingPolicy:: isAbutFirstSleepingSlot() {
 }
 
 bool SyncRecoveryTrollingPolicy::isCoverLastSleepingSlot() {
-	return SlottedFishSession::lastSlotOrdinal() >=  FishingParameters::LastSlotOrdinalToFish ;
+	return currentSessionEndSlotOrdinal() >=  FishingParameters::LastSlotOrdinalToFish ;
 }
 
 bool SyncRecoveryTrollingPolicy::isAbutLastSleepingSlot() {
-	return SlottedFishSession::lastSlotOrdinal() == FishingParameters::LastSlotOrdinalToFish - 1;
+	return currentSessionEndSlotOrdinal() == FishingParameters::LastSlotOrdinalToFish - 1;
 }
