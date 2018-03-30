@@ -58,23 +58,28 @@ public:
 	 *
 	 * Duration includes one HFXOStartup and one or many VirtualSlotDurations
 	 */
-	static const DeltaTime DeepFishSessionDurationTicks =
-				ScheduleParameters::HFXOStartup
-				+ ScheduleParameters::VirtualSlotDuration;
-
+#ifdef TASKS
+	// Radio Prelude is separate
+	static const DeltaTime DeepFishSessionDurationTicks = ScheduleParameters::VirtualSlotDuration;
+	static const DeltaTime MinTrollingFishSessionDurationTicks = MinSlotsTrollingFishedPerPeriod * ScheduleParameters::VirtualSlotDuration;
+#else
 	static const DeltaTime MinTrollingRealFishSessionDurationTicks =
 					ScheduleParameters::HFXOStartup
 					+ MinSlotsTrollingFishedPerPeriod * ScheduleParameters::VirtualSlotDuration;
+	static const DeltaTime DeepFishRealSessionDurationTicks =
+						ScheduleParameters::HFXOStartup
+						+ ScheduleParameters::VirtualSlotDuration;
+#endif
 
-	static const DeltaTime MinTrollingFishSessionDurationTicks =
-			MinSlotsTrollingFishedPerPeriod * ScheduleParameters::VirtualSlotDuration;
-
-	// TODO calculate from syncperiod and active slots
-	static const DeltaTime MaxTrollingRealFishSessionDurationTicks = 1000;
+	// Arbitrarily limit trolling to 100 slots
+	static const DeltaTime MaxTrollingRealFishSessionDurationSlots = 100;
 
 
 	/*
 	 * The number of syncPeriods we deep fish.
 	 */
 	static const unsigned int CountFishingsPerDeepFishing = 6;
+
+
+	static const unsigned int DurationTilTwoSlotsFromEndSyncPeriod = ScheduleParameters::NormalSyncPeriodDuration - 2 * ScheduleParameters::VirtualSlotDuration;
 };

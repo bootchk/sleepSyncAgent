@@ -38,7 +38,7 @@ void SlottedFishSession::incrementFishSessionDuration(SlotCount increment) {
 	DeltaTime trialResult = _sessionDurationInSlots + increment;
 
 	// Not larger than all of sync period.
-	if (trialResult > FishingParameters::MaxTrollingRealFishSessionDurationTicks) {
+	if (trialResult > FishingParameters::MaxTrollingRealFishSessionDurationSlots) {
 		Logger::log("!!!Try overflow fish duration\n");
 		return;
 	}
@@ -62,15 +62,15 @@ void SlottedFishSession::decrementFishSessionDuration(SlotCount decrement){
 		_dynamicFishSessionDurationInTicks -= decrement;
 
 	// Prevent less than minimum required by other code
-	if (_dynamicFishSessionDurationInTicks < FishingParameters::MinTrollingRealFishSessionDurationTicks)
-		_dynamicFishSessionDurationInTicks = FishingParameters::MinTrollingRealFishSessionDurationTicks;
+	if (_dynamicFishSessionDurationInTicks < FishingParameters::MinTrollingFishSessionDurationTicks)
+		_dynamicFishSessionDurationInTicks = FishingParameters::MinTrollingFishSessionDurationTicks;
 }
 
 
 void SlottedFishSession::setDurationToMinDuration() {
 	Logger::logToMinFish();
 	_sessionDurationInSlots = 1;
-	_dynamicFishSessionDurationInTicks = FishingParameters::MinTrollingRealFishSessionDurationTicks;
+	_dynamicFishSessionDurationInTicks = FishingParameters::MinTrollingFishSessionDurationTicks;
 
 	// TODO SyncRecoveryTrollingPolicy::restart();
 }

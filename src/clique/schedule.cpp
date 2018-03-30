@@ -190,7 +190,7 @@ void Schedule::adjust(LongTime newEndTime) {
 	// assert old startTimeOfSyncPeriod < new endTimeOfSyncPeriod  < nowTime() + 2*periodDuration
 
 	// endTime never advances backward
-	assert(_endTimeOfSyncPeriod > _unadjustedEndTimeOfSyncPeriod);
+	assert(_endTimeOfSyncPeriod >= _unadjustedEndTimeOfSyncPeriod);
 
 	// end time never jumps too far forward from remembered start time.
 	assert( (_endTimeOfSyncPeriod - startTimeOfSyncPeriod()) <= 2* ScheduleParameters::NormalSyncPeriodDuration);

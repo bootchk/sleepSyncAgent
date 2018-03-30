@@ -86,4 +86,7 @@ public:
 
 	static bool isFishSlotStartSyncPeriod();
 	static bool isFishSlotEndSyncPeriod();
+
+private:
+	static DeltaTime deltaSyncPointToEndDeepFishing();
 };

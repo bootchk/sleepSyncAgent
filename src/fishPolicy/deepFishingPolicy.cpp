@@ -58,9 +58,8 @@ LongTime DeepFishingPolicy::getStartTimeToFish() {
 
 /*
  * Deep fishing is one slot, to cover sync slot of fishee.
- * !!! Is two real slots, one sleeping for HFXO startup.
  *
- * Compile time constant.
+ * !!! In older design, is two real slots, one sleeping for HFXO startup.
  */
 DeltaTime DeepFishingPolicy::getFishSessionDurationTicks() {
 	// Constant
@@ -91,16 +90,16 @@ void  DeepFishingPolicy::preFishing() {
 	;
 }
 
+DeltaTime DeepFishingPolicy::deltaSyncPointToEndDeepFishing() {
+	return deltaSyncPointToSyncPointOfFishee + getFishSessionDurationTicks();
+}
+
 bool DeepFishingPolicy::isFishSlotStartSyncPeriod() {
-	// TODO Task
-	// If start time is less than three slots from start of sync period
-	return false;	// TEMP
+	return deltaSyncPointToSyncPointOfFishee < ScheduleParameters::ThreeSlotDuration;
 }
 
 bool DeepFishingPolicy::isFishSlotEndSyncPeriod() {
-	// TODO Task
-	// if start time is less than two slots from end of sync period.
-	return false;	// TEMP
+	return deltaSyncPointToEndDeepFishing() <  FishingParameters::DurationTilTwoSlotsFromEndSyncPeriod;
 }
 
 

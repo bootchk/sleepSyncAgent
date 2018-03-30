@@ -108,11 +108,21 @@ void handleGranularityAspectOfMasterSync(SyncMessage* msg){
  * Which is equal to slot duration minus delta from now to end of SyncSlot
  */
 DeltaTime getFishingDeltaFromMergeMsg(SyncMessage* msg) {
-	LongTime timeToFish = clique.schedule.adjustedEventTimeFromMsg(msg);
-	DeltaTime deltaToFish = TimeMath::clampedTimeDifferenceFromNow(timeToFish);
+	LongTime timeOfSyncPtOfMerge = clique.schedule.adjustedEventTimeFromMsg(msg);
+	DeltaTime deltaNowToTimeOfSyncPtOfMerge = TimeMath::clampedTimeDifferenceFromNow(timeOfSyncPtOfMerge);
 
-	// We haven't changed cliques, schedule is unchanged (or slightly changed) since we started SyncSlot
-	DeltaTime result = deltaToFish + clique.schedule.deltaPastSyncPointToNow();
+	/*
+	 * Assert: We haven't changed cliques, schedule is unchanged (or slightly changed) since we started SyncSlot.
+	 *
+	 * We have already taken out TOA, we don't add deltaPastSyncPointToTOA
+	 */
+	DeltaTime result = deltaNowToTimeOfSyncPtOfMerge + clique.schedule.deltaPastSyncPointToNow();
+	/*
+	 * Result is for Deep fishing.
+	 * Result is to a SyncPoint.
+	 * We need to start listening near the SyncPoint since Sync is xmitted in middle of following SyncSlot.
+	 * The result does not allow for RadioPrelude.
+	 */
 
 	// No assertions here, assertions later when we use it.
 	return result;
