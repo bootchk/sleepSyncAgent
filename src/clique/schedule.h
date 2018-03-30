@@ -127,6 +127,11 @@ public:
 	 */
 	static DeltaTime deltaNowToNextSyncPoint();
 	static LongTime timeOfNextSyncPoint();
+	/*
+	 * This IS a PeriodTime, in range [0, normalSyncPeriodDuration]
+	 */
+	static DeltaTime deltaNowToNextUnadjustedSyncPoint();
+	static LongTime timeOfUnadjustedNextSyncPoint();
 
 
 	static LongTime latestTimeToEndSlots();

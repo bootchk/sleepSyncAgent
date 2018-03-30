@@ -107,7 +107,7 @@ void SyncSchedule::syncSendTask() {
 }
 
 void SyncSchedule::syncSlotEndFromListen() {
-	Logger::log(" EndFListen");
+	Logger::log(" EndFLstn");
 	TaskTimer::schedule(SSTask::endSyncSlotListen,
 			SyncSlotSchedule::deltaToThisSyncSlotEnd());
 }

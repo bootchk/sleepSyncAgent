@@ -17,6 +17,7 @@ namespace {
  * Invariant: in the past
  */
 LongTime _startTimeOfSyncPeriod;
+LongTime _unadjustedEndTimeOfSyncPeriod;
 
 /*
  * Set every SyncPoint (when SyncPeriod starts) to normal end time
@@ -56,6 +57,7 @@ void rollPeriodForwardDiscretely() {
 
 	 _startTimeOfSyncPeriod = _endTimeOfSyncPeriod;
 	 _endTimeOfSyncPeriod = _startTimeOfSyncPeriod + ScheduleParameters::NormalSyncPeriodDuration;
+	 _unadjustedEndTimeOfSyncPeriod = _endTimeOfSyncPeriod;
 
 	 Logger::logStartSyncPeriod(_startTimeOfSyncPeriod);
 
@@ -174,15 +176,13 @@ void Schedule::adjustWithRandomAddedTime(){
 
 
 void Schedule::adjust(LongTime newEndTime) {
-	LongTime oldEndTimeOfSyncPeriod = _endTimeOfSyncPeriod;
-
 	// FUTURE optimization?? If adjustedEndTime is near old endTime, forego setting it?
 	_endTimeOfSyncPeriod = newEndTime;
 
 	// assert old startTimeOfSyncPeriod < new endTimeOfSyncPeriod  < nowTime() + 2*periodDuration
 
 	// endTime never advances backward
-	assert(_endTimeOfSyncPeriod > oldEndTimeOfSyncPeriod);
+	assert(_endTimeOfSyncPeriod > _unadjustedEndTimeOfSyncPeriod);
 
 	// end time never jumps too far forward from remembered start time.
 	assert( (_endTimeOfSyncPeriod - startTimeOfSyncPeriod()) <= 2* ScheduleParameters::NormalSyncPeriodDuration);
@@ -301,9 +301,8 @@ LongTime Schedule::endTimeOfSyncPeriod(){ return _endTimeOfSyncPeriod; }
  * SyncPoint is the time in the SyncPeriod when we callback onSyncPoint() to the app.
  * See where the callback is invoked.
  */
-LongTime Schedule::timeOfNextSyncPoint() {
-	return _endTimeOfSyncPeriod;
-}
+LongTime Schedule::timeOfNextSyncPoint()           {  return _endTimeOfSyncPeriod;  }
+LongTime Schedule::timeOfUnadjustedNextSyncPoint() {  return _unadjustedEndTimeOfSyncPeriod;  }
 
 
 
@@ -324,6 +323,12 @@ DeltaTime  Schedule::deltaNowToNextSyncPoint() {
 		Logger::log(">>> zero or neg delta to next SyncPoint\n");
 	}
 #endif
+	return result;
+}
+
+
+DeltaTime  Schedule::deltaNowToNextUnadjustedSyncPoint() {
+	DeltaTime result = TimeMath::clampedTimeDifferenceFromNow(timeOfUnadjustedNextSyncPoint());
 	return result;
 }
 

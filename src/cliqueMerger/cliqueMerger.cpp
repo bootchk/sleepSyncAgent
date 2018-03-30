@@ -350,7 +350,12 @@ SyncMessage* CliqueMerger::makeMergeMsg(){
 	 *
 	 * The receiving unit (mergee) will adjust for latency.
 	 */
-	DeltaTime deltaSync = owningClique->schedule.deltaNowToNextSyncPoint();
+
+	/*
+	 * !!! deltaSync must be a PeriodTime (a DeltaSync) so we use unadjuste next sync point.
+	 * Self's next syncpoint may be two sync periods in future, but mergeSync says it is only one syncPeriod away.
+	 */
+	DeltaTime deltaSync = owningClique->schedule.deltaNowToNextUnadjustedSyncPoint();
 
 	return MessageFactory::initMergeSyncMessage(kindOfMerger, deltaSync, superiorMasterID, inferiorMasterID);
 }

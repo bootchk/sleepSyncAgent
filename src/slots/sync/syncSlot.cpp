@@ -51,7 +51,7 @@ void SyncSlot::bookkeepingAtPreludeToSyncSlot() {
 
 
 void SyncSlot::beginListen() {
-	Logger::log(" Listen ");
+	Logger::log("Lstn ");
 	Receiver::startWithHandler(SyncSlotMessageHandler::handle);
 }
 

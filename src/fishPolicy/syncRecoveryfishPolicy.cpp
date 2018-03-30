@@ -43,7 +43,7 @@ void setSessionForStartSlot( SlotCount startSlot) {
 	currentStartSlotOrdinal = startSlot;
 	currentEndSlotOrdinal = currentStartSlotOrdinal + SlottedFishSession::durationInSlots() - 1;
 	assert(isInRange());
-	Logger::log("Fish slots:"); Logger::logInt(currentStartSlotOrdinal); Logger::log(","); Logger::logInt(currentEndSlotOrdinal);
+	Logger::log("Fish:"); Logger::logInt(currentStartSlotOrdinal); Logger::log(","); Logger::logInt(currentEndSlotOrdinal);
 }
 
 
