@@ -25,14 +25,34 @@ namespace {
  * and the first result is FirstSleepingSlotOrdinal.
  */
 	SlotCount upCounter = FishingParameters::FirstSlotOrdinalToFish ;
-	SlotCount downCounter = FishingParameters::LastSlotOrdinalToFish;
-	SlotCount currentSlotOrdinal = FishingParameters::FirstSlotOrdinalToFish;
+	SlotCount downCounter = FishingParameters::LastSlotOrdinalShouldFish;
+
+	/* Default is start and end on same slot. */
+	SlotCount currentStartSlotOrdinal = FishingParameters::FirstSlotOrdinalToFish;
+	SlotCount currentEndSlotOrdinal = FishingParameters::FirstSlotOrdinalToFish;
 	bool direction = true;
+
+
+bool isInRange() {
+	return currentStartSlotOrdinal >= FishingParameters::FirstSlotOrdinalToFish
+				and currentEndSlotOrdinal <= FishingParameters::LastSlotOrdinalShouldFish;
 }
 
 
+void setSessionForStartSlot( SlotCount startSlot) {
+	currentStartSlotOrdinal = startSlot;
+	currentEndSlotOrdinal = currentStartSlotOrdinal + SlottedFishSession::durationInSlots() - 1;
+	assert(isInRange());
+	Logger::log("Fish slots:"); Logger::logInt(currentStartSlotOrdinal); Logger::log(","); Logger::logInt(currentEndSlotOrdinal);
+}
+
+
+} // namespace
+
+
 SlotCount SyncRecoveryTrollingPolicy::getInitialUpCounter() { return FishingParameters::FirstSlotOrdinalToFish; }
-SlotCount SyncRecoveryTrollingPolicy::getInitialDownCounter() { return FishingParameters::LastSlotOrdinalToFish - SlottedFishSession::durationInSlots() + 1; }
+SlotCount SyncRecoveryTrollingPolicy::getInitialDownCounter() { return FishingParameters::LastSlotOrdinalShouldFish - SlottedFishSession::durationInSlots() + 1; }
+
 
 
 // !!! This should be the same as above compile time initialization.
@@ -45,39 +65,29 @@ void SyncRecoveryTrollingPolicy::restart() {
 
 	upCounter = getInitialUpCounter();
 	downCounter =  getInitialDownCounter();
-	currentSlotOrdinal = upCounter;
-	direction = true;
-
 	Logger::log("Up:"); Logger::logInt(upCounter);
 	Logger::log("Down:"); Logger::logInt(downCounter);
+
+	setSessionForStartSlot(upCounter);
+	direction = true;
 }
 
 
 
-
-
-SlotCount SyncRecoveryTrollingPolicy::currentSessionStartSlotOrdinal() {
-	assert(currentSlotOrdinal >= FishingParameters::FirstSlotOrdinalToFish
-			and currentSlotOrdinal <= FishingParameters::LastSlotOrdinalToFish);
-	return currentSlotOrdinal;
-}
-
-SlotCount SyncRecoveryTrollingPolicy::currentSessionEndSlotOrdinal() {
-	return currentSessionStartSlotOrdinal() + SlottedFishSession::durationInSlots();
-}
+SlotCount SyncRecoveryTrollingPolicy::currentSessionStartSlotOrdinal() { return currentStartSlotOrdinal; }
+SlotCount SyncRecoveryTrollingPolicy::currentSessionEndSlotOrdinal() { return currentEndSlotOrdinal; }
 
 
 // TODO if session duration is changed before starting, the above values are not right
 
 
 bool SyncRecoveryTrollingPolicy::checkDone() {
-	/*
-	 * A trolling fish session has been done.  Move to next one.
-	 */
-	proceedToNextFishSlotOrdinal();
 	return false;	// Never done trolling
 }
 
+void SyncRecoveryTrollingPolicy::preFishing() {
+	proceedToNextFishSlotOrdinal();
+}
 
 /*
  * This must only be called once per sync period.
@@ -94,16 +104,16 @@ void SyncRecoveryTrollingPolicy::proceedToNextFishSlotOrdinal() {
 		next = downCounter;
 	}
 
-	direction = ! direction;	// reverse direction, i.e. counter to return next call
+	direction = ! direction;	// alternate direction, i.e. counter to return next call
 
-	currentSlotOrdinal = next;	// Validity checked on retrieval
+	setSessionForStartSlot(next);
 }
 
 
 LongTime SyncRecoveryTrollingPolicy::getStartTimeToFish() {
 
 	// minus 1: convert ordinal to zero-based duration multiplier
-	LongTime result = clique.schedule.startTimeOfSyncPeriod() +  (currentSlotOrdinal - 1) * ScheduleParameters::VirtualSlotDuration;
+	LongTime result = clique.schedule.startTimeOfSyncPeriod() +  (currentStartSlotOrdinal - 1) * ScheduleParameters::VirtualSlotDuration;
 
 	return result;
 }
@@ -112,7 +122,7 @@ LongTime SyncRecoveryTrollingPolicy::getStartTimeToFish() {
 
 
 // delegate to fishSession
-DeltaTime SyncRecoveryTrollingPolicy::getFishSessionDuration() {
+DeltaTime SyncRecoveryTrollingPolicy::getFishSessionDurationTicks() {
 	// Variable with constant default
 	return SlottedFishSession::durationInTicks();
 }
@@ -131,17 +141,17 @@ bool SyncRecoveryTrollingPolicy::isFishSessionNearEndSyncPeriod() {
 // Private
 
 bool SyncRecoveryTrollingPolicy::isCoverFirstSleepingSlot() {
-	return currentSlotOrdinal == FishingParameters::FirstSlotOrdinalToFish;
+	return currentStartSlotOrdinal == FishingParameters::FirstSlotOrdinalToFish;
 }
 
 bool SyncRecoveryTrollingPolicy:: isAbutFirstSleepingSlot() {
-	return currentSlotOrdinal == FishingParameters::FirstSlotOrdinalToFish + 1;
+	return currentStartSlotOrdinal == FishingParameters::FirstSlotOrdinalToFish + 1;
 }
 
 bool SyncRecoveryTrollingPolicy::isCoverLastSleepingSlot() {
-	return currentSessionEndSlotOrdinal() >=  FishingParameters::LastSlotOrdinalToFish ;
+	return currentSessionEndSlotOrdinal() >=  FishingParameters::LastSlotOrdinalShouldFish ;
 }
 
 bool SyncRecoveryTrollingPolicy::isAbutLastSleepingSlot() {
-	return currentSessionEndSlotOrdinal() == FishingParameters::LastSlotOrdinalToFish - 1;
+	return currentSessionEndSlotOrdinal() == FishingParameters::LastSlotOrdinalShouldFish - 1;
 }

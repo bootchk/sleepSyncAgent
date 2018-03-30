@@ -62,7 +62,7 @@ LongTime DeepFishingPolicy::getStartTimeToFish() {
  *
  * Compile time constant.
  */
-DeltaTime DeepFishingPolicy::getFishSessionDuration() {
+DeltaTime DeepFishingPolicy::getFishSessionDurationTicks() {
 	// Constant
 	return FishingParameters::DeepFishSessionDurationTicks;
 }
@@ -85,6 +85,11 @@ bool DeepFishingPolicy::checkDone() {
 	return result;
 }
 
+
+void  DeepFishingPolicy::preFishing() {
+	// Fishing time is fixed (only slightly adjusted by sync messages), does not proceed.
+	;
+}
 
 bool DeepFishingPolicy::isFishSlotStartSyncPeriod() {
 	// TODO Task

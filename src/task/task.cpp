@@ -10,6 +10,8 @@
 #include "../slots/sync/syncSlot.h"
 #include "../slots/syncing/syncWorkSlot.h"
 
+#include "../slots/fishing/fishingManager.h"
+
 #include <cassert>
 
 
@@ -19,7 +21,15 @@ namespace {
  * Schedule task in the normally sleeping slots.
  */
 void scheduleNonSyncTask() {
+
+	/*
+	 * preFishing() decides next fish slot if any.
+	 * Must precede tryUndoAfterSyncing() which uses the decision.
+	 */
+	FishingManager::preFishing();
 	RadioPrelude::tryUndoAfterSyncing();
+
+
 	// Prelude might be done, but radio not in use
 	switch(SyncModeManager::mode()) {
 

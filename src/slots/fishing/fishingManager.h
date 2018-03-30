@@ -41,14 +41,20 @@ public:
 	static FishingMode mode();
 
 	/*
-	 * Mark that fishing was done.
-	 * Proceeds to another spot if trolling.
+	 * Fishing was just done.
 	 * Possible change mode, Deep=>Trolling when Deep is done
 	 *
 	 * Deep is episodic and finite.
 	 * Check for completion, call callback for event, and switch mode to Trolling.
 	 */
 	static void checkFishingDone();
+
+	 /*
+	  * Called near start of each SyncPeriod to allow fishing mode to advance.
+	  * Proceeds to another spot if trolling.
+	  * !!! Must not be called elsewhere during SyncPeriod because it alters parameters of fishing schedule.
+	  */
+	static void preFishing();
 
 
 
@@ -79,7 +85,7 @@ public:
 	 * Caller must ensure it meets other constraints.
 	 */
 	static LongTime getStartTimeToFish();
-	static DeltaTime getFishSessionDuration();
+	static DeltaTime getFishSessionDurationTicks();
 
 
 	static bool isFishSlotStartSyncPeriod();

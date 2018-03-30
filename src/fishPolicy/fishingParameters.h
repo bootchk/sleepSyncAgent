@@ -30,12 +30,24 @@ public:
 	static const SlotCount MinSlotsTrollingFishedPerPeriod = 1;
 
 	/*
-	 * Subtract to account for HFXO Startup.
+	 * The last slot ordinal that any fishing session should cover.
+	 *
+	 * We can cover the very last slot if RadioPrelude is left on so we can start syncSlot immediately thereafter.
+	 */
+	static const SlotCount LastSlotOrdinalShouldFish = ScheduleParameters::CountSlots;
+
+	/*
+	 * OLD design.
+	 *  Subtract to account for HFXO Startup.
 	 * E.G. If we fish one slot, we can't start fishing at the last slot
 	 * because it would overlap the next SyncSlot.
+	 *
+	 * TODO Not used, and old design probably broken now.
 	 */
-	static const SlotCount LastSlotOrdinalToFish = ScheduleParameters::CountSlots
+	static const SlotCount LastSlotOrdinalPreludeToFish = ScheduleParameters::CountSlots
 			- MinSlotsTrollingFishedPerPeriod;	// !!!
+
+
 	static const SlotCount FirstSlotOrdinalToFish = ScheduleParameters::FirstSleepingSlotOrdinal;
 
 	/*

@@ -174,7 +174,7 @@ void SyncSchedule::fishSlotEnd() {
 	// Duration varies
 	Logger::log(" FishEndFStart");
 	TaskTimer::schedule(SSTask::fishSlotEnd,
-			FishingManager::getFishSessionDuration());
+			FishingManager::getFishSessionDurationTicks());
 }
 
 

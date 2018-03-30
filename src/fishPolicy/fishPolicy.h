@@ -33,6 +33,7 @@ class SyncRecoveryTrollingPolicy {
 public:
 	static void restart();
 	static bool checkDone();
+	static void preFishing();
 
 	/*
 	 * There is no init.
@@ -51,7 +52,7 @@ public:
 
 
 	static LongTime getStartTimeToFish();
-	static DeltaTime getFishSessionDuration();
+	static DeltaTime getFishSessionDurationTicks();
 
 	/*
 	 * Subclass specialization
@@ -75,12 +76,13 @@ class DeepFishingPolicy {
 public:
 	static void restart(DeltaTime, Callback);
 	static bool checkDone();
+	static void preFishing();
 
 	static SlotCount currentSessionStartSlotOrdinal();
 	static SlotCount currentSessionEndSlotOrdinal();
 
 	static LongTime getStartTimeToFish();
-	static DeltaTime getFishSessionDuration();
+	static DeltaTime getFishSessionDurationTicks();
 
 	static bool isFishSlotStartSyncPeriod();
 	static bool isFishSlotEndSyncPeriod();

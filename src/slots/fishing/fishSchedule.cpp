@@ -29,8 +29,8 @@ void FishSchedule::setStartAndEndTimes() {
 	memoTimeOfFishSessionStart();
 	memoTimeOfFishSessionEnd();
 
-	Logger::log(" Fish:");
-	Logger::logInt(FishingManager::currentSessionStartSlotOrdinal());
+	//Logger::log(" Fish:");
+	//Logger::logInt(FishingManager::currentSessionStartSlotOrdinal());
 	//Logger::log(" ");
 	//Logger::log(_memoStartTimeOfFishSlot);
 	//Logger::log(" ");
@@ -108,7 +108,7 @@ LongTime FishSchedule::timeOfFishSessionEnd() {
 	 * Next, clamp end time of long session started near end of sync period.
 	 */
 	LongTime scheduledEndTime = _memoStartTimeOfFishSlot
-			+ FishingManager::getFishSessionDuration();
+			+ FishingManager::getFishSessionDurationTicks();
 
 	/*
 	 * Fish session started near end of SyncPeriod
@@ -126,5 +126,5 @@ LongTime FishSchedule::timeOfFishSessionEnd() {
 
 
 void FishSchedule::logParameters() {
-	Logger::log("Fish duration "); Logger::logInt(FishingManager::getFishSessionDuration());
+	Logger::log("Fish duration "); Logger::logInt(FishingManager::getFishSessionDurationTicks());
 }

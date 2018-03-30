@@ -47,8 +47,7 @@ void FishingManager::checkFishingDone() {
 	// Delegate to current fishing mode
 	switch(fishingMode){
 	case FishingMode::Trolling:
-		// It never returns true, don't care
-		(void) SyncRecoveryTrollingPolicy::checkDone();
+		(void) SyncRecoveryTrollingPolicy::checkDone();	// Always false, don't care
 		break;
 	case FishingMode::DeepFishing:
 		if (DeepFishingPolicy::checkDone()) {
@@ -58,6 +57,19 @@ void FishingManager::checkFishingDone() {
 		break;
 	}
 }
+
+void FishingManager::preFishing() {
+	// Delegate to current fishing mode
+	switch(fishingMode){
+	case FishingMode::Trolling:
+		SyncRecoveryTrollingPolicy::preFishing();
+		break;
+	case FishingMode::DeepFishing:
+		DeepFishingPolicy::preFishing();
+		break;
+	}
+}
+
 
 SlotCount FishingManager::currentSessionStartSlotOrdinal(){
 	SlotCount result;
@@ -95,17 +107,17 @@ LongTime FishingManager::getStartTimeToFish(){
 	return result;
 }
 
-DeltaTime FishingManager::getFishSessionDuration(){
+DeltaTime FishingManager::getFishSessionDurationTicks(){
 
 	DeltaTime result;
 
 	switch(fishingMode){
 	case FishingMode::Trolling:
 	default:
-		result = SyncRecoveryTrollingPolicy::getFishSessionDuration();
+		result = SyncRecoveryTrollingPolicy::getFishSessionDurationTicks();
 		break;
 	case FishingMode::DeepFishing:
-		result = DeepFishingPolicy::getFishSessionDuration();
+		result = DeepFishingPolicy::getFishSessionDurationTicks();
 		break;
 	}
 	/*

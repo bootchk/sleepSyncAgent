@@ -15,31 +15,49 @@ void decrementCounterModuloSleepingSlots(SlotCount* counter);
  * but down counter will fish them.
  * Thus slots near the SyncSlot are fished less often then others.
  */
+
+/*
+ * Implementation notes:  counter is unsigned, take care not to subtract possibly below zero
+ */
 void incrementCounterModuloSleepingSlots(SlotCount* counter) {
-	(*counter) += SlottedFishSession::durationInSlots();
+	SlotCount result;
 
-	// If overlaps following sync slot, skip past
+	result = *counter + SlottedFishSession::durationInSlots();
 
-	if (SyncRecoveryTrollingPolicy::currentSessionEndSlotOrdinal() > FishingParameters::LastSlotOrdinalToFish) {
-			*counter = SyncRecoveryTrollingPolicy::getInitialUpCounter();
+	// If overlaps (last slot of session beyond last slot to fish) following sync slot, skip past
+
+	if (result + SlottedFishSession::durationInSlots() > FishingParameters::LastSlotOrdinalShouldFish) {
+			result = SyncRecoveryTrollingPolicy::getInitialUpCounter();
 	}
+	(*counter) =result;
 	/*
 	Trivial case where slotDuration is 1
-	if (*counter > FishingParameters::LastSlotOrdinalToFish) {
+	if (*counter > FishingParameters::LastSlotOrdinalShouldFish) {
 		*counter = FishingParameters::FirstSlotOrdinalToFish;
 	}
 	*/
 }
 
 void decrementCounterModuloSleepingSlots(SlotCount* counter) {
-	(*counter) -= SlottedFishSession::durationInSlots();
-	if (SyncRecoveryTrollingPolicy::currentSessionStartSlotOrdinal() < FishingParameters::FirstSlotOrdinalToFish) {
-		*counter = SyncRecoveryTrollingPolicy::getInitialDownCounter();
+	SlotCount result;
+
+	if ( *counter < FishingParameters::FirstSlotOrdinalToFish + SlottedFishSession::durationInSlots()) {
+		/*
+		 * Subtraction would underflow, i.e. would overlap preceding sync slot.
+		 * Circularly skip past the sync slot.
+		 */
+		result = SyncRecoveryTrollingPolicy::getInitialDownCounter();
 	}
+	else {
+		result = *counter - SlottedFishSession::durationInSlots();
+	}
+	*counter =result;
+
 	/*
 	 if (*counter < FishingParameters::FirstSlotOrdinalToFish) {
-		*counter = FishingParameters::LastSlotOrdinalToFish;
+	 *counter = FishingParameters::LastSlotOrdinalShouldFish;
 	}
-	*/
+	 */
 }
-}
+
+}	// namespace
