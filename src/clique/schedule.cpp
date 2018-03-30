@@ -71,6 +71,14 @@ void rollPeriodForwardDiscretely() {
 }
 
 
+/*
+* Log the small signed adjustment (drift of my clock)
+* See elsewhere, if this is negative, we skip a period.
+*/
+void logDrift(LongTime newSyncEndTime) {
+	Logger::log("Adj:"); Logger::logSignedInt( static_cast<signed int> (newSyncEndTime - Schedule::timeOfNextSyncPoint() ));
+}
+
 } // namespace
 
 
@@ -214,28 +222,39 @@ void Schedule::adjustByCliqueHistoryOffset(DeltaTime offset){
  * where SyncPeriod is never shortened (at all), only extended.
  * Specialized for MasterSync message.
  */
+/*
+ * 2018 lkk old discussion, not valid?
+ * !!!! < or = : if we are already past sync point,
+ * both result and timeOfNextSyncPoint() could be the same
+ * (both deltas are zero.)
+ */
 LongTime Schedule::adjustedSyncPeriodEndTimeFromMsg(const SyncMessage* msg) {
 
 	// Get raw time from msg
 	LongTime result = adjustedEventTimeFromMsg(msg);
 
+	logDrift(result);
+
 	/*
 	 * Don't adjust end time sooner than it already is,
-	 * otherwise fishing and merging in this sync period also need adjusting.
-	 * If the calculate time is sooner, then add duration of a syncperiod.
-	 * So the current sync period will end much later, but that doesn't matter.
+	 * otherwise fishing and merging in this sync period (when near end SyncPeriod) also need adjusting.
 	 *
-	 * !!!! < or = : if we are already past sync point,
-	 * both result and timeOfNextSyncPoint() could be the same
-	 * (both deltas are zero.)
+	 * If newEndTime is sooner, then add duration of a syncperiod.
+	 * Thus the current sync period will end much later (syncPeriod up to 2x long.)
+	 * That works, but is less than ideal because we skip listening.
 	 */
-	if (result <= timeOfNextSyncPoint()) {
+	/*
+	 * Only <, not <=.
+	 * If result is zero, our clock is not drifted at all.
+	 * We don't need to adjust actually.
+	 * We especially don't need to extend our syncPeriod with an extra.
+	 */
+
+	if (result < timeOfNextSyncPoint()) {
 		result += ScheduleParameters::NormalSyncPeriodDuration;
 	}
 
-
-	Logger::log(result);
-	Logger::log("<new period end\n");
+	//Logger::log(result);  Logger::log("<new period end\n");
 
 	assert( (result - startTimeOfSyncPeriod()) <= 2* ScheduleParameters::NormalSyncPeriodDuration);
 	return result;
@@ -268,8 +287,8 @@ LongTime Schedule::adjustedEventTimeFromMsg(const SyncMessage* msg) {
 
 	LongTime result = toa + delta;
 
-	Logger::log(toa);
-	Logger::log("<toa\n");
+	// Logger::log(toa);  Logger::log("<toa\n");
+
 	// Offset already logged in msg details.
 	//logInt(deltaNowToNextSyncPoint());
 	//log(":Delta to next event\n");

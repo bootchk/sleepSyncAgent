@@ -89,6 +89,7 @@ public:
 	static void log(uint8_t);
 	static void log(unsigned long long int);
 	static void logInt(uint32_t); // ??? ambiguous call problems if omit this
+	static void logSignedInt(int32_t);
 
 	/*
 	 * Only using during development, while measuring software.

@@ -103,6 +103,7 @@ void Logger::logInferiorCliqueSyncSlotOfSlave() { localLogger.log("Slave heard i
 void Logger::init() { localLogger.init(); }
 void Logger::log(const char * text) { localLogger.log(text); }
 void Logger::logInt(uint32_t value) { localLogger.log(value); }
+void Logger::logSignedInt(int32_t value) { localLogger.log(value); }
 void Logger::log(uint8_t value) { localLogger.log(value); }
 void Logger::log(unsigned long long value) { localLogger.log(value); }
 
