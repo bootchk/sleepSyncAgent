@@ -86,7 +86,7 @@ void SyncSchedule::radioPreludeTaskWSync() {
 
 void SyncSchedule::startSyncSlotFromPreludeStart() {
 	// Not assert RadioPrelude::isDone() because we schedule this just before RP::do()
-	Logger::log(" StartFPre");
+	Logger::log(" StrtFPre");
 	TaskTimer::schedule(SSTask::startSyncSlotAfterPrelude,
 			SleepDuration::preludeTilNextTask());
 }
@@ -95,13 +95,13 @@ void SyncSchedule::startSyncSlotFromPreludeStart() {
 
 // Prelude still done, don't need to schedule it
 void SyncSchedule::startSyncSlotWithoutScheduledPrelude() {
-	Logger::log(" StartWoPre");
+	Logger::log(" StrtWoPre");
 	TaskTimer::schedule(SSTask::startSyncSlotWithoutScheduledPrelude,
 				SleepDuration::nowTilSyncPoint());
 }
 
 void SyncSchedule::syncSendTask() {
-	Logger::log(" SendFStart");
+	Logger::log(" SndFStrt");
 	TaskTimer::schedule(SSTask::sendSync,
 			SyncSlotSchedule::deltaToThisSyncSlotMiddleSubslot());
 }
@@ -172,7 +172,7 @@ void SyncSchedule::fishSlotStart() {
 void SyncSchedule::fishSlotEnd() {
 
 	// Duration varies
-	Logger::log(" FishEndFStart");
+	Logger::log(" FishEndFStrt");
 	TaskTimer::schedule(SSTask::fishSlotEnd,
 			FishingManager::getFishSessionDurationTicks());
 }
@@ -189,6 +189,17 @@ void SyncSchedule::syncSlotAfterFishSlot() {
 	}
 }
 
+
+
+/*
+ * Merging
+ */
+
+void SyncSchedule::merger() {
+	Logger::log(" Merger");
+	TaskTimer::schedule(SSTask::mergerStartAndEnd,
+					MergeSchedule::deltaToThisMergeStart());
+}
 
 void SyncSchedule::syncSlotAfterMerging() {
 	if (RadioPrelude::tryUndoAfterMerging()) {
@@ -207,8 +218,4 @@ void SyncSchedule::provisionStart() {
 					SyncSlotSchedule::deltaToThisSyncSlotEnd());	// TODO proper time LOW
 }
 
-void SyncSchedule::merger() {
-	Logger::log(" Merger");
-	TaskTimer::schedule(SSTask::mergerStartAndEnd,
-					MergeSchedule::deltaToThisMergeStart());
-}
+

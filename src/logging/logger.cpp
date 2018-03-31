@@ -11,8 +11,9 @@
 #include "../message/message.h"
 #include "../clique/schedule.h"
 
-#include "../globals.h" // clique
-#include "../clique/clique.h"
+#include "../syncAgentImp/syncAgentImp.h"
+//#include "../globals.h" // clique
+//#include "../clique/clique.h"
 
 
 
@@ -29,7 +30,7 @@ RTTLogger localLogger;
 
 
 void Logger::logSystemInfo() {
-	localLogger.log(clique.getMasterID());
+	localLogger.log(SyncAgentImp::getMasterID());
 	localLogger.log("<ID\n");
 }
 
@@ -116,6 +117,16 @@ void Logger::logReceivedInfo(uint8_t value){
 	localLogger.log("\nInfo ");
 	localLogger.log(value);
 }
+
+
+
+void Logger::logSyncPoint() {
+	if (SyncAgentImp::isSelfMaster())
+		localLogger.log("\nMastr ");
+	else
+		localLogger.log("\nSlave ");
+}
+
 
 
 /*

@@ -149,7 +149,7 @@ void SSTask::startSyncSlotWithoutScheduledPrelude() {
 
 
 void SSTask::startSyncSlotAfterPrelude() {
-	Logger::log("\nSyncPt ");
+	Logger::logSyncPoint();
 	assert(RadioPrelude::isDone());
 
 

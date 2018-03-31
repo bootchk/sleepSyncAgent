@@ -52,9 +52,9 @@ enum class MessageType {
 	ControlWorkCycle,
 
 	// Merging, also carrying an offset
-	EnticingInferior,	// 7  Was MergeSync
-	MasterMergedAway,
-	SlaveMergedAway,
+	MergeOther,	// 7  Was MergeSync
+	MergeMyMasterDepart,
+	MergeMySlaveDepart,
 
 	AbandonMastership,	//10
 

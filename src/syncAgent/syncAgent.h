@@ -66,7 +66,6 @@ public:
 	// Is self Master of some clique (for now, only one clique.  Future: hops)
 	static bool isSelfMaster();
 	static bool isSelfSlave();
-
 };
 
 /*

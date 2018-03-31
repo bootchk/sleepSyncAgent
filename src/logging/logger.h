@@ -99,6 +99,7 @@ public:
 	/*
 	 * Significant events?  Logged remotely?
 	 */
+	static void logSyncPoint();
 	static void logStartSync();
 	static void logPauseSync();
 	static void logStartFish();

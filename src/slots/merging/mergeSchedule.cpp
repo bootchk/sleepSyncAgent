@@ -18,6 +18,8 @@
 LongTime MergeSchedule::timeOfThisMergeStart(DeltaTime offset) {
 	LongTime result;
 	result = Schedule::startTimeOfSyncPeriod() + offset;
+
+	// TODO could be stronger:  in the non-sync period: after sync slot and before end of unadjusted sync end
 	assert(result < Schedule::endTimeOfSyncPeriod());
 	return result;
 }

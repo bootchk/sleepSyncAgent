@@ -184,15 +184,15 @@ HandlingResult SyncSlotMessageHandler::handle(SyncMessage* msg){
 	 * case MessageType::MergeSync:
 	 *	handlingResult = handleMergeSyncMessage(msg);
 	 */
-	case MessageType::EnticingInferior:
+	case MessageType::MergeOther:
 		handlingResult = handleEnticingInferiorMessage(msg);
 		SyncAgentImp::countMergeSyncHeard++;
 		break;
-	case MessageType::MasterMergedAway:
+	case MessageType::MergeMyMasterDepart:
 		handlingResult = handleMasterMergedAwayMessage(msg);
 		SyncAgentImp::countMergeSyncHeard++;
 		break;
-	case MessageType::SlaveMergedAway:
+	case MessageType::MergeMySlaveDepart:
 		handlingResult = handleSlaveMergedAwayMessage(msg);
 		SyncAgentImp::countMergeSyncHeard++;
 		break;

@@ -192,9 +192,9 @@ void initMergeMyClique(SyncMessage* msg){
 	inferiorMasterID = owningClique->getMasterID();
 
 	if (SyncAgentImp::isSelfMaster() )
-		kindOfMerger = MessageType::MasterMergedAway;
+		kindOfMerger = MessageType::MergeMyMasterDepart;
 	else
-		kindOfMerger = MessageType::SlaveMergedAway;
+		kindOfMerger = MessageType::MergeMySlaveDepart;
 
 	// FUTURE migrate this outside and return result to indicate it should be done
 	/*
@@ -211,7 +211,7 @@ void initMergeMyClique(SyncMessage* msg){
 	 * Self is Role Merger.
 	 * Self will send MergeSync in SyncSlot of former clique.
 	 */
-	assert((kindOfMerger == MessageType::MasterMergedAway) or (kindOfMerger == MessageType::SlaveMergedAway));
+	assert((kindOfMerger == MessageType::MergeMyMasterDepart) or (kindOfMerger == MessageType::MergeMySlaveDepart));
 }
 
 /*
@@ -239,7 +239,7 @@ void initMergeOtherClique(SyncMessage* msg){
 
 	// No adjustment to self schedule
 
-	kindOfMerger = MessageType::EnticingInferior;
+	kindOfMerger = MessageType::MergeOther;
 
 	/*
 	 * Self is Master or Slave.
@@ -254,7 +254,7 @@ void initMergeOtherClique(SyncMessage* msg){
 	 * Will send MergeSync (contending with master of other inferior clique.)
 	 * Self's clique and schedule unchanged.
 	 */
-	assert(kindOfMerger == MessageType::EnticingInferior);
+	assert(kindOfMerger == MessageType::MergeOther);
 }
 
 } // namespace

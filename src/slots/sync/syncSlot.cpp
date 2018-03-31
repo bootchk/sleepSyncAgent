@@ -10,9 +10,7 @@
 #include "../../messageHandler/messageHandler.h"
 #include "../../receiver/receiver.h"
 
-#include "../../globals.h"	// clique
-#include "../../clique/clique.h"
-
+#include "../../syncAgent/syncAgent.h"
 #include "../../syncAgentImp/syncAgentImp.h"
 #include "../../syncAgentImp/state/syncMode.h"
 
@@ -61,8 +59,8 @@ void SyncSlot::endListen() {
 	Receiver::stop();
 
 	// FUTURE we could do this elsewhere, e.g. start of sync slot
-	if (!clique.isSelfMaster())
-		clique.checkMasterDroppedOut();
+	if (SyncAgent::isSelfSlave())
+		SyncAgentImp::checkMasterDroppedOut();
 }
 
 

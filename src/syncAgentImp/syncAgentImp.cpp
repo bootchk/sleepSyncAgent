@@ -140,7 +140,8 @@ void SyncAgentImp::initSyncObjects(
 
 
 bool SyncAgentImp::isSelfMaster() { return clique.isSelfMaster(); }
-
+void SyncAgentImp::checkMasterDroppedOut() { return clique.checkMasterDroppedOut(); }
+SystemID SyncAgentImp::getMasterID() { return clique.getMasterID(); }
 
 void SyncAgentImp::scatter() {
 	/*

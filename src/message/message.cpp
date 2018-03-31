@@ -33,9 +33,9 @@ char const * SyncMessage::representation(MessageType msgType) {
 		case MessageType::ControlWorkTime:       result = " CWTi"; break;
 		case MessageType::ControlWorkCycle:      result = " CWCy"; break;
 
-		case MessageType::EnticingInferior:      result = "MSEnt"; break;
-		case MessageType::MasterMergedAway:      result = "MSMAw"; break;
-		case MessageType::SlaveMergedAway:       result = "MSSAw"; break;
+		case MessageType::MergeOther:      result = "MSEnt"; break;
+		case MessageType::MergeMyMasterDepart:      result = "MSMAw"; break;
+		case MessageType::MergeMySlaveDepart:       result = "MSSAw"; break;
 
 		case MessageType::AbandonMastership:     result = " Aban"; break;
 		case MessageType::Info:                  result = " Info"; break;
@@ -56,9 +56,9 @@ MessageType SyncMessage::messageTypeFromRaw(unsigned char receivedType) {
 	case 3:  result = MessageType::ControlNetGranularity; break;
 	case 4:  result = MessageType::ControlScatterClique; break;
 
-	case 5:  result = MessageType::EnticingInferior; break;
-	case 6:  result = MessageType::MasterMergedAway; break;
-	case 7:  result = MessageType::SlaveMergedAway; break;
+	case 5:  result = MessageType::MergeOther; break;
+	case 6:  result = MessageType::MergeMyMasterDepart; break;
+	case 7:  result = MessageType::MergeMySlaveDepart; break;
 
 	case 8:  result = MessageType::AbandonMastership; break;
 	case 9:  result = MessageType::Info; break;
@@ -97,7 +97,7 @@ static bool doesCarryOffsetToOtherClique(MessageType type) {
 	bool result;
 	switch (type){
 	case MessageType::MasterSync:
-	case MessageType::EnticingInferior:
+	case MessageType::MergeOther:
 	case MessageType::WorkSync:
 		result = true;
 		break;
