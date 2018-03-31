@@ -1,8 +1,7 @@
 
-#include <cassert>
+#include "../merge/mergeSlot.h"
 
-#include "mergeSlot.h"
-#include "mergeSchedule.h"
+#include <cassert>
 
 #include "../../modules/syncSender.h"
 #include "../../sleepers/syncSleeper.h"
@@ -12,6 +11,7 @@
 #include "../../logging/logger.h"
 #include "../../syncAgentImp/state/phase.h"
 #include "../../syncAgentImp/state/role.h"
+#include "../merge/mergeSchedule.h"
 
 
 

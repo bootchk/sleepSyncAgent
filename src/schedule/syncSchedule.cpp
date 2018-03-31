@@ -11,9 +11,8 @@
 #include "taskTimer.h"
 
 #include "../slots/fishing/fishingManager.h"
-#include "../slots/merging/mergeSchedule.h"
-
 #include "../logging/logger.h"
+#include "../slots/merge/mergeSchedule.h"
 
 
 

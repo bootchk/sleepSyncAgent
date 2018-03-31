@@ -6,7 +6,7 @@
 #include <services/mailbox.h>
 #include <exceptions/faultHandlers.h>
 
-#include "../slots/infoing/infoSlot.h"
+#include "../slots/info/infoSlot.h"
 
 
 

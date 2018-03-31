@@ -1,7 +1,7 @@
 
-#include <cassert>
+#include "../merge/mergeSchedule.h"
 
-#include "mergeSchedule.h"
+#include <cassert>
 
 #include "../../clique/schedule.h"
 

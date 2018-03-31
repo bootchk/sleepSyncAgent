@@ -2,9 +2,6 @@
 #include "radioPrelude.h"
 
 #include "../slots/fishing/fishingManager.h"
-#include "../slots/merging/mergeSchedule.h"
-
-// Nested state
 #include "../syncAgentImp/state/syncMode.h"
 #include "../syncAgentImp/state/role.h"
 
@@ -13,6 +10,7 @@
 
 #include "../logging/logger.h"
 #include <cassert>
+#include "../slots/merge/mergeSchedule.h"
 
 
 

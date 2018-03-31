@@ -3,11 +3,11 @@
 #include "task.h"
 
 #include "../modules/syncSender.h"
-#include "../slots/merging/mergePolicy.h"
 #include "../syncAgentImp/syncAgentImp.h"
 #include "../schedule/syncSchedule.h"
 
 #include "../logging/logger.h"
+#include "../slots/merge/mergePolicy.h"
 
 
 /*

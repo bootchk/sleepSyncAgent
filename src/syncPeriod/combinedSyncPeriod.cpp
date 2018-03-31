@@ -8,10 +8,9 @@
 
 #include "../slots/syncing/syncWorkSlot.h"
 #include "../slots/fishing/fishSlot.h"
-#include "../slots/merging/mergeSlot.h"
-
 #include "../policy/fishWaitingPolicy.cpp"
 #include "../schedule/syncSchedule.h"
+#include "../slots/merge/mergeSlot.h"
 #include "../syncAgentImp/state/phase.h"
 #include "../syncAgentImp/state/role.h"
 

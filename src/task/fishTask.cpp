@@ -12,11 +12,11 @@
 #include "../modules/syncPowerManager.h"
 
 // in old design?
-#include "../slots/merging/mergePolicy.h"
 #include "../slots/fishing/fishingManager.h"
 #include "../slots/fishing/fishSchedule.h"
 
 #include <cassert>
+#include "../slots/merge/mergePolicy.h"
 
 
 

@@ -1,7 +1,7 @@
 
 #include <cassert>
 
-#include "../slots/merging/mergePolicy.h"
+#include "../slots/merge/mergePolicy.h"
 #include "../syncAgentImp/state/role.h"
 #include "../syncAgentImp/syncAgentImp.h"
 

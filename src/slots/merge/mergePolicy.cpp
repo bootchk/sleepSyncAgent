@@ -1,4 +1,6 @@
 
+#include "../merge/mergePolicy.h"
+
 #include <cassert>
 
 #include <random.h>	// randBool
@@ -7,7 +9,6 @@
 #include "../../policy/policyParameters.h"
 
 
-#include "mergePolicy.h"
 
 
 

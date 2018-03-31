@@ -1,5 +1,5 @@
 
-#include "infoSlot.h"
+#include "../info/infoSlot.h"
 
 #include <ensemble/ensemble.h>
 
