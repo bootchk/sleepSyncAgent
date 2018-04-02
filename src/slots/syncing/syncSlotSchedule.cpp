@@ -6,13 +6,16 @@
 #include "../../clique/clique.h"
 #include "../../globals.h"  // clique
 
+// radioSoC
+#include <clock/clockDuration.h>
+
 
 DeltaTime SyncSlotSchedule::deltaToThisSyncSlotMiddleSubslot(){
-	return TimeMath::clampedTimeDifferenceFromNow(timeOfThisSyncSlotMiddleSubslot());
+	return ClockDuration::clampedTimeDifferenceFromNow(timeOfThisSyncSlotMiddleSubslot());
 }
 
 DeltaTime SyncSlotSchedule::deltaToThisSyncSlotEnd(){
-	return TimeMath::clampedTimeDifferenceFromNow(timeOfThisSyncSlotEnd());
+	return ClockDuration::clampedTimeDifferenceFromNow(timeOfThisSyncSlotEnd());
 }
 
 /*

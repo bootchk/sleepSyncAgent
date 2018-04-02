@@ -3,7 +3,7 @@
 
 #include "oversleepMonitor.h"
 
-#include <radioSoC.h>	// LongTime, CustomFlash
+#include <radioSoC.h>	// LongTime, CustomFlash, ClockDuration
 
 #include "../logging/flashIndex.h"
 #include "../logging/logger.h"
@@ -12,6 +12,10 @@
 #include "../scheduleParameters.h"
 #include "../syncAgentImp/syncAgentImp.h"
 #include "syncSleeper.h"
+
+
+
+
 
 namespace {
 
@@ -73,7 +77,7 @@ bool OverSleepMonitor::checkOverslept(){
  * Coerce to unsigned int
  */
 unsigned int OverSleepMonitor::timeElapsedSinceLastStartSleep() {
-	return ((unsigned int) TimeMath::elapsed(sleepStartTime) ) ;
+	return ((unsigned int) ClockDuration::elapsed(sleepStartTime) ) ;
 }
 /*
  * TODO also check sanity versus passed in max sane timeout

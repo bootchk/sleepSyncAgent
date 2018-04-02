@@ -8,6 +8,10 @@
 #include "../../syncAgentImp/syncAgentImp.h"
 #include "../../scheduleParameters.h"
 
+// radioSoC
+#include <clock/clockDuration.h>
+
+
 
 /*
  * Merge slot:
@@ -26,7 +30,7 @@ LongTime MergeSchedule::timeOfThisMergeStart(DeltaTime offset) {
 
 
 DeltaTime MergeSchedule::deltaToThisMergeStart(const PeriodTime* const offset){
-	return TimeMath::clampedTimeDifferenceFromNow(timeOfThisMergeStart(offset->get()));
+	return ClockDuration::clampedTimeDifferenceFromNow(timeOfThisMergeStart(offset->get()));
 }
 
 /*

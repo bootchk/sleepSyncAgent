@@ -6,7 +6,11 @@
 #include "../logging/logger.h"
 #include "../scheduleParameters.h"	// probably already included by MergeOffset
 
+// embeddedMath
 #include <random.h>
+
+// radioSoC
+#include <clock/clockDuration.h>
 
 
 namespace {
@@ -327,7 +331,7 @@ LongTime Schedule::timeOfUnadjustedNextSyncPoint() {  return _unadjustedEndTimeO
 
 
 DeltaTime  Schedule::deltaNowToNextSyncPoint() {
-	DeltaTime result = TimeMath::clampedTimeDifferenceFromNow(timeOfNextSyncPoint());
+	DeltaTime result = ClockDuration::clampedTimeDifferenceFromNow(timeOfNextSyncPoint());
 	/*
 	 * Usually next SyncPoint is future.
 	 * If we are already past it, will whack sync.
@@ -337,7 +341,7 @@ DeltaTime  Schedule::deltaNowToNextSyncPoint() {
 	// Code for testing only
 	if (result == 0) {
 		// Calculate magnitude in past, how late are we?
-		DeltaTime wrongDelta = TimeMath::elapsed(timeOfNextSyncPoint());
+		DeltaTime wrongDelta = ClockDuration::elapsed(timeOfNextSyncPoint());
 		Logger::logInt(wrongDelta);
 		Logger::log(">>> zero or neg delta to next SyncPoint\n");
 	}
@@ -347,7 +351,7 @@ DeltaTime  Schedule::deltaNowToNextSyncPoint() {
 
 
 DeltaTime  Schedule::deltaNowToNextUnadjustedSyncPoint() {
-	DeltaTime result = TimeMath::clampedTimeDifferenceFromNow(timeOfUnadjustedNextSyncPoint());
+	DeltaTime result = ClockDuration::clampedTimeDifferenceFromNow(timeOfUnadjustedNextSyncPoint());
 	return result;
 }
 
@@ -359,7 +363,7 @@ DeltaTime  Schedule::deltaNowToNextUnadjustedSyncPoint() {
  * Stronger would return PeriodTime.
  */
 DeltaTime  Schedule::deltaPastSyncPointToNow() {
-	DeltaTime result = TimeMath::clampedTimeDifferenceToNow(startTimeOfSyncPeriod());
+	DeltaTime result = ClockDuration::clampedTimeDifferenceToNow(startTimeOfSyncPeriod());
 
 	// Not:  assert(result <= ScheduleParameters::NormalSyncPeriodDuration);
 	return result;

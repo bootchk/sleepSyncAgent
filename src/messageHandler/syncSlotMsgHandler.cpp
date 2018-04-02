@@ -13,6 +13,9 @@
 #include "../work/workOut.h"
 #include "../work/workIn.h"
 
+// radioSoC
+#include <clock/clockDuration.h>
+
 
 
 /*
@@ -109,7 +112,7 @@ void handleGranularityAspectOfMasterSync(SyncMessage* msg){
  */
 DeltaTime getFishingDeltaFromMergeMsg(SyncMessage* msg) {
 	LongTime timeOfSyncPtOfMerge = clique.schedule.adjustedEventTimeFromMsg(msg);
-	DeltaTime deltaNowToTimeOfSyncPtOfMerge = TimeMath::clampedTimeDifferenceFromNow(timeOfSyncPtOfMerge);
+	DeltaTime deltaNowToTimeOfSyncPtOfMerge = ClockDuration::clampedTimeDifferenceFromNow(timeOfSyncPtOfMerge);
 
 	/*
 	 * Assert: We haven't changed cliques, schedule is unchanged (or slightly changed) since we started SyncSlot.

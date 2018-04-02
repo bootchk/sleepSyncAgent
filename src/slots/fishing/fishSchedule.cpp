@@ -10,6 +10,9 @@
 #include "../../logging/logger.h"
 #include "../../clique/clique.h"
 
+// radioSoC
+#include <clock/clockDuration.h>
+
 // FUTURE memoize end time also???
 
 
@@ -39,12 +42,12 @@ void FishSchedule::setStartAndEndTimes() {
 }
 
 DeltaTime FishSchedule::deltaToFishSessionStart(){
-	return TimeMath::clampedTimeDifferenceFromNow(_memoStartTimeOfFishSlot);
+	return ClockDuration::clampedTimeDifferenceFromNow(_memoStartTimeOfFishSlot);
 }
 
 DeltaTime FishSchedule::deltaToFishSessionEnd(){
 	// WAS return TimeMath::clampedTimeDifferenceFromNow(timeOfThisFishSlotEnd());
-	return TimeMath::clampedTimeDifferenceFromNow(_memoEndTimeOfFishSlot);
+	return ClockDuration::clampedTimeDifferenceFromNow(_memoEndTimeOfFishSlot);
 }
 
 

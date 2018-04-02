@@ -1,7 +1,7 @@
 
 cmake_minimum_required(VERSION 3.5.1)
 
-project(sleepSyncAgent C CXX ASM)
+project(sleepSyncAgent CXX ASM)
 
 
 # Use cmake modules nRF5 specific
@@ -48,9 +48,23 @@ set_target_properties( sleepSyncAgent52832
 nRF5CheckTargetProperties(sleepSyncAgent52832)
 nRF5ConfigTargetByProperties(sleepSyncAgent52832)
 
-
 target_compile_definitions( sleepSyncAgent52832 PUBLIC "NRF52" )
 target_compile_definitions( sleepSyncAgent52832 PUBLIC "TASKS" )
+
+
+add_library(sleepSyncAgent52xNoSD "")
+set_target_properties( sleepSyncAgent52xNoSD
+    PROPERTIES
+       CHIP "nrf52832_xxaa"
+       SOFTDEVICE "none"
+       FLOAT_ABI "soft"
+    )
+nRF5CheckTargetProperties(sleepSyncAgent52xNoSD)
+nRF5ConfigTargetByProperties(sleepSyncAgent52xNoSD)
+
+target_compile_definitions( sleepSyncAgent52xNoSD PUBLIC "NRF52" )
+target_compile_definitions( sleepSyncAgent52xNoSD PUBLIC "TASKS" )
+
 
 
 # import libs from outside project
@@ -61,22 +75,25 @@ set_target_properties( radioSoC52wSD
         IMPORTED_LOCATION /home/bootch/git/radioSoC/Debug52wSD/libradioSoC52wSD.a
         INTERFACE_INCLUDE_DIRECTORIES "/home/bootch/git/radioSoC/src"
     )
-add_library(radioSoC52810 STATIC IMPORTED)
-set_target_properties( radioSoC52810 
+add_library(radioSoC52810NoSD STATIC IMPORTED)
+set_target_properties( radioSoC52810NoSD 
     PROPERTIES 
-        IMPORTED_LOCATION /home/bootch/git/radioSoC/cmakeBuild/libradioSoC52810.a
+        IMPORTED_LOCATION /home/bootch/git/radioSoC/cmakeBuild/libradioSoC52810NoSD.a
         INTERFACE_INCLUDE_DIRECTORIES "/home/bootch/git/radioSoC/src"
         IMPORTED_LINK_INTERFACE_LIBRARIES nRF5x52810
     )
 
-# No dependence on nRF5x
+
+# No dependence on nRF5x, since it is already linked into radioSoC
 
 
+# TODO No dependence on embeddedMath, since it is already linked into radioSoC
 add_library(embeddedMath STATIC IMPORTED)
 set_target_properties( embeddedMath
    PROPERTIES 
        IMPORTED_LOCATION /home/bootch/git/embeddedMath/Debug52/libembeddedMath52.a
        INTERFACE_INCLUDE_DIRECTORIES "/home/bootch/git/embeddedMath/src" )
+
 
 add_library(NRFDrivers STATIC IMPORTED)
 set_target_properties( NRFDrivers PROPERTIES IMPORTED_LOCATION /home/bootch/git/libNRFDrivers/Debug/libNRFDrivers.a )
@@ -132,6 +149,15 @@ PRIVATE
 #     nRF5x52
 #   BLEProvisionee
 #    NRFDrivers
+  
+
+target_link_libraries(sleepSyncAgent52xNoSD
+PUBLIC
+    radioSoC52810NoSD
+    embeddedMath
+    )
+   
+   
    
 # sources 
 #     
@@ -216,8 +242,7 @@ list(APPEND Sources
        "${CMAKE_CURRENT_LIST_DIR}/task/task.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/work/workIn.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/work/workOut.cpp"
-       
-      
+       "${CMAKE_CURRENT_LIST_DIR}/work/workControlProxy.cpp"
    )
 # "${CMAKE_CURRENT_LIST_DIR}/message/messageFactory.cpp"
 
@@ -227,7 +252,13 @@ list(APPEND ProvisioningSources
     "${CMAKE_CURRENT_LIST_DIR}/syncPeriod/provisionedSyncPeriod.cpp"
 )
 
+# TODO provisioned version
+# TODO name 52810SD
 target_sources(sleepSyncAgent52832
+   PUBLIC
+      ${Sources}
+   )
+target_sources(sleepSyncAgent52xNoSD
    PUBLIC
       ${Sources}
    )
