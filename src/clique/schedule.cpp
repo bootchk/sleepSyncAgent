@@ -173,7 +173,7 @@ void Schedule::adjustBySyncMsg(SyncMessage* msg) {
 void Schedule::adjustWithRandomAddedTime(){
 	LongTime newEndTime;
 	// Random offset less than syncPeriod
-	DeltaTime randomOffset = randUnsignedInt(0, ScheduleParameters::NormalSyncPeriodDuration);
+	DeltaTime randomOffset = Random::unsignedInt(0, ScheduleParameters::NormalSyncPeriodDuration);
 	/*
 	 * Add to start time plus syncPeriodDuration.
 	 * !!! Not to end time, which already may be adjusted out of range.

@@ -31,7 +31,7 @@ bool AdaptiveTransmitSyncPolicy::shouldTransmitSync() {
 		 *
 		 * Note this may have long runs of false, i.e. not transmitting sync.
 		 */
-		return randBool();
+		return Random::coinToss();
 	}
 }
 

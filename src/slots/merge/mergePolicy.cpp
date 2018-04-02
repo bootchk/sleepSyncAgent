@@ -33,7 +33,7 @@ bool MergePolicy::shouldScheduleMerge() {
 	 * But then the task is scheduled for a long time and many sync periods may happen meanwhile.
 	 */
 	//assert(isActive);	// require
-	return randBool();	// Fair coin flip
+	return Random::coinToss();
 }
 
 
