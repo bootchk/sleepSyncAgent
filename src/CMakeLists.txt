@@ -75,6 +75,8 @@ set_target_properties( radioSoC52wSD
         IMPORTED_LOCATION /home/bootch/git/radioSoC/Debug52wSD/libradioSoC52wSD.a
         INTERFACE_INCLUDE_DIRECTORIES "/home/bootch/git/radioSoC/src"
     )
+    
+if (NOT TARGET radioSoC52810NoSD)
 add_library(radioSoC52810NoSD STATIC IMPORTED)
 set_target_properties( radioSoC52810NoSD 
     PROPERTIES 
@@ -82,6 +84,7 @@ set_target_properties( radioSoC52810NoSD
         INTERFACE_INCLUDE_DIRECTORIES "/home/bootch/git/radioSoC/src"
         IMPORTED_LINK_INTERFACE_LIBRARIES nRF5x52810
     )
+endif()
 
 
 # No dependence on nRF5x, since it is already linked into radioSoC
@@ -153,8 +156,8 @@ PRIVATE
 
 target_link_libraries(sleepSyncAgent52xNoSD
 PUBLIC
-    radioSoC52810NoSD
-    embeddedMath
+    radioSoC52NoSD
+    embeddedMath52
     )
    
    
@@ -264,6 +267,12 @@ target_sources(sleepSyncAgent52xNoSD
    )
 
 
+# !!! current list dir is already /src
+target_include_directories(sleepSyncAgent52xNoSD
+   PUBLIC
+       "${CMAKE_CURRENT_LIST_DIR}"
+   )
+   
 #nRF5GenerateOtherArtifacts(sleepSyncAgent52810)
 # not generate FLASH_SOFTDEVICE target, already created by sniffer
 # nRF5AddCustomTargets(sleepSyncAgent52810)

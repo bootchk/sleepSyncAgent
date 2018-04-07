@@ -8,7 +8,7 @@
 #include "../slots/fish/fishSlot.h"
 
 #include "../syncAgentImp/state/role.h"
-#include "../policy/fishWaitingPolicy.cpp"
+#include "../policy/fishWaitingPolicy.h"
 #include "../modules/syncPowerManager.h"
 
 // in old design?

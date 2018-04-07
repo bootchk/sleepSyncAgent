@@ -4,7 +4,7 @@
 
 #include "../syncAgent/syncAgent.h"
 #include "../network/intraCliqueManager.h"
-#include "workControlProxy.h"
+#include "../work/workControlProxy.h"
 
 
 namespace {
