@@ -38,7 +38,6 @@ nRF5SetIncludePaths()
 
 # NRF52832
 add_library(sleepSyncAgent52832 "")
-
 set_target_properties( sleepSyncAgent52832
     PROPERTIES
        CHIP "nrf52832_xxaa"
@@ -48,8 +47,9 @@ set_target_properties( sleepSyncAgent52832
 nRF5CheckTargetProperties(sleepSyncAgent52832)
 nRF5ConfigTargetByProperties(sleepSyncAgent52832)
 
-target_compile_definitions( sleepSyncAgent52832 PUBLIC "NRF52" )
-target_compile_definitions( sleepSyncAgent52832 PUBLIC "TASKS" )
+# PRIVATE so not defined for referring builds
+target_compile_definitions( sleepSyncAgent52832 PRIVATE "NRF52" )
+target_compile_definitions( sleepSyncAgent52832 PRIVATE "TASKS" )
 
 
 add_library(sleepSyncAgent52xNoSD "")
@@ -62,8 +62,11 @@ set_target_properties( sleepSyncAgent52xNoSD
 nRF5CheckTargetProperties(sleepSyncAgent52xNoSD)
 nRF5ConfigTargetByProperties(sleepSyncAgent52xNoSD)
 
-target_compile_definitions( sleepSyncAgent52xNoSD PUBLIC "NRF52" )
-target_compile_definitions( sleepSyncAgent52xNoSD PUBLIC "TASKS" )
+target_compile_definitions( sleepSyncAgent52xNoSD PRIVATE "NRF52" )
+target_compile_definitions( sleepSyncAgent52xNoSD PRIVATE "TASKS" )
+
+
+
 
 
 
@@ -125,28 +128,12 @@ set_target_properties( BLEProvisionee52810e
 
 
 
-IF(EXISTS /home/bootch/git/radioSoC/Debug52/libradioSoC52.a)
-else()
-    message("FATAL_ERROR libradioSoC52.a not exist")
-ENDIF()
-
-IF(EXISTS /home/bootch/git/nRF5x/Debug52/libnRF5x52.a )
-else()
-    message("FATAL_ERROR libnRF5x52.a not exist")
-ENDIF()
-
-IF(EXISTS /home/bootch/git/embeddedMath/Debug52/libembeddedMath52.a)
-else()
-    message("FATAL_ERROR libembeddedMath52.a not exist")
-ENDIF()
-
-
 
 # ??? order is important unless we specify interlibrary dependencies
 target_link_libraries(sleepSyncAgent52832 
 PRIVATE
     radioSoC52wSD
-    embeddedMath
+    embeddedMath52
     )
 
 #     nRF5x52

@@ -31,7 +31,7 @@ public:
  * but we just measure the total.
  *
  */
-#if defined( NRF52 )
+#if defined( NRF52_SERIES )
 	/*
 	 * 2 rampup + 2 OTA + ? SW overhead
 	 *
@@ -40,7 +40,7 @@ public:
 	 * 4 measured July 2017 no optimization, logging enable, asserts enabled, gcc 6, nrf52DK
 	 */
 	static const DeltaTime SendLatency = 4;
-#elif defined( NRF51)
+#elif defined( NRF51_SERIES)
 	/*
 	 * 4 rampup + 2 OTA + ? SW overhead
 	 *
@@ -50,7 +50,7 @@ public:
 	 */
 	static const DeltaTime SendLatency = 10;
 #else
-#error "NRFxx not defined"
+#error "NRFxx_SERIES not defined"
 #endif
 
 
