@@ -51,8 +51,9 @@ void SyncAgentImp::preludeToLoop() {
 	Logger::logSystemInfo();
 	FishSchedule::logParameters();
 
+	// Obsolete
 	// Set sane timeout for SyncPeriod calculations, different from that used by SyncPowerSleeper
-	Sleeper::setSaneTimeout( ScheduleParameters::MaxSaneTimeoutSyncSleeper );
+	// Sleeper::setSaneTimeout( ScheduleParameters::MaxSaneTimeoutSyncSleeper );
 
 	// We expect not to brownout henceforth
 	SyncPowerManager::enterBrownoutDetectMode();
@@ -104,7 +105,6 @@ void SyncAgentImp::preludeToSyncPeriod() {
 }
 
 
-// TODO Obsolete
 /*
  * Assertions on enter loop:
  * - self is master of its own clique
@@ -116,6 +116,12 @@ void SyncAgentImp::preludeToSyncPeriod() {
  *
  * Note not necessary to have PowerForSync before call, this will sleep until there is.
  */
+
+
+
+
+
+#ifdef OBSOLETE
 void SyncAgentImp::loop(){
 
 	preludeToLoop();
@@ -158,5 +164,6 @@ void SyncAgentImp::loop(){
 	// never returns
 }
 
+#endif
 
 

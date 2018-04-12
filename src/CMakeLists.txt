@@ -207,7 +207,6 @@ list(APPEND Sources
        "${CMAKE_CURRENT_LIST_DIR}/sleepers/oversleepMonitor.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/sleepers/scheduleSleeper.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/sleepers/syncPowerSleeper.cpp"
-       "${CMAKE_CURRENT_LIST_DIR}/sleepers/syncSleeper.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/slots/fish/fishSlot.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/slots/fishing/fishingDoneCallbacks.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/slots/fishing/fishingManager.cpp"
@@ -236,6 +235,7 @@ list(APPEND Sources
        "${CMAKE_CURRENT_LIST_DIR}/work/workControlProxy.cpp"
    )
 # "${CMAKE_CURRENT_LIST_DIR}/message/messageFactory.cpp"
+# obsolete: "${CMAKE_CURRENT_LIST_DIR}/sleepers/syncSleeper.cpp"
 
 list(APPEND ProvisioningSources
     "${CMAKE_CURRENT_LIST_DIR}/network/topologyProvisioner.cpp"

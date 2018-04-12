@@ -5,10 +5,10 @@
 #include "../globals.h"	// clique
 #include "../cliqueHistory/cliqueHistory.h"
 #include "../scheduleParameters.h"
-#include "../sleepers/syncPowerSleeper.h"
+//#include "../sleepers/syncPowerSleeper.h"
 #include "../sleepers/oversleepMonitor.h"
 #include "../message/serializer.h"
-#include "../sleepers/syncSleeperObs.h"
+//#include "../sleepers/syncSleeperObs.h"
 
 #ifdef SOFTDEVICE_PRESENT
 // Provisioning
@@ -65,10 +65,11 @@ void SyncAgentImp::initSleepers() {
 }
 
 
+#ifdef Obsolete
 void SyncAgentImp::sleepUntilSyncPower(){
 	SyncPowerSleeper::sleepUntilSyncPower();
 }
-
+#endif
 
 void SyncAgentImp::connectApp(
 		Mailbox* aMailbox,
@@ -98,9 +99,9 @@ void SyncAgentImp::init()
 
 	/*
 	 * Initialize members (Radio, HfClock, DCDC) of ensemble.
-	 * Connect radio IRQ to syncSleeper so it knows reason for wake
 	 */
-	Ensemble::init(SyncSleeper::getMsgReceivedCallback());
+	// Obsolete Connect radio IRQ to syncSleeper so it knows reason for wake
+	// Ensemble::init(SyncSleeper::getMsgReceivedCallback());
 
 	initEnsembleProtocol();
 

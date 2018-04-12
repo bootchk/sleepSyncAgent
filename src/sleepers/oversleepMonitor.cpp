@@ -97,6 +97,9 @@ unsigned int OverSleepMonitor::getPhaseAndReason() {
 
 	// pack two short values into a 32-bit int
 	result.shorts[0] = (short unsigned int) SyncAgentImp::getPhase();
-	result.shorts[1] = (short unsigned int) SyncSleeper::getPriorReasonForWake();
+	// Get last reason for wake (what task)
+	// Temp hack
+	result.shorts[1] = (short unsigned int) SyncAgentImp::getPhase();
+	// Obsolete result.shorts[1] = (short unsigned int) SyncSleeper::getPriorReasonForWake();
 	return result.i;
 }

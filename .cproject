@@ -899,7 +899,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="syncPeriod/provisionedSyncPeriod.cpp|network/topologyProvisioner.cpp|provisioning/provisioningPublisher.cpp|provisioning/workProvisioner.cpp|main.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry excluding="sleepers/syncSleeperObs.cpp|syncPeriod/provisionedSyncPeriod.cpp|network/topologyProvisioner.cpp|provisioning/provisioningPublisher.cpp|provisioning/workProvisioner.cpp|main.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
