@@ -8,6 +8,8 @@
 class SleepDuration {
 public:
 
+	static DeltaTime powerCheckInterval();
+
 	// varies since now varies
 	static DeltaTime nowTilPreludeWSync();
 	static DeltaTime nowTilPreludeWFish();

@@ -9,6 +9,8 @@
 
 
 
+// TODO Obsolete
+// new is SyncSchedule::syncSendTask();
 
 
 

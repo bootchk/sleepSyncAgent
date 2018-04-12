@@ -14,7 +14,9 @@
 #include <timeMath.h>
 
 
-
+DeltaTime  SleepDuration::powerCheckInterval() {
+	return ScheduleParameters::TimeoutWaitingForSyncPowerSleeper;
+}
 
 DeltaTime SleepDuration::nowTilSyncPoint() {
 	return clique.schedule.deltaNowToNextSyncPoint();

@@ -11,7 +11,7 @@
 
 #include "../scheduleParameters.h"
 #include "../syncAgentImp/syncAgentImp.h"
-#include "syncSleeper.h"
+#include "syncSleeperObs.h"
 
 
 

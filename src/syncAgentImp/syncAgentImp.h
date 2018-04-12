@@ -15,16 +15,25 @@ class SyncAgentImp {
 
 /*
  * Expose external API to SyncAgent class, which delegates here.
+ *
+ * These are in approximate order of invocation.
  */
 public:
 
+	static void connectOnMuchPowerReserve( void (*callback)());
+
+	static void preludeToLoop();
+
+// TODO obsolete
 	static void initSleepers();
 
-	static void initSyncObjects(
+	static void connectApp(
 			Mailbox* mailbox,
 			void (*onWorkMsg)(MailContents),
 			void (*onSyncPoint)()
 	);
+
+	static void init();
 
 	// Init Ensemble to hardcoded one of possibly many protocols
 	static void initEnsembleProtocol();
@@ -60,9 +69,10 @@ public:	// to SyncSlot mainly
 
 	static MailContents countMergeSyncHeard ;
 
-private:
-	static void preludeToLoop();
+	// Interface towards app
+	static void (*onPowerReserveCallback)(void);
 
+private:
 
 	// Interface towards app
 	static void (*onWorkMsgCallback)(MailContents);

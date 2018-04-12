@@ -4,11 +4,11 @@
 #include <cassert>
 
 #include "../../modules/syncSender.h"
-#include "../../sleepers/syncSleeper.h"
 #include "../../syncAgentImp/syncAgentImp.h"
 
 // For debugging
 #include "../../logging/logger.h"
+#include "../../sleepers/syncSleeperObs.h"
 #include "../../syncAgentImp/state/phase.h"
 #include "../../syncAgentImp/state/role.h"
 #include "../merge/mergeSchedule.h"

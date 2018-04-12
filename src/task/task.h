@@ -3,6 +3,11 @@
 
 class SSTask {
 public:
+	/*
+	 * Startup task for primary SyncAgent operation.
+	 */
+	static void checkPowerReserve();
+
 	static void radioPrelude();
 
 	static void startSyncSlotAfterPrelude();

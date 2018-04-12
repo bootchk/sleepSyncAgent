@@ -6,9 +6,9 @@
 #include "../cliqueHistory/cliqueHistory.h"
 #include "../scheduleParameters.h"
 #include "../sleepers/syncPowerSleeper.h"
-#include "../sleepers/syncSleeper.h"
 #include "../sleepers/oversleepMonitor.h"
 #include "../message/serializer.h"
+#include "../sleepers/syncSleeperObs.h"
 
 #ifdef SOFTDEVICE_PRESENT
 // Provisioning
@@ -37,12 +37,21 @@ unsigned char SyncAgentImp::countMergeSyncHeard;
 
 RadioUseCase radioUseCaseSleepSync;
 
+void (*SyncAgentImp::onPowerReserveCallback)();
 
 // This file only implements part of the class, see other .cpp files.
 // See syncAgentLoop.cpp for high level algorithm.
 
 
 
+
+
+
+void SyncAgentImp::connectOnMuchPowerReserve( void (*callback)(void)) {
+	SyncAgentImp::onPowerReserveCallback = callback;
+}
+
+// Obsolete
 void SyncAgentImp::initSleepers() {
 
 	// assert longClock was init
@@ -61,11 +70,21 @@ void SyncAgentImp::sleepUntilSyncPower(){
 }
 
 
-void SyncAgentImp::initSyncObjects(
+void SyncAgentImp::connectApp(
 		Mailbox* aMailbox,
 		void (*aOnWorkMsgCallback)(unsigned char),
 		void (*aOnSyncPointCallback)()
 	)
+{
+	WorkOut::init(aMailbox);
+
+	// Copy parameters to static data members
+	onWorkMsgCallback = aOnWorkMsgCallback;
+	onSyncPointCallback = aOnSyncPointCallback;
+}
+
+
+void SyncAgentImp::init()
 {
 	/*
 	 * Require caller initialized radio, mailbox, and LongClock.
@@ -75,14 +94,7 @@ void SyncAgentImp::initSyncObjects(
 	 */
 
 	SyncModeManager::resetToModeMaintain();
-	WorkOut::init(aMailbox);
-
-	// Temp: test power consumption when all sleep
-	// while(true) waitForOSClockAndToRecoverBootEnergy(aLCT);
-
-	// Copy parameters to static data members
-	onWorkMsgCallback = aOnWorkMsgCallback;
-	onSyncPointCallback = aOnSyncPointCallback;
+	;
 
 	/*
 	 * Initialize members (Radio, HfClock, DCDC) of ensemble.

@@ -229,6 +229,7 @@ list(APPEND Sources
        "${CMAKE_CURRENT_LIST_DIR}/task/fishTask.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/task/mergerTask.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/task/provisionTask.cpp"
+       "${CMAKE_CURRENT_LIST_DIR}/task/checkPowerReserve.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/task/task.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/work/workIn.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/work/workOut.cpp"

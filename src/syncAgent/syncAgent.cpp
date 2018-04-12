@@ -7,12 +7,16 @@
 
 // Each method simply delegates to the implementation SyncAgentImp
 
-void SyncAgent::initSyncObjects(
+void SyncAgent::connectOnMuchPowerReserve( void (*callback)()) {
+	SyncAgentImp::connectOnMuchPowerReserve(callback);
+}
+
+void SyncAgent::connectApp(
 			Mailbox* mailbox,
 			void (*onWorkMsg)(unsigned char),
 			void (*onSyncPoint)()
 			) {
-	SyncAgentImp::initSyncObjects(mailbox, onWorkMsg, onSyncPoint);
+	SyncAgentImp::connectApp(mailbox, onWorkMsg, onSyncPoint);
 }
 
 void SyncAgent::initSleepers() { SyncAgentImp::initSleepers(); }

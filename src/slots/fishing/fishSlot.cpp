@@ -12,8 +12,8 @@
 #include "fishingManager.h"
 
 #include "../../messageHandler/messageHandler.h"
-#include "../../sleepers/syncSleeper.h"
 #include "../../modules/syncPowerManager.h"
+#include "../../sleepers/syncSleeperObs.h"
 #include "../../syncAgentImp/state/phase.h"
 
 

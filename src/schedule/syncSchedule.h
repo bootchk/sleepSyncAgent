@@ -8,6 +8,12 @@
 class SyncSchedule {
 public:
 	/*
+	 * Now is just after reset, power reserves low.
+	 * Check power: schedule self if not adequate, else schedule TODO FOO.
+	 */
+	static void checkPowerReserve();
+
+	/*
 	 * now is before any real slot have been done, but clock and schedule are running.
 	 * Schedule a null syncPeriod as if we just did one.
 	 */

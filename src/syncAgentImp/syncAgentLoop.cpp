@@ -104,6 +104,7 @@ void SyncAgentImp::preludeToSyncPeriod() {
 }
 
 
+// TODO Obsolete
 /*
  * Assertions on enter loop:
  * - self is master of its own clique
@@ -150,6 +151,8 @@ void SyncAgentImp::loop(){
 	while (true) {
 		// MCUSleep::untilAnyEvent();
 		MCUSleep::untilInterrupt();
+
+		assertUltraLowPower();
 	}
 #endif
 	// never returns

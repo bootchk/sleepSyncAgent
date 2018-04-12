@@ -10,13 +10,12 @@
 #include "syncSlotSchedule.h"
 #include "../../modules/syncSender.h"
 #include "../../logging/logger.h"
-#include "../../sleepers/syncSleeper.h"
-
 #include <cassert>
 #include "../../syncAgentImp/state/phase.h"
 
 #include "../../globals.h"	// clique
 #include "../../clique/clique.h"
+#include "../../sleepers/syncSleeperObs.h"
 
 /*
  * Sub types of syncWorkSlot

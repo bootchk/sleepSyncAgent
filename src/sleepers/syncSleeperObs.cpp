@@ -3,9 +3,6 @@
 
 #include <timeMath.h>
 
-#include "syncSleeper.h"
-
-// radioSoC lib
 #include <clock/sleeper.h>	// pure class Sleeper
 #include <exceptions/powerAssertions.h>
 #include <exceptions/resetAssertions.h>
@@ -17,6 +14,7 @@
 #include "../scheduleParameters.h"
 
 #include "../logging/logger.h"
+#include "syncSleeperObs.h"
 
 namespace {
 

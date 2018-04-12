@@ -2,9 +2,9 @@
 
 #include "syncPowerSleeper.h"
 
-#include "syncSleeper.h"
 #include "../scheduleParameters.h"
 #include "../modules/syncPowerManager.h"
+#include "syncSleeperObs.h"
 
 
 /*

@@ -50,6 +50,16 @@ void theRadioPreludeTaskWFish() {
 
 
 
+
+
+
+
+void SyncSchedule::checkPowerReserve() {
+	TaskTimer::schedule(SSTask::checkPowerReserve,
+				SleepDuration::powerCheckInterval());
+}
+
+
 /*
  * SyncPeriod without prior RadioPrelude
  */

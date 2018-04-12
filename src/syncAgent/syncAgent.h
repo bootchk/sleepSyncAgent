@@ -45,9 +45,12 @@
 class SyncAgent {
 public:
 
+	static void connectOnMuchPowerReserve( void (*Foo)() );
+
+	// TODO Obsolete
 	static void initSleepers();
 
-	static void initSyncObjects(
+	static void connectApp(
 			Mailbox* mailbox,
 			void (*onWorkMsg)(unsigned char),
 			void (*onSyncPoint)()

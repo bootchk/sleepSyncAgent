@@ -4,7 +4,7 @@
 #include "../../modules/syncPowerManager.h"
 #include "../../logging/logger.h"
 #include "../../logging/flashLogger.h"
-#include "../../sleepers/syncSleeper.h"
+#include "../../sleepers/syncSleeperObs.h"
 
 /*
  * Sync slot is three subslots:

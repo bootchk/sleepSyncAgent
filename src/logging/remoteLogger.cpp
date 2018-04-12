@@ -10,6 +10,10 @@
 
 
 
+// define REMOTE_LOGGING to enable, usually defined in build config
+#ifdef REMOTE_LOGGING
+
+
 namespace {
 
 Mailbox infoMailbox;
@@ -24,8 +28,7 @@ void RemoteLogger::sendInfo(uint8_t item){
 	InfoSlot::perform(item);
 }
 
-// define REMOTE_LOGGING to enable, usually defined in build config
-#ifdef REMOTE_LOGGING
+
 
 bool RemoteLogger::isEnabled() { return true; }
 

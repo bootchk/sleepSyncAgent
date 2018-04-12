@@ -2,10 +2,10 @@
 #include "scheduleSleeper.h"
 
 #include "../slots/syncing/syncSlotSchedule.h"
-#include "syncSleeper.h"
 #include "../globals.h"	// clique
 #include "../clique/clique.h"	// clique
 #include "../syncAgentImp/state/phase.h"
+#include "syncSleeperObs.h"
 
 
 void ScheduleSleeper::sleepUntilSyncSlotMiddle() {
