@@ -56,24 +56,6 @@ void SyncWorkSlot::dispatchSyncSlotKind() {
 
 
 
-// Task
-void SyncWorkSlot::sendWorkSync(){
-	MailContents work = WorkOut::fetch();	// From app, WorkSyncMaintainer
-	Phase::set(PhaseEnum::SyncXmitWorkSync);
-	SyncSender::sendWorkSync(work);
-}
-
-void SyncWorkSlot::sendSync(){
-	Phase::set(PhaseEnum::SyncXmit);
-	SyncSender::sendMasterSync();
-}
-
-void SyncWorkSlot::sendControlSync(){
-	// SyncSender accesses IntraCliqueManager for message
-	SyncSender::sendControlSync();
-}
-
-
 
 void SyncWorkSlot::endListen(){
 	// Radio might be in use if we timeout'd while receiving

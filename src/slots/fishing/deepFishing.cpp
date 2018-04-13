@@ -1,7 +1,5 @@
-/*
- * Part of FishSlot implementation
- */
-#include "fishSlot.h"
+
+#include "deepFishing.h"
 
 #include "../../clique/clique.h"
 #include "../../globals.h"
@@ -17,7 +15,7 @@
  */
 
 
-void FishSlot::endDeepFishingWithNoAction() {
+void DeepFishing::endWithNoAction() {
 	/*
 	 * Self stays in current clique.
 	 *
@@ -31,7 +29,7 @@ void FishSlot::endDeepFishingWithNoAction() {
 }
 
 // TODO wording merged away => departed
-void FishSlot::endDeepFishingWithRecoverMaster() {
+void DeepFishing::endWithRecoverMaster() {
 	/*
 	 * Master merged away to superior
 	 * AND we didn't hear a superior.

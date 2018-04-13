@@ -6,11 +6,12 @@
 
 #include "../syncAgentImp/state/syncMode.h"
 
-// TODO one is old design
 #include "../slots/sync/syncSlot.h"
-#include "../slots/syncing/syncWorkSlot.h"
+#include "../slots/syncing/syncSlotStep.h"
 
 #include "../slots/fishing/fishingManager.h"
+
+#include "../logging/logger.h"
 
 #include <cassert>
 
@@ -57,13 +58,13 @@ void scheduleNonSyncTask() {
 void SSTask::sendSync() {
 	switch(SyncSlot::kind()) {
 	case SyncSlotKind::sendWorkSync:
-		SyncWorkSlot::sendWorkSync();
+		SyncSlotStep::sendWorkSync();
 		break;
 	case SyncSlotKind::sendSync:
-		SyncWorkSlot::sendSync();
+		SyncSlotStep::sendSync();
 		break;
 	case SyncSlotKind::sendControlSync:
-		SyncWorkSlot::sendControlSync();
+		SyncSlotStep::sendControlSync();
 		break;
 	case SyncSlotKind::listen:
 		// should not happen

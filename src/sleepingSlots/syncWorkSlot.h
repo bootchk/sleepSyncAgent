@@ -61,8 +61,5 @@ private:
 
 public:
 	static void tryPerform();
-	static void sendWorkSync();
-	static void sendSync();
-	static void sendControlSync();
 	static void endListen();
 };

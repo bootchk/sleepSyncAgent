@@ -8,7 +8,7 @@
 #include "../scheduleParameters.h"
 
 #include "../slots/fishing/fishingManager.h"
-#include "../slots/fishing/fishSlot.h"
+#include "../slots/fishing/deepFishing.h"
 #include "../syncAgentImp/syncAgentImp.h"
 #include "../work/workOut.h"
 #include "../work/workIn.h"
@@ -138,7 +138,7 @@ DeltaTime getFishingDeltaFromMergeMsg(SyncMessage* msg) {
  * Stay in current clique until that succeeds.
  */
 HandlingResult handleEnticingInferiorMessage(SyncMessage* msg){
-	FishingManager::switchToDeepFishing(getFishingDeltaFromMergeMsg(msg), FishSlot::endDeepFishingWithNoAction);
+	FishingManager::switchToDeepFishing(getFishingDeltaFromMergeMsg(msg), DeepFishing::endWithNoAction);
 	return HandlingResult::KeepListening;
 }
 
@@ -150,7 +150,7 @@ HandlingResult handleEnticingInferiorMessage(SyncMessage* msg){
  * If not succeed, try recover former master.
  */
 HandlingResult handleMasterMergedAwayMessage(SyncMessage* msg){
-	FishingManager::switchToDeepFishing(getFishingDeltaFromMergeMsg(msg), FishSlot::endDeepFishingWithRecoverMaster);
+	FishingManager::switchToDeepFishing(getFishingDeltaFromMergeMsg(msg), DeepFishing::endWithRecoverMaster);
 	return HandlingResult::KeepListening;
 }
 /*
@@ -158,7 +158,7 @@ HandlingResult handleMasterMergedAwayMessage(SyncMessage* msg){
  * That slave is sending this.
  */
 HandlingResult handleSlaveMergedAwayMessage(SyncMessage* msg){
-	FishingManager::switchToDeepFishing(getFishingDeltaFromMergeMsg(msg), FishSlot::endDeepFishingWithNoAction);
+	FishingManager::switchToDeepFishing(getFishingDeltaFromMergeMsg(msg), DeepFishing::endWithNoAction);
 	return HandlingResult::KeepListening;
 }
 
