@@ -12,8 +12,8 @@
 
 #ifdef SOFTDEVICE_PRESENT
 // Provisioning
-#include "../network/topology.h"
-#include "../provisioning/workProvisioningProxy.h"
+#include "../network/topologyProvisioner.h"
+#include "../provisioning/workProvisioner.h"
 #endif
 
 
@@ -106,8 +106,8 @@ void SyncAgentImp::init()
 	initEnsembleProtocol();
 
 #ifdef SOFTDEVICE_PRESENT
-	NetworkTopology::subscribeToProvisionings();
-	WorkProvisioningProxy::subscribeToProvisionings();
+	NetTopologyProvisioner::subscribeToProvisionings();
+	WorkProvisioner::subscribeToProvisionings();
 #endif
 
 #ifdef LOW_XMIT_POWER

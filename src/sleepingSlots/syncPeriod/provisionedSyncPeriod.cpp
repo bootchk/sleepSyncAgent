@@ -3,7 +3,7 @@
 #include "syncPeriod.h"
 
 // implementation
-#include "../slots/syncing/syncWorkSlot.h"
+//#include "../slots/syncing/syncWorkSlot.h"
 #include "../sleepers/scheduleSleeper.h"
 #include "../logging/logger.h"
 

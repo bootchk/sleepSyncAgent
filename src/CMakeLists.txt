@@ -32,24 +32,33 @@ nRF5SetIncludePaths()
 
 # no startup sources or linker scripts
 
+# Configurations:
+#
 # No need for separate library for 52810 or 52810e emulated (that is required for executable)
+# No support for 51xxx
+# IE always 52x
+#
 # Yes need separate library for wSD? i.e w/ provisioning
-# TODO
+# Code has #ifdef SOFTDEVICE/PROVISIONED for provisioning slot
+# Saying SD is s132 works for s112 also (API is the same.)
+# 
+# Thus names of two configs are
+# sleepSyncAgent52xNoSD
+# sleepSyncAgent52xSD
 
-# NRF52832
-add_library(sleepSyncAgent52832 "")
-set_target_properties( sleepSyncAgent52832
+add_library(sleepSyncAgent52xSD "")
+set_target_properties( sleepSyncAgent52xSD
     PROPERTIES
        CHIP "nrf52832_xxaa"
-       SOFTDEVICE "none"
+       SOFTDEVICE "s132"
        FLOAT_ABI "soft"
     )
-nRF5CheckTargetProperties(sleepSyncAgent52832)
-nRF5ConfigTargetByProperties(sleepSyncAgent52832)
+nRF5CheckTargetProperties(sleepSyncAgent52xSD)
+nRF5ConfigTargetByProperties(sleepSyncAgent52xSD)
 
 # PRIVATE so not defined for referring builds
-target_compile_definitions( sleepSyncAgent52832 PRIVATE "NRF52" )
-target_compile_definitions( sleepSyncAgent52832 PRIVATE "TASKS" )
+target_compile_definitions( sleepSyncAgent52xSD PRIVATE "NRF52" )
+target_compile_definitions( sleepSyncAgent52xSD PRIVATE "TASKS" )
 
 
 add_library(sleepSyncAgent52xNoSD "")
@@ -105,40 +114,42 @@ add_library(NRFDrivers STATIC IMPORTED)
 set_target_properties( NRFDrivers PROPERTIES IMPORTED_LOCATION /home/bootch/git/libNRFDrivers/Debug/libNRFDrivers.a )
 
 
-add_library(BLEProvisionee STATIC IMPORTED)
-set_target_properties( BLEProvisionee 
-    PROPERTIES 
-        IMPORTED_LOCATION /home/bootch/git/libBLEProvisionee/Debug/libBLEProvisionee.a
-        INTERFACE_INCLUDE_DIRECTORIES "/home/bootch/git/libBLEProvisionee/objects"
-    )
+#add_library(BLEProvisionee STATIC IMPORTED)
+#set_target_properties( BLEProvisionee 
+#    PROPERTIES 
+#        IMPORTED_LOCATION /home/bootch/git/libBLEProvisionee/Debug/libBLEProvisionee.a
+#        INTERFACE_INCLUDE_DIRECTORIES "/home/bootch/git/libBLEProvisionee/objects"
+#    )
 # Same library but built for 52810
-add_library(BLEProvisionee52810 STATIC IMPORTED)
-set_target_properties( BLEProvisionee52810 
-    PROPERTIES 
-        IMPORTED_LOCATION /home/bootch/git/libBLEProvisionee/Debug/libBLEProvisionee52810.a
-        INTERFACE_INCLUDE_DIRECTORIES "/home/bootch/git/libBLEProvisionee/objects"
-    )
+#add_library(BLEProvisionee52810 STATIC IMPORTED)
+#set_target_properties( BLEProvisionee52810 
+#    PROPERTIES 
+#        IMPORTED_LOCATION /home/bootch/git/libBLEProvisionee/Debug/libBLEProvisionee52810.a
+#        INTERFACE_INCLUDE_DIRECTORIES "/home/bootch/git/libBLEProvisionee/objects"
+#    )
 # Same library but built for 52810e emulated
-add_library(BLEProvisionee52810e STATIC IMPORTED)
-set_target_properties( BLEProvisionee52810e 
-    PROPERTIES 
-        IMPORTED_LOCATION /home/bootch/git/libBLEProvisionee/Debug/libBLEProvisionee52810e.a
-        INTERFACE_INCLUDE_DIRECTORIES "/home/bootch/git/libBLEProvisionee/objects"
-    )
+#add_library(BLEProvisionee52810e STATIC IMPORTED)
+#set_target_properties( BLEProvisionee52810e 
+#    PROPERTIES 
+#        IMPORTED_LOCATION /home/bootch/git/libBLEProvisionee/Debug/libBLEProvisionee52810e.a
+#        INTERFACE_INCLUDE_DIRECTORIES "/home/bootch/git/libBLEProvisionee/objects"
+#    )
 
 
 
 
 # ??? order is important unless we specify interlibrary dependencies
-target_link_libraries(sleepSyncAgent52832 
+target_link_libraries(sleepSyncAgent52xSD 
 PRIVATE
+    BLEProvisionee
+    NRFDrivers
     radioSoC52wSD
     embeddedMath52
     )
 
 #     nRF5x52
-#   BLEProvisionee
-#    NRFDrivers
+#   
+#    
   
 
 target_link_libraries(sleepSyncAgent52xNoSD
@@ -211,7 +222,6 @@ list(APPEND Sources
        "${CMAKE_CURRENT_LIST_DIR}/slots/fishing/fishingManager.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/slots/fishing/fishSchedule.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/slots/fishing/deepFishing.cpp"
-       "${CMAKE_CURRENT_LIST_DIR}/slots/info/infoSlot.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/slots/merge/mergePolicy.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/slots/merge/mergeSchedule.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/slots/sync/syncSlotProperty.cpp"
@@ -219,7 +229,6 @@ list(APPEND Sources
        "${CMAKE_CURRENT_LIST_DIR}/slots/syncing/syncSlotSchedule.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/slots/syncing/syncSlotStep.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/slots/abandonMastershipSlot.cpp"
-       "${CMAKE_CURRENT_LIST_DIR}/syncPeriod/modalSyncPeriod.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/task/fishTask.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/task/mergerTask.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/task/provisionTask.cpp"
@@ -238,28 +247,39 @@ list(APPEND Sources
 # "${CMAKE_CURRENT_LIST_DIR}/slots/syncing/syncSlotKinds.cpp"
 # "${CMAKE_CURRENT_LIST_DIR}/slots/fishing/fishSlot.cpp"
 # "${CMAKE_CURRENT_LIST_DIR}/syncPeriod/combinedSyncPeriod.cpp"
+# "${CMAKE_CURRENT_LIST_DIR}/syncPeriod/modalSyncPeriod.cpp"
+# "${CMAKE_CURRENT_LIST_DIR}/syncPeriod/provisionedSyncPeriod.cpp"
+# "${CMAKE_CURRENT_LIST_DIR}/slots/info/infoSlot.cpp"
 
 
 list(APPEND ProvisioningSources
     "${CMAKE_CURRENT_LIST_DIR}/network/topologyProvisioner.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/provisioning/provisioningPublisher.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/syncPeriod/provisionedSyncPeriod.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/provisioning/provisionSchedule.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/provisioning/provisionerCallback.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/provisioning/workProvisioner.cpp"
 )
 
-# TODO provisioned version
-# TODO name 52810SD
-target_sources(sleepSyncAgent52832
+# provisioned version
+target_sources(sleepSyncAgent52xSD
    PUBLIC
       ${Sources}
+      ${ProvisioningSources}
    )
+   
 target_sources(sleepSyncAgent52xNoSD
    PUBLIC
       ${Sources}
    )
 
 
+# Interface location
 # !!! current list dir is already /src
 target_include_directories(sleepSyncAgent52xNoSD
+   PUBLIC
+       "${CMAKE_CURRENT_LIST_DIR}"
+   )
+target_include_directories(sleepSyncAgent52xSD
    PUBLIC
        "${CMAKE_CURRENT_LIST_DIR}"
    )

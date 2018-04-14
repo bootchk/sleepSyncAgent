@@ -58,11 +58,12 @@ public:
 	 *
 	 * Duration includes one HFXOStartup and one or many VirtualSlotDurations
 	 */
-#ifdef TASKS
+
 	// Radio Prelude is separate
 	static const DeltaTime DeepFishSessionDurationTicks = ScheduleParameters::VirtualSlotDuration;
 	static const DeltaTime MinTrollingFishSessionDurationTicks = MinSlotsTrollingFishedPerPeriod * ScheduleParameters::VirtualSlotDuration;
-#else
+#ifdef OBSOLETE
+	// Without tasks
 	static const DeltaTime MinTrollingRealFishSessionDurationTicks =
 					ScheduleParameters::HFXOStartup
 					+ MinSlotsTrollingFishedPerPeriod * ScheduleParameters::VirtualSlotDuration;

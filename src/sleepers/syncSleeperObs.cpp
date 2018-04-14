@@ -3,7 +3,7 @@
 
 #include <timeMath.h>
 
-#include <clock/sleeper.h>	// pure class Sleeper
+//#include <clock/sleeper.h>	// pure class Sleeper
 #include <exceptions/powerAssertions.h>
 #include <exceptions/resetAssertions.h>
 

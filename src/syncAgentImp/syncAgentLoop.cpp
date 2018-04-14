@@ -1,17 +1,13 @@
 
 #include "../syncAgentImp/syncAgentImp.h"
 
-#include "../syncPeriod/modalSyncPeriod.h"
-
 #include <cassert>
 
 #include "../globals.h"	// clique
 #include "../scheduleParameters.h"
 
 #include "../modules/syncPowerManager.h"
-//#include "../syncPeriod/syncPeriod.h"
 
-#include "../sleepers/scheduleSleeper.h"
 #include "../work/workIn.h"
 
 #include "../slots/fishing/fishSchedule.h"	// logging
@@ -21,12 +17,8 @@
 #include "../syncAgentImp/state/phase.h"
 #include "../syncAgentImp/state/syncMode.h"
 
-// temp
-//#define TASKS
-#ifdef TASKS
-#include <clock/mcuSleep.h>
 #include "../schedule/syncSchedule.h"
-#endif
+
 
 /*
  * SyncAgentImp is a task(thread) that is infinite sequence of sync periods.
@@ -122,6 +114,10 @@ void SyncAgentImp::preludeToSyncPeriod() {
 
 
 #ifdef OBSOLETE
+
+#include <clock/mcuSleep.h>
+#include "../sleepers/scheduleSleeper.h"
+
 void SyncAgentImp::loop(){
 
 	preludeToLoop();

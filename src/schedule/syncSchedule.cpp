@@ -13,6 +13,7 @@
 #include "../slots/fishing/fishingManager.h"
 #include "../logging/logger.h"
 #include "../slots/merge/mergeSchedule.h"
+#include "../provisioning/provisionSchedule.h"
 
 
 
@@ -221,10 +222,35 @@ void SyncSchedule::syncSlotAfterMerging() {
 }
 
 
+/*
+ * Provisioning.
+ */
 void SyncSchedule::provisionStart() {
-	Logger::log(" Provision");
+	Logger::log(" ProvStrt");
 	TaskTimer::schedule(SSTask::provisionStart,
-					SyncSlotSchedule::deltaToThisSyncSlotEnd());	// TODO proper time LOW
+					ProvisionSchedule::deltaToProvisionStart());
 }
+
+void SyncSchedule::syncSlotAfterProvisioning() {
+	Logger::log(" SyncFProv");
+	if (RadioPrelude::tryUndoAfterMerging()) {
+		assert(not RadioPrelude::isDone());
+		SyncSchedule::radioPreludeTaskWSync();
+	}
+	else {
+		SyncSchedule::startSyncSlotWithoutScheduledPrelude();
+	}
+}
+
+
+
+
+#ifdef NOT_USED
+void SyncSchedule::provisionEnd() {
+	Logger::log(" ProvEnd");
+	TaskTimer::schedule(SSTask::provisionEnd,
+					ProvisionSchedule::deltaToProvisionEnd());
+}
+#endif
 
 

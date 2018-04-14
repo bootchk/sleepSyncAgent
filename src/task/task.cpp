@@ -20,6 +20,12 @@ namespace {
 
 /*
  * Schedule task in the normally sleeping slots.
+ *
+ * Nonsync tasks are:
+ * - fish (trolling or deep)
+ * - merge
+ * - provision
+ * - none (maintain sync, but no power for any other task.)
  */
 void scheduleNonSyncTask() {
 

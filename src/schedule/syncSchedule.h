@@ -32,6 +32,7 @@ public:
 	static void syncSlotAfterSyncSlot();
 	static void syncSlotAfterFishSlot();
 	static void syncSlotAfterMerging();
+	static void syncSlotAfterProvisioning();
 	static void radioPreludeTaskWSync();
 	static void startSyncSlotFromPreludeStart();
 
@@ -49,5 +50,8 @@ public:
 	static void fishSlotEnd();
 
 	static void provisionStart();
+	static void provisionEnd();
+
+
 	static void merger();
 };

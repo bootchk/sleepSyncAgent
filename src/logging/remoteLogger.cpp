@@ -6,12 +6,14 @@
 #include <services/mailbox.h>
 #include <exceptions/faultHandlers.h>
 
-#include "../slots/info/infoSlot.h"
+
 
 
 
 // define REMOTE_LOGGING to enable, usually defined in build config
 #ifdef REMOTE_LOGGING
+
+#include "../slots/info/infoSlot.h"
 
 
 namespace {

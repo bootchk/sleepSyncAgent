@@ -64,6 +64,14 @@ bool RadioPrelude::tryUndoAfterMerging() {
 	return result;
 }
 
+bool RadioPrelude::tryUndoAfterProvisioning() {
+	bool result;
+
+	result = shouldUndoAfterProvisioning();
+	if (result) undo();
+	return result;
+}
+
 
 
 /*
@@ -106,3 +114,13 @@ bool RadioPrelude::shouldUndoAfterSyncing() {
 
 bool RadioPrelude::shouldUndoAfterFishing() { return not FishingManager::isFishSlotEndSyncPeriod(); }
 bool RadioPrelude::shouldUndoAfterMerging() { return not MergeSchedule::isMergerEndSyncPeriod(); }
+
+/*
+ * Provisioning start after SyncSlot and last one second.
+ * Therefore, another second before next SyncSlot.
+ * TODO should be in terms of other const parameters, assumptions made elsewhere.
+ */
+bool RadioPrelude::shouldUndoAfterProvisioning() { return true; }
+
+
+
