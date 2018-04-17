@@ -8,12 +8,16 @@
 #include "syncSchedule.h"
 
 #include "../task/task.h"
-#include "taskTimer.h"
+
 
 #include "../slots/fishing/fishingManager.h"
 #include "../logging/logger.h"
 #include "../slots/merge/mergeSchedule.h"
 #include "../provisioning/provisionSchedule.h"
+
+// radioSoC
+#include <clock/taskTimer.h>
+
 
 
 
