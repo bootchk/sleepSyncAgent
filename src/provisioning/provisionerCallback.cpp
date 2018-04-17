@@ -4,19 +4,27 @@
 #include "../logging/logger.h"
 #include "provisioningPublisher.h"
 #include "../task/task.h"
+#include "../schedule/syncSchedule.h"
 
 
 
+namespace {
 
+void scheduleProvisionEnd() {
+	SyncSchedule::provisionEnd();
+}
+
+}
 
 
 /*
  * These are called from the context of a Softdevice Handler.
  * That is, a BLE event occurred under auspices of Softdevice.
  * That context is NOT an ISR i.e. not a task.
- * And none of our tasks are schedule.
- * Here, we shutdown the Provisioner (deactivate Softdevice, so no more events from it.)
- * And schedule a task.
+ * And none of our tasks are scheduled.
+ *
+ * I am not sure whether should disable SD from an observer context.
+ * So schedule a task to shutdown the Provisioner (disable Softdevice, so no more events from it.)
  */
 
 void ProvisionerCallback::succeed(ProvisionedValueType provision,
@@ -40,7 +48,7 @@ void ProvisionerCallback::succeed(ProvisionedValueType provision,
 		ProvisioningPublisher::notify(index, provision, rssi);
 	}
 
-	SSTask::provisionEnd();
+	scheduleProvisionEnd();
 }
 
 
@@ -49,5 +57,5 @@ void ProvisionerCallback::fail() {
 
 	// No publish to app, it only wants succeed
 
-	SSTask::provisionEnd();
+	scheduleProvisionEnd();
 }

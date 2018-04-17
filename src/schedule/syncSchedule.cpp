@@ -231,6 +231,14 @@ void SyncSchedule::provisionStart() {
 					ProvisionSchedule::deltaToProvisionStart());
 }
 
+
+void SyncSchedule::provisionEnd() {
+	Logger::log(" ProvEnd");
+	TaskTimer::schedule(SSTask::provisionEnd,
+					ProvisionSchedule::deltaToProvisionEnd());
+}
+
+
 void SyncSchedule::syncSlotAfterProvisioning() {
 	Logger::log(" SyncFProv");
 	if (RadioPrelude::tryUndoAfterMerging()) {
@@ -243,14 +251,5 @@ void SyncSchedule::syncSlotAfterProvisioning() {
 }
 
 
-
-
-#ifdef NOT_USED
-void SyncSchedule::provisionEnd() {
-	Logger::log(" ProvEnd");
-	TaskTimer::schedule(SSTask::provisionEnd,
-					ProvisionSchedule::deltaToProvisionEnd());
-}
-#endif
 
 

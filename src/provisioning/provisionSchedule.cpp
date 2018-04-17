@@ -18,8 +18,9 @@ DeltaTime ProvisionSchedule::deltaToProvisionStart() {
 
 DeltaTime ProvisionSchedule::deltaToProvisionEnd() {
 	/*
-	 *
+	 * No reason for delay.
+	 * Assert this is called from an ISR (Softdevice observer model is ISR)
+	 * and we just observed provision result from SD.
 	 */
-	// TODO Task
-	return 2000;
+	return 0;
 }

@@ -6,8 +6,14 @@ namespace {
 }
 
 
-
-
+/*
+ * SOFTDEVICE_PRESENT => provisioning capability
+ * This might change, when BLE is used for more than provisioning.
+ *
+ * The provisioning manager is compiled even when not SOFTDEVICE_PRESENT,
+ * so that less code is conditionally compiled.
+ */
+#ifdef SOFTDEVICE_PRESENT
 /*
  * Provision periodically, regularly.
  *
@@ -29,3 +35,6 @@ bool ProvisionManager::shouldProvision() {
 	}
 	return result;
 }
+#else
+bool ProvisionManager::shouldProvision() { return false; }
+#endif

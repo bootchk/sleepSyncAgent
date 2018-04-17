@@ -33,11 +33,11 @@ void toSyncOnly() {
 	SyncAgentImp::ToNoFishingFromOther();
 }
 
-#ifdef BLE_PROVISIONED
+
 void toSyncAndProvision() {
 	_mode = SyncMode::SyncAndProvision;
 }
-#endif
+
 
 
 }
@@ -101,14 +101,10 @@ void SyncModeManager::checkPowerAndTryModeTransitions(){
 			toSyncOnly();
 		}
 		else {
-#ifdef BLE_PROVISIONED
-		// TODO occasionally to SyncAndProvision
-		if (ProvisionManager::shouldProvision()) {
-			toSyncAndProvision();
-		}
-#else
-		// no change to mode
-#endif
+			// If SOFTDEVICE_PRESENT, will occasionally transition to SyncAndProvision
+			if (ProvisionManager::shouldProvision()) {
+				toSyncAndProvision();
+			}
 		}
 		break;
 		// No higher level

@@ -46,7 +46,7 @@ nRF5SetIncludePaths()
 # sleepSyncAgent52xNoSD
 # sleepSyncAgent52xSD
 
-add_library(sleepSyncAgent52xSD "")
+add_library(sleepSyncAgent52xSD STATIC "")
 set_target_properties( sleepSyncAgent52xSD
     PROPERTIES
        CHIP "nrf52832_xxaa"
@@ -59,6 +59,16 @@ nRF5ConfigTargetByProperties(sleepSyncAgent52xSD)
 # PRIVATE so not defined for referring builds
 target_compile_definitions( sleepSyncAgent52xSD PRIVATE "NRF52" )
 target_compile_definitions( sleepSyncAgent52xSD PRIVATE "TASKS" )
+
+#install(TARGETS sleepSyncAgent52xSD
+#    EXPORT sleepSyncTargets
+#    DESTINATION lib)
+#install(EXPORT sleepSyncTargets
+#    DESTINATION lib)
+
+
+
+
 
 
 add_library(sleepSyncAgent52xNoSD "")
@@ -145,7 +155,7 @@ PRIVATE
     NRFDrivers
     radioSoC52wSD
     embeddedMath52
-    )
+   )
 
 #     nRF5x52
 #   
@@ -210,6 +220,7 @@ list(APPEND Sources
        "${CMAKE_CURRENT_LIST_DIR}/policy/syncPolicy/adaptiveXmitSyncPolicy.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/policy/dropoutMonitor.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/policy/fishWaitingPolicy.cpp"
+       "${CMAKE_CURRENT_LIST_DIR}/policy/provisionManager.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/receiver/receiver.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/schedule/syncSchedule.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/schedule/radioPrelude.cpp"

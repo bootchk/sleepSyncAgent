@@ -88,7 +88,7 @@ bool RadioPrelude::shouldUndoAfterSyncing() {
 	bool result;
 	switch(SyncModeManager::mode()) {
 	case SyncMode::Maintain:
-		assert(false);
+		assert(false);	// Maintain mode should not call here.
 		break;
 
 	case SyncMode::SyncAndFishMerge:
@@ -105,9 +105,13 @@ bool RadioPrelude::shouldUndoAfterSyncing() {
 		}
 		break;
 
-	case SyncMode::SyncOnly:	// no non-sync slot follows
-	case SyncMode::SyncAndProvision:	// provision not use RP
+	case SyncMode::SyncOnly:	// no non-sync slot abuts
 		result = true;
+		break;
+	case SyncMode::SyncAndProvision:
+		result = true;	// Provisioning abuts and uses RadioPrelude (HFXO)
+		break;
+
 	}
 	return result;
 }

@@ -47,7 +47,6 @@ void scheduleNonSyncTask() {
 		SSTask::tryFishOrMerge();
 		break;
 	case SyncMode::SyncAndProvision:
-		// Provisioning does not use RadioPrelude ???
 		SyncSchedule::provisionStart();
 		break;
 	case SyncMode::Maintain:

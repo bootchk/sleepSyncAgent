@@ -23,6 +23,7 @@ void SSTask::provisionStart() {
 		 * IE continue in main loop on WFI.
 		 * Assert callback will come in finite time (timeout, error, or succeed.)
 		 */
+		// TODO do we need to use sd_app_evt_wait() ?
 	}
 	else {
 		/*
@@ -30,7 +31,7 @@ void SSTask::provisionStart() {
 		 * Schedule next task.
 		 * We might try provision again, on the next iteration of Provisioning cycle.
 		 */
-
+		SSTask::provisionEnd();
 	}
 }
 
