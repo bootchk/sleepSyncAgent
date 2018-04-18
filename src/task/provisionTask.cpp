@@ -6,24 +6,21 @@
 
 // libBLEProvisionee
 #include <provisioner.h>
-#include "../provisioning/provisionerCallback.h"
 #include "../syncAgentImp/syncAgentImp.h"
 #include "../schedule/syncSchedule.h"
 
 
 void SSTask::provisionStart() {
-	// Init on each session.  TODO init once.
-	Provisioner::init(ProvisionerCallback::succeed, ProvisionerCallback::fail);
+	// assert Provisioner is Init
 
 	APIError result = Provisioner::start();
 	if (result == APIError::BLEStartedOK ) {
 		/*
 		 * Softdevice is in charge.
-		 * Sleep until Provisioner callback.
+		 * Sleep (use sd_app_evt_wait()) until Provisioner callback.
 		 * IE continue in main loop on WFI.
 		 * Assert callback will come in finite time (timeout, error, or succeed.)
 		 */
-		// TODO do we need to use sd_app_evt_wait() ?
 	}
 	else {
 		/*
@@ -31,6 +28,7 @@ void SSTask::provisionStart() {
 		 * Schedule next task.
 		 * We might try provision again, on the next iteration of Provisioning cycle.
 		 */
+		Logger::log("SD error at Provisioner::start");
 		SSTask::provisionEnd();
 	}
 }

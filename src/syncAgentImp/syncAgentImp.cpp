@@ -15,6 +15,7 @@
 // Provisioning
 #include "../network/topologyProvisioner.h"
 #include "../provisioning/workProvisioner.h"
+#include "../provisioning/provisionerCallback.h"
 #endif
 
 
@@ -110,6 +111,7 @@ void SyncAgentImp::init()
 #ifdef SOFTDEVICE_PRESENT
 	NetTopologyProvisioner::subscribeToProvisionings();
 	WorkProvisioner::subscribeToProvisionings();
+	Provisioner::init(ProvisionerCallback::succeed, ProvisionerCallback::fail);
 #endif
 
 #ifdef LOW_XMIT_POWER
