@@ -5,9 +5,10 @@
 #include "../globals.h"	// clique
 #include "../cliqueHistory/cliqueHistory.h"
 #include "../scheduleParameters.h"
-//#include "../sleepers/syncPowerSleeper.h"
-#include "../sleepers/oversleepMonitor.h"
 #include "../message/serializer.h"
+
+//#include "../sleepers/syncPowerSleeper.h"
+//#include "../sleepers/oversleepMonitor.h"
 //#include "../sleepers/syncSleeperObs.h"
 
 #ifdef SOFTDEVICE_PRESENT
@@ -51,7 +52,8 @@ void SyncAgentImp::connectOnMuchPowerReserve( void (*callback)(void)) {
 	SyncAgentImp::onPowerReserveCallback = callback;
 }
 
-// Obsolete
+#ifdef Obsolete
+
 void SyncAgentImp::initSleepers() {
 
 	// assert longClock was init
@@ -65,7 +67,7 @@ void SyncAgentImp::initSleepers() {
 }
 
 
-#ifdef Obsolete
+
 void SyncAgentImp::sleepUntilSyncPower(){
 	SyncPowerSleeper::sleepUntilSyncPower();
 }
@@ -130,6 +132,7 @@ void SyncAgentImp::init()
 	 *
 	 * Some choices commented out.
 	 */
+#ifdef OBSOLETE
 	BrownoutRecorder::registerCallbacks(
 			//getPhase,
 			//SyncSleeper::getCountSleeps,
@@ -137,6 +140,7 @@ void SyncAgentImp::init()
 			//SyncSleeper::getPriorReasonForWake,
 			OverSleepMonitor::getPhaseAndReason,
 			OverSleepMonitor::timeElapsedSinceLastStartSleep);
+#endif
 
 	countMergeSyncHeard = 0;
 
@@ -196,7 +200,9 @@ void SyncAgentImp::scatter() {
  * Callbacks from BrownoutManager for debugging.
  */
 uint32_t SyncAgentImp::getPhase() { return (uint32_t) Phase::get(); }
+#ifdef OBSOLETE
 uint32_t SyncAgentImp::getReasonForWake() { return (uint32_t) Sleeper::getReasonForWake(); }
+#endif
 
 
 void SyncAgentImp::initEnsembleProtocol() {

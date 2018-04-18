@@ -91,13 +91,15 @@ target_compile_definitions( sleepSyncAgent52xNoSD PRIVATE "TASKS" )
 
 # import libs from outside project
 
-add_library(radioSoC52wSD STATIC IMPORTED)
-set_target_properties( radioSoC52wSD 
+if (NOT TARGET radioSoC52SD)
+add_library(radioSoC52SD STATIC IMPORTED)
+set_target_properties( radioSoC52SD 
     PROPERTIES 
-        IMPORTED_LOCATION /home/bootch/git/radioSoC/Debug52wSD/libradioSoC52wSD.a
+        IMPORTED_LOCATION /home/bootch/git/radioSoC/cmakeBuild/libradioSoC52SD.a
         INTERFACE_INCLUDE_DIRECTORIES "/home/bootch/git/radioSoC/src"
     )
-    
+endif()
+
 if (NOT TARGET radioSoC52810NoSD)
 add_library(radioSoC52810NoSD STATIC IMPORTED)
 set_target_properties( radioSoC52810NoSD 
@@ -153,7 +155,7 @@ target_link_libraries(sleepSyncAgent52xSD
 PRIVATE
     BLEProvisionee
     NRFDrivers
-    radioSoC52wSD
+    radioSoC52SD
     embeddedMath52
    )
 
@@ -225,10 +227,6 @@ list(APPEND Sources
        "${CMAKE_CURRENT_LIST_DIR}/schedule/syncSchedule.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/schedule/radioPrelude.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/schedule/sleepDuration.cpp"
-       "${CMAKE_CURRENT_LIST_DIR}/schedule/taskTimer.cpp"
-       "${CMAKE_CURRENT_LIST_DIR}/sleepers/oversleepMonitor.cpp"
-       "${CMAKE_CURRENT_LIST_DIR}/sleepers/scheduleSleeper.cpp"
-       "${CMAKE_CURRENT_LIST_DIR}/sleepers/syncPowerSleeper.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/slots/fish/fishSlot.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/slots/fishing/fishingManager.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/slots/fishing/fishSchedule.cpp"
@@ -261,6 +259,9 @@ list(APPEND Sources
 # "${CMAKE_CURRENT_LIST_DIR}/syncPeriod/modalSyncPeriod.cpp"
 # "${CMAKE_CURRENT_LIST_DIR}/syncPeriod/provisionedSyncPeriod.cpp"
 # "${CMAKE_CURRENT_LIST_DIR}/slots/info/infoSlot.cpp"
+# "${CMAKE_CURRENT_LIST_DIR}/sleepers/oversleepMonitor.cpp"
+#       "${CMAKE_CURRENT_LIST_DIR}/sleepers/scheduleSleeper.cpp"
+#       "${CMAKE_CURRENT_LIST_DIR}/sleepers/syncPowerSleeper.cpp"
 
 
 list(APPEND ProvisioningSources
