@@ -109,7 +109,7 @@ bool RadioPrelude::shouldUndoAfterSyncing() {
 		result = true;
 		break;
 	case SyncMode::SyncAndProvision:
-		result = true;	// Provisioning abuts and uses RadioPrelude (HFXO)
+		result = false;	// Provisioning abuts and uses RadioPrelude (HFXO)
 		break;
 
 	}

@@ -9,9 +9,16 @@
 #include "../syncAgentImp/syncAgentImp.h"
 #include "../schedule/syncSchedule.h"
 
+// assertions
+#include "../schedule/radioPrelude.h"
+#include <cassert>
+
 
 void SSTask::provisionStart() {
 	// assert Provisioner is Init
+
+	// We left HFXO running
+	assert(RadioPrelude::isDone());
 
 	APIError result = Provisioner::start();
 	if (result == APIError::BLEStartedOK ) {
@@ -45,6 +52,8 @@ void SSTask::provisionEnd() {
 	 * Prelude might still be done (HFXO running.)
 	 */
 	SyncSchedule::syncSlotAfterProvisioning();
+
+	// shutdown() already assert(not Provisioner::isProvisioning());
 }
 
 
