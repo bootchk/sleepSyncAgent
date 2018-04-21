@@ -226,6 +226,7 @@ void SyncSchedule::syncSlotAfterMerging() {
 }
 
 
+#ifdef SOFTDEVICE_PRESENT
 /*
  * Provisioning.
  */
@@ -254,6 +255,6 @@ void SyncSchedule::syncSlotAfterProvisioning() {
 	}
 }
 
-
+#endif
 
 

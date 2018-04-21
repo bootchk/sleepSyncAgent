@@ -3,7 +3,7 @@
 
 #include "../../modules/syncPowerManager.h"
 #include "../../logging/logger.h"
-#include "../../policy/provisionManager.h"
+#include "../../provisioning/provisionManager.h"
 
 // Actions for transitions
 #include "../../syncAgentImp/state/role.h"
@@ -33,11 +33,11 @@ void toSyncOnly() {
 	SyncAgentImp::ToNoFishingFromOther();
 }
 
-
+#ifdef SOFTDEVICE_PRESENT
 void toSyncAndProvision() {
 	_mode = SyncMode::SyncAndProvision;
 }
-
+#endif
 
 
 }
@@ -101,10 +101,12 @@ void SyncModeManager::checkPowerAndTryModeTransitions(){
 			toSyncOnly();
 		}
 		else {
+#ifdef SOFTDEVICE_PRESENT
 			// If SOFTDEVICE_PRESENT, will occasionally transition to SyncAndProvision
 			if (ProvisionManager::shouldProvision()) {
 				toSyncAndProvision();
 			}
+#endif
 		}
 		break;
 		// No higher level

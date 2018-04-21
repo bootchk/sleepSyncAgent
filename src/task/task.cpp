@@ -47,7 +47,9 @@ void scheduleNonSyncTask() {
 		SSTask::tryFishOrMerge();
 		break;
 	case SyncMode::SyncAndProvision:
+#ifdef SOFTDEVICE_PRESENT
 		SyncSchedule::provisionStart();
+#endif
 		break;
 	case SyncMode::Maintain:
 		// should not get here
