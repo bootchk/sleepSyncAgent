@@ -71,7 +71,8 @@ target_compile_definitions( sleepSyncAgent52xSD PRIVATE "TASKS" )
 
 
 
-add_library(sleepSyncAgent52xNoSD "")
+
+add_library(sleepSyncAgent52xNoSD STATIC "")
 set_target_properties( sleepSyncAgent52xNoSD
     PROPERTIES
        CHIP "nrf52832_xxaa"
@@ -100,6 +101,15 @@ set_target_properties( radioSoC52SD
     )
 endif()
 
+if (NOT TARGET radioSoC52NoSD)
+add_library(radioSoC52NoSD STATIC IMPORTED)
+set_target_properties( radioSoC52NoSD 
+    PROPERTIES 
+        IMPORTED_LOCATION /home/bootch/git/radioSoC/cmakeBuild/libradioSoC52NoSD.a
+        INTERFACE_INCLUDE_DIRECTORIES "/home/bootch/git/radioSoC/src"
+    )
+endif()
+
 if (NOT TARGET radioSoC52810NoSD)
 add_library(radioSoC52810NoSD STATIC IMPORTED)
 set_target_properties( radioSoC52810NoSD 
@@ -115,23 +125,27 @@ endif()
 
 
 # TODO No dependence on embeddedMath, since it is already linked into radioSoC
-add_library(embeddedMath STATIC IMPORTED)
-set_target_properties( embeddedMath
+# But it has an interface dependence, includes timetypes.h
+if (NOT TARGET embeddedMath52)
+add_library(embeddedMath52 STATIC IMPORTED)
+set_target_properties( embeddedMath52
    PROPERTIES 
-       IMPORTED_LOCATION /home/bootch/git/embeddedMath/Debug52/libembeddedMath52.a
+       IMPORTED_LOCATION /home/bootch/git/embeddedMath/cmakeBuild/libembeddedMath52.a
        INTERFACE_INCLUDE_DIRECTORIES "/home/bootch/git/embeddedMath/src" )
-
+endif()
 
 add_library(NRFDrivers STATIC IMPORTED)
 set_target_properties( NRFDrivers PROPERTIES IMPORTED_LOCATION /home/bootch/git/libNRFDrivers/Debug/libNRFDrivers.a )
 
-
-#add_library(BLEProvisionee STATIC IMPORTED)
-#set_target_properties( BLEProvisionee 
-#    PROPERTIES 
-#        IMPORTED_LOCATION /home/bootch/git/libBLEProvisionee/Debug/libBLEProvisionee.a
-#        INTERFACE_INCLUDE_DIRECTORIES "/home/bootch/git/libBLEProvisionee/objects"
-#    )
+if (NOT TARGET BLEProvisionee)
+add_library(BLEProvisionee STATIC IMPORTED)
+set_target_properties( BLEProvisionee 
+    PROPERTIES 
+        IMPORTED_LOCATION /home/bootch/git/libBLEProvisionee/Debug/libBLEProvisionee.a
+        INTERFACE_INCLUDE_DIRECTORIES "/home/bootch/git/libBLEProvisionee/objects"
+    )
+endif()
+    
 # Same library but built for 52810
 #add_library(BLEProvisionee52810 STATIC IMPORTED)
 #set_target_properties( BLEProvisionee52810 
@@ -222,7 +236,6 @@ list(APPEND Sources
        "${CMAKE_CURRENT_LIST_DIR}/policy/syncPolicy/adaptiveXmitSyncPolicy.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/policy/dropoutMonitor.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/policy/fishWaitingPolicy.cpp"
-       "${CMAKE_CURRENT_LIST_DIR}/policy/provisionManager.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/receiver/receiver.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/schedule/syncSchedule.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/schedule/radioPrelude.cpp"
@@ -240,7 +253,6 @@ list(APPEND Sources
        "${CMAKE_CURRENT_LIST_DIR}/slots/abandonMastershipSlot.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/task/fishTask.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/task/mergerTask.cpp"
-       "${CMAKE_CURRENT_LIST_DIR}/task/provisionTask.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/task/checkPowerReserve.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/task/task.cpp"
        "${CMAKE_CURRENT_LIST_DIR}/work/workIn.cpp"
@@ -270,6 +282,8 @@ list(APPEND ProvisioningSources
     "${CMAKE_CURRENT_LIST_DIR}/provisioning/provisionSchedule.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/provisioning/provisionerCallback.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/provisioning/workProvisioner.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/provisioning/provisionManager.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/provisioning/provisionTask.cpp"
 )
 
 # provisioned version

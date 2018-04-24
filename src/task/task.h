@@ -1,6 +1,19 @@
 
 #pragma once
 
+/*
+ * SleepSyncTask
+ *
+ * Knows the set of tasks for SleepSync.
+ * Just a list of code fragments run at various waypoints of the SleepSync schedule.
+ *
+ * A "task" is run-to-completion and executes in ISR context.
+ *
+ * A "task" is not a class: no method common to all these tasks.
+ * These methods ARE tasks, but they don't have class type "Task".
+ *
+ *
+ */
 class SSTask {
 public:
 	/*

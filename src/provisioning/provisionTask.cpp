@@ -1,6 +1,6 @@
 
 // Part of SSTask class implementation, specific to <provisioning>
-#include "task.h"
+#include "../task/task.h"
 
 #include "../logging/logger.h"
 
