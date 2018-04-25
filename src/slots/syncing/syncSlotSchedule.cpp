@@ -26,11 +26,9 @@ DeltaTime SyncSlotSchedule::deltaToThisSyncSlotEnd(){
 
 
 LongTime SyncSlotSchedule::timeOfThisSyncSlotMiddleSubslot() {
-#ifdef TASKS
+
 	return clique.schedule.startTimeOfSyncPeriod()  +   ScheduleParameters::DeltaSyncSlotStartToSyncSlotXmit;
-#else
-	return clique.schedule.startTimeOfSyncPeriod()  +   ScheduleParameters::DeltaSyncPointToSyncSlotMiddle;
-#endif
+	// SANS PRELUDE return clique.schedule.startTimeOfSyncPeriod()  +   ScheduleParameters::DeltaSyncPointToSyncSlotMiddle;
 }
 
 
@@ -39,10 +37,7 @@ LongTime SyncSlotSchedule::timeOfThisSyncSlotMiddleSubslot() {
  * by startup delays for ensemble.
  */
 LongTime SyncSlotSchedule::timeOfThisSyncSlotEnd() {
-#ifdef TASKS
 	return clique.schedule.startTimeOfSyncPeriod()  +   ScheduleParameters::VirtualSlotDuration;
-#else
-	return clique.schedule.startTimeOfSyncPeriod()  +   ScheduleParameters::RealSlotDuration;		// !!!!
-#endif
+	//SANS PRELUDE return clique.schedule.startTimeOfSyncPeriod()  +   ScheduleParameters::RealSlotDuration;		// !!!!
 }
 

@@ -13,7 +13,6 @@
 // radioSoC
 #include <clock/clockDuration.h>
 
-// FUTURE memoize end time also???
 
 
 

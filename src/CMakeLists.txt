@@ -46,6 +46,8 @@ nRF5SetIncludePaths()
 # sleepSyncAgent52xNoSD
 # sleepSyncAgent52xSD
 
+# OBSOLETE: target_compile_definitions( sleepSyncAgent52xNoSD PRIVATE "TASKS" )
+
 add_library(sleepSyncAgent52xSD STATIC "")
 set_target_properties( sleepSyncAgent52xSD
     PROPERTIES
@@ -58,7 +60,6 @@ nRF5ConfigTargetByProperties(sleepSyncAgent52xSD)
 
 # PRIVATE so not defined for referring builds
 target_compile_definitions( sleepSyncAgent52xSD PRIVATE "NRF52" )
-target_compile_definitions( sleepSyncAgent52xSD PRIVATE "TASKS" )
 
 #install(TARGETS sleepSyncAgent52xSD
 #    EXPORT sleepSyncTargets
@@ -83,7 +84,6 @@ nRF5CheckTargetProperties(sleepSyncAgent52xNoSD)
 nRF5ConfigTargetByProperties(sleepSyncAgent52xNoSD)
 
 target_compile_definitions( sleepSyncAgent52xNoSD PRIVATE "NRF52" )
-target_compile_definitions( sleepSyncAgent52xNoSD PRIVATE "TASKS" )
 
 
 

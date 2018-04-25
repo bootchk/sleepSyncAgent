@@ -13,6 +13,10 @@
 // lib embeddedMath
 #include <timeMath.h>
 
+#include "../logging/logger.h"
+
+
+
 
 DeltaTime  SleepDuration::powerCheckInterval() {
 	return ScheduleParameters::TimeoutWaitingForSyncPowerSleeper;
@@ -31,6 +35,13 @@ DeltaTime SleepDuration::nowTilPreludeWSync() {
 }
 
 DeltaTime SleepDuration::nowTilPreludeWFish() {
+#ifdef FOR_DEBUGGING
+	// if assertion in deltaSubtraction throws
+	Logger::log("til fish:");
+    Logger::logInt(nowTilFishStart());
+    Logger::log("til prelude to fish:");
+    Logger::logInt(preludeTilNextTask());
+#endif
 	return TimeMath::deltaSubtraction(nowTilFishStart(), preludeTilNextTask());
 }
 

@@ -111,7 +111,21 @@ void SyncAgentImp::preludeToSyncPeriod() {
 
 
 
+#ifdef CRUFT
+	/*
+	 * RTC tasks design.
+	 * Each task is RTC run-to-completion and is an ISR.
+	 * Invariant: task is running, or some task scheduled.
+	 * Main loop just sleeps, and all work is done in ISR's.
+	 */
+	SyncSchedule::initialSyncPeriod();
+	while (true) {
+		// MCUSleep::untilAnyEvent();
+		MCUSleep::untilInterrupt();
 
+		assertUltraLowPower();
+	}
+#endif
 
 #ifdef OBSOLETE
 
@@ -122,7 +136,6 @@ void SyncAgentImp::loop(){
 
 	preludeToLoop();
 
-#ifndef TASKS
 	while (true){
 
 		preludeToSyncPeriod();
@@ -142,21 +155,6 @@ void SyncAgentImp::loop(){
 
 		// SyncPeriod over and next one starts.
 	}
-#else
-	/*
-	 * RTC tasks design.
-	 * Each task is RTC run-to-completion and is an ISR.
-	 * Invariant: task is running, or some task scheduled.
-	 * Main loop just sleeps, and all work is done in ISR's.
-	 */
-	SyncSchedule::initialSyncPeriod();
-	while (true) {
-		// MCUSleep::untilAnyEvent();
-		MCUSleep::untilInterrupt();
-
-		assertUltraLowPower();
-	}
-#endif
 	// never returns
 }
 

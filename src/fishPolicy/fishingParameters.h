@@ -44,8 +44,7 @@ public:
 	 *
 	 * TODO Not used, and old design probably broken now.
 	 */
-	static const SlotCount LastSlotOrdinalPreludeToFish = ScheduleParameters::CountSlots
-			- MinSlotsTrollingFishedPerPeriod;	// !!!
+	//static const SlotCount LastSlotOrdinalPreludeToFish = ScheduleParameters::CountSlots - MinSlotsTrollingFishedPerPeriod;	// !!!
 
 
 	static const SlotCount FirstSlotOrdinalToFish = ScheduleParameters::FirstSleepingSlotOrdinal;

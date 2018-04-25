@@ -89,6 +89,8 @@ void SyncRecoveryTrollingPolicy::preFishing() {
 	proceedToNextFishSlotOrdinal();
 }
 
+//TODO calling pre instead of post means that when we first start, we skip the first slot
+
 /*
  * This must only be called once per sync period.
  */
