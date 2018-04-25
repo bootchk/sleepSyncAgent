@@ -134,14 +134,19 @@ set_target_properties( embeddedMath52
        INTERFACE_INCLUDE_DIRECTORIES "/home/bootch/git/embeddedMath/src" )
 endif()
 
+if (NOT TARGET NRFDrivers)
 add_library(NRFDrivers STATIC IMPORTED)
-set_target_properties( NRFDrivers PROPERTIES IMPORTED_LOCATION /home/bootch/git/libNRFDrivers/Debug/libNRFDrivers.a )
+set_target_properties( NRFDrivers PROPERTIES 
+    IMPORTED_LOCATION /home/bootch/git/libNRFDrivers/cmakeBuild/libNRFDrivers.a
+    INTERFACE_INCLUDE_DIRECTORIES "/home/bootch/git/libNRFDrivers"
+    )
+endif()
 
 if (NOT TARGET BLEProvisionee)
 add_library(BLEProvisionee STATIC IMPORTED)
 set_target_properties( BLEProvisionee 
     PROPERTIES 
-        IMPORTED_LOCATION /home/bootch/git/libBLEProvisionee/Debug/libBLEProvisionee.a
+        IMPORTED_LOCATION /home/bootch/git/libBLEProvisionee/cmakeBuild/libBLEProvisionee.a
         INTERFACE_INCLUDE_DIRECTORIES "/home/bootch/git/libBLEProvisionee/objects"
     )
 endif()
