@@ -22,6 +22,7 @@ public:
 
 	static void connectOnMuchPowerReserve( void (*callback)());
 
+	// Called once per POR, before looping over syncPeriods
 	static void preludeToLoop();
 
 // TODO obsolete
@@ -80,14 +81,16 @@ private:
 	// FUTURE static void (*onSyncingPausedCallback)();	// callback to app when syncing is paused
 
 
-	// methods
 public:
-	static void callbackAppPreSync();
-
-	// Miscellaneous bookkeeping at start of syncPeriod
+	/*
+	 * Bookkeeping at start of every syncPeriod.
+	 * Even if not using radio (mode: Marking)
+	 * Primary task: roll syncPeriod forward (apropos schedule)
+	 */
 	static void preludeToSyncPeriod();
 
 	// Upstream communication to app
+	static void callbackAppPreSync();
 	static void relayHeardWorkToApp(Payload work);
 
 	/*

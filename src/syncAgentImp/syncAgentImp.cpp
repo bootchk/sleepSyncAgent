@@ -24,6 +24,7 @@
 #include "../syncAgentImp/state/syncMode.h"
 #include "../work/workOut.h"
 #include "../work/workIn.h"
+#include "../fishPolicy/fishPowerMgr.h"
 
 
 // SyncSleeper, Sleeper pure classes
@@ -128,13 +129,15 @@ void SyncAgentImp::init()
 	clique.init();
 	CliqueHistory::init();
 
+	FishPowerMgr::init();
+
+#ifdef OBSOLETE
 	/*
 	 * Register callbacks that return debug info
 	 * BrownoutRecorder will also record phase if not already written by prior oversleep.
 	 *
 	 * Some choices commented out.
 	 */
-#ifdef OBSOLETE
 	BrownoutRecorder::registerCallbacks(
 			//getPhase,
 			//SyncSleeper::getCountSleeps,

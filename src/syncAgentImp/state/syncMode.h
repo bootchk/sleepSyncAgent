@@ -1,7 +1,7 @@
 
 #pragma once
 
-
+// TODO rename Maintain=>Marking
 enum class SyncMode {
 	/*
 	 * just counting out syncPeriods (which will drift).
@@ -14,12 +14,12 @@ enum class SyncMode {
 	 */
 	SyncOnly,
 	/*
-	 * actively syncing and also fishing for other cliques and merging them
+	 * actively syncing and also fishing for other cliques and merging them.
 	 * Two slots active.
 	 */
 	SyncAndFishMerge,
 	/*
-	 * Sync and provision.
+	 * Sync slot and a period (not slotted) for provision.
 	 */
 	SyncAndProvision
 };

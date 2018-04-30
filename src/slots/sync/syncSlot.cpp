@@ -14,6 +14,9 @@
 #include "../../syncAgentImp/syncAgentImp.h"
 #include "../../syncAgentImp/state/syncMode.h"
 
+#include "../../fishPolicy/fishPowerMgr.h"
+
+
 
 namespace {
 	/*
@@ -44,6 +47,9 @@ void SyncSlot::bookkeepingAtStartSyncSlot() {
 void SyncSlot::bookkeepingAtPreludeToSyncSlot() {
 	SyncAgentImp::callbackAppPreSync();
 	SyncModeManager::checkPowerAndTryModeTransitions();
+
+	// Increase trolling if power sufficient
+	FishPowerMgr::manage();
 }
 
 
